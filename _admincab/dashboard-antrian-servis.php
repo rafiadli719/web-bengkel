@@ -84,7 +84,7 @@ if(empty($_SESSION['_iduser'])){
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>Dashboard Antrian Servis - <?php include "lib/titel.php"; ?></title>
+    <title>Dashboard Antrian Servis - <?php include "../lib/titel.php"; ?></title>
     <meta name="description" content="Dashboard Progress Pengerjaan Antrian Servis" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -244,7 +244,7 @@ if(empty($_SESSION['_iduser'])){
                 <a href="index.php" class="navbar-brand">
                     <small>
                         <i class="fa fa-leaf"></i>
-                        <?php include "lib/subtitel.php"; ?>
+                                                 <?php include "../lib/subtitel.php"; ?>
                     </small>							
                 </a>								
             </div>
@@ -456,9 +456,9 @@ if(empty($_SESSION['_iduser'])){
                                                             <h6 class="no-margin">
                                                                 <i class="fa fa-user"></i> <?php echo $mekanik['nama_mekanik'] ?? 'Mekanik #' . $mekanik['id_mekanik']; ?>
                                                             </h6>
-                                                                                                                         <small>
+                                                            <small>
                                                                  <?php echo ucfirst(str_replace('_', ' ', $mekanik['jenis_mekanik'] ?? 'mekanik')); ?>
-                                                             </small>
+                                                            </small>
                                                         </div>
                                                         <div class="col-xs-4 text-right">
                                                             <span class="badge"><?php echo $mekanik['persen_kerja'] ?? 0; ?>%</span>
