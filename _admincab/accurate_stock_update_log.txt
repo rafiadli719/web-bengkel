@@ -1,0 +1,152 @@
+
+======= NEW TRANSACTION: IM25000000073 =======
+[2025-06-05 15:46:21 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000073 - SUCCESS ✅
+2025-06-05 15:46:21 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:46:21 WIB - 📦 Processing Item 1/1: 10009 (Qty: 2.000000)
+2025-06-05 15:46:21 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 15:46:21 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 15:46:22 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 15:46:22 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 15:46:22 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 15:46:22 WIB - 📤 Data: adjustmentAccountNo=110401&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10009&detailItem%5B0%5D.unitCost=500000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 15:46:22 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 15:46:22 WIB - 📡 Executing fixed cURL request...
+2025-06-05 15:46:22 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 15:46:22 WIB - 📥 Fixed Response: {"s":false,"d":["Cabang PESALAKAN tidak ditemukan atau sudah dihapus"]}
+2025-06-05 15:46:22 WIB - ❌ Fixed API Error: Cabang PESALAKAN tidak ditemukan atau sudah dihapus
+2025-06-05 15:46:22 WIB - ❌ Item 1 FAILED: API Error: Cabang PESALAKAN tidak ditemukan atau sudah dihapus
+2025-06-05 15:46:22 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-06-05 15:46:22 WIB - ❌ ACCURATE SYNC FAILED: API Error: Cabang PESALAKAN tidak ditemukan atau sudah dihapus (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000074 =======
+[2025-06-05 15:48:56 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000074 - SUCCESS ✅
+2025-06-05 15:48:56 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:48:56 WIB - 📦 Processing Item 1/1: 10008 (Qty: 2.000000)
+2025-06-05 15:48:56 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 15:48:56 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 15:48:56 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 15:48:56 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 15:48:56 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 15:48:56 WIB - 📤 Data: adjustmentAccountNo=110401&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 15:48:56 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 15:48:56 WIB - 📡 Executing fixed cURL request...
+2025-06-05 15:48:56 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 15:48:56 WIB - 📥 Fixed Response: {"s":false,"d":["Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang \"DUMMY\""]}
+2025-06-05 15:48:56 WIB - ❌ Fixed API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY"
+2025-06-05 15:48:56 WIB - ❌ Item 1 FAILED: API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY"
+2025-06-05 15:48:56 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-06-05 15:48:56 WIB - ❌ ACCURATE SYNC FAILED: API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY" (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000075 =======
+[2025-06-05 16:18:36 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000075 - SUCCESS ✅
+2025-06-05 16:18:36 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:18:36 WIB - 📦 Processing Item 1/1: 10008 (Qty: 2.000000)
+2025-06-05 16:18:36 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:18:36 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:18:36 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:18:36 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:18:36 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:18:36 WIB - 📤 Data: adjustmentAccountNo=IA.2025.06.00001&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:18:36 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:18:36 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:18:36 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:18:36 WIB - 📥 Fixed Response: {"s":false,"d":["Akun Perkiraan IA.2025.06.00001 tidak ditemukan atau sudah dihapus"]}
+2025-06-05 16:18:36 WIB - ❌ Fixed API Error: Akun Perkiraan IA.2025.06.00001 tidak ditemukan atau sudah dihapus
+2025-06-05 16:18:36 WIB - ❌ Item 1 FAILED: API Error: Akun Perkiraan IA.2025.06.00001 tidak ditemukan atau sudah dihapus
+2025-06-05 16:18:36 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-06-05 16:18:36 WIB - ❌ ACCURATE SYNC FAILED: API Error: Akun Perkiraan IA.2025.06.00001 tidak ditemukan atau sudah dihapus (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000076 =======
+[2025-06-05 16:20:16 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000076 - SUCCESS ✅
+2025-06-05 16:20:16 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:20:16 WIB - 📦 Processing Item 1/1: 10008 (Qty: 2.000000)
+2025-06-05 16:20:16 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:20:16 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:20:18 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:20:18 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:20:18 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:20:18 WIB - 📤 Data: adjustmentAccountNo=110401&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:20:18 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:20:18 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:20:18 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:20:18 WIB - 📥 Fixed Response: {"s":false,"d":["Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang \"DUMMY\""]}
+2025-06-05 16:20:18 WIB - ❌ Fixed API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY"
+2025-06-05 16:20:18 WIB - ❌ Item 1 FAILED: API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY"
+2025-06-05 16:20:18 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-06-05 16:20:18 WIB - ❌ ACCURATE SYNC FAILED: API Error: Akun Penyesuaian persediaan tidak dapat sama dengan akun persediaan barang "DUMMY" (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000077 =======
+[2025-06-05 16:31:56 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000077 - SUCCESS ✅
+2025-06-05 16:31:56 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:31:56 WIB - 📦 Processing Item 1/1: 10008 (Qty: 2.000000)
+2025-06-05 16:31:56 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:31:56 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:31:56 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:31:56 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:31:56 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:31:56 WIB - 📤 Data: adjustmentAccountNo=610001&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:31:56 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:31:56 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:31:56 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:31:56 WIB - 📥 Fixed Response: {"s":false,"d":["Akun Perkiraan 610001 tidak ditemukan atau sudah dihapus"]}
+2025-06-05 16:31:56 WIB - ❌ Fixed API Error: Akun Perkiraan 610001 tidak ditemukan atau sudah dihapus
+2025-06-05 16:31:56 WIB - ❌ Item 1 FAILED: API Error: Akun Perkiraan 610001 tidak ditemukan atau sudah dihapus
+2025-06-05 16:31:56 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-06-05 16:31:56 WIB - ❌ ACCURATE SYNC FAILED: API Error: Akun Perkiraan 610001 tidak ditemukan atau sudah dihapus (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000078 =======
+[2025-06-05 16:37:51 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000078 - SUCCESS ✅
+2025-06-05 16:37:51 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:37:51 WIB - 📦 Processing Item 1/1: 10008 (Qty: 2.000000)
+2025-06-05 16:37:51 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:37:51 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:37:52 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:37:52 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:37:52 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:37:52 WIB - 📤 Data: adjustmentAccountNo=&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=2.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:37:52 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:37:52 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:37:52 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:37:52 WIB - 📥 Fixed Response: {"r":{"stockOpnameResult":false,"optLock":3,"exchangeInvoice":false,"rollOver":false,"receiveItem":false,"employeeLoanDisbursement":false,"paymentPointOnlineBank":false,"manufactureOrder":false,"number":"IA.2025.06.00002","itemAdjustment":true,"finishedProject":false,"id":102,"openingBalance":false,"transDateView":"05 Jun 2025","periodEnd":false,"stockOpnameProcess":false,"workOrder":false,"branchId":101,"purchaseDownPayment":false,"assetTransfer":false,"salesInvoice":false,"recurringDetailId":n
+2025-06-05 16:37:52 WIB - ✅ FIXED SUCCESS!
+2025-06-05 16:37:52 WIB - ✅ Item 1 SUCCESS via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:37:52 WIB - 🏁 SYNC COMPLETED. Success: YES, Count: 1/1
+2025-06-05 16:37:52 WIB - 🎉 ACCURATE SYNC SUCCESS! All 1 items synchronized via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+
+======= NEW TRANSACTION: IM25000000079 =======
+[2025-06-05 16:39:07 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000079 - SUCCESS ✅
+2025-06-05 16:39:07 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:39:07 WIB - 📦 Processing Item 1/1: 10008 (Qty: 7.000000)
+2025-06-05 16:39:07 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:39:07 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:39:08 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:39:08 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:39:08 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:39:08 WIB - 📤 Data: adjustmentAccountNo=&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=7.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:39:08 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:39:08 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:39:08 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:39:08 WIB - 📥 Fixed Response: {"r":{"stockOpnameResult":false,"optLock":3,"exchangeInvoice":false,"receiveItem":false,"rollOver":false,"employeeLoanDisbursement":false,"paymentPointOnlineBank":false,"manufactureOrder":false,"number":"IA.2025.06.00003","itemAdjustment":true,"finishedProject":false,"id":250,"openingBalance":false,"transDateView":"05 Jun 2025","periodEnd":false,"stockOpnameProcess":false,"workOrder":false,"branchId":101,"purchaseDownPayment":false,"assetTransfer":false,"salesInvoice":false,"recurringDetailId":n
+2025-06-05 16:39:08 WIB - ✅ FIXED SUCCESS!
+2025-06-05 16:39:08 WIB - ✅ Item 1 SUCCESS via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:39:08 WIB - 🏁 SYNC COMPLETED. Success: YES, Count: 1/1
+2025-06-05 16:39:08 WIB - 🎉 ACCURATE SYNC SUCCESS! All 1 items synchronized via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+
+======= NEW TRANSACTION: IM25000000080 =======
+[2025-06-05 16:47:16 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000080 - SUCCESS ✅
+2025-06-05 16:47:16 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 16:47:16 WIB - 📦 Processing Item 1/1: 10008 (Qty: 5.000000)
+2025-06-05 16:47:16 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-06-05 16:47:16 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 16:47:16 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 16:47:16 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-05 16:47:16 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-05 16:47:16 WIB - 📤 Data: adjustmentAccountNo=&transDate=05%2F06%2F2025&description=&branchName=PESALAKAN&detailItem%5B0%5D.itemAdjustmentType=ADJUSTMENT_IN&detailItem%5B0%5D.itemNo=10008&detailItem%5B0%5D.unitCost=250000.000000&detailItem%5B0%5D.quantity=5.000000&detailItem%5B0%5D.warehouseName=Utama
+2025-06-05 16:47:16 WIB - 🌐 Fixed URL: https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:47:16 WIB - 📡 Executing fixed cURL request...
+2025-06-05 16:47:17 WIB - 📊 Fixed HTTP Code: 200
+2025-06-05 16:47:17 WIB - 📥 Fixed Response: {"r":{"stockOpnameResult":false,"optLock":3,"exchangeInvoice":false,"receiveItem":false,"rollOver":false,"paymentPointOnlineBank":false,"employeeLoanDisbursement":false,"manufactureOrder":false,"number":"IA.2025.06.00004","itemAdjustment":true,"finishedProject":false,"id":300,"openingBalance":false,"transDateView":"05 Jun 2025","periodEnd":false,"stockOpnameProcess":false,"workOrder":false,"branchId":101,"purchaseDownPayment":false,"assetTransfer":false,"salesInvoice":false,"recurringDetailId":n
+2025-06-05 16:47:17 WIB - ✅ FIXED SUCCESS!
+2025-06-05 16:47:17 WIB - ✅ Item 1 SUCCESS via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+2025-06-05 16:47:17 WIB - 🏁 SYNC COMPLETED. Success: YES, Count: 1/1
+2025-06-05 16:47:17 WIB - 🎉 ACCURATE SYNC SUCCESS! All 1 items synchronized via https://zeus.accurate.id/accurate/api/item-adjustment/save.do

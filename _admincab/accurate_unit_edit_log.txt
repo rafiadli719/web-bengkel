@@ -1,0 +1,20 @@
+[2025-06-13 07:14:38 WIB] 📝 EDIT UNIT - ID: 20, Accurate ID: NULL
+[2025-06-13 07:14:38 WIB] 📝 OLD: Kode='DMY', Nama='Dummy'
+[2025-06-13 07:14:38 WIB] 📝 NEW: Kode='DMY', Nama='Dummy1'
+[2025-06-13 07:14:38 WIB] 💾 DATABASE LOKAL: Update satuan 'Dummy1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 14:14:38 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 14:14:38 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 14:14:40 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 14:14:40 WIB] 🔍 Searching by name: 'Dummy'
+[2025-06-13 14:14:41 WIB] 📊 Search HTTP: 200
+[2025-06-13 14:14:41 WIB] 📋 Found 2 units, searching for 'dummy'
+[2025-06-13 14:14:41 WIB] ✅ Exact match found: ID 300
+[2025-06-13 14:14:41 WIB] 🔄 UPDATE MODE: Using unit ID 300
+[2025-06-13 14:14:41 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/unit/save.do
+[2025-06-13 14:14:41 WIB] 📤 Data: name=Dummy1&id=300
+[2025-06-13 14:14:41 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 14:14:41 WIB] 📥 Save Response: {"r":{"codeUnitTax":null,"optLock":1,"name":"Dummy1","id":300},"s":true,"d":["Satuan Barang \"Dummy1\" berhasil disimpan"]}
+[2025-06-13 14:14:41 WIB] ✅ Unit UPDATED successfully
+[2025-06-13 14:14:41 WIB] 🎉 Synchronization successful: UPDATED
+[2025-06-13 14:14:41 WIB] 🏁 Script execution completed
+[2025-06-13 14:14:41 WIB] ================================================================================

@@ -1,0 +1,78 @@
+[2025-06-13 09:17:40 WIB] 🔍 Getting category detail URL: https://zeus.accurate.id/accurate/api/item-category/detail.do?id=700
+[2025-06-13 09:17:40 WIB] 📊 Get category detail HTTP Code: 200
+[2025-06-13 09:17:40 WIB] 📥 Detail response: {
+    "s": true,
+    "d": {
+        "sub": false,
+        "parent": {
+            "sub": false,
+            "parent": null,
+            "lvl": 0,
+            "purchaseRetGlAccountId": null,
+            "defaultCategory": false,
+            "inventoryGlAccountId": null,
+            "optLock": 0,
+            "salesRetGlAccountId": null,
+            "parentNode": true,
+            "nameWithIndent": "Root",
+            "expenseGlAccountId": null,
+            "goodTransitGlAccountId": null,
+            "salesDiscountGlAccountId": null,
+            "nameWithIndentStrip": "Root",
+            "cogsGlAccountId": null,
+            "salesGlAccountId": null,
+            "name": "Root",
+            "id": 50,
+            "unBilledGlAccountId": null
+        },
+        "lvl": 1,
+        "purchaseRetGlAccountId": 72,
+        "defaultCategory": false,
+        "inventoryGlAccountId": 72,
+        "optLock": 0,
+        "salesRetGlAccountId": 100,
+        "parentNode": false,
+        "nameWithIndent": "DUMMY",
+        "expenseGlAccountId": 123,
+        "goodTransitGlAccountId": 73,
+        "salesDiscountGlAccountId": 101,
+        "nameWithIndentStrip": "DUMMY",
+        "cogsGlAccountId": 102,
+        "salesGlAccountId": 98,
+        "name": "DUMMY",
+        "id": 700,
+        "unBilledGlAccountId": 94
+    }
+}
+[2025-06-13 09:17:40 WIB] 🔍 Getting all categories URL: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=10&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 09:17:40 WIB] 📊 Get all categories HTTP Code: 200
+[2025-06-13 09:17:40 WIB] 📥 All categories response: {
+    "s": true,
+    "d": [
+        {
+            "name": "AKIGEN",
+            "id": 500
+        },
+        {
+            "name": "Default Category",
+            "id": 250
+        },
+        {
+            "name": "DUMMY",
+            "id": 700
+        },
+        {
+            "name": "Umum",
+            "id": 51
+        }
+    ],
+    "sp": {
+        "page": 1,
+        "sort": null,
+        "pageSize": 10,
+        "pageCount": 1,
+        "rowCount": 4,
+        "start": 0,
+        "limit": null
+    }
+}

@@ -1,0 +1,87 @@
+[2025-06-13 07:33:49 WIB] 📝 ADD SUPPLIER - Kode: DMY, Nama: Dummy
+[2025-06-13 07:33:49 WIB] 📋 Spare parts associations saved: 1 items
+[2025-06-13 07:33:49 WIB] 💾 DATABASE LOKAL: Insert supplier 'Dummy' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 14:33:49 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 14:33:49 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 14:33:50 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 14:33:50 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-06-13 14:33:50 WIB] 📤 Data: name=Dummy&transDate=13%2F06%2F2025&vendorNo=DMY&billStreet=DUMMY&billCity=DUMMY&billProvince=DUMMY&billZipCode=DUMMY&billCountry=DUMMY&mobilePhone=DUMMY&fax=DUMMY&email=DUMMY&notes=DUMMY&workPhone=DUMMY&branchId=1&detailContact%5B0%5D.name=DUMMY&detailContact%5B0%5D.mobilePhone=DUMMY&detailContact%5B0%5D.email=DUMMY&detailContact%5B0%5D.position=Contact+Person
+[2025-06-13 14:33:50 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 14:33:50 WIB] 📥 Save Response: {"s":false,"d":["Email tidak tepat"]}
+[2025-06-13 14:33:50 WIB] ❌ Synchronization failed: API Error: Email tidak tepat
+[2025-06-13 14:33:50 WIB] 🏁 Script execution completed
+[2025-06-13 14:33:50 WIB] ================================================================================
+[2025-06-13 07:42:07 WIB] 📝 ADD SUPPLIER - Kode: DMY, Nama: Dummy
+[2025-06-13 07:42:07 WIB] 📋 Spare parts associations saved: 1 items
+[2025-06-13 07:42:07 WIB] 💾 DATABASE LOKAL: Insert supplier 'Dummy' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 14:42:07 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 14:42:07 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 14:42:08 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 14:42:08 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-06-13 14:42:08 WIB] 📤 Data: name=Dummy&transDate=13%2F06%2F2025&vendorNo=DMY&billStreet=DUMMY&billCity=DUMMY&billProvince=DUMMY&billZipCode=0&billCountry=DUMMY&mobilePhone=0&fax=0&email=DUMMY%40gmail.com&notes=-&workPhone=0&branchId=1
+[2025-06-13 14:42:08 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 14:42:08 WIB] 📥 Save Response: {"r":{"documentCode":"DIGUNGGUNG","charField8":null,"charField9":null,"notes":"-","charField6":null,"charField7":null,"numericField10":null,"maxInvoiceAge":0,"idCard":null,"charField4":null,"charField5":null,"optLock":1,"defaultPurchaseDisc":null,"editBranchExistInAvailableBranch":true,"defaultIncTa
+[2025-06-13 14:42:08 WIB] ✅ Supplier created successfully
+[2025-06-13 14:42:08 WIB] 🎉 Synchronization successful: CREATED
+[2025-06-13 14:42:08 WIB] 🏁 Script execution completed
+[2025-06-13 14:42:08 WIB] ================================================================================
+[2025-06-13 08:16:12 WIB] ❌ Field wajib kosong: No. Telepon
+[2025-06-13 08:23:33 WIB] 📝 ADD SUPPLIER - Kode: COBA, Nama: Coba, Tipe: perorangan
+[2025-06-13 08:23:33 WIB] 📋 Spare parts associations saved: 1 items
+[2025-06-13 08:23:33 WIB] 💾 DATABASE LOKAL: Insert supplier 'Coba' (Kode: COBA, Tipe: perorangan) - SUCCESS ✅
+[2025-06-13 15:23:33 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 15:23:33 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 15:23:33 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 15:23:33 WIB] 🏷️ Supplier Type: perorangan → Category: Supplier Perorangan
+[2025-06-13 15:23:33 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-06-13 15:23:33 WIB] 📤 Data: name=Coba&transDate=13%2F06%2F2025&vendorNo=COBA&billStreet=COBACOBACOBA&billCity=Coba&billProvince=Coba&billZipCode=12345&billCountry=Indonesia&workPhone=08123456789&mobilePhone=628123456789&fax=-&email=dummy%40gmail.com&notes=COBA&defaultIncTax=false&currencyCode=IDR&branchId=1&termName=1+Days&detailContact%5B0%5D.name=08123456789&detailContact%5B0%5D.mobilePhone=628123456789&detailContact%5B0%5D.email=dummy%40gmail.com&detailContact%5B0%5D.position=Contact+Person&detailContact%5B0%5D.workPhone=08123456789&detailContact%5B0%5D.salutation=MR&categoryName=Supplier+Perorangan
+[2025-06-13 15:23:33 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 15:23:33 WIB] 📥 Save Response: {"s":false,"d":["Syarat Pembayaran 1 Days tidak ditemukan atau sudah dihapus"]}
+[2025-06-13 15:23:33 WIB] ❌ Synchronization failed: API Error: Syarat Pembayaran 1 Days tidak ditemukan atau sudah dihapus
+[2025-06-13 15:23:33 WIB] 🏁 Script execution completed
+[2025-06-13 15:23:33 WIB] ================================================================================
+[2025-06-13 08:27:31 WIB] 📝 ADD SUPPLIER - Kode: COBA, Nama: Coba, Tipe: perorangan
+[2025-06-13 08:27:31 WIB] 📋 Spare parts associations saved: 1 items
+[2025-06-13 08:27:31 WIB] 💾 DATABASE LOKAL: Insert supplier 'Coba' (Kode: COBA, Tipe: perorangan) - SUCCESS ✅
+[2025-06-13 15:27:31 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 15:27:31 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 15:27:32 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 15:27:32 WIB] 🏷️ Supplier Type: perorangan → Category: Supplier Perorangan
+[2025-06-13 15:27:32 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-06-13 15:27:32 WIB] 📤 Data: name=Coba&transDate=13%2F06%2F2025&vendorNo=COBA&billStreet=COBACOBACOBA&billCity=Coba&billProvince=Coba&billZipCode=12345&billCountry=Indonesia&workPhone=081234567890&mobilePhone=6281234567890&fax=021-1234567890&email=coba%40gmail.com&notes=COBA&defaultIncTax=false&currencyCode=IDR&branchId=1&termName=13+Days&detailContact%5B0%5D.name=081234567890&detailContact%5B0%5D.mobilePhone=6281234567890&detailContact%5B0%5D.email=coba%40gmail.com&detailContact%5B0%5D.position=Contact+Person&detailContact%5B0%5D.workPhone=081234567890&detailContact%5B0%5D.salutation=MR&categoryName=Supplier+Perorangan
+[2025-06-13 15:27:33 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 15:27:33 WIB] 📥 Save Response: {"s":false,"d":["Syarat Pembayaran 13 Days tidak ditemukan atau sudah dihapus"]}
+[2025-06-13 15:27:33 WIB] ❌ Synchronization failed: API Error: Syarat Pembayaran 13 Days tidak ditemukan atau sudah dihapus
+[2025-06-13 15:27:33 WIB] 🏁 Script execution completed
+[2025-06-13 15:27:33 WIB] ================================================================================
+[2025-06-13 08:30:48 WIB] 📝 ADD SUPPLIER - Kode: COBA, Nama: Coba, Tipe: perorangan
+[2025-06-13 08:30:48 WIB] 📋 Spare parts associations saved: 1 items
+[2025-06-13 08:30:48 WIB] 💾 DATABASE LOKAL: Insert supplier 'Coba' (Kode: COBA, Tipe: perorangan) - SUCCESS ✅
+[2025-06-13 15:30:48 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 15:30:48 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 15:30:50 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 15:30:50 WIB] 🏷️ Supplier Type: perorangan → Category: Supplier Perorangan
+[2025-06-13 15:30:50 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-06-13 15:30:50 WIB] 📤 Data: name=Coba&transDate=13%2F06%2F2025&vendorNo=COBA&billStreet=COBACOBA&billCity=Coba&billProvince=Coba&billZipCode=12345&billCountry=Indonesia&workPhone=081234567890&mobilePhone=6281234567890&fax=081234567890&email=coba%40gmail.com&notes=coba&defaultIncTax=false&currencyCode=IDR&branchId=1&detailContact%5B0%5D.name=081234567890&detailContact%5B0%5D.mobilePhone=6281234567890&detailContact%5B0%5D.email=coba%40gmail.com&detailContact%5B0%5D.position=Contact+Person&detailContact%5B0%5D.workPhone=081234567890&detailContact%5B0%5D.salutation=MR&categoryName=Supplier+Perorangan
+[2025-06-13 15:30:50 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 15:30:50 WIB] 📥 Save Response: {"r":{"documentCode":"DIGUNGGUNG","charField8":null,"charField9":null,"notes":"coba","charField6":null,"charField7":null,"numericField10":null,"maxInvoiceAge":0,"idCard":null,"charField4":null,"charField5":null,"optLock":2,"defaultPurchaseDisc":null,"editBranchExistInAvailableBranch":true,"defaultIncTax":false,"serviceSeller":false,"charField2":null,"charField3":null,"charField1":null,"id":250,"currencyId":50,"fax":"081234567890","documentCodeName":"Digunggung","detailBank":[],"dateField2":null,
+[2025-06-13 15:30:50 WIB] ✅ Supplier created successfully
+[2025-06-13 15:30:50 WIB] 🎉 Synchronization successful: CREATED
+[2025-06-13 15:30:50 WIB] 🏁 Script execution completed
+[2025-06-13 15:30:50 WIB] ================================================================================
+[2025-07-02 04:14:47 WIB] 📝 ADD SUPPLIER - Kode: SUP001, Nama: Rafi, Tipe: perorangan
+[2025-07-02 04:14:47 WIB] 📋 Spare parts associations saved: 1 items
+[2025-07-02 04:14:47 WIB] 💾 DATABASE LOKAL: Insert supplier 'Rafi' (Kode: SUP001, Tipe: perorangan) - SUCCESS ✅
+[2025-07-02 11:14:47 WIB] 🔄 Starting Accurate synchronization
+[2025-07-02 11:14:47 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-07-02 11:14:47 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-07-02 11:14:47 WIB] 🏷️ Supplier Type: perorangan → Category: Supplier Perorangan
+[2025-07-02 11:14:47 WIB] 📋 Sending ALL fields to Accurate (including empty ones)
+[2025-07-02 11:14:47 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/vendor/save.do
+[2025-07-02 11:14:47 WIB] 📤 Data: name=Rafi&transDate=02%2F07%2F2025&vendorNo=SUP001&billStreet=DUMMY&billCity=Tegal&billProvince=Jawa+Tengah&billZipCode=11111&billCountry=Indonesia&workPhone=0123456789&mobilePhone=62123456789&fax=081234567890&email=rafiadli%40gmail.com&notes=&website=&npwpNo=&pkpNo=&defaultIncTax=false&currencyCode=IDR&branchId=1&detailContact%5B0%5D.name=011111111111111&detailContact%5B0%5D.mobilePhone=62123456789&detailContact%5B0%5D.email=rafiadli%40gmail.com&detailContact%5B0%5D.position=Contact+Person&detailContact%5B0%5D.workPhone=0123456789&detailContact%5B0%5D.salutation=MR&categoryName=Supplier+Perorangan
+[2025-07-02 11:14:48 WIB] 📊 Save HTTP Code: 200
+[2025-07-02 11:14:48 WIB] 📥 Save Response: {"r":{"documentCode":"DIGUNGGUNG","charField8":null,"charField9":null,"notes":null,"charField6":null,"charField7":null,"numericField10":null,"maxInvoiceAge":0,"idCard":null,"charField4":null,"charField5":null,"optLock":2,"defaultPurchaseDisc":null,"editBranchExistInAvailableBranch":true,"defaultIncTax":false,"serviceSeller":false,"charField2":null,"charField3":null,"charField1":null,"id":50,"currencyId":50,"fax":"081234567890","documentCodeName":"Digunggung","detailBank":[],"dateField2":null,"br
+[2025-07-02 11:14:48 WIB] ✅ Supplier created successfully
+[2025-07-02 11:14:48 WIB] 🎉 Synchronization successful: CREATED
+[2025-07-02 11:14:48 WIB] 🏁 Script execution completed
+[2025-07-02 11:14:48 WIB] ================================================================================

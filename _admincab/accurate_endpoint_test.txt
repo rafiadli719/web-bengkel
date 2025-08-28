@@ -1,0 +1,75 @@
+
+======= ACCURATE BRAND ENDPOINT TEST =======
+2025-07-02 14:37:42 WIB - Starting endpoint discovery...
+2025-07-02 14:37:43 WIB - ❌ NOT FOUND: /accurate/api/item-brand/list.do (GET) - HTTP 404
+2025-07-02 14:37:43 WIB - ❌ NOT FOUND: /accurate/api/item/brand/list.do (GET) - HTTP 404
+2025-07-02 14:37:43 WIB - ❌ NOT FOUND: /accurate/api/brand/list.do (GET) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/item-brand/detail.do (GET) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/item/brand/detail.do (GET) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/brand/detail.do (GET) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/item-brand/save.do (POST) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/item/brand/save.do (POST) - HTTP 404
+2025-07-02 14:37:44 WIB - ❌ NOT FOUND: /accurate/api/brand/save.do (POST) - HTTP 404
+2025-07-02 14:37:45 WIB - ❌ NOT FOUND: /accurate/api/item-brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 14:37:47 WIB - ❌ NOT FOUND: /accurate/api/item/brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 14:37:47 WIB - Test completed. Working endpoints: 0
+
+======= ACCURATE BRAND ENDPOINT TEST =======
+2025-07-02 15:13:18 WIB - Starting endpoint discovery...
+2025-07-02 15:13:19 WIB - ❌ NOT FOUND: /accurate/api/item-brand/list.do (GET) - HTTP 404
+2025-07-02 15:13:19 WIB - ❌ NOT FOUND: /accurate/api/item/brand/list.do (GET) - HTTP 404
+2025-07-02 15:13:19 WIB - ❌ NOT FOUND: /accurate/api/brand/list.do (GET) - HTTP 404
+2025-07-02 15:13:19 WIB - ❌ NOT FOUND: /accurate/api/item-brand/detail.do (GET) - HTTP 404
+2025-07-02 15:13:19 WIB - ❌ NOT FOUND: /accurate/api/item/brand/detail.do (GET) - HTTP 404
+2025-07-02 15:13:20 WIB - ❌ NOT FOUND: /accurate/api/brand/detail.do (GET) - HTTP 404
+2025-07-02 15:13:20 WIB - ❌ NOT FOUND: /accurate/api/item-brand/save.do (POST) - HTTP 404
+2025-07-02 15:13:20 WIB - ❌ NOT FOUND: /accurate/api/item/brand/save.do (POST) - HTTP 404
+2025-07-02 15:13:21 WIB - ❌ NOT FOUND: /accurate/api/brand/save.do (POST) - HTTP 404
+2025-07-02 15:13:21 WIB - ❌ NOT FOUND: /accurate/api/item-brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 15:13:21 WIB - ❌ NOT FOUND: /accurate/api/item/brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 15:13:21 WIB - Test completed. Working endpoints: 0
+
+======= ACCURATE BRAND ENDPOINT TEST =======
+2025-07-02 15:40:25 WIB - Starting endpoint discovery...
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item-brand/list.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item/brand/list.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/brand/list.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item-brand/detail.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item/brand/detail.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/brand/detail.do (GET) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item-brand/save.do (POST) - HTTP 404
+2025-07-02 15:40:25 WIB - ❌ NOT FOUND: /accurate/api/item/brand/save.do (POST) - HTTP 404
+2025-07-02 15:40:26 WIB - ❌ NOT FOUND: /accurate/api/brand/save.do (POST) - HTTP 404
+2025-07-02 15:40:26 WIB - ❌ NOT FOUND: /accurate/api/item-brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 15:40:26 WIB - ❌ NOT FOUND: /accurate/api/item/brand/bulk-save.do (POST) - HTTP 404
+2025-07-02 15:40:26 WIB - Test completed. Working endpoints: 0
+
+======= ACCURATE BRAND ENDPOINT TEST =======
+2025-07-03 09:35:53 WIB - Starting endpoint discovery...
+2025-07-03 09:35:53 WIB - ❌ NOT FOUND: /accurate/api/item-brand/list.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item/brand/list.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/brand/list.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item-brand/detail.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item/brand/detail.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/brand/detail.do (GET) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item-brand/save.do (POST) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item/brand/save.do (POST) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/brand/save.do (POST) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item-brand/bulk-save.do (POST) - HTTP 404
+2025-07-03 09:35:54 WIB - ❌ NOT FOUND: /accurate/api/item/brand/bulk-save.do (POST) - HTTP 404
+2025-07-03 09:35:54 WIB - Test completed. Working endpoints: 0
+
+======= ACCURATE BRAND ENDPOINT TEST =======
+2025-07-03 21:19:06 WIB - Starting endpoint discovery...
+2025-07-03 21:19:06 WIB - ❌ NOT FOUND: /accurate/api/item-brand/list.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item/brand/list.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/brand/list.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item-brand/detail.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item/brand/detail.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/brand/detail.do (GET) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item-brand/save.do (POST) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item/brand/save.do (POST) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/brand/save.do (POST) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item-brand/bulk-save.do (POST) - HTTP 404
+2025-07-03 21:19:07 WIB - ❌ NOT FOUND: /accurate/api/item/brand/bulk-save.do (POST) - HTTP 404
+2025-07-03 21:19:07 WIB - Test completed. Working endpoints: 0

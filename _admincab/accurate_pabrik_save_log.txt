@@ -1,0 +1,48 @@
+[2025-07-02 13:32:24 WIB] 📝 ADD PABRIK - Nama: HONDA
+[2025-07-02 13:32:24 WIB] 💾 DATABASE LOKAL: Insert pabrik 'HONDA' - SUCCESS ✅
+[2025-07-02 13:32:24 WIB] 🔄 Starting Accurate synchronization for category
+[2025-07-02 13:32:24 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-07-02 13:32:24 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-07-02 13:32:24 WIB] 🌐 ACCURATE CATEGORY SYNC: Starting
+[2025-07-02 13:32:24 WIB] 🌐 Category creation URL: https://zeus.accurate.id/accurate/api/item/save.do
+[2025-07-02 13:32:24 WIB] 📤 Dummy item data: itemType=NON_INVENTORY&name=DUMMY+ITEM+FOR+CATEGORY%3A+HONDA&no=DUMMY_CAT_HONDA_1751437944&itemCategoryName=HONDA&notes=Temporary+item+to+create+category%3A+HONDA.+&controlQuantity=false&unitPrice=0.000000&vendorPrice=0.000000&unit1Name=PCS
+[2025-07-02 13:32:25 WIB] 📊 HTTP Code: 200
+[2025-07-02 13:32:25 WIB] 📥 Response: {"r":{"unit2Id":null,"charField8":null,"charField9":null,"charField6":null,"charField7":null,"numericField10":null,"unit4Price":0.000000,"charField4":null,"unit3Name":"","charField5":null,"optLock":0,"percentTaxable":100.000000,"itemBrandId":null,"ratioVendorUnit":1.000000,"unit3Price":0.000000,"salesDiscountGlAccountId":101,"balance":0.000000,"itemProduced":false,"charField2":null,"charField3":null,"charField1":null,"id":100,"maxOptionModifier":null,"unitPrice":0.000000,"dateField2":null,"branc
+[2025-07-02 13:32:25 WIB] ✅ Dummy item created successfully, category should now exist
+[2025-07-02 13:32:25 WIB] 🎉 Category synchronization successful: CATEGORY_CREATED
+[2025-07-02 13:32:25 WIB] 🏁 Script execution completed
+[2025-07-02 13:32:25 WIB] ================================================================================
+[2025-07-02 13:40:50 WIB] 📝 ADD PABRIK - Nama: HONDA
+[2025-07-02 13:40:50 WIB] 💾 DATABASE LOKAL: Insert pabrik 'HONDA' - SUCCESS ✅
+[2025-07-02 13:40:50 WIB] 🔄 Starting Accurate synchronization for category
+[2025-07-02 13:40:50 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-07-02 13:40:50 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-07-02 13:40:50 WIB] 🌐 ACCURATE CATEGORY SYNC: Starting
+[2025-07-02 14:06:48 WIB] 📝 ADD PABRIK - Nama: HONDA
+[2025-07-02 14:06:48 WIB] 💾 DATABASE LOKAL: Insert pabrik 'HONDA' - SUCCESS ✅
+[2025-07-02 14:06:48 WIB] 🔄 Starting Accurate synchronization for pabrik barang
+[2025-07-02 14:06:48 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-07-02 14:06:52 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-07-02 14:06:52 WIB] 🌐 ACCURATE BRAND/CATEGORY SYNC: Starting
+[2025-07-02 14:06:52 WIB] 🔍 Mencari endpoint untuk brand/merek di Accurate...
+[2025-07-02 14:06:52 WIB] 🧪 Testing endpoint: /accurate/api/item-brand/save.do
+[2025-07-02 14:06:52 WIB] 📊 Endpoint /accurate/api/item-brand/save.do: HTTP 404
+[2025-07-02 14:06:52 WIB] ❌ Endpoint /accurate/api/item-brand/save.do tidak ditemukan (404)
+[2025-07-02 14:06:52 WIB] 🧪 Testing endpoint: /accurate/api/brand/save.do
+[2025-07-02 14:06:53 WIB] 📊 Endpoint /accurate/api/brand/save.do: HTTP 404
+[2025-07-02 14:06:53 WIB] ❌ Endpoint /accurate/api/brand/save.do tidak ditemukan (404)
+[2025-07-02 14:06:53 WIB] 🧪 Testing endpoint: /accurate/api/manufacturer/save.do
+[2025-07-02 14:06:53 WIB] 📊 Endpoint /accurate/api/manufacturer/save.do: HTTP 404
+[2025-07-02 14:06:53 WIB] ❌ Endpoint /accurate/api/manufacturer/save.do tidak ditemukan (404)
+[2025-07-02 14:06:53 WIB] 🧪 Testing endpoint: /accurate/api/item-manufacturer/save.do
+[2025-07-02 14:06:53 WIB] 📊 Endpoint /accurate/api/item-manufacturer/save.do: HTTP 404
+[2025-07-02 14:06:53 WIB] ❌ Endpoint /accurate/api/item-manufacturer/save.do tidak ditemukan (404)
+[2025-07-02 14:06:53 WIB] ❌ Tidak ada endpoint brand yang tersedia, mencoba dummy item approach...
+[2025-07-02 14:06:53 WIB] 🌐 Category creation URL: https://zeus.accurate.id/accurate/api/item/save.do
+[2025-07-02 14:06:53 WIB] 📤 Dummy item data: itemType=NON_INVENTORY&name=DUMMY+ITEM+FOR+CATEGORY%3A+HONDA&no=DUMMY_CAT_HONDA_1751440013&itemCategoryName=HONDA&notes=Temporary+item+to+create+category%3A+HONDA.+&controlQuantity=false&unitPrice=0.000000&vendorPrice=0.000000&unit1Name=PCS
+[2025-07-02 14:06:53 WIB] 📊 HTTP Code: 200
+[2025-07-02 14:06:53 WIB] 📥 Response: {"r":{"unit2Id":null,"charField8":null,"charField9":null,"charField6":null,"charField7":null,"numericField10":null,"unit4Price":0.000000,"charField4":null,"unit3Name":"","charField5":null,"optLock":0,"percentTaxable":100.000000,"itemBrandId":null,"ratioVendorUnit":1.000000,"unit3Price":0.000000,"salesDiscountGlAccountId":101,"balance":0.000000,"itemProduced":false,"charField2":null,"charField3":null,"charField1":null,"id":150,"maxOptionModifier":null,"unitPrice":0.000000,"dateField2":null,"tax1I
+[2025-07-02 14:06:53 WIB] ✅ Dummy item created successfully, category should now exist
+[2025-07-02 14:06:53 WIB] 🎉 Brand/Category synchronization successful: DUMMY_ITEM_CATEGORY
+[2025-07-02 14:06:53 WIB] 🏁 Script execution completed
+[2025-07-02 14:06:53 WIB] ================================================================================

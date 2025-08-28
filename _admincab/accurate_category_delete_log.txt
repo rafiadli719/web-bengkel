@@ -1,0 +1,283 @@
+[2025-06-09 11:19:57 WIB] 📝 DELETE CATEGORY - ID: 32, Kode: APA, Nama: APALAH1
+[2025-06-09 11:19:57 WIB] 💾 DATABASE LOKAL: Kategori 'APALAH1' (Kode: APA) dihapus - SUCCESS ✅
+[2025-06-09 11:19:58 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 11:19:59 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-09 11:19:59 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-09 11:19:59 WIB] 📊 Search category HTTP Code: 200
+[2025-06-09 11:19:59 WIB] 🌐 Delete category URL: https://zeus.accurate.id/accurate/api/item-category/delete.do?id=450
+[2025-06-09 11:19:59 WIB] 📊 Delete category HTTP Code: 200
+[2025-06-09 11:19:59 WIB] ✅ CATEGORY DELETE SUCCESS: APALAH1 (ID: 450)
+[2025-06-09 11:19:59 WIB] 🎉 Sinkronisasi penghapusan kategori ke Accurate berhasil
+[2025-06-09 11:19:59 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-09 13:03:26 WIB] 📝 DELETE CATEGORY - ID: 31, Kode: COBA, Nama: Dummy, Accurate ID: None
+[2025-06-09 13:03:26 WIB] 💾 DATABASE LOKAL: Kategori 'Dummy' (Kode: COBA) dihapus - SUCCESS ✅
+[2025-06-09 13:03:26 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 13:03:26 WIB] 📊 open-db.do HTTP Code: 200
+[2025-06-09 13:03:26 WIB] ❌ open-db.do returned success=false
+[2025-06-09 13:03:26 WIB] ❌ Failed to open Accurate database
+[2025-06-09 13:03:26 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Cannot open Accurate database
+[2025-06-09 13:03:26 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-09 13:03:34 WIB] 📝 DELETE CATEGORY - ID: 30, Kode: AKIGEN, Nama: Akigen, Accurate ID: None
+[2025-06-09 13:03:34 WIB] 💾 DATABASE LOKAL: Kategori 'Akigen' (Kode: AKIGEN) dihapus - SUCCESS ✅
+[2025-06-09 13:03:34 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 13:03:34 WIB] 📊 open-db.do HTTP Code: 200
+[2025-06-09 13:03:34 WIB] ❌ open-db.do returned success=false
+[2025-06-09 13:03:34 WIB] ❌ Failed to open Accurate database
+[2025-06-09 13:03:34 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Cannot open Accurate database
+[2025-06-09 13:03:34 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-09 13:17:30 WIB] 📝 DELETE CATEGORY - ID: 34, Kode: DUMMY, Nama: DUMMY12, Accurate ID: None
+[2025-06-09 13:17:30 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY12' (Kode: DUMMY) dihapus - SUCCESS ✅
+[2025-06-09 13:17:30 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 13:17:30 WIB] 📊 open-db.do HTTP Code: 200
+[2025-06-09 13:17:30 WIB] ❌ open-db.do returned success=false
+[2025-06-09 13:17:30 WIB] ❌ Failed to open Accurate database
+[2025-06-09 13:17:30 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Cannot open Accurate database
+[2025-06-09 13:17:30 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-09 13:46:00 WIB] 📝 DELETE CATEGORY - ID: 35, Kode: COBA, Nama: COBA12, Accurate ID: NULL
+[2025-06-09 13:46:00 WIB] 💾 DATABASE LOKAL: Kategori 'COBA12' (Kode: COBA) dihapus - SUCCESS ✅
+[2025-06-09 13:46:04 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 13:46:04 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-09 13:46:04 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-09 13:46:04 WIB] ⚠️ No Accurate ID found for category 'COBA12'
+[2025-06-09 13:46:04 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: No Accurate ID found for category 'COBA12'
+[2025-06-09 13:46:04 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-09 14:23:32 WIB] 📝 DELETE CATEGORY - ID: 37, Kode: DUMMY, Nama: DUMMY1, Accurate ID: NULL
+[2025-06-09 14:23:32 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY1' (Kode: DUMMY) dihapus - SUCCESS ✅
+[2025-06-09 14:23:32 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-09 14:23:32 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-09 14:23:32 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-09 14:23:32 WIB] ⚠️ No accurate_id found, searching by name: DUMMY1
+[2025-06-09 14:23:33 WIB] 📊 Search category HTTP Code: 200
+[2025-06-09 14:23:33 WIB] ⚠️ Category 'DUMMY1' not found in Accurate (exact match)
+[2025-06-09 14:23:33 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Category 'DUMMY1' not found in Accurate
+[2025-06-09 14:23:33 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-11 11:54:10 WIB] 📝 DELETE CATEGORY - ID: 36, Kode: COBA, Nama: COBA, Accurate ID: NULL
+[2025-06-11 11:54:10 WIB] 💾 DATABASE LOKAL: Kategori 'COBA' (Kode: COBA) dihapus - SUCCESS ✅
+[2025-06-11 11:54:10 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-11 11:54:10 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-11 11:54:10 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-11 11:54:10 WIB] ⚠️ No accurate_id found, searching by name: COBA
+[2025-06-11 11:54:10 WIB] 📊 Search category HTTP Code: 200
+[2025-06-11 11:54:10 WIB] ⚠️ Category 'COBA' not found in Accurate (exact match)
+[2025-06-11 11:54:10 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Category 'COBA' not found in Accurate
+[2025-06-11 11:54:10 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-11 11:54:14 WIB] ❌ Kategori dengan ID 36 tidak ditemukan di database lokal
+[2025-06-13 09:00:32 WIB] 📝 DELETE CATEGORY - ID: 38, Kode: COBA, Nama: COBA, Accurate ID: NULL
+[2025-06-13 09:00:32 WIB] 💾 DATABASE LOKAL: Kategori 'COBA' (Kode: COBA) dihapus - SUCCESS ✅
+[2025-06-13 09:00:32 WIB] 🔍 Testing connection to: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:00:32 WIB] 🕐 Timestamp: 13/06/2025 09:00:32
+[2025-06-13 09:00:32 WIB] 🔐 Signature: KKrJ6GgI6RbM3EeeyWBK4j+QSk1+pC6y5pUv9MdBLGg=
+[2025-06-13 09:00:33 WIB] 📊 Connection test HTTP Code: 200
+[2025-06-13 09:00:33 WIB] 📥 API Response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-13 09:00:33 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-13 09:00:33 WIB] 🔍 Testing connection to: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:00:33 WIB] 🕐 Timestamp: 13/06/2025 09:00:33
+[2025-06-13 09:00:33 WIB] 🔐 Signature: 65+XBc+r/js0DhAUQXBg2fspyFXyEvK1qM4urYf8lmM=
+[2025-06-13 09:00:33 WIB] 📊 Connection test HTTP Code: 200
+[2025-06-13 09:00:33 WIB] 📥 API Response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-13 09:00:35 WIB] 📊 Get host HTTP Code: 200
+[2025-06-13 09:00:35 WIB] 📥 Full API Response: {
+    "s": true,
+    "d": {
+        "database": {
+            "license": {
+                "education": false,
+                "licenseEnd": "17\/06\/2025",
+                "accessibleUntil": "22\/06\/2025",
+                "sample": false,
+                "trial": true
+            },
+            "deleted": false,
+            "bgColor": "FFFFFF",
+            "host": "https:\/\/zeus.accurate.id",
+            "alias": "FIT MOTOR DUMMY",
+            "logo": "",
+            "admin": true,
+            "id": 1867327,
+            "logoUrl": ""
+        },
+        "application": {
+            "name": "PROGRAM BENGKEL FIT MOTOR",
+            "appKey": "3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"
+        },
+        "tokenType": "api",
+        "user": {
+            "gender": "female",
+            "nickName": "FIT MOTOR",
+            "mobile": "081578391970",
+            "fullName": "FIT MOTOR",
+            "id": 861037,
+            "locale": "in-ID",
+            "email": "fitmotortegal@gmail.com",
+            "picture": null
+        }
+    }
+}
+[2025-06-13 09:00:35 WIB] 🔍 Checking path: d -> data usaha -> host
+[2025-06-13 09:00:35 WIB] ✓ Found key 'd': array
+[2025-06-13 09:00:35 WIB] ✗ Key 'data usaha' not found
+[2025-06-13 09:00:35 WIB] 🔍 Checking path: d -> database -> host
+[2025-06-13 09:00:35 WIB] ✓ Found key 'd': array
+[2025-06-13 09:00:35 WIB] ✓ Found key 'database': array
+[2025-06-13 09:00:35 WIB] ✓ Found key 'host': https://zeus.accurate.id
+[2025-06-13 09:00:35 WIB] ✅ Host found via path 'd -> database -> host': https://zeus.accurate.id
+[2025-06-13 09:00:35 WIB] ⚠️ No valid accurate_id found, searching by name: COBA
+[2025-06-13 09:00:35 WIB] 🔍 Searching category URL: https://zeus.accurate.id/accurate/api/item-category/list.do?filter.keywords.val=COBA&filter.keywords.op=CONTAIN&sp.pageSize=100
+[2025-06-13 09:00:36 WIB] 📊 Search category HTTP Code: 200
+[2025-06-13 09:00:36 WIB] 📥 Search response: {"s":true,"d":[],"sp":{"page":1,"sort":null,"pageSize":100,"pageCount":1,"rowCount":0,"start":0,"limit":null}}
+[2025-06-13 09:00:36 WIB] ❌ Search failed or returned empty results
+[2025-06-13 09:00:36 WIB] ❌ Category 'COBA' not found in Accurate
+[2025-06-13 09:00:36 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Category 'COBA' not found in Accurate
+[2025-06-13 09:00:36 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-13 09:00:36 WIB] ================================================================================
+[2025-06-13 09:02:12 WIB] 📝 DELETE CATEGORY - ID: 39, Kode: DMY, Nama: DUMMY, Accurate ID: NULL
+[2025-06-13 09:02:12 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) dihapus - SUCCESS ✅
+[2025-06-13 09:02:12 WIB] 🔍 Testing connection to: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:02:12 WIB] 🕐 Timestamp: 13/06/2025 09:02:12
+[2025-06-13 09:02:12 WIB] 🔐 Signature: VR4bzKLDB/apIv1TYAI7gIyMRxBCLWdSn3rMwbwR6yc=
+[2025-06-13 09:02:15 WIB] 📊 Connection test HTTP Code: 200
+[2025-06-13 09:02:15 WIB] 📥 API Response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-13 09:02:15 WIB] 🔄 Memulai sinkronisasi penghapusan kategori ke Accurate
+[2025-06-13 09:02:15 WIB] 🔍 Testing connection to: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:02:15 WIB] 🕐 Timestamp: 13/06/2025 09:02:15
+[2025-06-13 09:02:15 WIB] 🔐 Signature: +XwXCJtcTKLFjxZi5OIbpttxpWiwhmfycKuVFnzf34g=
+[2025-06-13 09:02:15 WIB] 📊 Connection test HTTP Code: 200
+[2025-06-13 09:02:15 WIB] 📥 API Response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-13 09:02:15 WIB] 📊 Get host HTTP Code: 200
+[2025-06-13 09:02:15 WIB] 📥 Full API Response: {
+    "s": true,
+    "d": {
+        "database": {
+            "license": {
+                "education": false,
+                "licenseEnd": "17\/06\/2025",
+                "accessibleUntil": "22\/06\/2025",
+                "sample": false,
+                "trial": true
+            },
+            "deleted": false,
+            "bgColor": "FFFFFF",
+            "host": "https:\/\/zeus.accurate.id",
+            "alias": "FIT MOTOR DUMMY",
+            "logo": "",
+            "admin": true,
+            "id": 1867327,
+            "logoUrl": ""
+        },
+        "application": {
+            "name": "PROGRAM BENGKEL FIT MOTOR",
+            "appKey": "3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"
+        },
+        "tokenType": "api",
+        "user": {
+            "gender": "female",
+            "nickName": "FIT MOTOR",
+            "mobile": "081578391970",
+            "fullName": "FIT MOTOR",
+            "id": 861037,
+            "locale": "in-ID",
+            "email": "fitmotortegal@gmail.com",
+            "picture": null
+        }
+    }
+}
+[2025-06-13 09:02:15 WIB] 🔍 Checking path: d -> data usaha -> host
+[2025-06-13 09:02:15 WIB] ✓ Found key 'd': array
+[2025-06-13 09:02:15 WIB] ✗ Key 'data usaha' not found
+[2025-06-13 09:02:15 WIB] 🔍 Checking path: d -> database -> host
+[2025-06-13 09:02:15 WIB] ✓ Found key 'd': array
+[2025-06-13 09:02:15 WIB] ✓ Found key 'database': array
+[2025-06-13 09:02:15 WIB] ✓ Found key 'host': https://zeus.accurate.id
+[2025-06-13 09:02:15 WIB] ✅ Host found via path 'd -> database -> host': https://zeus.accurate.id
+[2025-06-13 09:02:15 WIB] ⚠️ No valid accurate_id found, searching by name: DUMMY
+[2025-06-13 09:02:15 WIB] 🔍 Searching category URL: https://zeus.accurate.id/accurate/api/item-category/list.do?filter.keywords.val=DUMMY&filter.keywords.op=CONTAIN&sp.pageSize=100
+[2025-06-13 09:02:16 WIB] 📊 Search category HTTP Code: 200
+[2025-06-13 09:02:16 WIB] 📥 Search response: {"s":true,"d":[{"id":700}],"sp":{"page":1,"sort":null,"pageSize":100,"pageCount":1,"rowCount":1,"start":0,"limit":null}}
+[2025-06-13 09:02:16 WIB] 📋 Found 1 categories
+[2025-06-13 09:02:16 WIB] 🔍 Comparing: '' with 'dummy' (ID: 700)
+[2025-06-13 09:02:16 WIB] ❌ No matching category found for 'DUMMY'
+[2025-06-13 09:02:16 WIB] ❌ Category 'DUMMY' not found in Accurate
+[2025-06-13 09:02:16 WIB] ⚠️ Sinkronisasi penghapusan kategori ke Accurate gagal: Category 'DUMMY' not found in Accurate
+[2025-06-13 09:02:16 WIB] 🏁 Eksekusi script penghapusan kategori selesai
+[2025-06-13 09:02:16 WIB] ================================================================================
+[2025-06-13 09:42:07 WIB] 📝 DELETE CATEGORY - ID: 40, Kode: DMY, Nama: DUMMY, Accurate ID: NULL
+[2025-06-13 09:42:07 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) dihapus - SUCCESS ✅
+[2025-06-13 09:42:07 WIB] 🔍 Getting Accurate host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:42:08 WIB] 📊 HTTP Code: 200
+[2025-06-13 09:42:08 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 09:42:08 WIB] 🔄 Memulai sinkronisasi ke Accurate
+[2025-06-13 09:42:08 WIB] 🔍 Searching by name: 'DUMMY'
+[2025-06-13 09:42:08 WIB] 🌐 List URL: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 09:42:08 WIB] 📋 Found 4 categories
+[2025-06-13 09:42:08 WIB] 🔍 Checking: ID=500, Name='akigen'
+[2025-06-13 09:42:08 WIB] 🔍 Checking: ID=250, Name='default category'
+[2025-06-13 09:42:08 WIB] 🔍 Checking: ID=750, Name='dummy'
+[2025-06-13 09:42:08 WIB] ✅ EXACT MATCH found! ID: 750
+[2025-06-13 09:42:08 WIB] 🗑️ Deleting category ID: 750
+[2025-06-13 09:42:08 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 09:42:08 WIB] 📤 Delete data: {"id":750}
+[2025-06-13 09:42:08 WIB] 📊 Delete HTTP Code: 200
+[2025-06-13 09:42:08 WIB] 📥 Delete response: {"s":true,"d":["Kategori Barang \"DUMMY\" berhasil dihapus"]}
+[2025-06-13 09:42:08 WIB] ✅ Category delete SUCCESS
+[2025-06-13 09:42:08 WIB] 🎉 SUKSES TOTAL! Category deleted: ID 750
+[2025-06-13 09:42:08 WIB] 🏁 Script execution completed
+[2025-06-13 09:42:08 WIB] ================================================================================
+[2025-06-13 10:04:36 WIB] 📝 DELETE CATEGORY - ID: 41, Kode: DMY, Nama: DUMMY, Accurate ID: NULL
+[2025-06-13 10:04:36 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) dihapus - SUCCESS ✅
+[2025-06-13 10:04:36 WIB] 🔍 Getting Accurate host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:04:36 WIB] 📊 HTTP Code: 200
+[2025-06-13 10:04:36 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 10:04:36 WIB] 🔄 Memulai sinkronisasi ke Accurate
+[2025-06-13 10:04:36 WIB] 🔍 Searching by name: 'DUMMY'
+[2025-06-13 10:04:36 WIB] 🌐 List URL: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:04:36 WIB] 📋 Found 3 categories
+[2025-06-13 10:04:36 WIB] 🔍 Checking: ID=500, Name='akigen'
+[2025-06-13 10:04:36 WIB] 🔍 Checking: ID=250, Name='default category'
+[2025-06-13 10:04:36 WIB] 🔍 Checking: ID=51, Name='umum'
+[2025-06-13 10:04:36 WIB] ❌ Category not found with any strategy
+[2025-06-13 10:04:36 WIB] ❌ Kategori tidak ditemukan di Accurate
+[2025-06-13 10:44:39 WIB] 📝 DELETE CATEGORY - ID: 42, Kode: DMY, Nama: DUMMY1, Accurate ID: NULL
+[2025-06-13 10:44:39 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY1' (Kode: DMY) dihapus - SUCCESS ✅
+[2025-06-13 10:44:39 WIB] 🔍 Getting Accurate host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:44:39 WIB] 📊 HTTP Code: 200
+[2025-06-13 10:44:39 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 10:44:39 WIB] 🔄 Memulai sinkronisasi ke Accurate
+[2025-06-13 10:44:39 WIB] 🔍 Searching by name: 'DUMMY1'
+[2025-06-13 10:44:39 WIB] 🌐 List URL: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:44:39 WIB] 📋 Found 5 categories
+[2025-06-13 10:44:39 WIB] 🔍 Checking: ID=500, Name='akigen'
+[2025-06-13 10:44:39 WIB] 🔍 Checking: ID=250, Name='default category'
+[2025-06-13 10:44:39 WIB] 🔍 Checking: ID=751, Name='dummy'
+[2025-06-13 10:44:39 WIB] 🔍 Checking: ID=800, Name='dummy1'
+[2025-06-13 10:44:39 WIB] ✅ EXACT MATCH found! ID: 800
+[2025-06-13 10:44:39 WIB] 🗑️ Deleting category ID: 800
+[2025-06-13 10:44:39 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 10:44:39 WIB] 📤 Delete data: {"id":800}
+[2025-06-13 10:44:39 WIB] 📊 Delete HTTP Code: 200
+[2025-06-13 10:44:39 WIB] 📥 Delete response: {"s":true,"d":["Kategori Barang \"DUMMY1\" berhasil dihapus"]}
+[2025-06-13 10:44:39 WIB] ✅ Category delete SUCCESS
+[2025-06-13 10:44:39 WIB] 🎉 SUKSES TOTAL! Category deleted: ID 800
+[2025-06-13 10:44:39 WIB] 🏁 Script execution completed
+[2025-06-13 10:44:39 WIB] ================================================================================
+[2025-06-13 10:53:01 WIB] 📝 DELETE CATEGORY - ID: 43, Kode: DMY, Nama: DUMMY12, Accurate ID: NULL
+[2025-06-13 10:53:01 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY12' (Kode: DMY) dihapus - SUCCESS ✅
+[2025-06-13 10:53:01 WIB] 🔍 Getting Accurate host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:53:01 WIB] 📊 HTTP Code: 200
+[2025-06-13 10:53:01 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 10:53:01 WIB] 🔄 Memulai sinkronisasi ke Accurate
+[2025-06-13 10:53:01 WIB] 🔍 Searching by name: 'DUMMY12'
+[2025-06-13 10:53:01 WIB] 🌐 List URL: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:53:02 WIB] 📋 Found 4 categories
+[2025-06-13 10:53:02 WIB] 🔍 Checking: ID=500, Name='akigen'
+[2025-06-13 10:53:02 WIB] 🔍 Checking: ID=250, Name='default category'
+[2025-06-13 10:53:02 WIB] 🔍 Checking: ID=900, Name='dummy12'
+[2025-06-13 10:53:02 WIB] ✅ EXACT MATCH found! ID: 900
+[2025-06-13 10:53:02 WIB] 🗑️ Deleting category ID: 900
+[2025-06-13 10:53:02 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 10:53:02 WIB] 📤 Delete data: {"id":900}
+[2025-06-13 10:53:02 WIB] 📊 Delete HTTP Code: 200
+[2025-06-13 10:53:02 WIB] 📥 Delete response: {"s":true,"d":["Kategori Barang \"DUMMY12\" berhasil dihapus"]}
+[2025-06-13 10:53:02 WIB] ✅ Category delete SUCCESS
+[2025-06-13 10:53:02 WIB] 🎉 SUKSES TOTAL! Category deleted: ID 900
+[2025-06-13 10:53:02 WIB] 🏁 Script execution completed
+[2025-06-13 10:53:02 WIB] ================================================================================

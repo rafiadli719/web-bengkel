@@ -1,0 +1,55 @@
+[2025-06-13 13:38:04 WIB] 📝 DELETE UNIT - ID: 18, Nama: DMY, Accurate ID: NULL
+[2025-06-13 13:38:04 WIB] 💾 DATABASE LOKAL: Satuan 'DMY' dihapus - SUCCESS ✅
+[2025-06-13 13:38:04 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 13:38:05 WIB] 📊 HTTP Code: 200
+[2025-06-13 13:38:05 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 13:38:05 WIB] 🔐 Establishing session: https://zeus.accurate.id/accurate/api/open-db.do
+[2025-06-13 13:38:06 WIB] 📊 Session HTTP Code: 404
+[2025-06-13 13:38:06 WIB] ❌ Failed to establish session
+[2025-06-13 13:38:06 WIB] ⚠️ Tidak dapat terhubung ke Accurate
+[2025-06-13 13:52:19 WIB] 📝 DELETE UNIT - ID: 19, Nama: DMY
+[2025-06-13 13:52:19 WIB] 📝 Table has accurate_id column: YES
+[2025-06-13 13:52:19 WIB] 📝 Accurate ID: NULL
+[2025-06-13 13:52:19 WIB] 💾 DATABASE LOKAL: Satuan 'DMY' dihapus - SUCCESS ✅
+[2025-06-13 13:52:19 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 13:52:19 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 13:52:19 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 13:52:19 WIB] 🔍 Searching by name: 'DMY'
+[2025-06-13 13:52:20 WIB] 📊 Search HTTP: 200
+[2025-06-13 13:52:20 WIB] 📥 Search response: {"s":true,"d":[{"codeUnitTax":null,"optLock":0,"name":"Dummy","id":250},{"codeUnitTax":null,"optLock":0,"name":"PCS","id":50}],"sp":{"page":1,"sort":null,"pageSize":100,"pageCount":1,"rowCount":2,"start":0,"limit":null}}
+[2025-06-13 13:52:20 WIB] 📋 Found 2 units, searching for 'dmy'
+[2025-06-13 13:52:20 WIB] 📝 [0] ID: 250, Name: 'Dummy'
+[2025-06-13 13:52:20 WIB] 📝 [1] ID: 50, Name: 'PCS'
+[2025-06-13 13:52:20 WIB] 🔄 Few results found, using: 'Dummy' (ID: 250)
+[2025-06-13 13:52:20 WIB] 🗑️ Deleting unit by ID: 250
+[2025-06-13 13:52:20 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/unit/delete.do
+[2025-06-13 13:52:20 WIB] 📤 Delete data: {"id":250}
+[2025-06-13 13:52:20 WIB] 📊 Delete HTTP Code: 200
+[2025-06-13 13:52:20 WIB] 📥 Delete response: {"s":true,"d":["Satuan Barang \"Dummy\" berhasil dihapus"]}
+[2025-06-13 13:52:20 WIB] ✅ Unit delete SUCCESS
+[2025-06-13 13:52:20 WIB] 🎉 Synchronization successful: DELETED
+[2025-06-13 13:52:20 WIB] 🏁 Script execution completed
+[2025-06-13 13:52:20 WIB] ================================================================================
+[2025-06-13 14:14:49 WIB] 📝 DELETE UNIT - ID: 20, Nama: DMY
+[2025-06-13 14:14:49 WIB] 📝 Table has accurate_id column: YES
+[2025-06-13 14:14:49 WIB] 📝 Accurate ID: NULL
+[2025-06-13 14:14:49 WIB] 💾 DATABASE LOKAL: Satuan 'DMY' dihapus - SUCCESS ✅
+[2025-06-13 14:14:49 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 14:14:49 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 14:14:51 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 14:14:51 WIB] 🔍 Searching by name: 'DMY'
+[2025-06-13 14:14:51 WIB] 📊 Search HTTP: 200
+[2025-06-13 14:14:51 WIB] 📥 Search response: {"s":true,"d":[{"codeUnitTax":null,"optLock":1,"name":"Dummy1","id":300},{"codeUnitTax":null,"optLock":0,"name":"PCS","id":50}],"sp":{"page":1,"sort":null,"pageSize":100,"pageCount":1,"rowCount":2,"start":0,"limit":null}}
+[2025-06-13 14:14:51 WIB] 📋 Found 2 units, searching for 'dmy'
+[2025-06-13 14:14:51 WIB] 📝 [0] ID: 300, Name: 'Dummy1'
+[2025-06-13 14:14:51 WIB] 📝 [1] ID: 50, Name: 'PCS'
+[2025-06-13 14:14:51 WIB] 🔄 Few results found, using: 'Dummy1' (ID: 300)
+[2025-06-13 14:14:51 WIB] 🗑️ Deleting unit by ID: 300
+[2025-06-13 14:14:51 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/unit/delete.do
+[2025-06-13 14:14:51 WIB] 📤 Delete data: {"id":300}
+[2025-06-13 14:14:52 WIB] 📊 Delete HTTP Code: 200
+[2025-06-13 14:14:52 WIB] 📥 Delete response: {"s":true,"d":["Satuan Barang \"Dummy1\" berhasil dihapus"]}
+[2025-06-13 14:14:52 WIB] ✅ Unit delete SUCCESS
+[2025-06-13 14:14:52 WIB] 🎉 Synchronization successful: DELETED
+[2025-06-13 14:14:52 WIB] 🏁 Script execution completed
+[2025-06-13 14:14:52 WIB] ================================================================================

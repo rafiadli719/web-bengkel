@@ -1,0 +1,611 @@
+[2025-05-30 08:53:23 WIB] 💾 LOCAL DATABASE: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:53:23 WIB - 🌐 OFFICIAL ACCURATE API INTEGRATION: Starting sync...
+2025-05-30 08:53:23 WIB - 🔑 Requesting session from: https://account.accurate.id/api/open-db.do
+2025-05-30 08:53:23 WIB - 🔒 Generated X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:53:23 WIB - 📊 Session request HTTP Code: 200
+2025-05-30 08:53:23 WIB - 📥 Session response: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:53:23 WIB - ❌ Failed to get session, using API token as session
+2025-05-30 08:53:23 WIB - 📤 API Data: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:53:23 WIB - 📊 HTTP Code: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:53:23 WIB - 📥 Response: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:53:23 WIB - ❌ Failed to connect to Accurate API
+[2025-05-30 08:53:29 WIB] 💾 LOCAL DATABASE: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:53:29 WIB - 🌐 OFFICIAL ACCURATE API INTEGRATION: Starting sync...
+2025-05-30 08:53:29 WIB - 🔑 Requesting session from: https://account.accurate.id/api/open-db.do
+2025-05-30 08:53:29 WIB - 🔒 Generated X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:53:29 WIB - 📊 Session request HTTP Code: 200
+2025-05-30 08:53:29 WIB - 📥 Session response: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:53:29 WIB - ❌ Failed to get session, using API token as session
+2025-05-30 08:53:29 WIB - 📤 API Data: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:53:29 WIB - 📊 HTTP Code: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:53:29 WIB - 📥 Response: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:53:29 WIB - ❌ Failed to connect to Accurate API
+[2025-05-30 08:53:50 WIB] 💾 LOCAL DATABASE: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:53:50 WIB - 🌐 OFFICIAL ACCURATE API INTEGRATION: Starting sync...
+2025-05-30 08:53:50 WIB - 🔑 Requesting session from: https://account.accurate.id/api/open-db.do
+2025-05-30 08:53:50 WIB - 🔒 Generated X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:53:50 WIB - 📊 Session request HTTP Code: 200
+2025-05-30 08:53:50 WIB - 📥 Session response: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:53:50 WIB - ❌ Failed to get session, using API token as session
+2025-05-30 08:53:50 WIB - 📤 API Data: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:53:50 WIB - 📊 HTTP Code: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:53:50 WIB - 📥 Response: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:53:50 WIB - ❌ Failed to connect to Accurate API
+[2025-05-30 08:57:19 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:57:19 WIB] 💾 DATABASE LOKAL: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:57:19 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:57:19 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:57:19 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:57:19 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:57:19 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:57:19 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:57:19 WIB - 📤 Data API: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:57:19 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:57:19 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:57:19 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 08:57:40 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:57:40 WIB] 💾 DATABASE LOKAL: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:57:40 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:57:40 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:57:40 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:57:40 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:57:40 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:57:40 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:57:40 WIB - 📤 Data API: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:57:40 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:57:40 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:57:40 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 08:57:43 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:57:43 WIB] 💾 DATABASE LOKAL: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:57:43 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:57:43 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:57:43 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:57:43 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:57:43 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:57:43 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:57:43 WIB - 📤 Data API: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:57:43 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:57:43 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:57:43 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 08:58:01 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:58:01 WIB] 💾 DATABASE LOKAL: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:58:01 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:58:01 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:58:01 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:58:02 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:58:02 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:58:02 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:58:02 WIB - 📤 Data API: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:58:02 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:58:02 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:58:02 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 08:58:09 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:58:09 WIB] 💾 DATABASE LOKAL: Kategori 'AKI DOANG' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:58:09 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:58:09 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:58:09 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:58:09 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:58:09 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:58:09 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:58:09 WIB - 📤 Data API: name=AKI+DOANG&defaultCategory=0&parentName=
+2025-05-30 08:58:09 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:58:09 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:58:09 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 08:58:20 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 08:58:20 WIB] 💾 DATABASE LOKAL: Kategori 'AKI AJA' (Kode: AKI) - SUCCESS ✅
+2025-05-30 08:58:20 WIB - 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+2025-05-30 08:58:20 WIB - 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+2025-05-30 08:58:20 WIB - 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+2025-05-30 08:58:20 WIB - 📊 Kode HTTP permintaan session: 200
+2025-05-30 08:58:20 WIB - 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+2025-05-30 08:58:20 WIB - ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+2025-05-30 08:58:20 WIB - 📤 Data API: name=AKI+AJA&defaultCategory=0&parentName=
+2025-05-30 08:58:20 WIB - 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+2025-05-30 08:58:20 WIB - 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+2025-05-30 08:58:20 WIB - ❌ Gagal terhubung ke API Accurate
+[2025-05-30 09:04:01 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 09:04:01 WIB] 💾 DATABASE LOKAL: Kategori 'AKI AJA' (Kode: AKI) - SUCCESS ✅
+[2025-05-30 09:04:01 WIB] 🔧 Memulai proses integrasi dengan Accurate...
+[2025-05-30 09:04:01 WIB] ✅ File konfigurasi ditemukan: ../config/accurate_config.php
+[2025-05-30 09:04:01 WIB] ✅ Konstanta API berhasil didefinisikan
+[2025-05-30 09:04:01 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-05-30 09:04:01 WIB] 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+[2025-05-30 09:04:01 WIB] 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+[2025-05-30 09:04:01 WIB] 🔒 Tanda tangan X-Api-Signature: 796913dc05819122aadba3cada7d4b7770bee80b5dc96b57f14c4f513eca6f53
+[2025-05-30 09:04:01 WIB] 📊 Kode HTTP permintaan session: 200
+[2025-05-30 09:04:01 WIB] 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+[2025-05-30 09:04:01 WIB] ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+[2025-05-30 09:04:01 WIB] 📤 Data API: name=AKI+AJA&defaultCategory=0&parentName=
+[2025-05-30 09:04:01 WIB] 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+[2025-05-30 09:04:01 WIB] 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+[2025-05-30 09:04:01 WIB] ❌ Gagal terhubung ke API Accurate
+[2025-05-30 09:04:01 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-05-30 09:04:01 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-05-30 09:04:01 WIB] 🏁 Eksekusi skrip selesai
+[2025-05-30 09:08:10 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 09:08:10 WIB] 💾 DATABASE LOKAL: Kategori 'AKI AJA' (Kode: AKI) - SUCCESS ✅
+[2025-05-30 09:08:10 WIB] 🔧 Memulai proses integrasi dengan Accurate...
+[2025-05-30 09:08:10 WIB] ✅ File konfigurasi ditemukan: ../config/accurate_config.php
+[2025-05-30 09:08:10 WIB] ✅ Konstanta API berhasil didefinisikan
+[2025-05-30 09:08:10 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-05-30 09:08:10 WIB] 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+[2025-05-30 09:08:10 WIB] 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+[2025-05-30 09:08:10 WIB] 🔒 Tanda tangan X-Api-Signature: 4109167badd6ea5d7046ff209b072517443b12044f8d2a20169b61bb152d4393
+[2025-05-30 09:08:10 WIB] 📊 Kode HTTP permintaan session: 200
+[2025-05-30 09:08:10 WIB] 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+[2025-05-30 09:08:10 WIB] ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+[2025-05-30 09:08:10 WIB] 📤 Data API: name=AKI+AJA&defaultCategory=0&parentName=
+[2025-05-30 09:08:10 WIB] 📊 Kode HTTP: 404, URL: https://account.accurate.id/api/item-category/save.do
+[2025-05-30 09:08:10 WIB] 📥 Respon: 
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="in-id" lang="in-id" dir="ltr">
+    <head>
+      <title>Error: Halaman tidak ditemukan</title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=1024, initial-scale=0, maximum-scale=2.0">
+			<link rel="icon" type="image/png" href="/images/favicon.png"/>
+	
+	    <link rel="stylesheet" type="text/css" href="/library/vuexy/v8_2_0/bootstrap5/app-assets/css/bootstrap.min.css" />
+	    <link rel="stylesheet" type="tex
+[2025-05-30 09:08:10 WIB] ❌ Gagal terhubung ke API Accurate
+[2025-05-30 09:08:10 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-05-30 09:08:10 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-05-30 09:08:10 WIB] 🏁 Eksekusi skrip selesai
+[2025-05-30 09:18:33 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 09:18:33 WIB] 💾 DATABASE LOKAL: Kategori 'AKI AJA' (Kode: AKI) - SUCCESS ✅
+[2025-05-30 09:18:33 WIB] 🔧 Memulai proses integrasi dengan Accurate...
+[2025-05-30 09:18:33 WIB] ✅ File konfigurasi ditemukan: ../config/accurate_config.php
+[2025-05-30 09:18:33 WIB] ✅ Konstanta API berhasil didefinisikan
+[2025-05-30 09:18:33 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-05-30 09:18:33 WIB] 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+[2025-05-30 09:18:33 WIB] 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+[2025-05-30 09:18:33 WIB] 🔒 Tanda tangan X-Api-Signature: d936a609559077fe29cd7dde58f951ca9fde6ab317ca05d0179f2a26e5eb37af
+[2025-05-30 09:18:33 WIB] 📊 Kode HTTP permintaan session: 200
+[2025-05-30 09:18:33 WIB] 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+[2025-05-30 09:18:33 WIB] ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+[2025-05-30 09:18:33 WIB] ❌ Gagal melanjutkan karena session tidak valid
+[2025-05-30 09:18:33 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-05-30 09:18:33 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-05-30 09:18:33 WIB] 🏁 Eksekusi skrip selesai
+[2025-05-30 09:49:21 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-05-30 09:49:21 WIB] 💾 DATABASE LOKAL: Kategori 'AKI' (Kode: AKI) - SUCCESS ✅
+[2025-05-30 09:49:21 WIB] 🔧 Memulai proses integrasi dengan Accurate...
+[2025-05-30 09:49:21 WIB] ✅ File konfigurasi ditemukan: ../config/accurate_config.php
+[2025-05-30 09:49:21 WIB] ✅ Konstanta API berhasil didefinisikan
+[2025-05-30 09:49:21 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-05-30 09:49:21 WIB] 🌐 INTEGRASI API ACCURATE RESMI: Mulai sinkronisasi...
+[2025-05-30 09:49:21 WIB] 🔑 Meminta session dari: https://account.accurate.id/api/open-db.do
+[2025-05-30 09:49:21 WIB] 🔒 Tanda tangan X-Api-Signature: 0030efaf59b5c46b37494a8eb826f7d3410e14a5f09f5dbba73bfbc2cac65e1a
+[2025-05-30 09:49:21 WIB] 📊 Kode HTTP permintaan session: 200
+[2025-05-30 09:49:21 WIB] 📥 Respon session: {"s":false,"d":["Header X-Api-Signature invalid: Require Application 'PROGRAM BENGKEL FIT MOTOR' signature"]}
+[2025-05-30 09:49:21 WIB] ❌ Gagal mendapatkan session, menggunakan API token sebagai session
+[2025-05-30 09:49:21 WIB] ❌ Gagal melanjutkan karena session tidak valid
+[2025-05-30 09:49:21 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-05-30 09:49:21 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-05-30 09:49:21 WIB] 🏁 Eksekusi skrip selesai
+[2025-06-04 09:07:20 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-04 09:07:20 WIB] 💾 DATABASE LOKAL: Kategori 'aki' (Kode: aki) - SUCCESS ✅
+[2025-06-04 09:07:20 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-06-04 09:07:20 WIB] 🔑 Meminta host dari: https://account.accurate.id/api/api-token.do
+[2025-06-04 09:07:20 WIB] 🔒 Tanda tangan X-Api-Signature: KtfhyZPSmSALyRHVscIC3EIzPvZHV3L8nNfS3uXQNF0=
+[2025-06-04 09:07:21 WIB] 📊 Kode HTTP /api-token.do: 200, Response: {"s":false,"d":["Header X-Api-Timestamp difference more than 600 seconds with Server Time (2025-06-04T16:07:21.073+07:00[Asia/Jakarta]): 04/06/2025 09:07:20"]}
+[2025-06-04 09:07:21 WIB] Invalid response format: {"s":false,"d":["Header X-Api-Timestamp difference more than 600 seconds with Server Time (2025-06-04T16:07:21.073+07:00[Asia\/Jakarta]): 04\/06\/2025 09:07:20"]}
+[2025-06-04 09:07:21] Failed to get host: HTTP 200
+[2025-06-04 09:07:21 WIB] ❌ Gagal melanjutkan karena host tidak valid
+[2025-06-04 09:07:21 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-06-04 09:07:21 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-06-04 09:07:21 WIB] 🏁 Eksekusi skrip selesai
+[2025-06-04 09:44:37 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-04 09:44:37 WIB] 💾 DATABASE LOKAL: Kategori 'dummy' (Kode: dummy) - SUCCESS ✅
+[2025-06-04 09:44:37 WIB] 🔄 Memulai sinkronisasi dengan Accurate...
+[2025-06-04 09:44:37 WIB] 🔑 Meminta host dari: https://account.accurate.id/api/api-token.do
+[2025-06-04 09:44:37 WIB] 🔒 Tanda tangan X-Api-Signature: JBb91/DK1LP1obaKGxUgyJjCPiFGIxVB9JTFopla6KY=
+[2025-06-04 09:44:37 WIB] 📊 Kode HTTP /api-token.do: 200, Response: {"s":false,"d":["Header X-Api-Timestamp difference more than 600 seconds with Server Time (2025-06-04T16:44:37.236+07:00[Asia/Jakarta]): 04/06/2025 09:44:37"]}
+[2025-06-04 09:44:37 WIB] Invalid response format: {"s":false,"d":["Header X-Api-Timestamp difference more than 600 seconds with Server Time (2025-06-04T16:44:37.236+07:00[Asia\/Jakarta]): 04\/06\/2025 09:44:37"]}
+[2025-06-04 09:44:37] Failed to get host: HTTP 200
+[2025-06-04 09:44:37 WIB] ❌ Gagal melanjutkan karena host tidak valid
+[2025-06-04 09:44:37 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-06-04 09:44:37 WIB] ⚠️ Sinkronisasi ke Accurate gagal
+[2025-06-04 09:44:37 WIB] 🏁 Eksekusi skrip selesai
+[2025-06-07 14:06:04 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-07 14:06:04 WIB] ❌ Field wajib kosong: txtkd atau txtnama
+[2025-06-09 02:44:52 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 02:44:52 WIB] 💾 DATABASE LOKAL: Kategori 'Dummy' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 09:44:52 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 09:44:52 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 09:44:52 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 09:44:52 WIB - 🔒 X-Api-Timestamp: 09/06/2025 09:44:52
+2025-06-09 09:44:52 WIB - 🔒 X-Api-Signature: rEOHjLClPu/KhmslXmkCA4Lf0Zms1ASIXzshtZZ0P28=
+2025-06-09 09:44:55 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 09:44:55 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 09:44:55 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 09:44:55 WIB - 📤 Category Data: name=Dummy&defaultCategory=false&parentName=
+2025-06-09 09:44:55 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 09:44:55 WIB - 📡 Executing category API request...
+2025-06-09 09:44:56 WIB - 📊 Category HTTP Code: 200
+2025-06-09 09:44:56 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 09:44:56 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 09:44:56 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 09:44:56 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 09:44:56 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 03:25:23 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 03:25:24 WIB] 💾 DATABASE LOKAL: Kategori 'Aki' (Kode: AKIGEN) - SUCCESS ✅
+[2025-06-09 10:25:24 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 10:25:24 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 10:25:24 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 10:25:24 WIB - 🔒 X-Api-Timestamp: 09/06/2025 10:25:24
+2025-06-09 10:25:24 WIB - 🔒 X-Api-Signature: NVmbPl9IgAjLSahnRVvqiq1tKIIXVe2IEdshkLi3vg0=
+2025-06-09 10:25:24 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 10:25:24 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 10:25:24 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 10:25:24 WIB - 📤 Category Data: name=Aki&defaultCategory=false&parentName=
+2025-06-09 10:25:24 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 10:25:24 WIB - 📡 Executing category API request...
+2025-06-09 10:25:24 WIB - 📊 Category HTTP Code: 200
+2025-06-09 10:25:24 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 10:25:24 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 10:25:24 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 10:25:24 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 10:25:24 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 03:29:21 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 03:29:21 WIB] 💾 DATABASE LOKAL: Kategori 'Coba' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 10:29:21 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 10:29:21 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 10:29:21 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 10:29:21 WIB - 🔒 X-Api-Timestamp: 09/06/2025 10:29:21
+2025-06-09 10:29:21 WIB - 🔒 X-Api-Signature: XM4n001vRC0++qBZGsrnuVHlu6Rm/jrb8tSzQha96mw=
+2025-06-09 10:29:22 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 10:29:22 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 10:29:22 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 10:29:22 WIB - 📤 Category Data: name=Coba&defaultCategory=false&parentName=
+2025-06-09 10:29:22 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 10:29:22 WIB - 📡 Executing category API request...
+2025-06-09 10:29:23 WIB - 📊 Category HTTP Code: 200
+2025-06-09 10:29:23 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 10:29:23 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 10:29:23 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 10:29:23 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 10:29:23 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 04:10:57 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 04:10:57 WIB] 💾 DATABASE LOKAL: Kategori 'APALAH' (Kode: APA) - SUCCESS ✅
+[2025-06-09 11:10:57 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 11:10:57 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 11:10:57 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 11:10:57 WIB - 🔒 X-Api-Timestamp: 09/06/2025 11:10:57
+2025-06-09 11:10:57 WIB - 🔒 X-Api-Signature: bsw80dHCQqOwcjp6HLrRQ3fsrt58THqRE2dNVNa7FYo=
+2025-06-09 11:10:57 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 11:10:57 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 11:10:57 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 11:10:57 WIB - 📤 Category Data: name=APALAH&defaultCategory=false&parentName=
+2025-06-09 11:10:57 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 11:10:57 WIB - 📡 Executing category API request...
+2025-06-09 11:10:57 WIB - 📊 Category HTTP Code: 200
+2025-06-09 11:10:57 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 11:10:57 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 11:10:57 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 11:10:57 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 11:10:57 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 06:03:53 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 06:03:53 WIB] 💾 DATABASE LOKAL: Kategori 'AKIGEN' (Kode: AKIGEN) - SUCCESS ✅
+[2025-06-09 13:03:53 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 13:03:53 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 13:03:53 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 13:03:53 WIB - 🔒 X-Api-Timestamp: 09/06/2025 13:03:53
+2025-06-09 13:03:53 WIB - 🔒 X-Api-Signature: kQLgmi5xg4SNLBbg1vLzPRHGWKWbfzW/NaLcAlPMnjU=
+2025-06-09 13:03:53 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 13:03:53 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 13:03:53 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 13:03:53 WIB - 📤 Category Data: name=AKIGEN&defaultCategory=false&parentName=
+2025-06-09 13:03:53 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 13:03:53 WIB - 📡 Executing category API request...
+2025-06-09 13:03:53 WIB - 📊 Category HTTP Code: 200
+2025-06-09 13:03:53 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 13:03:53 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 13:03:53 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 13:03:53 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 13:03:53 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 06:04:10 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 06:04:10 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 13:04:10 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 13:04:10 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 13:04:10 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 13:04:10 WIB - 🔒 X-Api-Timestamp: 09/06/2025 13:04:10
+2025-06-09 13:04:10 WIB - 🔒 X-Api-Signature: f886c9KW0OJJulpYBkCYsLAncNap//D3Bv7R7vhSTBQ=
+2025-06-09 13:04:11 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 13:04:11 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 13:04:11 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 13:04:11 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-09 13:04:11 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 13:04:11 WIB - 📡 Executing category API request...
+2025-06-09 13:04:11 WIB - 📊 Category HTTP Code: 200
+2025-06-09 13:04:11 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 13:04:11 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 13:04:11 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 13:04:11 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 13:04:11 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 06:17:44 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 06:17:44 WIB] 💾 DATABASE LOKAL: Kategori 'COBA' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 13:17:44 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 13:17:44 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 13:17:44 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 13:17:44 WIB - 🔒 X-Api-Timestamp: 09/06/2025 13:17:44
+2025-06-09 13:17:44 WIB - 🔒 X-Api-Signature: 0uYai1mcdiuQ+mSv/5I44Ovf1R7NXBvk/De/VFOvxc8=
+2025-06-09 13:17:45 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 13:17:45 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 13:17:45 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 13:17:45 WIB - 📤 Category Data: name=COBA&defaultCategory=false&parentName=
+2025-06-09 13:17:45 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 13:17:45 WIB - 📡 Executing category API request...
+2025-06-09 13:17:45 WIB - 📊 Category HTTP Code: 200
+2025-06-09 13:17:45 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 13:17:45 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 13:17:45 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 13:17:45 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 13:17:45 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 07:22:18 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 07:22:18 WIB] 💾 DATABASE LOKAL: Kategori 'COBA' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 14:22:18 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 14:22:18 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 14:22:18 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 14:22:18 WIB - 🔒 X-Api-Timestamp: 09/06/2025 14:22:18
+2025-06-09 14:22:18 WIB - 🔒 X-Api-Signature: bUm0mnGOWBSjcim6DoDJfHEPn6SRNEdLLt3zE8ZAYZs=
+2025-06-09 14:22:25 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 14:22:25 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 14:22:25 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 14:22:25 WIB - 📤 Category Data: name=COBA&defaultCategory=false&parentName=
+2025-06-09 14:22:25 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 14:22:25 WIB - 📡 Executing category API request...
+2025-06-09 14:22:26 WIB - 📊 Category HTTP Code: 200
+2025-06-09 14:22:26 WIB - 📥 Category Response: {"s":false,"d":["Sudah ada data lain dengan Nama \"COBA\""]}
+2025-06-09 14:22:26 WIB - ❌ Category API Error: Sudah ada data lain dengan Nama "COBA"
+[2025-06-09 14:22:26 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-06-09 14:22:26 WIB] ⚠️ Sinkronisasi kategori ke Accurate gagal: API Error: Sudah ada data lain dengan Nama "COBA"
+[2025-06-09 14:22:26 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-09 07:23:09 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-09 07:23:09 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 14:23:09 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-09 14:23:09 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-09 14:23:09 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 14:23:09 WIB - 🔒 X-Api-Timestamp: 09/06/2025 14:23:09
+2025-06-09 14:23:09 WIB - 🔒 X-Api-Signature: kzShcFckSKjQkbH6Qfw1YT1+8DtWU25+ip2C/Vf35GM=
+2025-06-09 14:23:10 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 14:23:10 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 14:23:10 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 14:23:10 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-09 14:23:10 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 14:23:10 WIB - 📡 Executing category API request...
+2025-06-09 14:23:10 WIB - 📊 Category HTTP Code: 200
+2025-06-09 14:23:10 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 14:23:10 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-09 14:23:10 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-09 14:23:10 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-09 14:23:10 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-11 03:50:08 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-11 03:50:08 WIB] 💾 DATABASE LOKAL: Kategori 'COBA' (Kode: COBA) - SUCCESS ✅
+[2025-06-11 10:50:08 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-11 10:50:08 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-11 10:50:08 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-11 10:50:08 WIB - 🔒 X-Api-Timestamp: 11/06/2025 10:50:08
+2025-06-11 10:50:08 WIB - 🔒 X-Api-Signature: A04oJx3z7yTwvb7gpHd+7olJ8d42jrd8bZAuPgLPHIs=
+2025-06-11 10:50:11 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-11 10:50:11 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-11 10:50:11 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-11 10:50:11 WIB - 📤 Category Data: name=COBA&defaultCategory=false&parentName=
+2025-06-11 10:50:11 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-11 10:50:11 WIB - 📡 Executing category API request...
+2025-06-11 10:50:12 WIB - 📊 Category HTTP Code: 200
+2025-06-11 10:50:12 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-11 10:50:12 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-11 10:50:12 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-11 10:50:12 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-11 10:50:12 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-13 02:01:38 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-13 02:01:39 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 09:01:39 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-13 09:01:39 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-13 09:01:39 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-13 09:01:39 WIB - 🔒 X-Api-Timestamp: 13/06/2025 09:01:39
+2025-06-13 09:01:39 WIB - 🔒 X-Api-Signature: 4ZIvjAwH9SB6Nid2BZTwkM/o2IaOGUXM5Vh0QzvLjgc=
+2025-06-13 09:01:39 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-13 09:01:39 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-13 09:01:39 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-13 09:01:39 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-13 09:01:39 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-13 09:01:39 WIB - 📡 Executing category API request...
+2025-06-13 09:01:39 WIB - 📊 Category HTTP Code: 200
+2025-06-13 09:01:39 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-13 09:01:39 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-13 09:01:39 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-13 09:01:39 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-13 09:01:39 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-13 02:41:45 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-13 02:41:45 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 09:41:45 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-13 09:41:45 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-13 09:41:45 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-13 09:41:45 WIB - 🔒 X-Api-Timestamp: 13/06/2025 09:41:45
+2025-06-13 09:41:45 WIB - 🔒 X-Api-Signature: fNw7Kk+2RfWfgc6BYcS7lQntXHYWPmBWDwHHgDViJY4=
+2025-06-13 09:41:47 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-13 09:41:47 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-13 09:41:47 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-13 09:41:47 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-13 09:41:47 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-13 09:41:47 WIB - 📡 Executing category API request...
+2025-06-13 09:41:48 WIB - 📊 Category HTTP Code: 200
+2025-06-13 09:41:48 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-13 09:41:48 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-13 09:41:48 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-13 09:41:48 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-13 09:41:48 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-13 03:04:21 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-13 03:04:21 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:04:21 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-13 10:04:21 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-13 10:04:21 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-13 10:04:21 WIB - 🔒 X-Api-Timestamp: 13/06/2025 10:04:21
+2025-06-13 10:04:21 WIB - 🔒 X-Api-Signature: 704WzFy8sfknu/XaxE3tsfmPXJ35zN5KJ91XXl4QghY=
+2025-06-13 10:04:26 WIB - 📊 api-token.do HTTP Code: 0
+2025-06-13 10:04:26 WIB - ❌ api-token.do cURL Error: Connection timed out after 5005 milliseconds
+[2025-06-13 10:04:26 WIB] 📌 Hasil sinkronisasi: Gagal
+[2025-06-13 10:04:26 WIB] ⚠️ Sinkronisasi kategori ke Accurate gagal: Cannot get Accurate host
+[2025-06-13 10:04:26 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-13 03:05:11 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-13 03:05:11 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:05:11 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-13 10:05:11 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-13 10:05:11 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-13 10:05:11 WIB - 🔒 X-Api-Timestamp: 13/06/2025 10:05:11
+2025-06-13 10:05:11 WIB - 🔒 X-Api-Signature: Snh/bjBt9NHY8Dun9vmi/4aF3BemFa3tdd4aoP3mxdQ=
+2025-06-13 10:05:12 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-13 10:05:12 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-13 10:05:12 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-13 10:05:12 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-13 10:05:12 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-13 10:05:12 WIB - 📡 Executing category API request...
+2025-06-13 10:05:12 WIB - 📊 Category HTTP Code: 200
+2025-06-13 10:05:12 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-13 10:05:12 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-13 10:05:12 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-13 10:05:12 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-13 10:05:12 WIB] 🏁 Eksekusi script kategori selesai
+[2025-06-13 03:45:10 WIB] 📋 Pengiriman Form - hapus1: "Not set", hapus2: "Not set", hapus3: "Not set", hapus4: "Not set"
+[2025-06-13 03:45:10 WIB] 💾 DATABASE LOKAL: Kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:45:10 WIB] 🔄 Memulai sinkronisasi kategori dengan Accurate (API Token)...
+2025-06-13 10:45:10 WIB - 🚀 STARTING CATEGORY API CALL: /accurate/api/item-category/save.do
+2025-06-13 10:45:10 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-13 10:45:10 WIB - 🔒 X-Api-Timestamp: 13/06/2025 10:45:10
+2025-06-13 10:45:10 WIB - 🔒 X-Api-Signature: /YfE5BtO6pKoJK6b8Aa62y9hH3tYfYSMEjU+1LaJlVA=
+2025-06-13 10:45:10 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-13 10:45:10 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-13 10:45:10 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-13 10:45:10 WIB - 📤 Category Data: name=DUMMY&defaultCategory=false&parentName=
+2025-06-13 10:45:10 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-13 10:45:10 WIB - 📡 Executing category API request...
+2025-06-13 10:45:10 WIB - 📊 Category HTTP Code: 200
+2025-06-13 10:45:10 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-13 10:45:10 WIB - ✅ CATEGORY SUCCESS!
+[2025-06-13 10:45:10 WIB] 📌 Hasil sinkronisasi: Berhasil
+[2025-06-13 10:45:10 WIB] 🎉 Sinkronisasi kategori ke Accurate berhasil
+[2025-06-13 10:45:10 WIB] 🏁 Eksekusi script kategori selesai

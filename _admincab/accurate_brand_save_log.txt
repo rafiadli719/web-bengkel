@@ -1,0 +1,15 @@
+
+======= NEW BRAND: KAWASAKI =======
+2025-07-02 14:29:36 WIB - 💾 LOCAL DATABASE: Brand KAWASAKI - SUCCESS ✅
+2025-07-02 14:29:36 WIB - 🌐 ACCURATE API SYNC: Starting brand sync for 'KAWASAKI'
+2025-07-02 14:29:36 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-07-02 14:29:36 WIB - 📊 api-token.do HTTP Code: 200
+2025-07-02 14:29:36 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"27/07/2025","accessibleUntil":"01/08/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"COBA","logo":"","admin":true,"id":1927364,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-07-02 14:29:36 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-07-02 14:29:36 WIB - 🚀 TRYING ENDPOINT: /accurate/api/item-category/save.do
+2025-07-02 14:29:36 WIB - 🌐 URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-07-02 14:29:36 WIB - 📤 Data: {"name":"KAWASAKI","notes":"","suspended":"false"}
+2025-07-02 14:29:37 WIB - 📊 HTTP Code: 200
+2025-07-02 14:29:37 WIB - 📖 Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-07-02 14:29:37 WIB - ✅ SUCCESS with endpoint: /accurate/api/item-category/save.do ✅
+2025-07-02 14:29:37 WIB - 🎉 ACCURATE BRAND SYNC SUCCESS! Brand synchronized via https://zeus.accurate.id/accurate/api/item-category/save.do

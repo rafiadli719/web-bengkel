@@ -1,0 +1,291 @@
+[2025-06-09 03:18:44 WIB] 📝 EDIT CATEGORY - ID: 29
+[2025-06-09 03:18:44 WIB] 📝 OLD: Kode='DUMMY', Nama='Dummy'
+[2025-06-09 03:18:44 WIB] 📝 NEW: Kode='DUMMY', Nama='Coba'
+[2025-06-09 03:18:44 WIB] 💾 DATABASE LOKAL: Update kategori 'Coba' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 10:18:44 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 10:18:44 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 10:18:44 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 10:18:44 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 10:18:44 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 10:18:44 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 10:18:44 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 10:18:44 WIB - 📤 Category Data: name=Coba&defaultCategory=false&parentName=
+2025-06-09 10:18:44 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 10:18:44 WIB - 📡 Executing category update API request...
+2025-06-09 10:18:47 WIB - 📊 Category HTTP Code: 200
+2025-06-09 10:18:47 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 10:18:47 WIB - ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 10:18:47 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 10:18:47 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 10:18:47 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 03:28:41 WIB] 📝 EDIT CATEGORY - ID: 30
+[2025-06-09 03:28:41 WIB] 📝 OLD: Kode='AKIGEN', Nama='Aki'
+[2025-06-09 03:28:41 WIB] 📝 NEW: Kode='AKIGEN', Nama='Akigen'
+[2025-06-09 03:28:41 WIB] 💾 DATABASE LOKAL: Update kategori 'Akigen' (Kode: AKIGEN) - SUCCESS ✅
+[2025-06-09 10:28:41 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 10:28:41 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 10:28:41 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 10:28:41 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 10:28:41 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 10:28:41 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 10:28:41 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 10:28:41 WIB - 📤 Category Data: name=Akigen&defaultCategory=false&parentName=
+2025-06-09 10:28:41 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 10:28:41 WIB - 📡 Executing category update API request...
+2025-06-09 10:28:42 WIB - 📊 Category HTTP Code: 200
+2025-06-09 10:28:42 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"nameWithIndent":"Root","parentNode":true,"expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 10:28:42 WIB - ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 10:28:42 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 10:28:42 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 10:28:42 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 03:29:37 WIB] 📝 EDIT CATEGORY - ID: 31
+[2025-06-09 03:29:37 WIB] 📝 OLD: Kode='COBA', Nama='Coba'
+[2025-06-09 03:29:37 WIB] 📝 NEW: Kode='COBA', Nama='Dummy'
+[2025-06-09 03:29:37 WIB] 💾 DATABASE LOKAL: Update kategori 'Dummy' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 10:29:37 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 10:29:37 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 10:29:37 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 10:29:37 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 10:29:37 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 10:29:37 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 10:29:37 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 10:29:37 WIB - 📤 Category Data: name=Dummy&defaultCategory=false&parentName=
+2025-06-09 10:29:37 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 10:29:37 WIB - 📡 Executing category update API request...
+2025-06-09 10:29:40 WIB - 📊 Category HTTP Code: 200
+2025-06-09 10:29:40 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 10:29:40 WIB - ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 10:29:40 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 10:29:40 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 10:29:40 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 04:13:19 WIB] 📝 EDIT CATEGORY - ID: 32
+[2025-06-09 04:13:19 WIB] 📝 OLD: Kode='APA', Nama='APALAH'
+[2025-06-09 04:13:19 WIB] 📝 NEW: Kode='APA', Nama='APALAH COBA'
+[2025-06-09 04:13:19 WIB] 💾 DATABASE LOKAL: Update kategori 'APALAH COBA' (Kode: APA) - SUCCESS ✅
+[2025-06-09 11:13:19 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 11:13:19 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 11:13:19 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 11:13:19 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 11:13:19 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 11:13:19 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 11:13:19 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 11:13:19 WIB - 📤 Category Data: name=APALAH+COBA&defaultCategory=false&parentName=
+2025-06-09 11:13:19 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 11:13:19 WIB - 📡 Executing category update API request...
+2025-06-09 11:13:20 WIB - 📊 Category HTTP Code: 200
+2025-06-09 11:13:20 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"nameWithIndent":"Root","parentNode":true,"expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 11:13:20 WIB - ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 11:13:20 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 11:13:20 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 11:13:20 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 04:14:14 WIB] 📝 EDIT CATEGORY - ID: 32
+[2025-06-09 04:14:14 WIB] 📝 OLD: Kode='APA', Nama='APALAH COBA'
+[2025-06-09 04:14:14 WIB] 📝 NEW: Kode='APA', Nama='APALAH COBA HEHE'
+[2025-06-09 04:14:14 WIB] 💾 DATABASE LOKAL: Update kategori 'APALAH COBA HEHE' (Kode: APA) - SUCCESS ✅
+[2025-06-09 11:14:14 WIB] 🔄 Memulai sinkronisasi pembuatan kategori baru dengan Accurate (API Token)...
+2025-06-09 11:14:14 WIB - 🚀 STARTING CATEGORY CREATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 11:14:14 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 11:14:14 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 11:14:14 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 11:14:14 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 11:14:14 WIB - 🆕 CREATE MODE: Creating new category in Accurate
+2025-06-09 11:14:14 WIB - 📤 Category Data: name=APALAH+COBA+HEHE&defaultCategory=false&parentName=
+2025-06-09 11:14:14 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 11:14:14 WIB - 📡 Executing category create API request...
+2025-06-09 11:14:14 WIB - 📊 Category HTTP Code: 200
+2025-06-09 11:14:14 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"purchaseRetGlAccountId":72,"defaultCategory":false,"
+2025-06-09 11:14:14 WIB - ✅ CATEGORY CREATE SUCCESS!
+[2025-06-09 11:14:14 WIB] 📌 Hasil sinkronisasi pembuatan: Berhasil
+[2025-06-09 11:14:14 WIB] 🎉 Sinkronisasi pembuatan kategori ke Accurate berhasil
+[2025-06-09 11:14:14 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 04:15:55 WIB] 📝 EDIT CATEGORY - ID: 32
+[2025-06-09 04:15:55 WIB] 📝 OLD: Kode='APA', Nama='APALAH COBA HEHE'
+[2025-06-09 04:15:55 WIB] 📝 NEW: Kode='APA', Nama='APALAH1'
+[2025-06-09 04:15:55 WIB] 💾 DATABASE LOKAL: Update kategori 'APALAH1' (Kode: APA) - SUCCESS ✅
+[2025-06-09 11:15:55 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 11:15:55 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 11:15:55 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-09 11:15:55 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-09 11:15:55 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-06-09 11:15:55 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-06-09 11:15:55 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 11:15:55 WIB - 📤 Category Data: name=APALAH1&defaultCategory=false&parentName=
+2025-06-09 11:15:55 WIB - 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+2025-06-09 11:15:55 WIB - 📡 Executing category update API request...
+2025-06-09 11:15:55 WIB - 📊 Category HTTP Code: 200
+2025-06-09 11:15:55 WIB - 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+2025-06-09 11:15:55 WIB - ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 11:15:55 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 11:15:55 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 11:15:55 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 06:08:14 WIB] 📝 EDIT CATEGORY - ID: 34, Accurate ID: None
+[2025-06-09 06:08:14 WIB] 📝 OLD: Kode='DUMMY', Nama='DUMMY'
+[2025-06-09 06:08:14 WIB] 📝 NEW: Kode='DUMMY', Nama='DUMMY1'
+[2025-06-09 06:08:15 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 13:08:15 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 13:08:15 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+[2025-06-09 13:08:15 WIB] 📊 open-db.do HTTP Code: 200
+[2025-06-09 13:08:15 WIB] ❌ open-db.do returned success=false
+[2025-06-09 13:08:15 WIB] ❌ Failed to open Accurate database
+[2025-06-09 13:08:15 WIB] 📌 Hasil sinkronisasi update: Gagal
+[2025-06-09 13:08:15 WIB] ⚠️ Sinkronisasi update kategori ke Accurate gagal: Cannot open Accurate database
+[2025-06-09 13:08:15 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 06:13:01 WIB] 📝 EDIT CATEGORY - ID: 34, Accurate ID: None
+[2025-06-09 06:13:01 WIB] 📝 OLD: Kode='DUMMY', Nama='DUMMY1'
+[2025-06-09 06:13:01 WIB] 📝 NEW: Kode='DUMMY', Nama='DUMMY12'
+[2025-06-09 06:13:01 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY12' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 13:13:01 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 13:13:01 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+[2025-06-09 13:13:01 WIB] 📊 open-db.do HTTP Code: 200
+[2025-06-09 13:13:01 WIB] ❌ open-db.do returned success=false
+[2025-06-09 13:13:01 WIB] 📌 Hasil sinkronisasi update: Gagal
+[2025-06-09 13:13:01 WIB] ⚠️ Sinkronisasi update kategori ke Accurate gagal: Cannot open Accurate database
+[2025-06-09 13:13:01 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 06:17:51 WIB] 📝 EDIT CATEGORY - ID: 35, Accurate ID: None
+[2025-06-09 06:17:51 WIB] 📝 OLD: Kode='COBA', Nama='COBA'
+[2025-06-09 06:17:51 WIB] 📝 NEW: Kode='COBA', Nama='COBA1'
+[2025-06-09 06:17:51 WIB] 💾 DATABASE LOKAL: Update kategori 'COBA1' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 13:17:51 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate (API Token)...
+2025-06-09 13:17:51 WIB - 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+2025-06-09 13:17:51 WIB - 🆕 CREATE MODE: No Accurate ID found, will create new
+2025-06-09 13:17:51 WIB - 📤 Category Data: name=COBA1&defaultCategory=false&parentName=
+2025-06-09 13:17:51 WIB - 🌐 Category URL: https://account.accurate.id/accurate/api/item-category/save.do
+2025-06-09 13:17:51 WIB - 📡 Executing category update API request...
+2025- 06-09 13:17:51 WIB - 📊 Category HTTP Code: 302
+2025-06-09 13:17:51 WIB - 📥 Category Response: 
+2025-06-09 13:17:51 WIB - ❌ Getting 302 redirect
+[2025-06-09 13:17:51 WIB] 📌 Hasil sinkronisasi update: Gagal
+[2025-06-09 13:17:51 WIB] ⚠️ Sinkronisasi update kategori ke Accurate gagal: Getting redirect. Check API token permissions for item category.
+[2025-06-09 13:17:51 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 06:45:44 WIB] 📝 EDIT CATEGORY - ID: 35, Accurate ID: NULL
+[2025-06-09 06:45:44 WIB] 📝 OLD: Kode='COBA', Nama='COBA1'
+[2025-06-09 06:45:44 WIB] 📝 NEW: Kode='COBA', Nama='COBA12'
+[2025-06-09 06:45:44 WIB] 💾 DATABASE LOKAL: Update kategori 'COBA12' (Kode: COBA) - SUCCESS ✅
+[2025-06-09 13:45:44 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate
+[2025-06-09 13:45:44 WIB] 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+[2025-06-09 13:45:44 WIB] 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+[2025-06-09 13:45:44 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-09 13:45:44 WIB] 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-09 13:45:44 WIB] ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+[2025-06-09 13:45:44 WIB] 🆕 CREATE MODE: No Accurate ID found, will create new
+[2025-06-09 13:45:44 WIB] 📤 Category Data: name=COBA12&defaultCategory=false&parentName=
+[2025-06-09 13:45:44 WIB] 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+[2025-06-09 13:45:44 WIB] 📡 Executing category update API request...
+[2025-06-09 13:45:44 WIB] 📊 Category HTTP Code: 200
+[2025-06-09 13:45:44 WIB] 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+[2025-06-09 13:45:44 WIB] ✅ CATEGORY UPDATE SUCCESS!
+[2025-06-09 13:45:44 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 13:45:44 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil
+[2025-06-09 13:45:44 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-09 07:23:22 WIB] 📝 EDIT CATEGORY - ID: 37, Accurate ID: NULL
+[2025-06-09 07:23:22 WIB] 📝 OLD: Kode='DUMMY', Nama='DUMMY'
+[2025-06-09 07:23:22 WIB] 📝 NEW: Kode='DUMMY', Nama='DUMMY1'
+[2025-06-09 07:23:22 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DUMMY) - SUCCESS ✅
+[2025-06-09 14:23:22 WIB] 🔄 Memulai sinkronisasi update kategori dengan Accurate
+[2025-06-09 14:23:22 WIB] 🚀 STARTING CATEGORY UPDATE API CALL: /accurate/api/item-category/save.do
+[2025-06-09 14:23:22 WIB] 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+[2025-06-09 14:23:23 WIB] 📊 api-token.do HTTP Code: 200
+[2025-06-09 14:23:23 WIB] 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"FIT MOTOR DUMMY","logo":"","admin":true,"id":1867327,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR",
+[2025-06-09 14:23:23 WIB] ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+[2025-06-09 14:23:23 WIB] 🆕 CREATE MODE: No Accurate ID found, will create new entry
+[2025-06-09 14:23:23 WIB] 📤 Category Data: name=DUMMY1&defaultCategory=false&parentName=
+[2025-06-09 14:23:23 WIB] 🌐 Category URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+[2025-06-09 14:23:23 WIB] 📡 Executing category update API request...
+[2025-06-09 14:23:23 WIB] 📊 Category HTTP Code: 200
+[2025-06-09 14:23:23 WIB] 📥 Category Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAccountId":null,"nameWithIndentStrip":"Root","cogsGlAccountId":null,"salesGlAccountId":null,"name":"Root","id":50,"unBilledGlAccountId":null},"lvl":1,"defaultCategory":false,"purchaseRetGlAccountId":72,"
+[2025-06-09 14:23:23 WIB] ✅ CATEGORY CREATED SUCCESS!
+[2025-06-09 14:23:23 WIB] 📌 Hasil sinkronisasi update: Berhasil
+[2025-06-09 14:23:23 WIB] 🎉 Sinkronisasi update kategori ke Accurate berhasil (CREATED)
+[2025-06-09 14:23:23 WIB] 🏁 Eksekusi script edit kategori selesai
+[2025-06-13 03:05:34 WIB] 📝 EDIT CATEGORY - ID: 42, Accurate ID: NULL
+[2025-06-13 03:05:34 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY'
+[2025-06-13 03:05:34 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 03:05:34 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:05:34 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 10:05:34 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:05:35 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 10:05:35 WIB] 🔐 Establishing session: https://zeus.accurate.id/accurate/api/open-db.do
+[2025-06-13 10:05:35 WIB] 📊 Session HTTP Code: 404
+[2025-06-13 10:05:35 WIB] 📥 Session Response: {"s":false,"d":["URL API tidak tepat"]}
+[2025-06-13 10:05:35 WIB] ❌ Failed to establish session: HTTP 404
+[2025-06-13 10:05:35 WIB] ⚠️ Cannot establish Accurate connection
+[2025-06-13 03:27:17 WIB] 📝 EDIT CATEGORY - ID: 42, Accurate ID: NULL
+[2025-06-13 03:27:17 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 03:27:17 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY'
+[2025-06-13 03:27:17 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:27:17 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 10:27:17 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:27:22 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 10:27:22 WIB] 🔐 Establishing session: https://zeus.accurate.id/accurate/api/open-db.do
+[2025-06-13 10:27:26 WIB] 📊 Session HTTP Code: 404
+[2025-06-13 10:27:26 WIB] 📥 Session Response: {"s":false,"d":["URL API tidak tepat"]}
+[2025-06-13 10:27:26 WIB] ❌ Failed to establish session: HTTP 404
+[2025-06-13 10:27:26 WIB] ⚠️ Cannot establish Accurate connection
+[2025-06-13 10:41:28 WIB] 📝 EDIT CATEGORY - ID: 42, Accurate ID: NULL
+[2025-06-13 10:41:28 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY'
+[2025-06-13 10:41:28 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 10:41:28 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:41:28 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 10:41:28 WIB] 🆕 CREATE MODE: No category ID, will create new
+[2025-06-13 10:41:30 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 10:41:30 WIB] 📥 Save Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAcc
+[2025-06-13 10:41:30 WIB] 🏁 Script execution completed
+[2025-06-13 10:41:30 WIB] ================================================================================
+[2025-06-13 10:45:26 WIB] 📝 EDIT CATEGORY - ID: 43, Accurate ID: NULL
+[2025-06-13 10:45:26 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY'
+[2025-06-13 10:45:26 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 10:45:26 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:45:26 WIB] ⚠️ No valid accurate_id, skipping Accurate sync
+[2025-06-13 10:45:26 WIB] 🏁 Script execution completed
+[2025-06-13 10:45:26 WIB] ================================================================================
+[2025-06-13 10:47:55 WIB] 📝 EDIT CATEGORY - ID: 43, Accurate ID: NULL
+[2025-06-13 10:47:55 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 10:47:55 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 10:47:55 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:47:57 WIB] ✅ Host found: https://zeus.accurate.id
+[2025-06-13 10:47:57 WIB] ❌ Kategori tidak ditemukan di Accurate, akan membuat baru
+[2025-06-13 10:47:57 WIB] 🆕 CREATE MODE: No valid category ID, will create new
+[2025-06-13 10:47:57 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 10:47:57 WIB] 📥 Save Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAcc
+[2025-06-13 10:47:57 WIB] 🏁 Script execution completed
+[2025-06-13 10:47:57 WIB] ================================================================================
+[2025-06-13 03:51:46 WIB] 📝 EDIT CATEGORY - ID: 43, Accurate ID: NULL
+[2025-06-13 03:51:46 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 03:51:46 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 03:51:46 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY1' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:51:46 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 10:51:46 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:51:46 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 10:51:46 WIB] 🔍 Searching by name: 'DUMMY1'
+[2025-06-13 10:51:46 WIB] 📊 Search HTTP: 200
+[2025-06-13 10:51:46 WIB] 📋 Found 5 categories, searching for 'dummy1'
+[2025-06-13 10:51:46 WIB] ✅ Exact match found: ID 900
+[2025-06-13 10:51:46 WIB] 🔄 UPDATE MODE: Using category ID 900
+[2025-06-13 10:51:46 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+[2025-06-13 10:51:46 WIB] 📤 Data: name=DUMMY1&defaultCategory=false&parentName=&id=900
+[2025-06-13 10:51:46 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 10:51:46 WIB] 📥 Save Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"defaultCategory":false,"purchaseRetGlAccountId":null,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAcc
+[2025-06-13 10:51:46 WIB] ✅ Category UPDATED successfully
+[2025-06-13 10:51:46 WIB] 🎉 Synchronization successful: UPDATED
+[2025-06-13 10:51:46 WIB] 🏁 Script execution completed
+[2025-06-13 10:51:46 WIB] ================================================================================
+[2025-06-13 03:52:08 WIB] 📝 EDIT CATEGORY - ID: 43, Accurate ID: NULL
+[2025-06-13 03:52:08 WIB] 📝 OLD: Kode='DMY', Nama='DUMMY1'
+[2025-06-13 03:52:08 WIB] 📝 NEW: Kode='DMY', Nama='DUMMY12'
+[2025-06-13 03:52:08 WIB] 💾 DATABASE LOKAL: Update kategori 'DUMMY12' (Kode: DMY) - SUCCESS ✅
+[2025-06-13 10:52:08 WIB] 🔄 Starting Accurate synchronization
+[2025-06-13 10:52:08 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:52:08 WIB] ✅ Host extracted: https://zeus.accurate.id
+[2025-06-13 10:52:08 WIB] 🔍 Searching by name: 'DUMMY1'
+[2025-06-13 10:52:08 WIB] 📊 Search HTTP: 200
+[2025-06-13 10:52:08 WIB] 📋 Found 5 categories, searching for 'dummy1'
+[2025-06-13 10:52:08 WIB] ✅ Exact match found: ID 900
+[2025-06-13 10:52:08 WIB] 🔄 UPDATE MODE: Using category ID 900
+[2025-06-13 10:52:08 WIB] 🌐 Save URL: https://zeus.accurate.id/accurate/api/item-category/save.do
+[2025-06-13 10:52:08 WIB] 📤 Data: name=DUMMY12&defaultCategory=false&parentName=&id=900
+[2025-06-13 10:52:09 WIB] 📊 Save HTTP Code: 200
+[2025-06-13 10:52:09 WIB] 📥 Save Response: {"r":{"sub":false,"parent":{"sub":false,"parent":null,"lvl":0,"purchaseRetGlAccountId":null,"defaultCategory":false,"inventoryGlAccountId":null,"optLock":0,"salesRetGlAccountId":null,"parentNode":true,"nameWithIndent":"Root","expenseGlAccountId":null,"goodTransitGlAccountId":null,"salesDiscountGlAcc
+[2025-06-13 10:52:09 WIB] ✅ Category UPDATED successfully
+[2025-06-13 10:52:09 WIB] 🎉 Synchronization successful: UPDATED
+[2025-06-13 10:52:09 WIB] 🏁 Script execution completed
+[2025-06-13 10:52:09 WIB] ================================================================================

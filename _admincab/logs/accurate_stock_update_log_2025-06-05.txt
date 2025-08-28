@@ -1,0 +1,44 @@
+
+======= NEW TRANSACTION: IM25000000069 =======
+[2025-06-05 15:37:05 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000069 - SUCCESS ✅
+2025-06-05 15:37:05 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:37:05 WIB - 🚀 STARTING BULK API CALL: /accurate/api/item-adjustment/bulk-save.do
+2025-06-05 15:37:05 WIB - 🔍 Calling api-token.do: http://account.accurate.id/api/api-token.do
+2025-06-05 15:37:05 WIB - 📊 api-token.do HTTP Code: 302
+2025-06-05 15:37:05 WIB - ❌ api-token.do HTTP Error: 302
+2025-06-05 15:37:05 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host
+
+======= NEW TRANSACTION: IM25000000070 =======
+[2025-06-05 15:37:32 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000070 - SUCCESS ✅
+2025-06-05 15:37:32 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:37:32 WIB - 🚀 STARTING BULK API CALL: /accurate/api/item-adjustment/bulk-save.do
+2025-06-05 15:37:32 WIB - 🔍 Calling api-token.do: http://account.accurate.id/api/api-token.do
+2025-06-05 15:37:32 WIB - 📊 api-token.do HTTP Code: 302
+2025-06-05 15:37:32 WIB - ❌ api-token.do HTTP Error: 302
+2025-06-05 15:37:32 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host
+
+======= NEW TRANSACTION: IM25000000071 =======
+[2025-06-05 15:38:32 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000071 - SUCCESS ✅
+2025-06-05 15:38:32 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:38:32 WIB - 🚀 STARTING BULK API CALL: /accurate/api/item-adjustment/bulk-save.do
+2025-06-05 15:38:32 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 15:38:33 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 15:38:33 WIB - 📄 api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.ac...
+2025-06-05 15:38:33 WIB - ✅ Host found: https://zeus.accurate.id
+2025-06-05 15:38:33 WIB - 🔐 Establishing session: https://zeus.accurate.id/accurate/api/open-db.do
+2025-06-05 15:38:33 WIB - 📊 Session HTTP Code: 404
+2025-06-05 15:38:33 WIB - ❌ Session HTTP Error: 404
+2025-06-05 15:38:33 WIB - ❌ ACCURATE SYNC FAILED: Cannot establish Accurate session
+
+======= NEW TRANSACTION: IM25000000072 =======
+[2025-06-05 15:39:09 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000072 - SUCCESS ✅
+2025-06-05 15:39:09 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-06-05 15:39:09 WIB - 🚀 STARTING BULK API CALL: /accurate/api/item-adjustment/bulk-save.do
+2025-06-05 15:39:09 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-06-05 15:39:09 WIB - 📊 api-token.do HTTP Code: 200
+2025-06-05 15:39:09 WIB - 📄 api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"17/06/2025","accessibleUntil":"22/06/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.ac...
+2025-06-05 15:39:09 WIB - ✅ Host found: https://zeus.accurate.id
+2025-06-05 15:39:09 WIB - 🔐 Establishing session: https://zeus.accurate.id/accurate/api/open-db.do
+2025-06-05 15:39:09 WIB - 📊 Session HTTP Code: 404
+2025-06-05 15:39:09 WIB - ❌ Session HTTP Error: 404
+2025-06-05 15:39:09 WIB - ❌ ACCURATE SYNC FAILED: Cannot establish Accurate session

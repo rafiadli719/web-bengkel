@@ -1,0 +1,27 @@
+[2025-06-13 09:33:34 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 09:33:35 WIB] 🔍 Searching for 'DUMMY' at: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 09:33:35 WIB] ✅ Found 'DUMMY' with ID: 700
+[2025-06-13 09:33:35 WIB] 🔍 Getting detail for ID: 700
+[2025-06-13 09:33:35 WIB] 🧪 SIMULATION: Would delete category ID: 700
+[2025-06-13 09:33:35 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 09:33:35 WIB] 📤 Delete data: {"id":700}
+[2025-06-13 09:33:35 WIB] ⚠️ SIMULATION MODE: Delete request NOT sent
+[2025-06-13 10:00:32 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:00:33 WIB] 🔍 Searching for 'DUMMY' at: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:00:33 WIB] ❌ Category 'DUMMY' not found
+[2025-06-13 10:13:51 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:13:51 WIB] 🔍 Searching for 'DUMMY' at: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:13:51 WIB] ✅ Found 'DUMMY' with ID: 751
+[2025-06-13 10:13:51 WIB] 🔍 Getting detail for ID: 751
+[2025-06-13 10:13:51 WIB] 🧪 SIMULATION: Would delete category ID: 751
+[2025-06-13 10:13:51 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 10:13:51 WIB] 📤 Delete data: {"id":751}
+[2025-06-13 10:13:51 WIB] ⚠️ SIMULATION MODE: Delete request NOT sent
+[2025-06-13 10:14:46 WIB] 🔍 Getting host from: https://account.accurate.id/api/api-token.do
+[2025-06-13 10:14:46 WIB] 🔍 Searching for 'DUMMY' at: https://zeus.accurate.id/accurate/api/item-category/list.do?sp.pageSize=100&fields=id%2Cname%2Ccode%2Cdescription
+[2025-06-13 10:14:46 WIB] ✅ Found 'DUMMY' with ID: 751
+[2025-06-13 10:14:46 WIB] 🔍 Getting detail for ID: 751
+[2025-06-13 10:14:47 WIB] 🧪 SIMULATION: Would delete category ID: 751
+[2025-06-13 10:14:47 WIB] 🌐 Delete URL: https://zeus.accurate.id/accurate/api/item-category/delete.do
+[2025-06-13 10:14:47 WIB] 📤 Delete data: {"id":751}
+[2025-06-13 10:14:47 WIB] ⚠️ SIMULATION MODE: Delete request NOT sent

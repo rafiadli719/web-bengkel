@@ -1,0 +1,23 @@
+
+======= EDIT ITEM: DUMMY =======
+2025-07-02 16:09:21 WIB - 💾 LOCAL DATABASE: Item DUMMY - UPDATE SUCCESS ✅
+2025-07-02 16:09:21 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-07-02 16:09:21 WIB - 📊 api-token.do HTTP Code: 200
+2025-07-02 16:09:21 WIB - 📄 Full api-token.do response: {"s":true,"d":{"database":{"license":{"education":false,"licenseEnd":"27/07/2025","accessibleUntil":"01/08/2025","sample":false,"trial":true},"deleted":false,"bgColor":"FFFFFF","host":"https://zeus.accurate.id","alias":"COBA","logo":"","admin":true,"id":1927364,"logoUrl":""},"application":{"name":"PROGRAM BENGKEL FIT MOTOR","appKey":"3b3c7979-63a1-493a-afd6-5ccb4b2f3d72"},"tokenType":"api","user":{"gender":"female","nickName":"FIT MOTOR","mobile":"081578391970","fullName":"FIT MOTOR","id":861037,"locale":"in-ID","email":"fitmotortegal@gmail.com","picture":null}}}
+2025-07-02 16:09:21 WIB - ✅ Host found at path [d.database.host]: https://zeus.accurate.id
+2025-07-02 16:09:21 WIB - 🔍 Searching Accurate item: https://zeus.accurate.id/accurate/api/item/detail.do?no=DUMMY
+2025-07-02 16:09:22 WIB - 📊 Search HTTP Code: 200
+2025-07-02 16:09:22 WIB - ✅ Found Accurate item ID: 50 for item: DUMMY
+2025-07-02 16:09:22 WIB - 📝 Will UPDATE existing item with ID: 50
+2025-07-02 16:09:22 WIB - 📋 Supplier mapping: SUP001 → Rafi
+2025-07-02 16:09:22 WIB - ✅ Using supplier: Rafi (code: SUP001)
+2025-07-02 16:09:22 WIB - 🌐 ACCURATE API SYNC: Starting UPDATE
+2025-07-02 16:09:22 WIB - 📤 Sending data: {"itemType":"INVENTORY","name":"DUMMY1","no":"DUMMY","unit1Name":"PCS","unitPrice":"250000.000000","vendorPrice":"150000.000000","notes":"DUMMY1","controlQuantity":"true","itemCategoryName":"Default Category","upcNo":"DUMMY1","vendorUnitName":"PCS","minimumQuantity":"3.000000","minimumQuantityReorder":"8.000000","id":50,"preferedVendorName":"Rafi"}
+2025-07-02 16:09:22 WIB - 🚀 STARTING UPDATE API CALL: /accurate/api/item/save.do
+2025-07-02 16:09:22 WIB - 📋 Using cached host: https://zeus.accurate.id
+2025-07-02 16:09:22 WIB - 🌐 URL: https://zeus.accurate.id/accurate/api/item/save.do
+2025-07-02 16:09:22 WIB - 📖 Executing cURL request...
+2025-07-02 16:09:22 WIB - 📊 HTTP Code: 200
+2025-07-02 16:09:22 WIB - 📖 Response: {"r":{"unit2Id":null,"charField8":null,"charField9":null,"charField6":null,"charField7":null,"numericField10":null,"unit4Price":0.000000,"charField4":null,"unit3Name":"","charField5":null,"optLock":2,"percentTaxable":100.000000,"itemBrandId":null,"ratioVendorUnit":1.000000,"unit3Price":0.000000,"salesDiscountGlAccountId":101,"balance":0.000000,"itemProduced":false,"charField2":null,"charField3":null,"charField1":null,"id":50,"maxOptionModifier":null,"unitPrice":250000.000000,"dateField2":null,"t
+2025-07-02 16:09:22 WIB - ✅ UPDATE SUCCESS ✅
+2025-07-02 16:09:22 WIB - 🎉 ACCURATE UPDATE SUCCESS! Item synchronized via https://zeus.accurate.id/accurate/api/item/save.do
