@@ -2,27 +2,12 @@
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
+		exit;
 	} else {
-		$id_user=$_SESSION['_iduser'];
-        $kd_cabang=$_SESSION['_cabang'];
-		include "../config/koneksi.php";
-        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
-                                        FROM tbuser WHERE id='$id_user'");			
-		$tm_cari=mysqli_fetch_array($cari_kd);
-		$_nama=$tm_cari['nama_user'];				        
-		$pwd=$tm_cari['password'];				        
-		$lvl_akses=$tm_cari['user_akses'];				                
-		$foto_user=$tm_cari['foto_user'];				
-		if($foto_user=='') {
-			$foto_user="file_upload/avatar.png";
-		}
-
-    // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_cabang, tipe_cabang 
-                                        FROM tbcabang 
+		header("Location: penerimaan_antarcab.php");
+		exit;
+	}
+	__halt_compiler();
                                         WHERE kode_cabang='$kd_cabang'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$nama_cabang=$tm_cari['nama_cabang'];				        

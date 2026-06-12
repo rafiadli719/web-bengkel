@@ -894,127 +894,203 @@ if(empty($_SESSION['_iduser'])){
 
     <!-- Modal Add/Edit Mapping -->
     <div class="modal fade" id="modal-mapping" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title" id="modal-title">Tambah Mapping</h4>
+                    <h4 class="modal-title" id="modal-title"><i class="fa fa-plus"></i> Tambah Mapping</h4>
                 </div>
                 <form id="form-mapping" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" id="action" value="add">
                         <input type="hidden" name="id" id="mapping_id">
                         
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Keluhan <span class="text-danger">*</span>:</label>
-                                    <select class="form-control chosen-select-keluhan" name="kode_keluhan" id="kode_keluhan" required 
-                                            data-placeholder="Ketik untuk mencari keluhan...">
-                                        <option value=""></option>
-                                        <?php
-                                        $keluhan_query = "SELECT kode_keluhan, nama_keluhan, kategori, tingkat_prioritas, estimasi_waktu 
-                                                         FROM tbmaster_keluhan 
-                                                         WHERE status_aktif='1' 
-                                                         ORDER BY kategori, tingkat_prioritas DESC, nama_keluhan";
-                                        $keluhan_result = mysqli_query($koneksi, $keluhan_query);
-                                        while($keluhan_row = mysqli_fetch_array($keluhan_result)) {
-                                            $prioritas_badge = '';
-                                            switch($keluhan_row['tingkat_prioritas']) {
-                                                case 'darurat': $prioritas_badge = '[DARURAT]'; break;
-                                                case 'tinggi': $prioritas_badge = '[TINGGI]'; break;
-                                                case 'sedang': $prioritas_badge = '[SEDANG]'; break;
-                                                case 'rendah': $prioritas_badge = '[RENDAH]'; break;
-                                            }
-                                            
-                                            echo "<option value='" . $keluhan_row['kode_keluhan'] . "' 
-                                                    data-kategori='" . $keluhan_row['kategori'] . "'
-                                                    data-prioritas='" . $keluhan_row['tingkat_prioritas'] . "'
-                                                    data-waktu='" . $keluhan_row['estimasi_waktu'] . "'>";
-                                            echo $keluhan_row['kode_keluhan'] . " - " . $keluhan_row['nama_keluhan'] . " " . $prioritas_badge . " (" . $keluhan_row['kategori'] . ")";
-                                            echo "</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                    <div style="margin-top: 8px; clear: both;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-info-circle"></i> 
-                                            Ketik kode keluhan, nama, atau kategori untuk mencari
-                                        </small>
-                                    </div>
-                                </div>
+                        <div class="form-group">
+                            <label>Keluhan <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" id="kode_keluhan_display" class="form-control" placeholder="Pilih keluhan..." readonly>
+                                <input type="hidden" name="kode_keluhan" id="kode_keluhan">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" onclick="openModalKeluhan()">
+                                        <i class="fa fa-search"></i> Cari
+                                    </button>
+                                </span>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>WorkOrder <span class="text-danger">*</span>:</label>
-                                    <select class="form-control chosen-select-workorder" name="kode_workorder" id="kode_workorder" required
-                                            data-placeholder="Ketik untuk mencari workorder...">
-                                        <option value=""></option>
-                                        <?php
-                                        $wo_query = "SELECT kode_wo, nama_wo, harga, waktu, keterangan 
-                                                    FROM tbworkorderheader 
-                                                    WHERE status = '0'
-                                                    ORDER BY nama_wo";
-                                        $wo_result = mysqli_query($koneksi, $wo_query);
-                                        while($wo_row = mysqli_fetch_array($wo_result)) {
-                                            echo "<option value='" . $wo_row['kode_wo'] . "' 
-                                                    data-harga='" . $wo_row['harga'] . "'
-                                                    data-waktu='" . $wo_row['waktu'] . "'
-                                                    data-keterangan='" . htmlspecialchars($wo_row['keterangan']) . "'>";
-                                            echo $wo_row['kode_wo'] . " - " . $wo_row['nama_wo'] . " | Rp " . number_format($wo_row['harga'], 0, ',', '.') . " | " . $wo_row['waktu'] . " min";
-                                            echo "</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                    <div style="margin-top: 8px; clear: both;">
-                                        <small class="text-muted">
-                                            <i class="fa fa-info-circle"></i> 
-                                            Ketik kode WO, nama, atau harga untuk mencari
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="keluhan-preview" style="margin-top:5px;display:none;" class="alert alert-info alert-sm"></div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Prioritas Mapping:</label>
-                                    <select class="form-control" name="prioritas" id="prioritas">
-                                        <option value="rendah">Rendah</option>
-                                        <option value="sedang" selected>Sedang</option>
-                                        <option value="tinggi">Tinggi</option>
-                                        <option value="darurat">Darurat</option>
-                                    </select>
-                                    <small class="text-muted">Prioritas tinggi akan dipilih jika ada multiple mapping untuk keluhan yang sama</small>
-                                </div>
+                        <div class="form-group">
+                            <label>WorkOrder <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" id="kode_workorder_display" class="form-control" placeholder="Pilih workorder..." readonly>
+                                <input type="hidden" name="kode_workorder" id="kode_workorder">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" onclick="openModalWorkorder()">
+                                        <i class="fa fa-search"></i> Cari
+                                    </button>
+                                </span>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Preview WorkOrder:</label>
-                                    <div id="workorder-preview" class="well well-sm" style="display: none;">
-                                        <strong id="preview-nama-wo"></strong><br>
-                                        <span class="text-success" id="preview-harga"></span> | 
-                                        <span class="text-info" id="preview-waktu"></span>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="workorder-preview" style="margin-top:5px;display:none;" class="alert alert-success alert-sm"></div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="alert alert-warning" style="margin-top: 15px; clear: both;">
-                                    <i class="ace-icon fa fa-warning"></i>
-                                    <strong>Perhatian:</strong> Jika sudah ada mapping dengan keluhan yang sama, prioritas yang lebih tinggi akan digunakan sebagai default.
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label>Prioritas Mapping</label>
+                            <select class="form-control" name="prioritas" id="prioritas" style="width:180px;">
+                                <option value="rendah">Rendah</option>
+                                <option value="sedang" selected>Sedang</option>
+                                <option value="tinggi">Tinggi</option>
+                                <option value="darurat">Darurat</option>
+                            </select>
+                            <small class="text-muted">Prioritas tinggi akan dipilih jika ada multiple mapping</small>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="ace-icon fa fa-warning"></i>
+                            <strong>Perhatian:</strong> Jika sudah ada mapping dengan keluhan yang sama, prioritas yang lebih tinggi akan digunakan sebagai default.
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
+                        <button type="submit" class="btn btn-success" id="btn-save"><i class="fa fa-save"></i> Simpan</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Cari Keluhan -->
+    <div class="modal fade" id="modal-cari-keluhan" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fa fa-search"></i> Cari Keluhan</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group" style="margin-bottom:10px;">
+                        <input type="text" id="qKeluhan" class="form-control" placeholder="Ketik kode atau nama keluhan...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" id="btnCariKeluhan" type="button"><i class="fa fa-search"></i> Cari</button>
+                        </span>
+                    </div>
+                    <div class="table-responsive" style="max-height:350px; overflow:auto;">
+                        <table class="table table-striped table-hover" id="tblHasilKeluhan">
+                            <thead>
+                                <tr>
+                                    <th>Kode</th>
+                                    <th>Nama Keluhan</th>
+                                    <th>Kategori</th>
+                                    <th>Prioritas</th>
+                                    <th style="width:70px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $keluhan_query = "SELECT kode_keluhan, nama_keluhan, kategori 
+                                                 FROM tbmaster_keluhan 
+                                                 WHERE status_aktif='1' 
+                                                 ORDER BY kategori, nama_keluhan LIMIT 30";
+                                $keluhan_result = mysqli_query($koneksi, $keluhan_query);
+                                if($keluhan_result && mysqli_num_rows($keluhan_result) > 0) {
+                                    while($row = mysqli_fetch_array($keluhan_result)) {
+                                        // Default values since specific columns might not exist
+                                        $prioritas = isset($row['tingkat_prioritas']) ? $row['tingkat_prioritas'] : 'sedang';
+                                        
+                                        $badge = '';
+                                        switch($prioritas) {
+                                            case 'darurat': $badge = '<span class="label label-danger">DARURAT</span>'; break;
+                                            case 'tinggi': $badge = '<span class="label label-warning">TINGGI</span>'; break;
+                                            case 'sedang': $badge = '<span class="label label-info">SEDANG</span>'; break;
+                                            case 'rendah': $badge = '<span class="label label-success">RENDAH</span>'; break;
+                                            default: $badge = '<span class="label label-info">SEDANG</span>'; break;
+                                        }
+                                        echo "<tr>";
+                                        echo "<td>" . htmlspecialchars($row['kode_keluhan']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nama_keluhan']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['kategori']) . "</td>";
+                                        echo "<td>$badge</td>";
+                                        echo "<td><button type='button' class='btn btn-xs btn-success btnPilihKeluhan' 
+                                                data-kode='" . htmlspecialchars($row['kode_keluhan']) . "' 
+                                                data-nama='" . htmlspecialchars($row['nama_keluhan']) . "'
+                                                data-kategori='" . htmlspecialchars($row['kategori']) . "'
+                                                data-prioritas='" . htmlspecialchars($prioritas) . "'>
+                                                <i class='fa fa-check'></i> Pilih</button></td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5' class='text-center text-muted'>Tidak ada data keluhan (Query Error atau Kosong: " . mysqli_error($koneksi) . ")</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Cari WorkOrder -->
+    <div class="modal fade" id="modal-cari-workorder" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fa fa-search"></i> Cari WorkOrder</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group" style="margin-bottom:10px;">
+                        <input type="text" id="qWorkorder" class="form-control" placeholder="Ketik kode atau nama workorder...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" id="btnCariWorkorder" type="button"><i class="fa fa-search"></i> Cari</button>
+                        </span>
+                    </div>
+                    <div class="table-responsive" style="max-height:350px; overflow:auto;">
+                        <table class="table table-striped table-hover" id="tblHasilWorkorder">
+                            <thead>
+                                <tr>
+                                    <th>Kode</th>
+                                    <th>Nama WorkOrder</th>
+                                    <th class="text-right">Harga</th>
+                                    <th>Waktu</th>
+                                    <th style="width:70px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $wo_query = "SELECT kode_wo, nama_wo, harga, waktu 
+                                            FROM tbworkorderheader 
+                                            WHERE status = '0'
+                                            ORDER BY nama_wo LIMIT 30";
+                                $wo_result = mysqli_query($koneksi, $wo_query);
+                                if($wo_result && mysqli_num_rows($wo_result) > 0) {
+                                    while($row = mysqli_fetch_array($wo_result)) {
+                                        echo "<tr>";
+                                        echo "<td>" . htmlspecialchars($row['kode_wo']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nama_wo']) . "</td>";
+                                        echo "<td class='text-right'>Rp " . number_format($row['harga'], 0, ',', '.') . "</td>";
+                                        echo "<td>" . $row['waktu'] . " menit</td>";
+                                        echo "<td><button type='button' class='btn btn-xs btn-success btnPilihWorkorder' 
+                                                data-kode='" . htmlspecialchars($row['kode_wo']) . "' 
+                                                data-nama='" . htmlspecialchars($row['nama_wo']) . "'
+                                                data-harga='" . $row['harga'] . "'
+                                                data-waktu='" . $row['waktu'] . "'>
+                                                <i class='fa fa-check'></i> Pilih</button></td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5' class='text-center text-muted'>Tidak ada data workorder</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1052,28 +1128,35 @@ if(empty($_SESSION['_iduser'])){
         $wo_js_query = "SELECT kode_wo, nama_wo, harga, waktu FROM tbworkorderheader";
         $wo_js_result = mysqli_query($koneksi, $wo_js_query);
         echo "var workorderData = {";
-        while($wo_js_row = mysqli_fetch_array($wo_js_result)) {
-            echo "'" . $wo_js_row['kode_wo'] . "': {";
-            echo "'nama': '" . addslashes($wo_js_row['nama_wo']) . "',";
-            echo "'harga': " . $wo_js_row['harga'] . ",";
-            echo "'waktu': " . $wo_js_row['waktu'];
-            echo "},";
+        if($wo_js_result && mysqli_num_rows($wo_js_result) > 0) {
+            while($wo_js_row = mysqli_fetch_array($wo_js_result)) {
+                echo "'" . $wo_js_row['kode_wo'] . "': {";
+                echo "'nama': '" . addslashes($wo_js_row['nama_wo']) . "',";
+                echo "'harga': " . $wo_js_row['harga'] . ",";
+                echo "'waktu': " . $wo_js_row['waktu'];
+                echo "},";
+            }
         }
         echo "};";
         ?>
 
         function showAddModal() {
-            $('#modal-title').text('Tambah Mapping');
+            $('#modal-title').html('<i class="fa fa-plus"></i> Tambah Mapping');
             $('#action').val('add');
             $('#mapping_id').val('');
             $('#form-mapping')[0].reset();
-            $('.chosen-select').trigger('chosen:updated');
-            $('#workorder-preview').hide();
+            $('#kode_keluhan').val('');
+            $('#kode_keluhan_display').val('');
+            $('#kode_workorder').val('');
+            $('#kode_workorder_display').val('');
+            $('#keluhan-preview').hide().html('');
+            $('#workorder-preview').hide().html('');
+            $('#prioritas').val('sedang');
             $('#modal-mapping').modal('show');
         }
 
         function showEditModal(id) {
-            $('#modal-title').text('Edit Mapping');
+            $('#modal-title').html('<i class="fa fa-edit"></i> Edit Mapping');
             $('#action').val('edit');
             $('#mapping_id').val(id);
             
@@ -1087,10 +1170,14 @@ if(empty($_SESSION['_iduser'])){
                     if(response.success) {
                         var data = response.data;
                         $('#kode_keluhan').val(data.kode_keluhan);
+                        $('#kode_keluhan_display').val(data.kode_keluhan + ' - ' + (data.nama_keluhan || ''));
+                        $('#keluhan-preview').html('<i class="fa fa-info-circle"></i> ' + (data.nama_keluhan || '')).show();
+                        
                         $('#kode_workorder').val(data.kode_workorder);
+                        $('#kode_workorder_display').val(data.kode_workorder + ' - ' + (data.nama_wo || ''));
+                        $('#workorder-preview').html('<i class="fa fa-cogs"></i> ' + (data.nama_wo || '')).show();
+                        
                         $('#prioritas').val(data.prioritas);
-                        $('.chosen-select').trigger('chosen:updated');
-                        updateWorkorderPreview();
                         $('#modal-mapping').modal('show');
                     } else {
                         alert('Error: ' + response.message);
@@ -1121,20 +1208,18 @@ if(empty($_SESSION['_iduser'])){
                 $('#form-bulk-sync').submit();
             }
         }
-
-        function updateWorkorderPreview() {
-            var kodeWo = $('#kode_workorder').val();
-            if(kodeWo && workorderData[kodeWo]) {
-                var wo = workorderData[kodeWo];
-                $('#preview-nama-wo').text(wo.nama);
-                $('#preview-harga').text('Rp ' + number_format(wo.harga, 0, ',', '.'));
-                $('#preview-waktu').text(wo.waktu + ' menit');
-                $('#workorder-preview').show();
-            } else {
-                $('#workorder-preview').hide();
-            }
+        
+        // Open search modals
+        function openModalKeluhan() {
+            $('#modal-cari-keluhan').modal('show');
+            $('#qKeluhan').val('').focus();
         }
-
+        
+        function openModalWorkorder() {
+            $('#modal-cari-workorder').modal('show');
+            $('#qWorkorder').val('').focus();
+        }
+        
         function number_format(number, decimals, dec_point, thousands_sep) {
             number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
             var n = !isFinite(+number) ? 0 : +number,
@@ -1157,9 +1242,6 @@ if(empty($_SESSION['_iduser'])){
             return s.join(dec);
         }
 
-        // Event handlers
-        $('#kode_workorder').on('change', updateWorkorderPreview);
-
         // Form validation
         $('#form-mapping').on('submit', function(e) {
             var kodeKeluhan = $('#kode_keluhan').val();
@@ -1167,7 +1249,11 @@ if(empty($_SESSION['_iduser'])){
             
             if(!kodeKeluhan || !kodeWorkorder) {
                 e.preventDefault();
-                alert('Keluhan dan WorkOrder harus dipilih!');
+                if(!kodeKeluhan) {
+                    alert('Keluhan wajib dipilih.');
+                } else if(!kodeWorkorder) {
+                    alert('WorkOrder wajib dipilih.');
+                }
                 return false;
             }
             
@@ -1175,71 +1261,57 @@ if(empty($_SESSION['_iduser'])){
         });
 
         jQuery(function($) {
-            if(!ace.vars['touch']) {
-                // Simple Chosen for Keluhan dropdown
-                $('.chosen-select-keluhan').chosen({
-                    allow_single_deselect: true,
-                    search_contains: true,
-                    placeholder_text_single: "Ketik untuk mencari keluhan...",
-                    no_results_text: "Tidak ditemukan keluhan:",
-                    width: "100%"
-                }); 
+            // Handle Keluhan selection
+            $('#tblHasilKeluhan').on('click', '.btnPilihKeluhan', function() {
+                var kode = $(this).data('kode');
+                var nama = $(this).data('nama');
+                var kategori = $(this).data('kategori');
+                var prioritas = $(this).data('prioritas');
                 
-                // Simple Chosen for WorkOrder dropdown
-                $('.chosen-select-workorder').chosen({
-                    allow_single_deselect: true,
-                    search_contains: true,
-                    placeholder_text_single: "Ketik untuk mencari workorder...",
-                    no_results_text: "Tidak ditemukan workorder:",
-                    width: "100%"
-                });
-                
-                // Regular chosen for other dropdowns
-                $('.chosen-select').chosen({
-                    allow_single_deselect: true,
-                    search_contains: true,
-                    width: "100%"
-                }); 
-                
-                // Window resize handler
-                $(window)
-                .off('resize.chosen')
-                .on('resize.chosen', function() {
-                    $('.chosen-select, .chosen-select-keluhan, .chosen-select-workorder').each(function() {
-                         var $this = $(this);
-                         $this.next().css({'width': $this.parent().width()});
-                    })
-                }).trigger('resize.chosen');
-            }
-            
-            // Simple keluhan selection
-            $('#kode_keluhan').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                var kategori = selectedOption.data('kategori');
-                var prioritas = selectedOption.data('prioritas');
-                var waktu = selectedOption.data('waktu');
-                
-                if (kategori) {
-                    showKeluhanInfo(kategori, prioritas, waktu);
-                    suggestWorkorderBasedOnKeluhan(kategori, prioritas);
-                }
+                $('#kode_keluhan').val(kode);
+                $('#kode_keluhan_display').val(kode + ' - ' + nama);
+                $('#keluhan-preview').html('<i class="fa fa-info-circle"></i> <strong>' + nama + '</strong> | Kategori: ' + kategori + ' | Prioritas: ' + prioritas.toUpperCase()).show();
+                $('#modal-cari-keluhan').modal('hide');
             });
             
-            // Simple workorder selection
-            $('#kode_workorder').on('change', function() {
-                updateWorkorderPreview();
-                var selectedOption = $(this).find('option:selected');
-                var harga = selectedOption.data('harga');
-                var waktu = selectedOption.data('waktu');
-                var keterangan = selectedOption.data('keterangan');
+            // Handle WorkOrder selection
+            $('#tblHasilWorkorder').on('click', '.btnPilihWorkorder', function() {
+                var kode = $(this).data('kode');
+                var nama = $(this).data('nama');
+                var harga = $(this).data('harga');
+                var waktu = $(this).data('waktu');
                 
-                if (harga) {
-                    showWorkorderInfo(harga, waktu, keterangan);
-                }
+                $('#kode_workorder').val(kode);
+                $('#kode_workorder_display').val(kode + ' - ' + nama);
+                $('#workorder-preview').html('<i class="fa fa-cogs"></i> <strong>' + nama + '</strong> | Rp ' + number_format(harga, 0, ',', '.') + ' | ' + waktu + ' menit').show();
+                $('#modal-cari-workorder').modal('hide');
+            });
+            
+            // Simple client-side filter for Keluhan table
+            $('#btnCariKeluhan').on('click', function() {
+                filterTable('qKeluhan', 'tblHasilKeluhan');
+            });
+            $('#qKeluhan').on('keypress', function(e) {
+                if(e.which == 13) { filterTable('qKeluhan', 'tblHasilKeluhan'); return false; }
+            });
+            
+            // Simple client-side filter for WorkOrder table
+            $('#btnCariWorkorder').on('click', function() {
+                filterTable('qWorkorder', 'tblHasilWorkorder');
+            });
+            $('#qWorkorder').on('keypress', function(e) {
+                if(e.which == 13) { filterTable('qWorkorder', 'tblHasilWorkorder'); return false; }
             });
         });
         
-        // Show keluhan information
+        function filterTable(inputId, tableId) {
+            var q = $('#' + inputId).val().toLowerCase();
+            $('#' + tableId + ' tbody tr').each(function() {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(q) > -1);
+            });
+        }
+        
         function showKeluhanInfo(kategori, prioritas, waktu) {
             var info = '<div class="alert alert-info alert-sm">';
             info += '<i class="fa fa-info-circle"></i> ';
@@ -1317,90 +1389,6 @@ if(empty($_SESSION['_iduser'])){
             }
         }
         
-        // Enhanced search functionality with type-to-find indicators
-        function initEnhancedSearch() {
-            // Custom search for keluhan with enhanced placeholder
-            $('#kode_keluhan_chosen .chosen-search input').attr({
-                'placeholder': '🔍 Ketik kode, nama, kategori, atau prioritas...',
-                'autocomplete': 'off',
-                'spellcheck': 'false'
-            });
-            
-            // Custom search for workorder with enhanced placeholder
-            $('#kode_workorder_chosen .chosen-search input').attr({
-                'placeholder': '🔧 Ketik kode, nama, harga, atau waktu...',
-                'autocomplete': 'off',
-                'spellcheck': 'false'
-            });
-            
-            // Add search tips
-            addSearchTips();
-        }
-        
-        // Add type-to-find indicators
-        function addTypeToFindIndicators() {
-            $('.chosen-container').each(function() {
-                if (!$(this).find('.type-indicator').length) {
-                    $(this).append('<div class="type-indicator">Type to find</div>');
-                }
-            });
-        }
-        
-        // Show type indicator
-        function showTypeIndicator(container, text) {
-            container.find('.type-indicator').text(text).addClass('show');
-        }
-        
-        // Hide type indicator
-        function hideTypeIndicator(container) {
-            container.find('.type-indicator').removeClass('show');
-        }
-        
-        // Highlight search results
-        function highlightSearchResults(container, searchTerm) {
-            container.find('.chosen-results li').each(function() {
-                var text = $(this).text();
-                var highlightedText = text.replace(new RegExp('(' + searchTerm + ')', 'gi'), '<span class="search-highlight">$1</span>');
-                $(this).html(highlightedText);
-            });
-        }
-        
-        // Highlight suggested options
-        function highlightSuggestedOptions(suggestedWOs) {
-            $('#kode_workorder_chosen .chosen-results li').removeClass('suggested-option');
-            suggestedWOs.forEach(function(woCode) {
-                $('#kode_workorder_chosen .chosen-results li[data-option-array-index]').each(function() {
-                    if ($(this).text().indexOf(woCode) === 0) {
-                        $(this).addClass('suggested-option').prepend('⭐ ');
-                    }
-                });
-            });
-        }
-        
-        // Update mapping priority based on keluhan priority
-        function updateMappingPriority(keluhanPrioritas) {
-            var mappingPrioritas = $('#prioritas');
-            var suggestedPriority = keluhanPrioritas;
-            
-            // Auto-adjust mapping priority to match keluhan priority
-            if (mappingPrioritas.val() === 'sedang' || mappingPrioritas.val() === '') {
-                mappingPrioritas.val(suggestedPriority);
-                
-                // Show priority adjustment notification
-                var notification = '<div class="alert alert-info alert-sm" id="priority-notification">';
-                notification += '<i class="fa fa-level-up"></i> ';
-                notification += '<strong>Auto-Adjust:</strong> Prioritas mapping disesuaikan ke <strong>' + suggestedPriority.toUpperCase() + '</strong> mengikuti prioritas keluhan.';
-                notification += '</div>';
-                
-                $('#priority-notification').remove();
-                mappingPrioritas.closest('.form-group').append(notification);
-                
-                setTimeout(function() {
-                    $('#priority-notification').fadeOut();
-                }, 4000);
-            }
-        }
-        
         // Validate mapping combination
         function validateMappingCombination() {
             var keluhanCode = $('#kode_keluhan').val();
@@ -1418,7 +1406,7 @@ if(empty($_SESSION['_iduser'])){
                     dataType: 'json',
                     success: function(response) {
                         if (response.exists) {
-                            showValidationWarning('⚠️ Mapping ini sudah ada dengan prioritas: ' + response.prioritas.toUpperCase());
+                            showValidationWarning('Mapping ini sudah ada dengan prioritas: ' + response.prioritas.toUpperCase());
                         } else {
                             hideValidationWarning();
                         }
@@ -1433,7 +1421,7 @@ if(empty($_SESSION['_iduser'])){
             var warning = '<div class="alert alert-warning alert-sm" id="validation-warning">';
             warning += '<i class="fa fa-exclamation-triangle"></i> ' + message;
             warning += '</div>';
-            $('.modal-body').prepend(warning);
+            $('#modal-mapping .modal-body').prepend(warning);
         }
         
         // Hide validation warning
@@ -1456,29 +1444,6 @@ if(empty($_SESSION['_iduser'])){
             }
         }
         
-        // Initialize enhanced search after modal is shown
-        $('#modal-mapping').on('shown.bs.modal', function() {
-            setTimeout(function() {
-                initEnhancedSearch();
-                addTypeToFindIndicators();
-            }, 150);
-        });
-        
-        // Add CSS for suggested options
-        $('<style>').text(`
-            .chosen-results li.suggested-option {
-                background-color: #fff3cd !important;
-                border-left: 3px solid #ffc107;
-                font-weight: 500;
-            }
-            .chosen-results li.suggested-option.highlighted {
-                background-color: #337ab7 !important;
-                color: white;
-            }
-            .search-tips {
-                margin: 15px 0;
-            }
-        `).appendTo('head');
     </script>
 </body>
 </html>

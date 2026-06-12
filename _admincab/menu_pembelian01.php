@@ -80,7 +80,35 @@
 											Work Order/Paket
 										</a>
 										<b class="arrow"></b>
-									</li>  
+									</li>
+									<li class="">
+										<a href="master-keluhan-crud.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Master Keluhan
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="master-workorder-mapping.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Keluhan - WO Mapping
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="master-fastmoves.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Fast Moves Mapping
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="master-temuan.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Master Temuan
+										</a>
+										<b class="arrow"></b>
+									</li>
                                     <li class="">
 										<a href="hjual_jasa.php">
 											<i class="menu-icon fa fa-caret-right"></i>
@@ -144,7 +172,7 @@
 										<b class="arrow"></b>
 									</li>
 								</ul>
-							</li>							                           
+							</li>
 							<li class="">
 								<a href="#" class="dropdown-toggle">
 									<i class="menu-icon fa fa-caret-right"></i>
@@ -166,16 +194,30 @@
 											Level Mekanik
 										</a>
 										<b class="arrow"></b>
-									</li>                                    
+									</li>
+									<li class="">
+										<a href="master_kepala_mekanik.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Master Kepala Mekanik
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="master-tarif-jemput.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Tarif Jemput Antar
+										</a>
+										<b class="arrow"></b>
+									</li>
 								</ul>
-							</li>	
+							</li>
 							<li class="">
 								<a href="sales.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Sales
 								</a>
 								<b class="arrow"></b>
-							</li>	
+							</li>
 							<li class="">
 								<a href="#" class="dropdown-toggle">
 									<i class="menu-icon fa fa-caret-right"></i>
@@ -197,30 +239,30 @@
 											Pabrik Motor
 										</a>
 										<b class="arrow"></b>
-									</li>                                    
+									</li>
 									<li class="">
 										<a href="motor_kategori.php">
 											<i class="menu-icon fa fa-caret-right"></i>
 											Kategori Motor
 										</a>
 										<b class="arrow"></b>
-									</li>           
+									</li>
 									<li class="">
 										<a href="kendaraan.php">
 											<i class="menu-icon fa fa-caret-right"></i>
 											Kendaraan
 										</a>
 										<b class="arrow"></b>
-									</li>            
+									</li>
 									<li class="">
 										<a href="motor_warna.php">
 											<i class="menu-icon fa fa-caret-right"></i>
 											Warna
 										</a>
 										<b class="arrow"></b>
-									</li>                                                                                                                         
+									</li>
 								</ul>
-							</li>						                            
+							</li>
 							<li class="">
 								<a href="#" class="dropdown-toggle">
 									<i class="menu-icon fa fa-caret-right"></i>
@@ -235,7 +277,7 @@
 											Propinsi
 										</a>
 										<b class="arrow"></b>
-									</li>            
+									</li>
 									<li class="">
 										<a href="kab.php">
 											<i class="menu-icon fa fa-caret-right"></i>
@@ -249,95 +291,47 @@
 											Kecamatan
 										</a>
 										<b class="arrow"></b>
-									</li>           
+									</li>
 									<li class="">
 										<a href="desa.php">
 											<i class="menu-icon fa fa-caret-right"></i>
 											Desa/Kelurahan
 										</a>
 										<b class="arrow"></b>
-									</li>                                                                        
+									</li>
 								</ul>
-							</li>	
+							</li>
 							<li class="">
 								<a href="akun_kas.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Akun Sumber Kas
 								</a>
 								<b class="arrow"></b>
-							</li>			
+							</li>
 							<li class="">
 								<a href="akun_biaya.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Akun Biaya
 								</a>
 								<b class="arrow"></b>
-							</li>			
+							</li>
 							<li class="">
 								<a href="user.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Data User
 								</a>
 								<b class="arrow"></b>
-							</li>	
+							</li>
 							<li class="">
 								<a href="keping.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Nominal Rupiah
 								</a>
 								<b class="arrow"></b>
-							</li>				                                                        			                                                        
+							</li>
 						</ul>
 					</li>
 					<li class="">
-						<a href="#" class="dropdown-toggle">
-							<i class="menu-icon fa fa-tag"></i>
-							<span class="menu-text"> Kasir </span>
-							<b class="arrow fa fa-angle-down"></b>
-						</a>
-						<b class="arrow"></b>
-						<ul class="submenu">
-							<li class="">
-								<a href="kas_awal.php">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Kas Awal
-								</a>
-								<b class="arrow"></b>
-							</li>
-							<li class="">
-								<a href="#" class="dropdown-toggle">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Transaksi
-									<b class="arrow fa fa-angle-down"></b>
-								</a>
-								<b class="arrow"></b>
-								<ul class="submenu">
-									<li class="">
-										<a href="kas_masuk.php">
-											<i class="menu-icon fa fa-caret-right"></i>
-											Kas Masuk
-										</a>
-										<b class="arrow"></b>
-									</li>
-									<li class="">
-										<a href="kas_keluar.php">
-											<i class="menu-icon fa fa-caret-right"></i>
-											Pengeluaran Kas
-										</a>
-										<b class="arrow"></b>
-									</li>
-								</ul>
-							</li>
-							<li class="">
-								<a href="kas_akhir.php">
-									<i class="menu-icon fa fa-caret-right"></i>
-									Kas Akhir
-								</a>
-								<b class="arrow"></b>
-							</li>                            							
-						</ul>
-					</li>	
-					<li class="active open">
 						<a href="#" class="dropdown-toggle">
 							<i class="menu-icon fa fa-list"></i>
 							<span class="menu-text"> Pembelian </span>
@@ -345,10 +339,69 @@
 						</a>
 						<b class="arrow"></b>
 						<ul class="submenu">
-							<li class="active">
-								<a href="pesanan_pembelian.php">
+							<li class="">
+								<a href="procurement_dashboard.php">
+									<i class="menu-icon fa fa-dashboard"></i>
+									Dashboard MIN/MAX
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="">
+								<a href="rencana_order.php">
+									<i class="menu-icon fa fa-calendar-check-o"></i>
+									Rencana Order
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="">
+								<a href="pr_add.php">
+									<i class="menu-icon fa fa-caret-right"></i>
+									Purchase Request (PR)
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="">
+								<a href="#" class="dropdown-toggle">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Pesanan Pembelian
+									<b class="arrow fa fa-angle-down"></b>
+								</a>
+								<b class="arrow"></b>
+								<ul class="submenu">
+									<li class="">
+										<a href="pesanan_pembelian.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Daftar PO
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="pesanan_pembelian_add.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Input Manual
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="pesanan_pembelian_upload.php">
+											<i class="menu-icon fa fa-upload"></i>
+											Upload Excel
+										</a>
+										<b class="arrow"></b>
+									</li>
+								</ul>
+							</li>
+							<li class="">
+								<a href="do_from_po.php">
+									<i class="menu-icon fa fa-caret-right"></i>
+									Delivery Order (DO)
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="">
+								<a href="do_list.php">
+									<i class="menu-icon fa fa-caret-right"></i>
+									Daftar DO
 								</a>
 								<b class="arrow"></b>
 							</li>
@@ -365,7 +418,7 @@
 									Pembayaran Hutang
 								</a>
 								<b class="arrow"></b>
-							</li>                            							
+							</li>
 						</ul>
 					</li>
 					<li class="">
@@ -396,7 +449,7 @@
 									Pembayaran Piutang
 								</a>
 								<b class="arrow"></b>
-							</li>                            							
+							</li>
 						</ul>
 					</li>
 					<li class="">
@@ -427,10 +480,10 @@
 									Penerimaan
 								</a>
 								<b class="arrow"></b>
-							</li>                            							
-							                            
+							</li>
+
 						</ul>
-					</li>                    
+					</li>
 					<li class="">
 						<a href="#" class="dropdown-toggle">
 							<i class="menu-icon fa fa-list"></i>
@@ -451,6 +504,13 @@
 								<b class="arrow"></b>
 								<ul class="submenu">
 									<li class="">
+										<a href="input_kepala_mekanik_harian.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Input Kepala Mekanik Harian
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
 										<a href="servis-carinopol.php">
 											<i class="menu-icon fa fa-caret-right"></i>
 											Input Servis
@@ -463,7 +523,7 @@
 											Lihat Data
 										</a>
 										<b class="arrow"></b>
-									</li>                
+									</li>
 								</ul>
 							</li>
 							<li class="">
@@ -487,7 +547,31 @@
 											Lihat Data
 										</a>
 										<b class="arrow"></b>
-									</li>                
+									</li>
+								</ul>
+							</li>
+							<li class="">
+								<a href="#" class="dropdown-toggle">
+									<i class="menu-icon fa fa-caret-right"></i>
+									Servis Jemput Antar
+									<b class="arrow fa fa-angle-down"></b>
+								</a>
+								<b class="arrow"></b>
+								<ul class="submenu">
+									<li class="">
+										<a href="servis-reguler-jemput.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Jadwal Penjemputan
+										</a>
+										<b class="arrow"></b>
+									</li>
+									<li class="">
+										<a href="report-tracking-keluhan.php">
+											<i class="menu-icon fa fa-caret-right"></i>
+											Tracking Keluhan
+										</a>
+										<b class="arrow"></b>
+									</li>
 								</ul>
 							</li>
 						</ul>
@@ -525,7 +609,7 @@
 											Item Keluar
 										</a>
 										<b class="arrow"></b>
-									</li>                
+									</li>
 								</ul>
 							</li>
 							<li class="">
@@ -544,7 +628,7 @@
 							</li>
 						</ul>
 					</li>
-                    
+
 					<li class="">
 						<a href="#" class="dropdown-toggle">
 							<i class="menu-icon fa fa-print"></i>
@@ -573,7 +657,7 @@
 									Pembayaran Hutang
 								</a>
 								<b class="arrow"></b>
-							</li>                            
+							</li>
 							<li class="">
 								<a href="lap_pesanan_penjualan.php">
 									<i class="menu-icon fa fa-caret-right"></i>
@@ -594,21 +678,21 @@
 									Pembayaran Piutang
 								</a>
 								<b class="arrow"></b>
-							</li>                            
+							</li>
 							<li class="">
 								<a href="lap_servis.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Service
 								</a>
 								<b class="arrow"></b>
-							</li>                  
+							</li>
 							<li class="">
 								<a href="lap_kas_masuk.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Kas Masuk
 								</a>
 								<b class="arrow"></b>
-							</li>                                      
+							</li>
 							<li class="">
 								<a href="lap_kas_keluar.php">
 									<i class="menu-icon fa fa-caret-right"></i>
@@ -622,15 +706,15 @@
 									Stok Masuk (Manual)
 								</a>
 								<b class="arrow"></b>
-							</li>                                                                  
+							</li>
                             <li class="">
 								<a href="lap_stok_keluar.php">
 									<i class="menu-icon fa fa-caret-right"></i>
 									Stok Keluar (Manual)
 								</a>
 								<b class="arrow"></b>
-							</li>                                                                  
+							</li>
 						</ul>
-					</li>					                     
-                    					
+					</li>
+
 				</ul><!-- /.nav-list -->

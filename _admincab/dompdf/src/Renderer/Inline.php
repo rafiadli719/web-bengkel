@@ -55,6 +55,10 @@ class Inline extends AbstractRenderer
 
         foreach ($frame->get_children() as $child) {
             list($child_x, $child_y, $child_w, $child_h) = $child->get_padding_box();
+            $child_x = (float)$child_x;
+            $child_y = (float)$child_y;
+            $child_w = (float)$child_w;
+            $child_h = (float)$child_h;
 
             if (!is_null($w) && $child_x < $x + $w) {
                 //This branch seems to be supposed to being called on the first part
@@ -121,7 +125,7 @@ class Inline extends AbstractRenderer
                 $w += (float)$child_w;
             }
 
-            $h = max($h, $child_h);
+            $h = max((float)$h, (float)$child_h);
 
             if ($DEBUGLAYOUTINLINE) {
                 $this->_debug_layout($child->get_border_box(), "blue");

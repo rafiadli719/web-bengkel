@@ -41,8 +41,8 @@
                                                                 <label>&nbsp;</label>
                                                                 <div class="row">
                                                                     <div class="col-xs-8 col-sm-12">
-                                                                        <button type="submit" 
-                                                                        class="btn btn-sm btn-primary" id="btnaddsrv" name="btnaddsrv">+</button>
+                                                                        <button type="button" 
+                                                                        class="btn btn-sm btn-primary" id="btnaddsrv" name="btnaddsrv" onclick="addItemJasa()">+</button>
                                                                     </div>
                                                                 </div>
                                                             </div>                                                            

@@ -349,26 +349,33 @@
                         <div class="space space-8"></div> 
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
-								<div class="table-header">
-                                    <?php echo $hasil_cari; ?>
-								</div>                            
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <td class="center" width="5%"></td>
-                                            <td width="10%">Kode Item</td>
-                                            <td width="8%">Kode Barcode</td>
-                                            <td width="19%">Nama Item</td>
-                                            <td width="9%">Jenis</td>
-                                            <td align="right" width="8%">Stok Akhir</td>
-                                            <td align="right" width="8%">Stok Min.</td>
-                                            <td width="8%">Satuan</td>
-                                            <td width="9%">Rak</td>
-                                            <td align="right" width="8%">Harga Pokok</td> 
-                                            <td align="right" width="8%">Harga Jual</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                    <div class="widget-header widget-header-green widget-header-flat">
+                                        <h4 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-list"></i>
+                                            <?php echo $hasil_cari; ?>
+                                        </h4>
+                                    </div>
+                                    
+                                    <div class="widget-body">
+                                        <div class="widget-main no-padding">
+                                            <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover" style="table-layout: fixed; width: 100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center" style="width: 40px;">Aksi</th>
+                                                        <th style="width: 100px;">Kode Item</th>
+                                                        <th style="width: 80px;">Barcode</th>
+                                                        <th>Nama Item</th>
+                                                        <th style="width: 130px;">Jenis</th>
+                                                        <th class="center" style="width: 45px;">Stok</th>
+                                                        <th class="center" style="width: 40px;">Min.</th>
+                                                        <th style="width: 50px;">Satuan</th>
+                                                        <th style="width: 45px;">Rak</th> 
+                                                        <th class="center" style="width: 80px;">Harga Pokok</th>
+                                                        <th class="center" style="width: 80px;">Harga Jual</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
                                     <?php 
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
@@ -382,53 +389,86 @@
                                             $tm_cari=mysqli_fetch_array($cari_kd);
                                             $saldo_akhir=$tm_cari['saldo'];	
 
-                                            if($saldo_akhir=='0') {
-                                                $bgcolor="red";
-                                                $fontcolor="white";
+                                            // Ensure saldo_akhir is numeric
+                                            $saldo_akhir = $saldo_akhir ?? 0;
+                                            $saldo_akhir = is_numeric($saldo_akhir) ? $saldo_akhir : 0;
+
+                                            $blocked_reason = "";
+                                            if($saldo_akhir <= 0) {
+                                                // Stok habis - BLOCK
+                                                $row_class="danger";
+                                                $stock_badge="danger";
                                                 $disabled="disabled";
+                                                $blocked_reason = "STOK KOSONG";
+                                            } elseif($saldo_akhir <= $stokmin) {
+                                                 // Stok menipis - WARNING
+                                                $row_class="warning";
+                                                $stock_badge="warning";
+                                                $disabled="";
+                                                $blocked_reason = "";
                                             } else {
-                                                if($saldo_akhir<=$stokmin) {
-                                                    $bgcolor="yellow";
-                                                    $fontcolor="black";
-                                                    $disabled="";
-                                                } else {
-                                                    $bgcolor="white";
-                                                    $fontcolor="black";
-                                                    $disabled="";
-                                                }
+                                                // Normal
+                                                $row_class="";
+                                                $stock_badge="success";
+                                                $disabled="";
+                                                $blocked_reason = "";
                                             }
                                     ?>
-                                        <tr>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" class="center">
-                                                <div class="btn-group">
-                                                    <button data-toggle="dropdown" class="btn <?php echo $disabled; ?> dropdown-toggle btn-minier btn-yellow">
-                                                        Aksi
-                                                        <span class="ace-icon fa fa-caret-down icon-on-right"></span>
+                                        <tr class="<?php echo $row_class; ?>">
+                                            <td class="center">
+                                                <?php if($disabled == "disabled") { ?>
+                                                    <button class="btn btn-minier btn-danger" disabled title="Stok Kosong">
+                                                        <i class="ace-icon fa fa-ban"></i>
                                                     </button>
-                                                    <ul class="dropdown-menu dropdown-default">
-                                                        <li>
-                                                            <a href="servis-garansi.php?snoserv=<?php echo $no_service; ?>&kd=<?php echo $tampil['noitem']; ?>&kdjasa=<?php echo $kdjasa; ?>">Pilih</a>
-                                                        </li>
-                                                    </ul>
-                                                </div><!-- /.btn-group -->                                                                                                    
+                                                <?php } else { ?>
+                                                    <a href="servis-garansi.php?snoserv=<?php echo $no_service; ?>&kd=<?php echo $tampil['noitem']; ?>&kdjasa=<?php echo $kdjasa; ?>" 
+                                                       class="btn btn-minier btn-success" title="Pilih Item">
+                                                        <i class="ace-icon fa fa-check"></i>
+                                                    </a>
+                                                <?php } ?>                                                                                                   
                                             </td>														
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['noitem']?></font></td>														
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['kodebarcode']?></font></td>	
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['namaitem']?></font></td>                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['namajenis']?></font></td>																											                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo $saldo_akhir; ?></font></td>                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['stokmin']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['satuan']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['rakbarang']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo number_format($tampil['hargapokok'],0)?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo number_format($tampil['hargajual'],0)?></font></td>                                            
+
+                                            <td>
+                                                <strong><?php echo $tampil['noitem']; ?></strong>
+                                            </td>														
+
+                                            <td>
+                                                <span class="text-muted"><?php echo $tampil['kodebarcode']; ?></span>
+                                            </td>	
+
+                                            <td>
+                                                <span class="text-primary"><?php echo $tampil['namaitem']; ?></span>
+                                            </td>                                            
+                                            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <span class="label label-sm label-info" title="<?php echo $tampil['namajenis']; ?>"><?php echo $tampil['namajenis']; ?></span>
+                                            </td>																											                                            
+                                            <td class="center">
+                                                <span class="badge badge-<?php echo $stock_badge; ?>"><?php echo $saldo_akhir; ?></span>
+                                            </td>                                            
+                                            <td class="center">
+                                                <span class="text-muted"><?php echo $tampil['stokmin']; ?></span>
+                                            </td>
+                                            <td><?php echo $tampil['satuan']; ?></td>
+                                            <td>
+                                                <span class="label label-sm label-grey"><?php echo $tampil['rakbarang']; ?></span>
+                                            </td>
+                                            <td class="center">
+                                                <span class="text-danger">Rp <?php echo number_format($tampil['hargapokok'],0); ?></span>
+                                            </td>
+                                            <td class="center">
+                                                <strong class="text-success">Rp <?php echo number_format($tampil['hargajual'],0); ?></strong>
+                                            </td>                                            
                                         </tr>
 
                                     <?php
                                         }
                                     ?>
                                     </tbody>                                    
-                                </table>
+                                            </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                             

@@ -291,21 +291,27 @@ if (empty($_SESSION['_iduser'])) {
                             <div class="col-xs-12">
                                 <form class="form-horizontal" action="save_barang_kategori.php" method="post">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label no-padding-right" for="txtkd"> Kode </label>
+                                        <label class="col-sm-3 control-label no-padding-right" for="txtkd"><strong>KODE KATEGORI</strong></label>
                                         <div class="col-sm-9">
-                                            <input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-6" required autocomplete="off" />
+                                            <input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-8" placeholder="Masukkan kode kategori" required autocomplete="off" />
+                                            <div class="help-block">
+                                                <small class="text-muted">Hanya boleh 1 kata, tidak boleh ada spasi</small>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label no-padding-right" for="txtnama"> Kategori Barang </label>
+                                        <label class="col-sm-3 control-label no-padding-right" for="txtnama"><strong>NAMA KATEGORI</strong></label>
                                         <div class="col-sm-9">
-                                            <input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-6" required autocomplete="off" />
+                                            <input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-8" placeholder="Masukkan nama kategori" required autocomplete="off" />
+                                            <div class="help-block">
+                                                <small class="text-muted">Nama lengkap kategori</small>
+                                            </div>
                                         </div>
                                     </div>
                                     
                                     <!-- Info sinkronisasi -->
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-9">
+                                        <div class="col-sm-offset-3 col-sm-9">
                                             <div class="alert alert-info">
                                                 <i class="fa fa-info-circle"></i> 
                                                 <strong>Informasi:</strong> 
@@ -318,8 +324,51 @@ if (empty($_SESSION['_iduser'])) {
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="clearfix form-actions">
+								</div>
+								</div>
+								</div>
+								</div>
+								</div>
+								</div>
+								</div>
+								
+																<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" for="txtketerangan"> 
+										<strong>KETERANGAN</strong> 
+									</label>
+									<div class="col-sm-9">
+										<textarea id="txtketerangan" name="txtketerangan" class="col-xs-10 col-sm-8" 
+												  rows="3" placeholder="Keterangan dari kategori item" required></textarea>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-3 control-label no-padding-right" for="margin_sesuai_jenis"> 
+										<strong>MARGIN SESUAI JENIS</strong> 
+									</label>
+									<div class="col-sm-9">
+										<select id="margin_sesuai_jenis" name="margin_sesuai_jenis" class="col-xs-10 col-sm-4" required>
+											<option value="">-- Pilih --</option>
+											<option value="TIDAK">TIDAK</option>
+											<option value="YA">YA</option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="form-group" id="margin_kategori_group" style="display: none;">
+									<label class="col-sm-3 control-label no-padding-right" for="txtmargin"> 
+										<strong>MARGIN KATEGORI</strong> 
+									</label>
+									<div class="col-sm-9">
+										<div class="input-group col-xs-10 col-sm-4">
+											<input type="number" id="txtmargin" name="txtmargin" class="form-control" 
+												   min="0" max="100" step="0.01" placeholder="0" />
+											<span class="input-group-addon">%</span>
+										</div>
+									</div>
+								</div>
+								
+								<div class="clearfix form-actions">
                                         <div class="col-md-offset-2 col-md-9">
                                             <button class="btn btn-info" type="submit">
                                                 <i class="ace-icon fa fa-check bigger-110"></i>
@@ -492,93 +541,37 @@ if (empty($_SESSION['_iduser'])) {
 
         <!-- inline scripts related to this page -->
         <script type="text/javascript">
-            jQuery(function($) {
-                // Initialize chosen select
-                if(!ace.vars['touch']) {
-                    $('.chosen-select').chosen({allow_single_deselect:true}); 
-                    $(window)
-                    .off('resize.chosen')
-                    .on('resize.chosen', function() {
-                        $('.chosen-select').each(function() {
-                             var $this = $(this);
-                             $this.next().css({'width': $this.parent().width()});
-                        })
-                    }).trigger('resize.chosen');
-                    $(document).on('settings.ace.chosen', function(e, event_name, event_val) {
-                        if(event_name != 'sidebar_collapsed') return;
-                        $('.chosen-select').each(function() {
-                             var $this = $(this);
-                             $this.next().css({'width': $this.parent().width()});
-                        })
-                    });
-                }
+            
+    <script type="text/javascript">
+jQuery(function($) {
+    // Handle margin sesuai jenis
+    $('#margin_sesuai_jenis').on('change', function() {
+        if ($(this).val() === 'TIDAK') {
+            $('#margin_kategori_group').show();
+            $('#txtmargin').prop('required', true);
+        } else {
+            $('#margin_kategori_group').hide();
+            $('#txtmargin').prop('required', false);
+            $('#txtmargin').val('');
+        }
+    });
 
-                // Initialize tooltips and popovers
-                $('[data-rel=tooltip]').tooltip({container:'body'});
-                $('[data-rel=popover]').popover({container:'body'});
+    // Auto-uppercase untuk keterangan
+    $('#txtketerangan').on('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+    
+    // Auto-uppercase dan remove spasi untuk kode
+    $('#txtkd').on('input', function() {
+        this.value = this.value.toUpperCase().replace(/\s/g, '');
+    });
+    
+    // Auto-uppercase untuk nama kategori
+    $('#txtnama').on('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+});
+</script>
 
-                // Initialize autosize for textareas
-                autosize($('textarea[class*=autosize]'));
-                
-                // Input masks
-                $.mask.definitions['~']='[+-]';
-                $('.input-mask-date').mask('99/99/9999');
-                $('.input-mask-phone').mask('(999) 999-9999');
-
-                // Auto-hide alert after 15 seconds
-                setTimeout(function() {
-                    $('.alert-dismissible').fadeOut('slow');
-                }, 15000);
-
-                // Focus pada field kode kategori
-                $('#txtkd').focus();
-
-                // Form validation
-                $('form').on('submit', function(e) {
-                    var kode = $('#txtkd').val().trim();
-                    var nama = $('#txtnama').val().trim();
-                    
-                    if (kode === '' || nama === '') {
-                        e.preventDefault();
-                        alert('Kode dan Nama Kategori harus diisi!');
-                        return false;
-                    }
-                    
-                    var confirmMessage = 'Apakah Anda yakin ingin menyimpan kategori ini?\n\n' +
-                                       'Kode: ' + kode + '\n' +
-                                       'Nama: ' + nama + '\n\n' +
-                                       'Data akan disimpan ke database lokal';
-                    
-                    <?php if (isset($_SESSION['accurate_status']) && $_SESSION['accurate_status'] == 'connected'): ?>
-                        confirmMessage += ' dan akan dicoba sinkronisasi ke Accurate Online dengan kode sesuai nama kategori.';
-                    <?php else: ?>
-                        confirmMessage += '.\nSinkronisasi ke Accurate tidak tersedia.';
-                    <?php endif; ?>
-                    
-                    return confirm(confirmMessage);
-                });
-
-                // Auto-uppercase untuk kode
-                $('#txtkd').on('input', function() {
-                    this.value = this.value.toUpperCase();
-                });
-
-                // Auto-uppercase untuk nama
-                $('#txtnama').on('input', function() {
-                    this.value = this.value.toUpperCase();
-                });
-            });
-
-            // Function untuk show troubleshooting modal
-            function showTroubleshooting() {
-                $('#troubleshootingModal').modal('show');
-            }
-
-            // Auto-refresh status setiap 5 menit
-            setInterval(function() {
-                // Bisa ditambahkan AJAX call untuk refresh status tanpa reload page
-                console.log('Auto-checking Accurate status...');
-            }, 300000); // 5 menit
-        </script>
-    </body>
+</body>
 </html>

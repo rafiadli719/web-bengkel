@@ -1,0 +1,324 @@
+===========================================
+UPDATE UNTUK master-keluhan-crud.php
+FITUR: APPROVAL KELUHAN DENGAN NOTIFIKASI
+===========================================
+
+INSTRUKSI:
+1. Backup file master-keluhan-crud.php terlebih dahulu
+2. Jalankan SQL_UPDATE_KELUHAN_APPROVAL.sql di database
+3. Ganti bagian kode sesuai instruksi di bawah
+
+===========================================
+BAGIAN 1: UPDATE QUERY TABEL (Line 452-456)
+===========================================
+
+GANTI DARI:
+$query = "SELECT mk.*, wo.nama_wo 
+         FROM tbmaster_keluhan mk
+         LEFT JOIN tbworkorderheader wo ON mk.workorder_default = wo.kode_wo
+         $where_clause
+         ORDER BY mk.tingkat_prioritas DESC, mk.kategori ASC, mk.nama_keluhan ASC
+         LIMIT $limit OFFSET $offset";
+
+GANTI MENJADI:
+$query = "SELECT mk.*, wo.nama_wo 
+         FROM tbmaster_keluhan mk
+         LEFT JOIN tbworkorderheader wo ON mk.workorder_default = wo.kode_wo
+         $where_clause
+         ORDER BY 
+           CASE mk.status_approval 
+             WHEN 'pending' THEN 1 
+             WHEN 'approved' THEN 2 
+             WHEN 'rejected' THEN 3 
+           END,
+           mk.tingkat_prioritas DESC, mk.kategori ASC, mk.nama_keluhan ASC
+         LIMIT $limit OFFSET $offset";
+
+===========================================
+BAGIAN 2: UPDATE ISI TABEL (Line 473-509)
+===========================================
+
+GANTI DARI:
+echo "<tr>";
+echo "<td class='center'>" . $no . "</td>";
+echo "<td>" . htmlspecialchars($row['kode_keluhan']) . "</td>";
+echo "<td>" . htmlspecialchars($row['nama_keluhan']) . "</td>";
+echo "<td>" . htmlspecialchars($row['kategori']) . "</td>";
+echo "<td class='center'>";
+echo "<span class='label $prioritas_class'>" . ucfirst($row['tingkat_prioritas']) . "</span>";
+echo "</td>";
+echo "<td class='center'>" . $row['estimasi_waktu'] . " min</td>";
+echo "<td>" . htmlspecialchars($row['workorder_default'] ?? '-') . "<br>";
+echo "<small class='text-muted'>" . htmlspecialchars($row['nama_wo'] ?? '') . "</small></td>";
+echo "<td class='center'>";
+if($row['status_aktif'] == '1') {
+    echo "<span class='label label-success'>Aktif</span>";
+} else {
+    echo "<span class='label label-default'>Nonaktif</span>";
+}
+echo "</td>";
+echo "<td class='center'>";
+echo "<div class='btn-group'>";
+echo "<button type='button' class='btn btn-xs btn-info' onclick='showEditModal(" . $row['id'] . ")' title='Edit'>";
+echo "<i class='ace-icon fa fa-edit'></i>";
+echo "</button>";
+
+if($row['status_aktif'] == '1') {
+    echo "<button type='button' class='btn btn-xs btn-danger' onclick='deleteKeluhan(" . $row['id'] . ")' title='Nonaktifkan'>";
+    echo "<i class='ace-icon fa fa-trash'></i>";
+    echo "</button>";
+} else {
+    echo "<button type='button' class='btn btn-xs btn-success' onclick='activateKeluhan(" . $row['id'] . ")' title='Aktifkan'>";
+    echo "<i class='ace-icon fa fa-check'></i>";
+    echo "</button>";
+}
+echo "</div>";
+echo "</td>";
+echo "</tr>";
+
+GANTI MENJADI:
+$status_approval = $row['status_approval'] ?? 'approved';
+$requested_by = $row['requested_by'] ?? '-';
+$requested_from = $row['requested_from'] ?? '-';
+
+// Badge color based on status
+$approval_badge_class = '';
+$approval_badge_text = '';
+switch($status_approval) {
+    case 'pending':
+        $approval_badge_class = 'label-warning';
+        $approval_badge_text = 'Pending';
+        break;
+    case 'approved':
+        $approval_badge_class = 'label-success';
+        $approval_badge_text = 'Approved';
+        break;
+    case 'rejected':
+        $approval_badge_class = 'label-danger';
+        $approval_badge_text = 'Rejected';
+        break;
+}
+
+$row_class = ($status_approval == 'pending') ? 'warning' : '';
+
+echo "<tr class='$row_class'>";
+echo "<td class='center'>" . $no . "</td>";
+echo "<td>" . htmlspecialchars($row['kode_keluhan']) . "</td>";
+echo "<td>" . htmlspecialchars($row['nama_keluhan']) . "</td>";
+echo "<td>" . htmlspecialchars($row['kategori']) . "</td>";
+echo "<td class='center'>";
+echo "<span class='label $prioritas_class'>" . ucfirst($row['tingkat_prioritas']) . "</span>";
+echo "</td>";
+echo "<td class='center'>" . $row['estimasi_waktu'] . " min</td>";
+echo "<td><small>" . htmlspecialchars($row['workorder_default'] ?? '-') . "</small></td>";
+
+// Status Approval
+echo "<td class='center'>";
+echo "<span class='label $approval_badge_class'>$approval_badge_text</span>";
+echo "</td>";
+
+// Request By
+echo "<td>";
+echo "<small>$requested_by<br>";
+echo "<span class='text-muted'>($requested_from)</span></small>";
+echo "</td>";
+
+// Status Aktif
+echo "<td class='center'>";
+if($row['status_aktif'] == '1') {
+    echo "<span class='label label-success'>Aktif</span>";
+} else {
+    echo "<span class='label label-default'>Nonaktif</span>";
+}
+echo "</td>";
+
+// Aksi
+echo "<td class='center'>";
+echo "<div class='btn-group'>";
+
+if($status_approval == 'pending') {
+    // Tombol Approve/Reject untuk keluhan pending
+    echo "<button type='button' class='btn btn-xs btn-success' onclick='approveKeluhan(" . $row['id'] . ", \"" . addslashes($row['nama_keluhan']) . "\")' title='Approve'>";
+    echo "<i class='ace-icon fa fa-check'></i>";
+    echo "</button>";
+    echo "<button type='button' class='btn btn-xs btn-danger' onclick='rejectKeluhan(" . $row['id'] . ", \"" . addslashes($row['nama_keluhan']) . "\")' title='Reject'>";
+    echo "<i class='ace-icon fa fa-times'></i>";
+    echo "</button>";
+} else if($status_approval == 'approved') {
+    // Tombol Edit/Delete untuk keluhan approved
+    echo "<button type='button' class='btn btn-xs btn-info' onclick='showEditModal(" . $row['id'] . ")' title='Edit'>";
+    echo "<i class='ace-icon fa fa-edit'></i>";
+    echo "</button>";
+    
+    if($row['status_aktif'] == '1') {
+        echo "<button type='button' class='btn btn-xs btn-danger' onclick='deleteKeluhan(" . $row['id'] . ")' title='Nonaktifkan'>";
+        echo "<i class='ace-icon fa fa-trash'></i>";
+        echo "</button>";
+    } else {
+        echo "<button type='button' class='btn btn-xs btn-success' onclick='activateKeluhan(" . $row['id'] . ")' title='Aktifkan'>";
+        echo "<i class='ace-icon fa fa-check'></i>";
+        echo "</button>";
+    }
+} else if($status_approval == 'rejected') {
+    // Tombol Info untuk keluhan rejected
+    echo "<button type='button' class='btn btn-xs btn-info' onclick='showRejectionReason(\"" . addslashes($row['rejection_reason']) . "\")' title='Lihat Alasan'>";
+    echo "<i class='ace-icon fa fa-info-circle'></i>";
+    echo "</button>";
+}
+
+echo "</div>";
+echo "</td>";
+echo "</tr>";
+
+===========================================
+BAGIAN 3: UPDATE COLSPAN TABEL KOSONG (Line 512-514)
+===========================================
+
+GANTI DARI:
+echo "<td colspan='9' class='center'>Tidak ada data keluhan</td>";
+
+GANTI MENJADI:
+echo "<td colspan='11' class='center'>Tidak ada data keluhan</td>";
+
+===========================================
+BAGIAN 4: TAMBAH MODAL APPROVAL (Sebelum line 665 - sebelum Hidden Forms)
+===========================================
+
+TAMBAHKAN KODE BERIKUT:
+
+    <!-- Modal Approve -->
+    <div id="modalApprove" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="ace-icon fa fa-check-circle text-success"></i> Approve Keluhan</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="approve">
+                        <input type="hidden" name="id" id="approve_id">
+                        <p>Apakah Anda yakin ingin <strong>menyetujui</strong> keluhan berikut?</p>
+                        <div class="alert alert-info">
+                            <strong id="approve_nama_keluhan"></strong>
+                        </div>
+                        <p class="text-muted"><small>Keluhan yang diapprove akan tersedia untuk digunakan di semua cabang.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                            <i class="ace-icon fa fa-times"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="ace-icon fa fa-check"></i> Approve
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reject -->
+    <div id="modalReject" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="ace-icon fa fa-times-circle text-danger"></i> Reject Keluhan</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="reject">
+                        <input type="hidden" name="id" id="reject_id">
+                        <p>Apakah Anda yakin ingin <strong>menolak</strong> keluhan berikut?</p>
+                        <div class="alert alert-warning">
+                            <strong id="reject_nama_keluhan"></strong>
+                        </div>
+                        <div class="form-group">
+                            <label>Alasan Penolakan <span class="text-danger">*</span></label>
+                            <textarea name="rejection_reason" class="form-control" rows="4" 
+                                      placeholder="Jelaskan alasan penolakan..." required></textarea>
+                            <small class="text-muted">Alasan penolakan akan dikirim ke cabang yang mengajukan.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                            <i class="ace-icon fa fa-times"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="ace-icon fa fa-times-circle"></i> Reject
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Rejection Reason -->
+    <div id="modalRejectionReason" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="ace-icon fa fa-info-circle text-danger"></i> Alasan Penolakan</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <p id="rejection_reason_text"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        <i class="ace-icon fa fa-times"></i> Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+===========================================
+BAGIAN 5: TAMBAH JAVASCRIPT (Sebelum tag </script> penutup, sekitar line 795)
+===========================================
+
+TAMBAHKAN KODE BERIKUT:
+
+        // Fungsi Approval
+        function approveKeluhan(id, nama) {
+            $('#approve_id').val(id);
+            $('#approve_nama_keluhan').text(nama);
+            $('#modalApprove').modal('show');
+        }
+        
+        function rejectKeluhan(id, nama) {
+            $('#reject_id').val(id);
+            $('#reject_nama_keluhan').text(nama);
+            $('#modalReject').modal('show');
+        }
+        
+        function showRejectionReason(reason) {
+            $('#rejection_reason_text').text(reason);
+            $('#modalRejectionReason').modal('show');
+        }
+        
+        // Filter Pending
+        function filterPending() {
+            // Scroll ke tabel
+            $('html, body').animate({
+                scrollTop: $(".table-responsive").offset().top - 100
+            }, 500);
+            
+            // Highlight baris pending
+            $('.table tbody tr.warning').effect("highlight", {color: "#fcf8e3"}, 2000);
+        }
+
+===========================================
+SELESAI
+===========================================
+
+Setelah update selesai, test dengan:
+1. Tambah keluhan baru → Harus muncul notifikasi "Menunggu approval"
+2. Lihat badge notifikasi di header tabel
+3. Klik "Lihat sekarang" untuk scroll ke keluhan pending
+4. Test approve/reject keluhan
+5. Lihat alasan reject untuk keluhan yang ditolak
+
+File sudah siap digunakan!

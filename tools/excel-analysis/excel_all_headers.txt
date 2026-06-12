@@ -1,0 +1,12 @@
+SHEET20 Headers (Row 4):
+A4:NoItem | B4:NamaItem | C4:STATUS | D4:DI NOSTOK
+
+SHEET18 Headers (Row 1):
+A1:STS | B1:PESALAKAN
+
+SHEET19 Headers (Row 1):
+A1:Kode Item | B1:Nama Item | C1:Kategori
+
+SHEET24 Headers (Row 3):
+A3:NoItem | B3:STATUS | C3:STOK | D3:MAX_STOK
+

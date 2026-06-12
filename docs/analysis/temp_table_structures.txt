@@ -1,0 +1,3000 @@
+CREATE TABLE IF NOT EXISTS `backup_tblservice_orphan` (
+  `no_service` varchar(50) DEFAULT NULL,
+  `no_pelanggan` varchar(20) DEFAULT NULL,
+  `tanggal` date DEFAULT NULL,
+  `total_akhir` decimal(15,2) DEFAULT NULL,
+  `backup_date` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `backup_tblservice_orphan`
+--
+
+INSERT INTO `backup_tblservice_orphan` (`no_service`, `no_pelanggan`, `tanggal`, `total_akhir`, `backup_date`) VALUES
+('SV25000000089', 'G 2695 TF', '2025-10-01', NULL, '2025-11-02 09:46:41'),
+('SV25000000093', 'G 3272 OR', '2025-10-02', NULL, '2025-11-02 09:46:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bulan_transaksi`
+--
+
+DROP TABLE IF EXISTS `bulan_transaksi`;
+CREATE TABLE IF NOT EXISTS `bulan_transaksi` (
+  `bulan` varchar(2) NOT NULL,
+  `nama` varchar(20) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `bulan_transaksi`
+--
+
+INSERT INTO `bulan_transaksi` (`bulan`, `nama`, `id`) VALUES
+('01', 'Januari', 1),
+('02', 'Pebruari', 2),
+('03', 'Maret', 3),
+('04', 'April', 4),
+('05', 'Mei', 5),
+('06', 'Juni', 6),
+('07', 'Juli', 7),
+('08', 'Agustus', 8),
+('09', 'September', 9),
+('10', 'Oktober', 10),
+('11', 'Nopember', 11),
+('12', 'Desember', 12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `log_perubahan_tarif`
+--
+
+DROP TABLE IF EXISTS `log_perubahan_tarif`;
+CREATE TABLE IF NOT EXISTS `log_perubahan_tarif` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tanggal` timestamp NOT NULL DEFAULT current_timestamp(),
+  `user_id` int(11) DEFAULT NULL,
+  `aksi` enum('INSERT','UPDATE','DELETE') NOT NULL,
+  `tarif_id` int(11) NOT NULL,
+  `data_lama` text DEFAULT NULL,
+  `data_baru` text DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_tanggal` (`tanggal`),
+  KEY `idx_tarif_id` (`tarif_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Log perubahan master tarif jemput';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_bank`
+--
+
+DROP TABLE IF EXISTS `master_bank`;
+CREATE TABLE IF NOT EXISTS `master_bank` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_bank` varchar(20) NOT NULL,
+  `nama_bank` varchar(100) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `is_aktif` int(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `kode_bank` (`kode_bank`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_bank`
+--
+
+INSERT INTO `master_bank` (`id`, `kode_bank`, `nama_bank`, `keterangan`, `is_aktif`, `created_at`, `updated_at`) VALUES
+(1, 'BCA', 'BANK CENTRAL ASIA', 'BANK CENTRAL ASIA (BCA)', 1, '2025-10-30 08:02:13', '2025-10-30 08:02:13'),
+(3, 'BRI', 'BANK RAKYAT INDONESIA', 'BANK RAKYAT IND0NESIA (BCA)', 1, '2025-11-05 04:10:33', '2025-11-05 04:11:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_kategori_member`
+--
+
+DROP TABLE IF EXISTS `master_kategori_member`;
+CREATE TABLE IF NOT EXISTS `master_kategori_member` (
+  `id_kategori` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_kategori` varchar(50) NOT NULL,
+  `tipe_kategori` enum('nominal','kunjungan') NOT NULL COMMENT 'Berdasarkan nominal atau kunjungan',
+  `min_value` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Nilai minimum untuk kategori ini',
+  `max_value` decimal(15,2) DEFAULT NULL COMMENT 'Nilai maksimum (NULL = unlimited)',
+  `diskon_persen` int(11) DEFAULT 0 COMMENT 'Diskon dalam persen',
+  `benefit_text` text DEFAULT NULL COMMENT 'Deskripsi benefit untuk member',
+  `icon` varchar(10) DEFAULT NULL COMMENT 'Icon emoji untuk kategori',
+  `warna` varchar(7) DEFAULT NULL COMMENT 'Warna hex untuk badge',
+  `urutan` int(11) DEFAULT 0 COMMENT 'Urutan tampilan',
+  `is_active` tinyint(1) DEFAULT 1 COMMENT '1=aktif, 0=nonaktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_kategori`),
+  UNIQUE KEY `unique_kategori_tipe` (`nama_kategori`,`tipe_kategori`),
+  KEY `idx_tipe` (`tipe_kategori`),
+  KEY `idx_active` (`is_active`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Master kategori member untuk nominal dan kunjungan';
+
+--
+-- Dumping data for table `master_kategori_member`
+--
+
+INSERT INTO `master_kategori_member` (`id_kategori`, `nama_kategori`, `tipe_kategori`, `min_value`, `max_value`, `diskon_persen`, `benefit_text`, `icon`, `warna`, `urutan`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Bronze', 'nominal', 0.00, 1999999.00, 0, 'Member standar\nAkses ke semua layanan', '?', '#CD7F32', 1, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(2, 'Silver', 'nominal', 2000000.00, 4999999.00, 10, 'Diskon 10% untuk service\nPrioritas antrian', '?', '#C0C0C0', 2, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(3, 'Gold', 'nominal', 5000000.00, 9999999.00, 15, 'Diskon 15% untuk service\nPrioritas antrian\nGratis cuci motor', '?', '#FFD700', 3, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(4, 'Platinum', 'nominal', 10000000.00, NULL, 20, 'Diskon 20% untuk service\nPrioritas antrian VIP\nGratis cuci motor & oli\nJemput antar gratis', '?', '#E5E4E2', 4, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(5, 'Bronze', 'kunjungan', 0.00, 4.00, 0, 'Member standar\r\nAkses ke semua layanan', '', '#cd7f32', 1, 1, '2025-11-03 04:34:41', '2025-11-03 04:54:40'),
+(6, 'Silver', 'kunjungan', 5.00, 9.00, 10, 'Diskon 10% untuk service\nPrioritas antrian', '?', '#C0C0C0', 2, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(7, 'Gold', 'kunjungan', 10.00, 19.00, 15, 'Diskon 15% untuk service\nPrioritas antrian\nGratis cuci motor', '?', '#FFD700', 3, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(8, 'Platinum', 'kunjungan', 20.00, NULL, 20, 'Diskon 20% untuk service\nPrioritas antrian VIP\nGratis cuci motor & oli\nJemput antar gratis', '?', '#E5E4E2', 4, 1, '2025-11-03 04:34:41', '2025-11-03 04:34:41'),
+(9, 'BOOYAHH', 'kunjungan', 12.00, NULL, 50, '', '?', '#00ffee', 1, 1, '2025-11-20 07:52:43', '2025-11-20 07:52:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_kedatangan_pelanggan`
+--
+
+DROP TABLE IF EXISTS `master_kedatangan_pelanggan`;
+CREATE TABLE IF NOT EXISTS `master_kedatangan_pelanggan` (
+  `id_kedatangan` int(11) NOT NULL AUTO_INCREMENT,
+  `no_pelanggan` varchar(20) NOT NULL COMMENT 'Nomor polisi pelanggan',
+  `no_service` varchar(30) NOT NULL COMMENT 'Nomor service/transaksi',
+  `kedatangan_ke` int(11) NOT NULL DEFAULT 1 COMMENT 'Urutan kunjungan pelanggan',
+  `tanggal_datang` date NOT NULL COMMENT 'Tanggal servis sekarang',
+  `tanggal_sebelumnya` date DEFAULT NULL COMMENT 'Tanggal servis sebelumnya',
+  `jarak_hari` int(11) DEFAULT 0 COMMENT 'Selisih hari dari kunjungan sebelumnya',
+  `total_transaksi` decimal(15,2) DEFAULT 0.00 COMMENT 'Total nominal transaksi',
+  `jumlah_item` int(11) DEFAULT 0 COMMENT 'Jumlah item/layanan servis',
+  `rata2_nilai_per_item` decimal(15,2) DEFAULT 0.00 COMMENT 'Rata-rata nilai per item',
+  `estimasi_datang_berikut` date DEFAULT NULL COMMENT 'Estimasi kunjungan berikutnya (+30 hari)',
+  `status_garansi` enum('aktif','expired','tidak_ada') DEFAULT 'tidak_ada' COMMENT 'Status garansi servis',
+  `keterangan` text DEFAULT NULL COMMENT 'Catatan tambahan',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id_kedatangan`),
+  KEY `idx_no_pelanggan` (`no_pelanggan`),
+  KEY `idx_tanggal_datang` (`tanggal_datang`),
+  KEY `idx_kedatangan_ke` (`kedatangan_ke`),
+  KEY `idx_estimasi` (`estimasi_datang_berikut`),
+  KEY `idx_no_service` (`no_service`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Tabel master untuk tracking kedatangan pelanggan';
+
+--
+-- Dumping data for table `master_kedatangan_pelanggan`
+--
+
+INSERT INTO `master_kedatangan_pelanggan` (`id_kedatangan`, `no_pelanggan`, `no_service`, `kedatangan_ke`, `tanggal_datang`, `tanggal_sebelumnya`, `jarak_hari`, `total_transaksi`, `jumlah_item`, `rata2_nilai_per_item`, `estimasi_datang_berikut`, `status_garansi`, `keterangan`, `created_at`, `updated_at`) VALUES
+(1, 'G 3495 AF', 'SV25000000146', 1, '2025-11-04', NULL, 0, NULL, 7, NULL, '2025-12-04', 'aktif', 'Kunjungan ke-1 pelanggan', '2025-11-04 13:53:00', '2025-11-04 13:53:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_perusahaan`
+--
+
+DROP TABLE IF EXISTS `master_perusahaan`;
+CREATE TABLE IF NOT EXISTS `master_perusahaan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_perusahaan` varchar(20) NOT NULL COMMENT 'Kode unik perusahaan',
+  `nama_perusahaan` varchar(100) NOT NULL COMMENT 'Nama perusahaan/bengkel',
+  `nama_singkat` varchar(50) DEFAULT NULL COMMENT 'Nama singkat untuk logo',
+  `alamat` text DEFAULT NULL COMMENT 'Alamat lengkap perusahaan',
+  `telepon` varchar(20) DEFAULT NULL COMMENT 'Nomor telepon',
+  `email` varchar(100) DEFAULT NULL COMMENT 'Email perusahaan',
+  `website` varchar(100) DEFAULT NULL COMMENT 'Website perusahaan',
+  `logo` varchar(255) DEFAULT NULL COMMENT 'Path file logo',
+  `npwp` varchar(30) DEFAULT NULL COMMENT 'NPWP perusahaan',
+  `direktur` varchar(100) DEFAULT NULL COMMENT 'Nama direktur',
+  `keterangan` text DEFAULT NULL COMMENT 'Keterangan tambahan',
+  `is_aktif` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Aktif, 0=Non-Aktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `kode_perusahaan` (`kode_perusahaan`),
+  KEY `idx_nama_perusahaan` (`nama_perusahaan`),
+  KEY `idx_is_aktif` (`is_aktif`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Master data perusahaan';
+
+--
+-- Dumping data for table `master_perusahaan`
+--
+
+INSERT INTO `master_perusahaan` (`id`, `kode_perusahaan`, `nama_perusahaan`, `nama_singkat`, `alamat`, `telepon`, `email`, `website`, `logo`, `npwp`, `direktur`, `keterangan`, `is_aktif`, `created_at`, `updated_at`) VALUES
+(1, 'FM001', 'BENGKEL FIT MOTOR', 'FIT MOTOR', 'Jl. Contoh No. 123, Jakarta', '021-12345678', 'info@fitmotor.com', '', 'file_upload/logo/logo_1761982878.jpg', '01.234.567.8-901.000', 'Budi Santoso', 'Perusahaan induk bengkel motor', 1, '2025-10-30 04:33:58', '2025-11-22 11:36:17');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `master_tarif_jemput`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `master_tarif_jemput`;
+CREATE TABLE IF NOT EXISTS `master_tarif_jemput` (
+`id` int(11)
+,`jenis_motor` enum('Motor Jalan','Motor Mogok')
+,`jarak_km` decimal(4,1)
+,`tarif` int(11)
+,`keterangan` text
+,`created_at` timestamp
+,`updated_at` timestamp
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_tarif_jemput_backup`
+--
+
+DROP TABLE IF EXISTS `master_tarif_jemput_backup`;
+CREATE TABLE IF NOT EXISTS `master_tarif_jemput_backup` (
+  `id` int(11) NOT NULL DEFAULT 0,
+  `jenis_motor` varchar(50) NOT NULL COMMENT 'Motor Jalan atau Motor Mogok',
+  `jarak_km` decimal(4,1) NOT NULL COMMENT 'Jarak dalam KM (contoh: 3.5)',
+  `tarif` int(11) NOT NULL COMMENT 'Tarif dalam rupiah',
+  `keterangan` text DEFAULT NULL COMMENT 'Catatan tambahan',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_tarif_jemput_backup`
+--
+
+INSERT INTO `master_tarif_jemput_backup` (`id`, `jenis_motor`, `jarak_km`, `tarif`, `keterangan`, `created_at`, `updated_at`) VALUES
+(1, 'Motor Jalan', 0.0, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(2, 'Motor Jalan', 0.5, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(3, 'Motor Jalan', 1.0, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(4, 'Motor Jalan', 1.5, 8000, 'Tarif dasar motor jalan', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(5, 'Motor Jalan', 2.0, 10000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(6, 'Motor Jalan', 2.5, 12000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(7, 'Motor Jalan', 3.0, 14000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(8, 'Motor Jalan', 3.5, 16000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(9, 'Motor Jalan', 4.0, 18000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(10, 'Motor Jalan', 4.5, 20000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(11, 'Motor Jalan', 5.0, 22000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(12, 'Motor Jalan', 5.5, 24000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(13, 'Motor Jalan', 6.0, 26000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(14, 'Motor Jalan', 6.5, 28000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(15, 'Motor Jalan', 7.0, 30000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(16, 'Motor Jalan', 7.5, 32000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(17, 'Motor Jalan', 8.0, 34000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(18, 'Motor Jalan', 8.5, 36000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(19, 'Motor Jalan', 9.0, 38000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(20, 'Motor Jalan', 9.5, 40000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(21, 'Motor Jalan', 10.0, 42000, '+2.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(22, 'Motor Mogok', 0.0, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(23, 'Motor Mogok', 0.5, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(24, 'Motor Mogok', 1.0, 0, 'Gratis 1 km pertama', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(25, 'Motor Mogok', 1.5, 11000, 'Tarif dasar motor mogok', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(26, 'Motor Mogok', 2.0, 14000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(27, 'Motor Mogok', 2.5, 17000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(28, 'Motor Mogok', 3.0, 20000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(29, 'Motor Mogok', 3.5, 23000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(30, 'Motor Mogok', 4.0, 26000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(31, 'Motor Mogok', 4.5, 29000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(32, 'Motor Mogok', 5.0, 32000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(33, 'Motor Mogok', 5.5, 35000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(34, 'Motor Mogok', 6.0, 38000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(35, 'Motor Mogok', 6.5, 41000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+(36, 'Motor Mogok', 7.0, 44000, '+3.000 per 0.5 km', '2025-10-05 08:43:35', '2025-10-05 08:43:35'),
+--
+CREATE TABLE IF NOT EXISTS `master_tarif_jemput_range` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `jenis_motor` enum('Motor Jalan','Motor Mogok') NOT NULL COMMENT 'Jenis kondisi motor',
+  `jarak_min` decimal(4,1) NOT NULL COMMENT 'Jarak minimum (KM)',
+  `jarak_max` decimal(4,1) DEFAULT NULL COMMENT 'Jarak maksimum (KM) - NULL untuk unlimited',
+  `tarif_dasar` int(11) NOT NULL COMMENT 'Tarif dasar untuk range ini',
+  `tarif_per_km` int(11) DEFAULT 0 COMMENT 'Tarif tambahan per KM di atas jarak_min',
+  `keterangan` text DEFAULT NULL COMMENT 'Penjelasan tarif',
+  `aktif` tinyint(1) DEFAULT 1 COMMENT '1=Aktif, 0=Nonaktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_jenis_aktif` (`jenis_motor`,`aktif`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Master tarif jemput antar motor - sistem range';
+
+--
+-- Dumping data for table `master_tarif_jemput_range`
+--
+
+INSERT INTO `master_tarif_jemput_range` (`id`, `jenis_motor`, `jarak_min`, `jarak_max`, `tarif_dasar`, `tarif_per_km`, `keterangan`, `aktif`, `created_at`, `updated_at`) VALUES
+(1, 'Motor Jalan', 0.0, 1.0, 0, 0, 'Gratis untuk jarak 0-1 KM', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(2, 'Motor Jalan', 1.1, 5.0, 8000, 2000, 'Tarif dasar Rp 8.000 untuk 1.1-5 KM, +Rp 2.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(3, 'Motor Jalan', 5.1, 10.0, 16000, 3000, 'Tarif dasar Rp 16.000 untuk 5.1-10 KM, +Rp 3.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(4, 'Motor Jalan', 10.1, NULL, 31000, 4000, 'Tarif dasar Rp 31.000 untuk >10 KM, +Rp 4.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(5, 'Motor Mogok', 0.0, 1.0, 0, 0, 'Gratis untuk jarak 0-1 KM', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(6, 'Motor Mogok', 1.1, 5.0, 12000, 3000, 'Tarif dasar Rp 12.000 untuk 1.1-5 KM, +Rp 3.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(7, 'Motor Mogok', 5.1, 10.0, 24000, 4000, 'Tarif dasar Rp 24.000 untuk 5.1-10 KM, +Rp 4.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45'),
+(8, 'Motor Mogok', 10.1, NULL, 44000, 5000, 'Tarif dasar Rp 44.000 untuk >10 KM, +Rp 5.000 per KM tambahan', 1, '2025-10-13 08:28:45', '2025-10-13 08:28:45');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `setting_highlight_member`
+--
+
+DROP TABLE IF EXISTS `setting_highlight_member`;
+CREATE TABLE IF NOT EXISTS `setting_highlight_member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kategori_member` varchar(50) NOT NULL,
+  `background_color` varchar(7) NOT NULL DEFAULT '#FFFFFF' COMMENT 'Warna background row (hex)',
+  `text_color` varchar(7) NOT NULL DEFAULT '#000000' COMMENT 'Warna text (hex)',
+  `border_color` varchar(7) DEFAULT NULL COMMENT 'Warna border (hex)',
+  `border_width` int(11) DEFAULT 0 COMMENT 'Ketebalan border (px)',
+  `is_bold` tinyint(1) DEFAULT 0 COMMENT '1=bold, 0=normal',
+  `opacity` decimal(3,2) DEFAULT 1.00 COMMENT 'Transparansi 0.00-1.00',
+  `is_active` tinyint(1) DEFAULT 1 COMMENT '1=aktif, 0=nonaktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `kategori_member` (`kategori_member`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Setting highlight warna untuk kategori member';
+
+--
+-- Dumping data for table `setting_highlight_member`
+--
+
+INSERT INTO `setting_highlight_member` (`id`, `kategori_member`, `background_color`, `text_color`, `border_color`, `border_width`, `is_bold`, `opacity`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Bronze', '#ffa857', '#121111', '#cd7f32', 2, 0, 0.30, 1, '2025-11-06 02:39:39', '2025-11-19 02:39:04'),
+(2, 'Silver', '#F5F5F5', '#4A4A4A', '#C0C0C0', 2, 0, 0.40, 1, '2025-11-06 02:39:39', '2025-11-06 02:39:39'),
+(3, 'Gold', '#FFFACD', '#B8860B', '#FFD700', 3, 1, 0.50, 1, '2025-11-06 02:39:39', '2025-11-06 02:39:39'),
+(4, 'Platinum', '#F0F8FF', '#2F4F4F', '#E5E4E2', 3, 1, 0.60, 1, '2025-11-06 02:39:39', '2025-11-06 02:39:39'),
+(5, 'BOOYAHH', '#FFFFFF', '#000000', '#CCCCCC', 1, 0, 1.00, 1, '2025-11-20 07:52:43', '2025-11-20 07:52:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `statistik_pelanggan`
+--
+
+DROP TABLE IF EXISTS `statistik_pelanggan`;
+CREATE TABLE IF NOT EXISTS `statistik_pelanggan` (
+  `id_statistik` int(11) NOT NULL AUTO_INCREMENT,
+  `no_pelanggan` varchar(20) NOT NULL COMMENT 'Relasi ke tblpelanggan.nopelanggan',
+  `total_transaksi` int(11) NOT NULL DEFAULT 0 COMMENT 'Jumlah total transaksi',
+  `total_nominal` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Total nilai transaksi (Rupiah)',
+  `jumlah_kunjungan` int(11) NOT NULL DEFAULT 0 COMMENT 'Jumlah kunjungan/service',
+  `kedatangan_terakhir` int(11) DEFAULT 0 COMMENT 'Nomor urut kedatangan terakhir',
+  `rata_jarak_kunjungan` decimal(10,2) DEFAULT 0.00 COMMENT 'Rata-rata jarak antar kunjungan (hari)',
+  `rata_rata_transaksi` decimal(15,2) NOT NULL DEFAULT 0.00 COMMENT 'Rata-rata nilai per transaksi',
+  `status_member` varchar(50) NOT NULL DEFAULT 'Bronze',
+  `kategori_member_kunjungan` varchar(50) DEFAULT 'Bronze',
+  `tanggal_pertama_transaksi` date DEFAULT NULL COMMENT 'Tanggal transaksi pertama kali',
+  `tanggal_terakhir_transaksi` date DEFAULT NULL COMMENT 'Tanggal transaksi terakhir',
+  `lama_tidak_datang` int(11) DEFAULT NULL COMMENT 'Jumlah hari sejak transaksi terakhir',
+  `lama_menjadi_pelanggan` int(11) DEFAULT NULL COMMENT 'Jumlah hari sejak transaksi pertama',
+  `estimasi_datang_berikutnya` date DEFAULT NULL COMMENT 'Estimasi tanggal datang berikutnya (30 hari dari terakhir)',
+  `total_motor` int(11) NOT NULL DEFAULT 0 COMMENT 'Jumlah motor yang pernah diservice',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `jumlah_cancel` int(11) DEFAULT 0 COMMENT 'Total service yang di-cancel',
+  `cancel_rate` decimal(5,2) DEFAULT 0.00 COMMENT 'Persentase cancel dari total booking',
+  `tanggal_cancel_terakhir` date DEFAULT NULL COMMENT 'Tanggal cancel terakhir',
+  `cancel_customer_request` int(11) DEFAULT 0 COMMENT 'Cancel karena customer request',
+  `cancel_no_stock` int(11) DEFAULT 0 COMMENT 'Cancel karena stok habis',
+  `cancel_no_mekanik` int(11) DEFAULT 0 COMMENT 'Cancel karena mekanik tidak ada',
+  `cancel_no_show` int(11) DEFAULT 0 COMMENT 'Cancel karena customer no-show',
+  `cancel_lainnya` int(11) DEFAULT 0 COMMENT 'Cancel karena alasan lain',
+  PRIMARY KEY (`id_statistik`),
+  UNIQUE KEY `uk_no_pelanggan` (`no_pelanggan`),
+  KEY `idx_status_member` (`status_member`),
+  KEY `idx_tanggal_terakhir` (`tanggal_terakhir_transaksi`),
+  KEY `idx_lama_tidak_datang` (`lama_tidak_datang`),
+  KEY `idx_kategori_member_kunjungan` (`kategori_member_kunjungan`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Tabel statistik pelanggan dengan update otomatis via trigger';
+
+--
+-- Dumping data for table `statistik_pelanggan`
+--
+
+INSERT INTO `statistik_pelanggan` (`id_statistik`, `no_pelanggan`, `total_transaksi`, `total_nominal`, `jumlah_kunjungan`, `kedatangan_terakhir`, `rata_jarak_kunjungan`, `rata_rata_transaksi`, `status_member`, `kategori_member_kunjungan`, `tanggal_pertama_transaksi`, `tanggal_terakhir_transaksi`, `lama_tidak_datang`, `lama_menjadi_pelanggan`, `estimasi_datang_berikutnya`, `total_motor`, `created_at`, `updated_at`, `jumlah_cancel`, `cancel_rate`, `tanggal_cancel_terakhir`, `cancel_customer_request`, `cancel_no_stock`, `cancel_no_mekanik`, `cancel_no_show`, `cancel_lainnya`) VALUES
+(9, 'G 3495 AF', 2, 0.00, 2, 1, 0.00, 0.00, 'Bronze', 'Bronze', '2025-10-02', '2025-11-04', 0, 33, '2025-12-04', 1, '2025-11-04 13:53:00', '2025-11-04 13:53:00', 0, 0.00, NULL, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbabsensi`
+--
+
+DROP TABLE IF EXISTS `tbabsensi`;
+CREATE TABLE IF NOT EXISTS `tbabsensi` (
+  `nip` varchar(20) NOT NULL,
+  `tgl` date NOT NULL,
+  `jam_masuk` varchar(10) NOT NULL,
+  `jam_keluar` varchar(10) NOT NULL,
+  `kode_status_kehadiran` int(11) NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `kode_perusahaan` varchar(20) NOT NULL,
+  `kode_lokasi` varchar(20) NOT NULL,
+  `lat_masuk` varchar(20) NOT NULL,
+  `long_masuk` varchar(20) NOT NULL,
+  `jarak_masuk` int(11) NOT NULL,
+  `lat_pulang` varchar(20) NOT NULL,
+  `long_pulang` varchar(20) NOT NULL,
+  `jarak_pulang` int(11) NOT NULL,
+  `nip_di_finger` varchar(5) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_upload` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=621 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbabsensi`
+--
+
+INSERT INTO `tbabsensi` (`nip`, `tgl`, `jam_masuk`, `jam_keluar`, `kode_status_kehadiran`, `keterangan`, `kode_perusahaan`, `kode_lokasi`, `lat_masuk`, `long_masuk`, `jarak_masuk`, `lat_pulang`, `long_pulang`, `jarak_pulang`, `nip_di_finger`, `id`, `id_upload`) VALUES
+('3', '2023-10-01', '09:08', '17:10', 1, '', '', '003', '', '', 0, '', '', 0, '3', 1, 'UPLO0001'),
+('3', '2023-10-04', '08:17', '16:21', 1, '', '', '003', '', '', 0, '', '', 0, '3', 2, 'UPLO0001'),
+('3', '2023-10-06', '08:45', '17:38', 1, '', '', '003', '', '', 0, '', '', 0, '3', 3, 'UPLO0001'),
+('3', '2023-10-07', '15:54', '16:31', 1, '', '', '003', '', '', 0, '', '', 0, '3', 4, 'UPLO0001'),
+('5', '2023-10-01', '08:38', '16:38', 1, '', '', '003', '', '', 0, '', '', 0, '5', 5, 'UPLO0001'),
+('5', '2023-10-02', '08:20', '16:32', 1, '', '', '003', '', '', 0, '', '', 0, '5', 6, 'UPLO0001'),
+('5', '2023-10-04', '08:59', '16:33', 1, '', '', '003', '', '', 0, '', '', 0, '5', 7, 'UPLO0001'),
+('5', '2023-10-05', '07:54', '16:42', 1, '', '', '003', '', '', 0, '', '', 0, '5', 8, 'UPLO0001'),
+('5', '2023-10-07', '08:16', '16:34', 1, '', '', '003', '', '', 0, '', '', 0, '5', 9, 'UPLO0001'),
+('5', '2023-10-08', '07:58', '16:36', 1, '', '', '003', '', '', 0, '', '', 0, '5', 10, 'UPLO0001'),
+('5', '2023-10-09', '07:53', '07:53', 1, '', '', '003', '', '', 0, '', '', 0, '5', 11, 'UPLO0001'),
+('11', '2023-10-01', '08:26', '17:08', 1, '', '', '003', '', '', 0, '', '', 0, '11', 12, 'UPLO0001'),
+('11', '2023-10-02', '08:36', '16:49', 1, '', '', '003', '', '', 0, '', '', 0, '11', 13, 'UPLO0001'),
+('11', '2023-10-04', '08:28', '16:40', 1, '', '', '003', '', '', 0, '', '', 0, '11', 14, 'UPLO0001'),
+('11', '2023-10-06', '08:35', '16:48', 1, '', '', '003', '', '', 0, '', '', 0, '11', 15, 'UPLO0001'),
+('11', '2023-10-07', '08:19', '16:59', 1, '', '', '003', '', '', 0, '', '', 0, '11', 16, 'UPLO0001'),
+('11', '2023-10-09', '08:18', '08:18', 1, '', '', '003', '', '', 0, '', '', 0, '11', 17, 'UPLO0001'),
+('12', '2023-10-02', '16:30', '16:30', 1, '', '', '003', '', '', 0, '', '', 0, '12', 18, 'UPLO0001'),
+('15', '2023-10-01', '08:34', '16:46', 1, '', '', '003', '', '', 0, '', '', 0, '15', 19, 'UPLO0001'),
+('15', '2023-10-02', '08:30', '16:30', 1, '', '', '003', '', '', 0, '', '', 0, '15', 20, 'UPLO0001'),
+('15', '2023-10-04', '08:22', '08:22', 1, '', '', '003', '', '', 0, '', '', 0, '15', 21, 'UPLO0001'),
+('15', '2023-10-05', '08:27', '16:30', 1, '', '', '003', '', '', 0, '', '', 0, '15', 22, 'UPLO0001'),
+('15', '2023-10-06', '08:35', '16:30', 1, '', '', '003', '', '', 0, '', '', 0, '15', 23, 'UPLO0001'),
+('15', '2023-10-07', '08:21', '16:34', 1, '', '', '003', '', '', 0, '', '', 0, '15', 24, 'UPLO0001'),
+('15', '2023-10-08', '08:21', '16:32', 1, '', '', '003', '', '', 0, '', '', 0, '15', 25, 'UPLO0001'),
+--
+CREATE TABLE IF NOT EXISTS `tbabsensi_temp` (
+  `no_urut` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
+  `waktu` datetime NOT NULL,
+  `tgl` date NOT NULL,
+  `jam` varchar(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbabsensi_temp`
+--
+
+INSERT INTO `tbabsensi_temp` (`no_urut`, `id`, `waktu`, `tgl`, `jam`) VALUES
+(0, 0, '0000-00-00 00:00:00', '0000-00-00', ''),
+(1, 1, '2023-07-02 12:40:00', '2023-07-02', '12:40:00'),
+(2, 1, '2023-07-02 12:40:00', '2023-07-02', '12:40:00'),
+(3, 1, '2023-07-02 12:42:00', '2023-07-02', '12:42:00'),
+(4, 1, '2023-07-02 14:20:00', '2023-07-02', '14:20:00'),
+(5, 1, '2023-07-02 14:22:00', '2023-07-02', '14:22:00'),
+(6, 1, '2023-07-02 14:22:00', '2023-07-02', '14:22:00'),
+(7, 1, '2023-07-02 14:23:00', '2023-07-02', '14:23:00'),
+(8, 2, '2023-07-02 14:44:00', '2023-07-02', '14:44:00'),
+(9, 2, '2023-07-02 14:44:00', '2023-07-02', '14:44:00'),
+(10, 1, '2023-07-02 14:48:00', '2023-07-02', '14:48:00'),
+(11, 6, '2023-07-03 08:01:00', '2023-07-03', '08:01:00'),
+(12, 6, '2023-07-03 08:01:00', '2023-07-03', '08:01:00'),
+(13, 7, '2023-07-03 08:03:00', '2023-07-03', '08:03:00'),
+(14, 5, '2023-07-03 08:09:00', '2023-07-03', '08:09:00'),
+(15, 2, '2023-07-03 08:10:00', '2023-07-03', '08:10:00'),
+(16, 4, '2023-07-03 08:19:00', '2023-07-03', '08:19:00'),
+(17, 1, '2023-07-03 08:23:00', '2023-07-03', '08:23:00'),
+(18, 4, '2023-07-03 16:42:00', '2023-07-03', '16:42:00'),
+(19, 6, '2023-07-03 16:42:00', '2023-07-03', '16:42:00'),
+(20, 5, '2023-07-03 16:42:00', '2023-07-03', '16:42:00'),
+(21, 1, '2023-07-03 17:13:00', '2023-07-03', '17:13:00'),
+(22, 2, '2023-07-03 17:16:00', '2023-07-03', '17:16:00'),
+(23, 6, '2023-07-04 08:04:00', '2023-07-04', '08:04:00'),
+(24, 7, '2023-07-04 08:07:00', '2023-07-04', '08:07:00'),
+(25, 2, '2023-07-04 08:08:00', '2023-07-04', '08:08:00'),
+(26, 1, '2023-07-04 08:16:00', '2023-07-04', '08:16:00'),
+(27, 4, '2023-07-04 08:17:00', '2023-07-04', '08:17:00'),
+(28, 5, '2023-07-04 08:19:00', '2023-07-04', '08:19:00'),
+(29, 5, '2023-07-04 08:19:00', '2023-07-04', '08:19:00'),
+(30, 5, '2023-07-04 16:21:00', '2023-07-04', '16:21:00'),
+(31, 4, '2023-07-04 16:22:00', '2023-07-04', '16:22:00'),
+(32, 4, '2023-07-04 16:23:00', '2023-07-04', '16:23:00'),
+(33, 1, '2023-07-04 16:24:00', '2023-07-04', '16:24:00'),
+(34, 6, '2023-07-04 16:24:00', '2023-07-04', '16:24:00'),
+(35, 6, '2023-07-06 08:03:00', '2023-07-06', '08:03:00'),
+(36, 7, '2023-07-06 08:06:00', '2023-07-06', '08:06:00'),
+(37, 2, '2023-07-06 08:13:00', '2023-07-06', '08:13:00'),
+--
+CREATE TABLE IF NOT EXISTS `tbabsensi_temp_rst` (
+  `id` int(11) NOT NULL,
+  `tgl` date NOT NULL,
+  `jam_masuk` varchar(10) NOT NULL,
+  `Jam_pulang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbabsensi_temp_rst`
+--
+
+INSERT INTO `tbabsensi_temp_rst` (`id`, `tgl`, `jam_masuk`, `Jam_pulang`) VALUES
+(0, '0000-00-00', '', ''),
+(1, '2023-07-02', '12:40:00', '14:48:00'),
+(1, '2023-07-03', '08:23:00', '17:13:00'),
+(1, '2023-07-04', '08:16:00', '16:24:00'),
+(1, '2023-07-07', '08:27:00', '17:04:00'),
+(1, '2023-07-08', '08:16:00', '16:51:00'),
+(1, '2023-07-09', '16:42:00', '16:42:00'),
+(1, '2023-07-10', '08:27:00', '17:09:00'),
+(1, '2023-07-11', '08:25:00', '17:03:00'),
+(1, '2023-07-13', '08:15:00', '16:55:00'),
+(1, '2023-07-14', '08:16:00', '16:45:00'),
+(1, '2023-07-15', '08:23:00', '16:24:00'),
+(1, '2023-07-16', '08:08:00', '16:47:00'),
+(1, '2023-07-17', '08:20:00', '17:12:00'),
+(1, '2023-07-18', '08:11:00', '16:49:00'),
+(1, '2023-07-21', '08:22:00', '16:30:00'),
+(1, '2023-07-22', '08:03:00', '16:26:00'),
+(1, '2023-07-27', '08:05:00', '16:08:00'),
+(1, '2023-07-28', '08:04:00', '16:29:00'),
+(1, '2023-07-29', '08:01:00', '16:24:00'),
+(1, '2023-08-01', '08:01:00', '16:23:00'),
+(1, '2023-09-04', '16:11:00', '16:11:00'),
+(1, '2023-09-28', '14:34:00', '16:44:00'),
+(1, '2023-09-29', '08:19:00', '17:16:00'),
+(2, '2023-07-02', '14:44:00', '14:44:00'),
+(2, '2023-07-03', '08:10:00', '17:16:00'),
+(2, '2023-07-04', '08:08:00', '08:08:00'),
+(2, '2023-07-06', '08:13:00', '08:13:00'),
+(2, '2023-07-07', '08:13:00', '17:04:00'),
+(2, '2023-07-08', '08:12:00', '16:51:00'),
+(2, '2023-07-09', '08:14:00', '16:33:00'),
+(2, '2023-07-10', '08:18:00', '17:09:00'),
+(2, '2023-07-11', '08:18:00', '17:03:00'),
+(2, '2023-07-12', '08:30:00', '16:05:00'),
+(2, '2023-07-14', '08:19:00', '16:46:00'),
+(2, '2023-07-15', '08:13:00', '16:24:00'),
+(2, '2023-07-16', '08:19:00', '16:47:00'),
+(2, '2023-07-17', '08:17:00', '17:12:00'),
+(2, '2023-07-18', '08:20:00', '16:51:00'),
+--
+CREATE TABLE IF NOT EXISTS `tbabsensi_upload` (
+  `id_upload` varchar(10) NOT NULL,
+  `tgl_upload` date NOT NULL,
+  `waktu_upload` varchar(10) NOT NULL,
+  `tgl_absensi_awal` date NOT NULL,
+  `tgl_absensi_akhir` date NOT NULL,
+  `kode_cabang` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbabsensi_upload`
+--
+
+INSERT INTO `tbabsensi_upload` (`id_upload`, `tgl_upload`, `waktu_upload`, `tgl_absensi_awal`, `tgl_absensi_akhir`, `kode_cabang`, `id`) VALUES
+('UPLO0001', '2023-10-14', '11:01', '2023-10-01', '2023-10-09', '003', 1),
+('UPLO0002', '2023-10-14', '11:01', '2023-10-01', '2023-10-09', '001', 2),
+('UPLO0003', '2023-10-14', '11:53', '2023-10-09', '2023-10-14', '003', 3),
+('UPLO0004', '2023-10-19', '02:20', '2023-07-02', '2023-10-16', '002', 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbagama`
+--
+
+DROP TABLE IF EXISTS `tbagama`;
+CREATE TABLE IF NOT EXISTS `tbagama` (
+  `agama` varchar(50) NOT NULL,
+  `kode` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`kode`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbagama`
+--
+
+INSERT INTO `tbagama` (`agama`, `kode`) VALUES
+('Islam', 1),
+('Kristen Katolik', 2),
+('Kristen Protestan', 3),
+('Hindu', 4),
+('Budha', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbakun`
+--
+
+DROP TABLE IF EXISTS `tbakun`;
+CREATE TABLE IF NOT EXISTS `tbakun` (
+  `no_akun` int(11) DEFAULT NULL,
+  `nama_akun` varchar(28) DEFAULT NULL,
+  `pos` varchar(6) DEFAULT NULL,
+  `debet` int(11) DEFAULT NULL,
+  `kredit` int(11) DEFAULT NULL,
+  `status_akun` int(11) DEFAULT NULL,
+  `akun_induk` varchar(5) DEFAULT NULL,
+  `no_akun_induk` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `tbakun`
+--
+
+INSERT INTO `tbakun` (`no_akun`, `nama_akun`, `pos`, `debet`, `kredit`, `status_akun`, `akun_induk`, `no_akun_induk`) VALUES
+(1100, 'AKTIVA', NULL, NULL, NULL, 0, 'YA', 0),
+(1101, 'Kas Besar', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1102, 'Kas Kasir', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1103, 'Bank Mandiri', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1104, 'Bank BCA', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1105, 'Piutang', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1106, 'Persediaan', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1107, 'Sewa Dimuka', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1108, 'Inventaris', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(1109, 'Akum. Peny. Inventaris', 'DEBIT', 0, 0, 0, 'TIDAK', 1100),
+(2100, 'KEWAJIBAN', NULL, NULL, NULL, 0, 'YA', 0),
+(2101, 'Hutang Dagang', 'KREDIT', 0, 0, 0, 'TIDAK', 2100),
+(2102, 'Hutang Lain-lain', 'KREDIT', 0, 0, 0, 'TIDAK', 2100),
+(3100, 'EKUITAS', NULL, NULL, NULL, 0, 'YA', 0),
+(3101, 'Modal', 'KREDIT', 0, 0, 0, 'TIDAK', 3100),
+(3102, 'Laba Ditahan', 'KREDIT', 0, 0, 0, 'TIDAK', 3100),
+(4100, 'PENDAPATAN', NULL, NULL, NULL, 0, 'YA', 0),
+(4101, 'Penjualan Barang', 'KREDIT', 0, 0, 0, 'TIDAK', 4100),
+(5100, 'HARGA POKOK PENJUALAN', NULL, NULL, NULL, 0, 'YA', 0),
+(5101, 'Harga Pokok Penjualan Barang', 'DEBIT', 0, 0, 0, 'TIDAK', 5100),
+(6100, 'BIAYA USAHA', NULL, NULL, NULL, 0, 'YA', 0),
+(6101, 'Biaya Gaji', 'DEBIT', 0, 0, 0, 'TIDAK', 6100),
+(6102, 'Biaya Transport', 'DEBIT', 0, 0, 0, 'TIDAK', 6100),
+(6103, 'Biaya Sewa', 'DEBIT', 0, 0, 0, 'TIDAK', 6100),
+(6104, 'Biaya Penyusutan', 'DEBIT', 0, 0, 0, 'TIDAK', 6100),
+(6105, 'Biaya Lain-lain', 'DEBIT', 0, 0, 0, 'TIDAK', 6100),
+(2103, 'PPH Penjualan', 'KREDIT', NULL, NULL, 0, 'TIDAK', 2100);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbakun_pos`
+--
+
+DROP TABLE IF EXISTS `tbakun_pos`;
+CREATE TABLE IF NOT EXISTS `tbakun_pos` (
+  `pos` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbakun_pos`
+--
+
+INSERT INTO `tbakun_pos` (`pos`) VALUES
+('DEBIT'),
+('KREDIT');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbbrg_keluar_detail`
+--
+
+DROP TABLE IF EXISTS `tbbrg_keluar_detail`;
+CREATE TABLE IF NOT EXISTS `tbbrg_keluar_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `harga` double NOT NULL,
+  `total` double NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `stok_sistem` int(11) NOT NULL,
+  `penyesuaian` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbbrg_keluar_header`
+--
+
+DROP TABLE IF EXISTS `tbbrg_keluar_header`;
+CREATE TABLE IF NOT EXISTS `tbbrg_keluar_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `kd_cabang_ke` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbbrg_masuk_detail`
+--
+
+DROP TABLE IF EXISTS `tbbrg_masuk_detail`;
+CREATE TABLE IF NOT EXISTS `tbbrg_masuk_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `harga` double NOT NULL,
+  `total` double NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `stok_sistem` int(11) NOT NULL,
+  `penyesuaian` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbbrg_masuk_header`
+--
+
+DROP TABLE IF EXISTS `tbbrg_masuk_header`;
+CREATE TABLE IF NOT EXISTS `tbbrg_masuk_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `kd_cabang_dr` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbcabang`
+--
+
+DROP TABLE IF EXISTS `tbcabang`;
+CREATE TABLE IF NOT EXISTS `tbcabang` (
+  `kode_cabang` varchar(10) NOT NULL,
+  `perusahaan_id` int(11) DEFAULT 1 COMMENT 'ID Perusahaan',
+  `nama_cabang` varchar(100) NOT NULL,
+  `alamat_cabang` text DEFAULT NULL,
+  `google_maps_cabang` varchar(500) DEFAULT NULL COMMENT 'Link Google Maps cabang',
+  `lat_cabang` varchar(30) DEFAULT NULL COMMENT 'Latitude cabang',
+  `long_cabang` varchar(30) DEFAULT NULL COMMENT 'Longitude cabang',
+  `tipe_cabang` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`kode_cabang`),
+  KEY `fk_cabang_perusahaan` (`perusahaan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbcabang`
+--
+
+INSERT INTO `tbcabang` (`kode_cabang`, `perusahaan_id`, `nama_cabang`, `alamat_cabang`, `google_maps_cabang`, `lat_cabang`, `long_cabang`, `tipe_cabang`) VALUES
+('PESALAKAN', 1, 'Cabang Pesalakan', 'Jl. Pesalakan No. 10', 'https://www.google.com/maps/place/Bengkel+Fit+Motor+Adiwerna/@-6.9327759,109.1267849,17z/data=!3m1!4b1!4m6!3m5!1s0x2e6fb97481fcfcc7:0xb756d2862d79d10d!8m2!3d-6.9327812!4d109.1293598!16s%2Fg%2F11gsbqlwkq?authuser=0&entry=ttu&g_ep=EgoyMDI1MTAwMS4wIKXMDSoASAFQAw%3D%3D', '-6.9327759', '109.1267849', '1'),
+('PST', 1, 'Bengkel Pusat', 'Jl. Industri No. 1', NULL, NULL, NULL, 'Pusat'),
+('SBY', 1, 'Cabang Surabaya', 'Jl. Pahlawan No. 10', NULL, NULL, NULL, 'Cabang');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbcabang_tipe`
+--
+
+DROP TABLE IF EXISTS `tbcabang_tipe`;
+CREATE TABLE IF NOT EXISTS `tbcabang_tipe` (
+  `cabang_tipe` varchar(20) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbcabang_tipe`
+--
+
+INSERT INTO `tbcabang_tipe` (`cabang_tipe`, `id`) VALUES
+('Milik Sendiri', 1),
+('Mitra', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbcara_bayar`
+--
+
+DROP TABLE IF EXISTS `tbcara_bayar`;
+CREATE TABLE IF NOT EXISTS `tbcara_bayar` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cara_bayar` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbcara_bayar`
+--
+
+INSERT INTO `tbcara_bayar` (`id`, `cara_bayar`) VALUES
+(1, 'Tunai'),
+(2, 'Kredit');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbcari`
+--
+
+DROP TABLE IF EXISTS `tbcari`;
+CREATE TABLE IF NOT EXISTS `tbcari` (
+  `cari` varchar(30) NOT NULL,
+  `tipe` varchar(2) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbcari`
+--
+
+INSERT INTO `tbcari` (`cari`, `tipe`, `id`) VALUES
+('No. Pesanan', '1', 1),
+('Kode Supplier', '1', 2),
+('Nama Supplier', '1', 3),
+('No. Transaksi', '2', 4),
+('No. Pesanan', '2', 5),
+('Kode Supplier', '2', 6),
+('Nama Supplier', '2', 7),
+('Cara Bayar', '2', 8),
+('No. Transaksi', '3', 9),
+('No. Pesanan', '3', 10),
+('Kode Pelanggan', '3', 11),
+('Nama Pelanggan', '3', 12),
+('Cara Bayar', '3', 13),
+('Kode Item', '4', 14),
+('Nama Item', '4', 15),
+('Jenis', '4', 16),
+('Rak', '4', 17),
+('Kode Pelanggan', '5', 18),
+('Nama Pelanggan', '5', 19),
+('Alamat', '5', 20),
+('Kota', '5', 21),
+('No. Telepon/WA', '5', 22),
+('Grup Pelanggan', '5', 23),
+('No. Transaksi', '6', 24),
+('No. Supplier', '6', 25),
+('Nama Supplier', '6', 26),
+('No. Transaksi', '7', 27),
+('No. Pelanggan', '7', 28),
+('Nama Pelanggan', '7', 29),
+('Kode Item', '8', 30),
+('Nama Item', '8', 31),
+('Grup Produk', '8', 32),
+('Jenis Produk', '8', 33),
+('No. Polisi', '9', 34),
+('Pemilik', '9', 35),
+('Alamat', '9', 36),
+('Merk', '9', 37),
+('Tipe', '9', 38),
+('Jenis', '9', 39),
+--
+CREATE TABLE IF NOT EXISTS `tbdarah` (
+  `kode` int(11) NOT NULL,
+  `darah` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbdarah`
+--
+
+INSERT INTO `tbdarah` (`kode`, `darah`) VALUES
+(1, 'A'),
+(2, 'B'),
+(3, 'AB'),
+(4, 'O');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbdivisi`
+--
+
+DROP TABLE IF EXISTS `tbdivisi`;
+CREATE TABLE IF NOT EXISTS `tbdivisi` (
+  `kode_divisi` varchar(20) NOT NULL,
+  `nama_divisi` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbdivisi`
+--
+
+INSERT INTO `tbdivisi` (`kode_divisi`, `nama_divisi`) VALUES
+('DIV01', 'Manajemen'),
+('DIV02', 'IT'),
+('DIV03', 'Personalia (HRD)'),
+('DIV04', 'Keuangan'),
+('DIV05', 'Pembelian'),
+('DIV06', 'Mekanik'),
+('DIV07', 'Customer Service'),
+('DIV08', 'Kasir');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbemp_education`
+--
+
+DROP TABLE IF EXISTS `tbemp_education`;
+CREATE TABLE IF NOT EXISTS `tbemp_education` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nip` varchar(20) NOT NULL,
+  `fld1` varchar(50) NOT NULL,
+  `fld2` varchar(50) NOT NULL,
+  `fld3` varchar(50) NOT NULL,
+  `fld4` varchar(4) NOT NULL,
+  `fld5` varchar(4) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbemp_family`
+--
+
+DROP TABLE IF EXISTS `tbemp_family`;
+CREATE TABLE IF NOT EXISTS `tbemp_family` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nip` varchar(20) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `id_jk` int(11) NOT NULL,
+  `alamat` varchar(100) NOT NULL,
+  `notlp` varchar(20) NOT NULL,
+  `hubungan` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbemp_training`
+--
+
+DROP TABLE IF EXISTS `tbemp_training`;
+CREATE TABLE IF NOT EXISTS `tbemp_training` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nip` varchar(20) NOT NULL,
+  `fld1` varchar(100) NOT NULL,
+  `fld2` varchar(100) NOT NULL,
+  `fld3` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbemp_tunjangan`
+--
+
+DROP TABLE IF EXISTS `tbemp_tunjangan`;
+CREATE TABLE IF NOT EXISTS `tbemp_tunjangan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nip` varchar(20) NOT NULL,
+  `nama_tunjangan` varchar(100) NOT NULL,
+  `nilai_tunjangan` double NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbhargajual`
+--
+
+DROP TABLE IF EXISTS `tbhargajual`;
+CREATE TABLE IF NOT EXISTS `tbhargajual` (
+  `jenis` varchar(20) NOT NULL,
+  `margin` decimal(10,1) NOT NULL,
+  `marginplus` double NOT NULL,
+  `bulat` double NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbhargajual`
+--
+
+INSERT INTO `tbhargajual` (`jenis`, `margin`, `marginplus`, `bulat`, `id`) VALUES
+('AKIGEN', 1.0, 5000, 1000, 1),
+('BAUDMU', 1.0, 500, 500, 2),
+('IMITAS', 1.0, 0, 500, 3),
+('KTNMNM', 1.0, 0, 500, 4),
+('OLIGEN', 1.0, 1000, 1000, 5),
+('ORISIN', 1.0, 0, 500, 6),
+('VARIAS', 1.0, 0, 500, 7),
+('NOSTOK', 1.0, 0, 500, 8),
+('AKIGEN', 999999999.9, 1e32, 5, 10);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbhari_kerja`
+--
+
+DROP TABLE IF EXISTS `tbhari_kerja`;
+CREATE TABLE IF NOT EXISTS `tbhari_kerja` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hari_kerja` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbhari_kerja`
+--
+
+INSERT INTO `tbhari_kerja` (`id`, `hari_kerja`) VALUES
+(1, '5 hari kerja'),
+(2, '6 hari kerja');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbhistory_divisi`
+--
+
+DROP TABLE IF EXISTS `tbhistory_divisi`;
+CREATE TABLE IF NOT EXISTS `tbhistory_divisi` (
+  `nip` varchar(20) NOT NULL,
+  `kode_divisi` varchar(20) NOT NULL,
+  `kode_jabatan` varchar(20) NOT NULL,
+  `tgl_start` date NOT NULL,
+  `tgl_end` date NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbhjual_jasa`
+--
+
+DROP TABLE IF EXISTS `tbhjual_jasa`;
+CREATE TABLE IF NOT EXISTS `tbhjual_jasa` (
+  `jasa` varchar(10) NOT NULL,
+  `nilai` double NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbhjual_jasa`
+--
+
+INSERT INTO `tbhjual_jasa` (`jasa`, `nilai`, `id`) VALUES
+('PK', 7000, 1),
+('PS', 9000, 2),
+('PB', 12000, 3),
+('PC', 3000, 4),
+('BARANG', 0, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbitem_keluar_detail`
+--
+
+DROP TABLE IF EXISTS `tbitem_keluar_detail`;
+CREATE TABLE IF NOT EXISTS `tbitem_keluar_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `harga` double NOT NULL,
+  `total` double NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `stok_sistem` int(11) NOT NULL,
+  `penyesuaian` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbitem_keluar_detail`
+--
+
+INSERT INTO `tbitem_keluar_detail` (`no_transaksi`, `no_item`, `quantity`, `harga`, `total`, `keterangan`, `user`, `id`, `kd_cabang`, `status_trx`, `stok_sistem`, `penyesuaian`) VALUES
+('IK25000000001', '10008', 3, 250000, 750000, '', 'admin', 1, '001', '1', 0, 0),
+('IK25000000002', '10008', 2, 250000, 500000, '', 'admin', 3, '001', '1', 0, 0),
+('IK25000000003', '10008', 3, 250000, 750000, '', 'admin', 4, '001', '1', 0, 0),
+('', '10002', 2, 250000, 500000, '', 'admin', 6, '001', '0', 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbitem_keluar_header`
+--
+
+DROP TABLE IF EXISTS `tbitem_keluar_header`;
+CREATE TABLE IF NOT EXISTS `tbitem_keluar_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbitem_keluar_header`
+--
+
+INSERT INTO `tbitem_keluar_header` (`no_transaksi`, `tanggal`, `note`, `user`, `kd_cabang`) VALUES
+('IK25000000001', '2025-05-28', '', 'admin', '001'),
+('IK25000000002', '2025-06-11', '', 'admin', '001'),
+('IK25000000003', '2025-06-11', '', 'admin', '001');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbitem_masuk_detail`
+--
+
+DROP TABLE IF EXISTS `tbitem_masuk_detail`;
+CREATE TABLE IF NOT EXISTS `tbitem_masuk_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `harga` double NOT NULL,
+  `total` double NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `stok_sistem` int(11) NOT NULL,
+  `penyesuaian` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbitem_masuk_detail`
+--
+
+INSERT INTO `tbitem_masuk_detail` (`no_transaksi`, `no_item`, `quantity`, `harga`, `total`, `keterangan`, `user`, `id`, `kd_cabang`, `status_trx`, `stok_sistem`, `penyesuaian`) VALUES
+('IM25000000001', 'airaccu', 59, 3000, 177000, '', 'pengadaan', 1, '001', '1', 0, 0),
+('IM25000000005', '10008', 2, 250000, 500000, '', 'admin', 7, '001', '1', 0, 0),
+('IM25000000006', '10008', 2, 250000, 500000, '', '0', 8, '001', '0', 0, 0),
+('IM25000000006', '10008', 3, 250000, 750000, '', '0', 9, '001', '0', 0, 0),
+('IM25000000006', '10008', 3, 250000, 750000, '', 'admin', 10, '001', '1', 0, 0),
+('IM25000000007', '10008', 1, 250000, 250000, '', '0', 11, '001', '0', 0, 0),
+('IM25000000007', '10008', 1, 250000, 250000, '', 'admin', 12, '001', '1', 0, 0),
+('IM25000000008', '10008', 1, 250000, 250000, '', 'admin', 13, '001', '1', 0, 0),
+('IM25000000009', '10008', 1, 250000, 250000, '', 'admin', 14, '001', '1', 0, 0),
+('IM25000000010', '10008', 2, 250000, 500000, '', 'admin', 15, '001', '1', 0, 0),
+('IM25000000011', '10008', 2, 250000, 500000, '', 'admin', 16, '001', '1', 0, 0),
+('IM25000000012', '10008', 2, 250000, 500000, '', 'admin', 17, '001', '1', 0, 0),
+('IM25000000013', '10008', 2, 250000, 500000, '', 'admin', 18, '001', '1', 0, 0),
+('IM25000000014', '10008', 1, 250000, 250000, '', 'admin', 19, '001', '1', 0, 0),
+('IM25000000015', '10008', 1, 250000, 250000, '', 'admin', 20, '001', '1', 0, 0),
+('IM25000000017', '10008', 2, 250000, 500000, '', 'admin', 21, '001', '1', 0, 0),
+('IM25000000020', '10008', 1, 250000, 250000, '', 'admin', 22, '001', '1', 0, 0),
+('IM25000000021', '10008', 2, 250000, 500000, '', 'admin', 23, '001', '1', 0, 0),
+('IM25000000022', '10008', 2, 250000, 500000, '', 'admin', 24, '001', '1', 0, 0),
+('IM25000000023', '10008', 2, 250000, 500000, '', 'admin', 25, '001', '1', 0, 0),
+('IM25000000024', '10008', 2, 250000, 500000, '', 'admin', 26, '001', '1', 0, 0),
+('IM25000000025', '10008', 2, 250000, 500000, '', 'admin', 27, '001', '1', 0, 0),
+('IM25000000026', '10008', 3, 250000, 750000, '', 'admin', 28, '001', '1', 0, 0),
+('IM25000000027', '10009', 2, 500000, 1000000, '', 'admin', 29, '001', '1', 0, 0),
+('IM25000000028', '10008', 2, 250000, 500000, '', 'admin', 30, '001', '1', 0, 0),
+('IM25000000029', '10008', 2, 250000, 500000, '', 'admin', 31, '001', '1', 0, 0),
+('IM25000000030', '10009', 3, 500000, 1500000, '', 'admin', 32, '001', '1', 0, 0),
+('IM25000000031', '10008', 2, 250000, 500000, '', 'admin', 33, '001', '1', 0, 0),
+('IM25000000032', '10008', 2, 250000, 500000, '', 'admin', 34, '001', '1', 0, 0),
+('IM25000000033', '10008', 1, 250000, 250000, '', 'admin', 35, '001', '1', 0, 0),
+--
+CREATE TABLE IF NOT EXISTS `tbitem_masuk_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbitem_masuk_header`
+--
+
+INSERT INTO `tbitem_masuk_header` (`no_transaksi`, `tanggal`, `note`, `user`, `kd_cabang`) VALUES
+('IM25000000001', '2025-04-24', '', 'pengadaan', '001'),
+('IM25000000002', '2025-05-28', '', 'admin', '001'),
+('IM25000000003', '2025-05-28', '', 'admin', '001'),
+('IM25000000004', '2025-05-28', '', 'admin', '001'),
+('IM25000000005', '2025-05-29', '', 'admin', '001'),
+('IM25000000006', '2025-05-28', '', 'admin', '001'),
+('IM25000000007', '2025-05-28', '', 'admin', '001'),
+('IM25000000008', '2025-05-28', '', 'admin', '001'),
+('IM25000000009', '2025-05-28', '', 'admin', '001'),
+('IM25000000010', '2025-05-28', '', 'admin', '001'),
+('IM25000000011', '2025-05-28', '', 'admin', '001'),
+('IM25000000012', '2025-05-28', '', 'admin', '001'),
+('IM25000000013', '2025-05-28', '', 'admin', '001'),
+('IM25000000014', '2025-05-28', '', 'admin', '001'),
+('IM25000000015', '2025-05-28', '', 'admin', '001'),
+('IM25000000016', '2025-05-28', '', 'admin', '001'),
+('IM25000000017', '2025-05-29', '', 'admin', '001'),
+('IM25000000018', '2025-05-29', '', 'admin', '001'),
+('IM25000000019', '2025-05-29', '', 'admin', '001'),
+('IM25000000020', '2025-05-29', '', 'admin', '001'),
+('IM25000000021', '2025-05-29', '', 'admin', '001'),
+('IM25000000022', '2025-05-29', '', 'admin', '001'),
+('IM25000000023', '2025-05-29', '', 'admin', '001'),
+('IM25000000024', '2025-05-29', '', 'admin', '001'),
+('IM25000000025', '2025-05-29', '', 'admin', '001'),
+('IM25000000026', '2025-05-29', '', 'admin', '001'),
+('IM25000000027', '2025-05-29', '', 'admin', '001'),
+('IM25000000028', '2025-05-29', '', 'admin', '001'),
+('IM25000000029', '2025-05-29', '', 'admin', '001'),
+('IM25000000030', '2025-05-29', '', 'admin', '001'),
+('IM25000000031', '2025-05-29', '', 'admin', '001'),
+('IM25000000032', '2025-05-29', '', 'admin', '001'),
+('IM25000000033', '2025-05-29', '', 'admin', '001'),
+('IM25000000034', '2025-05-29', '', 'admin', '001'),
+('IM25000000035', '2025-05-29', '', 'admin', '001'),
+('IM25000000036', '2025-05-29', '', 'admin', '001'),
+('IM25000000037', '2025-05-29', '', 'admin', '001'),
+('IM25000000038', '2025-05-29', '', 'admin', '001'),
+--
+CREATE TABLE IF NOT EXISTS `tbitem_validation_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `noitem` varchar(20) NOT NULL,
+  `status_lama` varchar(20) DEFAULT NULL,
+  `status_baru` varchar(20) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `validated_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbjabatan`
+--
+
+DROP TABLE IF EXISTS `tbjabatan`;
+CREATE TABLE IF NOT EXISTS `tbjabatan` (
+  `kode_jabatan` varchar(6) NOT NULL,
+  `nama_jabatan` varchar(50) NOT NULL,
+  `kode_divisi` varchar(20) NOT NULL,
+  `tjabatan` double NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbjabatan`
+--
+
+INSERT INTO `tbjabatan` (`kode_jabatan`, `nama_jabatan`, `kode_divisi`, `tjabatan`) VALUES
+('JBT-01', 'Managemen', 'DIV01', 0),
+('JBT-02', 'Manager HRD', 'DIV02', 0),
+('JBT-03', 'Manager IT', 'DIV03', 0),
+('JBT-04', 'Manager Keuangan', 'DIV04', 0),
+('JBT-05', 'Staff Pembelian', 'DIV05', 0),
+('JBT-06', 'Staff Mekanik', 'DIV06', 0),
+('JBT-07', 'Staff CS', 'DIV07', 0),
+('JBT-08', 'Staff Kasir', 'DIV08', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbjenis_bayar`
+--
+
+DROP TABLE IF EXISTS `tbjenis_bayar`;
+CREATE TABLE IF NOT EXISTS `tbjenis_bayar` (
+  `jenis_bayar` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbjenis_bayar`
+--
+
+INSERT INTO `tbjenis_bayar` (`jenis_bayar`) VALUES
+('TUNAI'),
+('DEBIT CARD'),
+('CREDIT CARD'),
+('TRANSFER');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbjenis_motor`
+--
+
+DROP TABLE IF EXISTS `tbjenis_motor`;
+CREATE TABLE IF NOT EXISTS `tbjenis_motor` (
+  `kd` int(11) NOT NULL AUTO_INCREMENT,
+  `jenis` varchar(50) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `status` varchar(1) DEFAULT '1',
+  PRIMARY KEY (`kd`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbjenis_motor`
+--
+
+INSERT INTO `tbjenis_motor` (`kd`, `jenis`, `keterangan`, `status`) VALUES
+(1, 'FI', 'Fuel Injection - Sistem injeksi bahan bakar modern', '1'),
+(2, 'CARBU', NULL, '1'),
+(3, 'INJEKSI', NULL, '1'),
+(4, 'Fuel Injection', NULL, '1'),
+(5, 'FI', 'Fuel Injection - Sistem injeksi bahan bakar modern', '1'),
+(6, 'CARBU', 'Carburetor - Sistem karburator konvensional', '1'),
+(7, 'CARBU', 'Carburetor - Sistem karburator konvensional', '1'),
+(8, 'DMY', 'dummy1', '0'),
+(9, 'SPORT', 'motor sport', '1'),
+(10, 'SPRSPORT', 'motor sport', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbjenis_penggantian_retur`
+--
+
+DROP TABLE IF EXISTS `tbjenis_penggantian_retur`;
+CREATE TABLE IF NOT EXISTS `tbjenis_penggantian_retur` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `jenis_penggantian` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbjenis_penggantian_retur`
+--
+
+INSERT INTO `tbjenis_penggantian_retur` (`id`, `jenis_penggantian`) VALUES
+(1, 'Ganti dengan barang yang sama'),
+(2, 'Ganti dengan barang lain'),
+(3, 'Ganti dengan nominal uang'),
+(4, 'Tidak diganti');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbjk`
+--
+
+DROP TABLE IF EXISTS `tbjk`;
+CREATE TABLE IF NOT EXISTS `tbjk` (
+  `kode_jk` int(11) NOT NULL AUTO_INCREMENT,
+  `jk` varchar(20) NOT NULL,
+  PRIMARY KEY (`kode_jk`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbjk`
+--
+
+INSERT INTO `tbjk` (`kode_jk`, `jk`) VALUES
+(1, 'Laki-Laki'),
+(2, 'Perempuan');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkas_kasir`
+--
+
+DROP TABLE IF EXISTS `tbkas_kasir`;
+CREATE TABLE IF NOT EXISTS `tbkas_kasir` (
+  `tanggal` date NOT NULL,
+  `jam` varchar(15) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `tipe` varchar(1) NOT NULL,
+  `keping_1` int(11) NOT NULL,
+  `keping_2` int(11) NOT NULL,
+  `keping_3` int(11) NOT NULL,
+  `keping_4` int(11) NOT NULL,
+  `keping_5` int(11) NOT NULL,
+  `keping_6` int(11) NOT NULL,
+  `keping_7` int(11) NOT NULL,
+  `keping_8` int(11) NOT NULL,
+  `keping_9` int(11) NOT NULL,
+  `keping_10` int(11) NOT NULL,
+  `total` double NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `total_awal` double NOT NULL,
+  `total_real` double NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkas_kasir_detail`
+--
+
+DROP TABLE IF EXISTS `tbkas_kasir_detail`;
+CREATE TABLE IF NOT EXISTS `tbkas_kasir_detail` (
+  `no_bukti` varchar(20) NOT NULL,
+  `nominal` double NOT NULL,
+  `jml_keping` int(11) NOT NULL,
+  `nilai` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkas_kasir_detail`
+--
+
+INSERT INTO `tbkas_kasir_detail` (`no_bukti`, `nominal`, `jml_keping`, `nilai`) VALUES
+('KSR2500000001', 100000, 5, 500000),
+('KSR2500000001', 75000, 0, 0),
+('KSR2500000001', 50000, 0, 0),
+('KSR2500000001', 20000, 0, 0),
+('KSR2500000001', 10000, 0, 0),
+('KSR2500000001', 5000, 0, 0),
+('KSR2500000001', 2000, 0, 0),
+('KSR2500000001', 1000, 0, 0),
+('KSR2500000001', 500, 0, 0),
+('KSR2500000001', 200, 0, 0),
+('KSR2500000001', 100, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkas_kasir_header`
+--
+
+DROP TABLE IF EXISTS `tbkas_kasir_header`;
+CREATE TABLE IF NOT EXISTS `tbkas_kasir_header` (
+  `no_bukti` varchar(20) NOT NULL,
+  `tanggal` date NOT NULL,
+  `jam` varchar(10) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `tipe` varchar(1) NOT NULL,
+  `total` double NOT NULL,
+  `total_awal` double NOT NULL,
+  `total_real` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkas_kasir_header`
+--
+
+INSERT INTO `tbkas_kasir_header` (`no_bukti`, `tanggal`, `jam`, `kd_cabang`, `user`, `tipe`, `total`, `total_awal`, `total_real`) VALUES
+('KSR2500000001', '2025-04-20', '13:59:45', '001', 'kasir', '1', 500000, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkategori_motor`
+--
+
+DROP TABLE IF EXISTS `tbkategori_motor`;
+CREATE TABLE IF NOT EXISTS `tbkategori_motor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kategori` varchar(20) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `status` varchar(1) DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkategori_motor`
+--
+
+INSERT INTO `tbkategori_motor` (`id`, `kategori`, `keterangan`, `status`) VALUES
+(1, 'BEBEK', NULL, '1'),
+(2, 'MATIC', 'Automatic transmission, body slim', '1'),
+(3, 'SUPER MATIC', NULL, '1'),
+(4, 'SPORT', NULL, '1'),
+(5, 'SUPER SPORT', NULL, '1'),
+(6, 'MATIC', 'Automatic transmission, body slim', '1'),
+(7, 'SUPERMATIC', 'Automatic transmission, body besar', '1'),
+(8, 'SUPERMATIC', 'Automatic transmission, body besar', '1'),
+(9, 'DMY', 'dummy1', '0'),
+(10, 'SUPERSPORT', 'supersport', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkategori_rak`
+--
+
+DROP TABLE IF EXISTS `tbkategori_rak`;
+CREATE TABLE IF NOT EXISTS `tbkategori_rak` (
+  `kode` varchar(10) NOT NULL,
+  `nama_kategori` varchar(50) NOT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`kode`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkategori_rak`
+--
+
+INSERT INTO `tbkategori_rak` (`kode`, `nama_kategori`, `deskripsi`, `created_at`) VALUES
+('BD', 'Baud', 'Kategori untuk produk baud', '2025-09-13 07:13:15'),
+('CH', 'Cairan', 'Kategori untuk produk cairan', '2025-09-13 07:13:15'),
+('CR', 'Carbu', 'Kategori untuk produk karburator', '2025-09-13 07:13:15'),
+('CV', 'CVT', 'Kategori untuk produk CVT', '2025-09-13 07:13:15'),
+('EL', 'Kelistrikan', 'Kategori untuk produk kelistrikan', '2025-09-13 07:13:15'),
+('FL', 'Filter', 'Kategori untuk produk filter', '2025-09-13 07:13:15'),
+('KB', 'Kabel', 'Kategori untuk produk kabel', '2025-09-13 07:13:15'),
+('MS', 'Mesin', 'Kategori untuk produk mesin', '2025-09-13 07:13:15'),
+('RD', 'Roda', 'Kategori untuk produk roda', '2025-09-13 07:13:15'),
+('RM', 'Rem', 'Kategori untuk produk rem', '2025-09-13 07:13:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkeluhan_proses`
+--
+
+DROP TABLE IF EXISTS `tbkeluhan_proses`;
+CREATE TABLE IF NOT EXISTS `tbkeluhan_proses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_keluhan` varchar(10) NOT NULL,
+  `kode_item` varchar(20) DEFAULT NULL,
+  `tipe_proses` enum('jasa','barang','inspeksi') NOT NULL,
+  `nama_proses` varchar(100) NOT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `estimasi_waktu` int(11) DEFAULT 0,
+  `harga_estimasi` double DEFAULT 0,
+  `wajib` varchar(1) DEFAULT '0' COMMENT '1=wajib, 0=opsional',
+  `urutan` int(11) DEFAULT 0,
+  `status_aktif` varchar(1) DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `kode_keluhan` (`kode_keluhan`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkeluhan_proses`
+--
+
+INSERT INTO `tbkeluhan_proses` (`id`, `kode_keluhan`, `kode_item`, `tipe_proses`, `nama_proses`, `deskripsi`, `estimasi_waktu`, `harga_estimasi`, `wajib`, `urutan`, `status_aktif`, `created_at`) VALUES
+(1, 'KEL001', NULL, 'inspeksi', 'Cek Busi', 'Periksa kondisi busi', 5, 0, '1', 1, '1', '2025-07-28 03:59:44'),
+(2, 'KEL001', NULL, 'inspeksi', 'Cek Bahan Bakar', 'Periksa tangki dan saluran bahan bakar', 10, 0, '1', 2, '1', '2025-07-28 03:59:44'),
+(3, 'KEL001', NULL, 'inspeksi', 'Cek Sistem Pengapian', 'Periksa CDI dan koil', 15, 0, '1', 3, '1', '2025-07-28 03:59:44'),
+(4, 'KEL002', NULL, 'inspeksi', 'Cek Minyak Rem', 'Periksa level dan kualitas minyak rem', 5, 0, '1', 1, '1', '2025-07-28 03:59:44'),
+(5, 'KEL002', NULL, 'inspeksi', 'Cek Kampas Rem', 'Periksa ketebalan kampas rem', 10, 0, '1', 2, '1', '2025-07-28 03:59:44'),
+(6, 'KEL002', NULL, 'jasa', 'Bleeding Rem', 'Buang angin dalam sistem rem', 20, 0, '0', 3, '1', '2025-07-28 03:59:44'),
+(7, 'KEL003', NULL, 'inspeksi', 'Identifikasi Sumber Bocor', 'Cari lokasi kebocoran oli', 15, 0, '1', 1, '1', '2025-07-28 03:59:44'),
+(8, 'KEL003', NULL, 'jasa', 'Ganti Seal/Gasket', 'Penggantian seal yang bocor', 45, 0, '0', 2, '1', '2025-07-28 03:59:44');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkeping`
+--
+
+DROP TABLE IF EXISTS `tbkeping`;
+CREATE TABLE IF NOT EXISTS `tbkeping` (
+  `keping` double NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkeping`
+--
+
+INSERT INTO `tbkeping` (`keping`, `id`) VALUES
+(100, 1),
+(200, 2),
+(500, 3),
+(1000, 4),
+(2000, 5),
+(5000, 6),
+(10000, 7),
+(20000, 8),
+(50000, 9),
+(100000, 10),
+(75000, 14);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkomisijl_sales1`
+--
+
+DROP TABLE IF EXISTS `tbkomisijl_sales1`;
+CREATE TABLE IF NOT EXISTS `tbkomisijl_sales1` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ket` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkomisijl_sales1`
+--
+
+INSERT INTO `tbkomisijl_sales1` (`id`, `ket`) VALUES
+(1, 'Dihitung per item barang'),
+(2, 'Dihitung per Faktur Jual');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkomisijl_sales2`
+--
+
+DROP TABLE IF EXISTS `tbkomisijl_sales2`;
+CREATE TABLE IF NOT EXISTS `tbkomisijl_sales2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ket` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tbkomisijl_sales2`
+--
+
+INSERT INTO `tbkomisijl_sales2` (`id`, `ket`) VALUES
+(1, 'Dalam Persentase'),
+(2, 'Dalam Nominal');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkoreksi_stok_detail`
+--
+
+DROP TABLE IF EXISTS `tbkoreksi_stok_detail`;
+CREATE TABLE IF NOT EXISTS `tbkoreksi_stok_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `stok_sistem` int(11) NOT NULL,
+  `penyesuaian` int(11) NOT NULL,
+  `tipe_stok` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbkoreksi_stok_header`
+--
+
+DROP TABLE IF EXISTS `tbkoreksi_stok_header`;
+CREATE TABLE IF NOT EXISTS `tbkoreksi_stok_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblakunkas`
+--
+
+DROP TABLE IF EXISTS `tblakunkas`;
+CREATE TABLE IF NOT EXISTS `tblakunkas` (
+  `kodeakun` varchar(10) NOT NULL,
+  `namaakun` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblakunkas`
+--
+
+INSERT INTO `tblakunkas` (`kodeakun`, `namaakun`, `id`) VALUES
+('BNI', 'Bank BNI', 1),
+('KAS1', 'Mutasi', 2),
+('KAS2', 'Kas Biaya Operational', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbldelivery_order_detail`
+--
+
+DROP TABLE IF EXISTS `tbldelivery_order_detail`;
+CREATE TABLE IF NOT EXISTS `tbldelivery_order_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_do` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `qty_po` int(11) NOT NULL,
+  `qty_kirim` int(11) NOT NULL,
+  `qty_terima` int(11) NOT NULL DEFAULT 0,
+  `qty_reject` int(11) NOT NULL DEFAULT 0,
+  `keterangan` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_item` (`no_item`),
+  KEY `fk_dod_do` (`no_do`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tbldelivery_order_detail`
+--
+
+INSERT INTO `tbldelivery_order_detail` (`id`, `no_do`, `nobaris`, `no_item`, `qty_po`, `qty_kirim`, `qty_terima`, `qty_reject`, `keterangan`) VALUES
+(1, 'DO2511PST00001', 0, 'ZTHCCDI', 5, 5, 5, 0, NULL),
+(2, 'DO202511PESALAKAN00001', 0, '09355-50105L460', 2, 2, 2, 0, NULL),
+(3, 'DO202511PESALAKAN00001', 0, '17210-K0J-N00', 3, 3, 3, 0, NULL),
+(4, 'DO202511PESALAKAN00001', 0, '17210-K59-A70', 1, 1, 1, 0, NULL),
+(5, 'DO202511PESALAKAN00001', 0, '20W-50JASO MA', 5, 5, 5, 0, NULL),
+(6, 'DO202511PESALAKAN00001', 0, '23100-K36-J02', 2, 2, 2, 0, NULL),
+(7, 'DO202511PESALAKAN00001', 0, '23100-K44-V01', 2, 2, 2, 0, NULL),
+(8, 'DO202511PESALAKAN00001', 0, '8990876610040', 1, 1, 1, 0, NULL),
+(9, 'DO202511PESALAKAN00001', 0, '8990876610057', 1, 1, 1, 0, NULL),
+(10, 'DO202511PESALAKAN00001', 0, '90793AJ437', 5, 5, 5, 0, NULL),
+(11, 'DO202511PESALAKAN00001', 0, '20W-40MATIC', 10, 10, 10, 0, NULL),
+(12, 'DO202511PESALAKAN00001', 0, '91202-K0J-N01', 4, 4, 4, 0, NULL),
+(13, 'DO202511PESALAKAN00001', 0, '93306-300YK', 4, 4, 4, 0, NULL),
+(14, 'DO202511PESALAKAN00001', 0, 'AAJ', 2, 2, 2, 0, NULL),
+(15, 'DO202511PESALAKAN00001', 0, 'BOCU-R0J', 18, 18, 18, 0, NULL),
+(16, 'DO202511PESALAKAN00001', 0, 'edrsae20w-40', 4, 4, 4, 0, NULL),
+(17, 'DO202511PESALAKAN00001', 0, 'ENDUROGEAR120', 1, 1, 1, 0, NULL),
+(18, 'DO202511PESALAKAN00001', 0, 'FRFLPB', 2, 2, 2, 0, NULL),
+(19, 'DO202511PESALAKAN00001', 0, 'FRFLPP', 9, 9, 9, 0, NULL),
+(20, 'DO202511PESALAKAN00001', 0, 'GEN000010', 5, 5, 5, 0, NULL),
+(21, 'DO202511PESALAKAN00001', 0, 'GEN00007', 17, 17, 17, 0, NULL),
+(22, 'DO202511PESALAKAN00001', 0, 'GP0125', 10, 10, 10, 0, NULL),
+(23, 'DO202511PESALAKAN00001', 0, 'GP0211', 4, 4, 4, 0, NULL),
+(24, 'DO202511PESALAKAN00001', 0, 'GP0212', 2, 2, 2, 0, NULL),
+(25, 'DO202511PESALAKAN00001', 0, 'LEDLMH', 2, 2, 2, 0, NULL),
+(26, 'DO202511PESALAKAN00001', 0, 'MRRMKT', 13, 13, 13, 0, NULL),
+(27, 'DO202511PESALAKAN00001', 0, 'VM00032', 3, 3, 3, 0, NULL),
+(28, 'DO202511PST00001', 0, '09355-50105L460', 2, 2, 2, 0, NULL),
+(29, 'DO202511PST00001', 0, '17210-K0J-N00', 3, 3, 3, 0, NULL),
+(30, 'DO202511PST00001', 0, '17210-K59-A70', 1, 1, 1, 0, NULL),
+(31, 'DO202511PST00001', 0, '20W-50JASO MA', 5, 5, 5, 0, NULL),
+--
+CREATE TABLE IF NOT EXISTS `tbldelivery_order_header` (
+  `no_do` varchar(50) NOT NULL,
+  `no_po` varchar(50) NOT NULL,
+  `no_supplier` varchar(50) NOT NULL,
+  `tanggal_do` date NOT NULL,
+  `tanggal_kirim` date NOT NULL,
+  `tanggal_estimasi_tiba` date NOT NULL,
+  `tanggal_tiba` date DEFAULT NULL,
+  `no_surat_jalan` varchar(50) DEFAULT NULL,
+  `no_kendaraan` varchar(20) DEFAULT NULL,
+  `nama_pengirim` varchar(100) DEFAULT NULL,
+  `telp_pengirim` varchar(20) DEFAULT NULL,
+  `alamat_kirim` text NOT NULL,
+  `total_qty` int(11) NOT NULL DEFAULT 0,
+  `status_do` enum('draft','confirmed','in_transit','arrived','received','cancelled') NOT NULL DEFAULT 'draft',
+  `keterangan` text DEFAULT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `created_by` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`no_do`),
+  KEY `idx_status` (`status_do`),
+  KEY `idx_tanggal_kirim` (`tanggal_kirim`),
+  KEY `fk_do_po` (`no_po`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tbldelivery_order_header`
+--
+
+INSERT INTO `tbldelivery_order_header` (`no_do`, `no_po`, `no_supplier`, `tanggal_do`, `tanggal_kirim`, `tanggal_estimasi_tiba`, `tanggal_tiba`, `no_surat_jalan`, `no_kendaraan`, `nama_pengirim`, `telp_pengirim`, `alamat_kirim`, `total_qty`, `status_do`, `keterangan`, `kd_cabang`, `created_by`, `created_at`, `updated_at`) VALUES
+('DO202511PESALAKAN00001', 'PS25000000004', 'AHASS', '2025-11-23', '2025-11-23', '2025-11-23', NULL, NULL, NULL, NULL, NULL, '', 132, 'received', NULL, 'PESALAKAN', 'admin', '2025-11-23 14:58:50', '2025-11-23 14:58:51'),
+('DO202511PST00001', 'PS25000000005', 'AHASS', '2025-11-24', '2025-11-24', '2025-11-24', NULL, NULL, NULL, NULL, NULL, '', 132, 'received', NULL, 'PST', 'admin', '2025-11-24 03:38:56', '2025-11-24 03:38:56'),
+('DO2511PST00001', 'PS25000000003', 'ADM', '2025-11-22', '2025-11-22', '2025-11-22', NULL, NULL, NULL, NULL, NULL, '', 5, 'received', NULL, 'PST', 'admin', '2025-11-22 13:21:30', '2025-11-22 13:21:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbldo_tracking`
+--
+
+DROP TABLE IF EXISTS `tbldo_tracking`;
+CREATE TABLE IF NOT EXISTS `tbldo_tracking` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_do` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `lokasi` varchar(100) DEFAULT NULL,
+  `updated_by` varchar(50) NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_dotrk_do` (`no_do`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tbldo_tracking`
+--
+
+INSERT INTO `tbldo_tracking` (`id`, `no_do`, `status`, `keterangan`, `lokasi`, `updated_by`, `updated_at`) VALUES
+(1, 'DO2511PST00001', 'received', 'Barang diterima', '', 'admin', '2025-11-22 13:21:30'),
+(2, 'DO202511PESALAKAN00001', 'received', 'Barang diterima', '', 'admin', '2025-11-23 14:58:51'),
+(3, 'DO202511PST00001', 'received', 'Barang diterima', '', 'admin', '2025-11-24 03:38:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblevel`
+--
+
+DROP TABLE IF EXISTS `tblevel`;
+CREATE TABLE IF NOT EXISTS `tblevel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `level_name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblevel`
+--
+
+INSERT INTO `tblevel` (`id`, `level_name`) VALUES
+(1, 'Administrator'),
+(2, 'Staf CS'),
+(3, 'Kasir'),
+(4, 'Mekanik'),
+(5, 'Pengadaan'),
+(6, 'Staf CRM'),
+(7, 'Managemen'),
+(8, 'Keuangan'),
+(9, 'HRD');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblhutang_detail`
+--
+
+DROP TABLE IF EXISTS `tblhutang_detail`;
+CREATE TABLE IF NOT EXISTS `tblhutang_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_pembelian` varchar(50) NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `jumlah_hutang` double NOT NULL,
+  `jumlah_bayar` double NOT NULL,
+  `status` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblhutang_header`
+--
+
+DROP TABLE IF EXISTS `tblhutang_header`;
+CREATE TABLE IF NOT EXISTS `tblhutang_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `no_supplier` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_bayar` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblist_bpjs`
+--
+
+DROP TABLE IF EXISTS `tblist_bpjs`;
+CREATE TABLE IF NOT EXISTS `tblist_bpjs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `list_bpjs` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblist_bpjs`
+--
+
+INSERT INTO `tblist_bpjs` (`id`, `list_bpjs`) VALUES
+(1, 'BPJS Kesehatan dan Ketenagakerjaan'),
+(2, 'BPJS Kesehatan saja'),
+(3, 'BPJS Ketenagakerjaan saja'),
+(4, 'Tidak Ikut Keduanya');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblitem`
+--
+
+DROP TABLE IF EXISTS `tblitem`;
+CREATE TABLE IF NOT EXISTS `tblitem` (
+  `noitem` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kodebarcode` varchar(30) NOT NULL,
+  `namaitem` varchar(50) NOT NULL,
+  `jenis` varchar(20) NOT NULL,
+  `satuan` varchar(3) NOT NULL,
+  `hargapokok` double NOT NULL,
+  `hargajual` double NOT NULL,
+  `hargajual2` double NOT NULL,
+  `hargajual3` double NOT NULL,
+  `hjqtyd2` double NOT NULL,
+  `hjqtyd3` double NOT NULL,
+  `hjqtys1` double NOT NULL,
+  `hjqtys2` double NOT NULL,
+  `totalpokok` double NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `stokmin` int(11) NOT NULL,
+  `statusitem` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `supplier` varchar(10) NOT NULL,
+  `supplier2` varchar(10) NOT NULL,
+  `supplier3` varchar(10) NOT NULL,
+  `statusproduk` varchar(1) NOT NULL,
+  `gambar` varchar(50) NOT NULL,
+  `note` varchar(100) NOT NULL,
+  `rakbarang` varchar(3) NOT NULL,
+  `jasawaktu` double NOT NULL,
+  `jasasatuanwaktu` varchar(1) NOT NULL,
+  `jeniskomisi` varchar(1) NOT NULL,
+  `komisiprosen` decimal(10,0) NOT NULL,
+  `komisinominal` double NOT NULL,
+  `inv_idawal` int(11) NOT NULL,
+  `inv_jmlawal` int(11) NOT NULL,
+  `inv_hrgawal` double NOT NULL,
+  `inv_tglawal` date NOT NULL,
+  `stok_maks` int(11) NOT NULL,
+  `kd_pabrik` int(11) NOT NULL,
+  `kd_etalase` varchar(10) NOT NULL,
+  `jenis_jasa` int(11) NOT NULL,
+  `tipe_item` enum('ORI','NON_ORI') DEFAULT 'NON_ORI' COMMENT 'ORI=Genuine Part, NON_ORI=Aftermarket/Imitasi',
+  `merek` varchar(50) DEFAULT NULL COMMENT 'Merek untuk ORI (Honda, Yamaha, Suzuki, dll)',
+  `kode_part_resmi` varchar(50) DEFAULT NULL COMMENT 'Kode part number resmi untuk ORI',
+  `nama_part_resmi` varchar(100) DEFAULT NULL COMMENT 'Nama part resmi sesuai catalog',
+  `penggunaan_motor` varchar(100) DEFAULT NULL COMMENT 'Penggunaan motor untuk NON-ORI',
+  `merek_tipe` varchar(100) DEFAULT NULL COMMENT 'Merek/Tipe/Ukuran untuk NON-ORI',
+  `kategori_rak` varchar(10) DEFAULT NULL COMMENT 'Kategori rak untuk auto-generate code NON-ORI',
+  `status_validasi` enum('pending_validation','validated','rejected') DEFAULT 'pending_validation' COMMENT 'Status validasi item',
+  `created_by` int(11) DEFAULT NULL COMMENT 'User ID yang membuat item',
+  `validated_by` int(11) DEFAULT NULL COMMENT 'User ID yang memvalidasi item',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  KEY `idx_tipe_item` (`tipe_item`),
+--
+CREATE TABLE IF NOT EXISTS `tblitemjenis` (
+  `jenis` varchar(10) NOT NULL,
+  `namajenis` varchar(50) NOT NULL,
+  `_default` varchar(1) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `accurate_id` bigint(20) DEFAULT NULL,
+  `status` varchar(1) NOT NULL DEFAULT '1' COMMENT '1=Active, 0=Inactive',
+  `margin_khusus` decimal(5,2) DEFAULT NULL,
+  `ikut_margin_jenis` varchar(1) DEFAULT '1',
+  `include_service` varchar(1) DEFAULT '0',
+  `keterangan` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblitemjenis`
+--
+
+INSERT INTO `tblitemjenis` (`jenis`, `namajenis`, `_default`, `id`, `accurate_id`, `status`, `margin_khusus`, `ikut_margin_jenis`, `include_service`, `keterangan`) VALUES
+('AKIGEN', 'AKI/ACCU SEMUA MERK', '0', 1, NULL, '1', NULL, '1', '0', NULL),
+('BAUDMU', 'BAUD ATAU MUR ATAU RING', '0', 2, NULL, '1', NULL, '1', '0', NULL),
+('GP1RCG', 'GP1 RACING SERIES', '0', 3, NULL, '1', NULL, '1', '0', NULL),
+('IMITAS', 'MERK LAIN-LAIN', '0', 4, NULL, '1', NULL, '1', '0', NULL),
+('KTNMNM', 'MINUMAN KANTIN', '0', 5, NULL, '1', NULL, '1', '0', NULL),
+('NOSTOK', 'SELAIN HONDA & YAMAHA', '0', 6, NULL, '1', NULL, '1', '0', NULL),
+('OLIGEN', 'OLI MESIN GENERAL', '0', 7, NULL, '1', NULL, '1', '0', NULL),
+('ORISIN', 'ORISINIL GENUINE PART', '0', 8, NULL, '1', NULL, '1', '0', NULL),
+('OUTSRC', 'SERVIS KELUAR', '0', 9, NULL, '1', NULL, '1', '0', NULL),
+('SERVIS', 'JASA SERVIS', '0', 10, NULL, '1', NULL, '1', '0', NULL),
+('VARIAS', 'VARIASI', '0', 11, NULL, '1', NULL, '1', '0', NULL),
+('YAHOKI', 'YAHOKI PART', '0', 12, NULL, '1', NULL, '1', '0', NULL),
+('AKIGEN', 'AKIGEN', '', 33, NULL, '0', NULL, '1', '0', NULL),
+('BAUD', 'BAUD/MUR/RING', '0', 44, NULL, '1', 40.00, '0', '0', 'Baut, mur, ring dan sejenisnya dengan margin khusus 40%'),
+('KELISTRIKA', 'KELISTRIKAN', '0', 45, NULL, '1', NULL, '1', '0', 'Komponen elektrik mengikuti margin jenis item'),
+('BHP', 'BHP/CONSUMABLES', '0', 46, NULL, '1', 20.00, '0', '1', 'Bahan habis pakai dengan margin 20%, termasuk dalam service'),
+('KARET', 'KARET/SEAL', '0', 47, NULL, '1', NULL, '1', '0', 'Komponen karet dan seal mengikuti margin jenis item'),
+('DUMMY', 'DUMMY', '0', 48, NULL, '1', 21.00, '0', '0', 'DUMMY');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblitemsatuan`
+--
+
+DROP TABLE IF EXISTS `tblitemsatuan`;
+CREATE TABLE IF NOT EXISTS `tblitemsatuan` (
+  `satuan` varchar(3) NOT NULL,
+  `namasatuan` varchar(30) NOT NULL,
+  `_default` varchar(1) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `accurate_id` varchar(50) DEFAULT NULL COMMENT 'ID dari Accurate Online untuk sinkronisasi',
+  `keterangan` text DEFAULT NULL,
+  `status` varchar(1) DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblitemsatuan`
+--
+
+INSERT INTO `tblitemsatuan` (`satuan`, `namasatuan`, `_default`, `id`, `accurate_id`, `keterangan`, `status`) VALUES
+('BOX', 'BOX', '0', 1, NULL, NULL, '1'),
+('BTL', 'BOTOL', '0', 2, NULL, NULL, '1'),
+('GLS', 'GELAS', '0', 3, NULL, NULL, '1'),
+('JAM', 'JAM', '0', 4, NULL, NULL, '1'),
+('PAK', 'PAK', '0', 5, NULL, NULL, '1'),
+('PCS', 'PCS', '1', 6, NULL, NULL, '1'),
+('PKT', 'PAKET', '0', 7, NULL, NULL, '1'),
+('PRS', 'PORSI', '0', 8, NULL, NULL, '1'),
+('PSG', 'PASANG', '0', 9, NULL, NULL, '1'),
+('SET', 'SET', '0', 10, NULL, NULL, '1'),
+('PCS', 'Pcs', '', 21, NULL, NULL, '1'),
+('PCS', 'Pcs', '', 22, NULL, NULL, '1'),
+('PAS', 'PASANG', '0', 23, NULL, 'Sepasang (contains 2 items)', '1'),
+('PCS', 'PCS', '1', 24, NULL, 'Pieces (single items)', '1'),
+('PAS', 'PASANG', '0', 25, NULL, 'Sepasang (contains 2 items)', '1'),
+('PCS', 'PCS', '1', 26, NULL, 'Pieces (single items)', '1'),
+('DMY', 'dummy', '0', 27, NULL, 'dmyq', '0');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblitem_backup_categories`
+--
+
+DROP TABLE IF EXISTS `tblitem_backup_categories`;
+CREATE TABLE IF NOT EXISTS `tblitem_backup_categories` (
+  `noitem` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `namaitem` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `kategori_rak` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Kategori rak untuk auto-generate code NON-ORI',
+  `tipe_item` enum('ORI','NON_ORI') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT 'NON_ORI' COMMENT 'ORI=Genuine Part, NON_ORI=Aftermarket/Imitasi'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tblitem_backup_categories`
+--
+
+INSERT INTO `tblitem_backup_categories` (`noitem`, `namaitem`, `kategori_rak`, `tipe_item`) VALUES
+('-', '-', NULL, 'NON_ORI'),
+('--', '-', NULL, 'NON_ORI'),
+('011-K44-NPP', 'PISTON KIT H.BEAT FI ESP/POP (1.00) ORI', NULL, 'NON_ORI'),
+('011-KPH-950-025', 'RING PISTON H.KARISMA IMI', NULL, 'NON_ORI'),
+('01-C21-300-40AA', 'BATOK DEPAN SMASH 125 WIN', NULL, 'NON_ORI'),
+('01-C21-307-40AA', 'SLEBOR DEPAN SMASH 125 WIN', NULL, 'NON_ORI'),
+('06141-GN5-505', 'RANTE KETENG SUPRA X', NULL, 'NON_ORI'),
+('06141-KRS-505', 'KETENG SET SUPRAFIT NEW', NULL, 'NON_ORI'),
+('06141-KWB-505', 'RANTE KETENG SET REVO 110 ABSOLUTE', NULL, 'NON_ORI'),
+('06381-KEV-880', 'STANG SEHER SUPRA X', NULL, 'NON_ORI'),
+('06381-KPH-900', 'ROD KIT CONNECTING KARISMA', NULL, 'NON_ORI'),
+('06381-KVB-930', 'STANG SEHER H.SUPRA X 125 HELM IN ORI', NULL, 'NON_ORI'),
+('06381-KVY-960', 'STANG SEHER BEAT CARBU AHM', NULL, 'NON_ORI'),
+('06381-KZL-A00', 'STANG SEHER BEAT FI AHM', NULL, 'NON_ORI'),
+('06381-KZR-600', 'SETANG SEHER H.VARIO 125 ORI', NULL, 'NON_ORI'),
+('06401-K15-900', 'GIR SET H.CB150 ORI', NULL, 'NON_ORI'),
+('06401-K18-900', 'GIR SET H.VERZA 150 ORI', NULL, 'NON_ORI'),
+('06401-K41-N01', 'GIR SET H.SUPRA X 125 NEW FI ORI', NULL, 'NON_ORI'),
+('06401-K45-N41', 'GIR SET H.CB150R LED ORI', NULL, 'NON_ORI'),
+('06401-K59-N00', 'GIR SET H.SONIC 150 ORI', NULL, 'NON_ORI'),
+('06401-KEH-900', 'GIR SET H.MEGAPRO PRIMUS ORI', NULL, 'NON_ORI'),
+('06401-KEV-881', 'GIR SET H.SUPRA X 100 ORI', NULL, 'NON_ORI'),
+('06401-KPH-881', 'GIR SET H.KARISMA/SUPRA X 125 ORI', NULL, 'NON_ORI'),
+('06401-KTL-700', 'GIR SET H.SUPRA FIT NEW/REVO 100CC ORI', NULL, 'NON_ORI'),
+('06401-KWB-900', 'GIR SET H.REVO 110 / BLADE ORI', NULL, 'NON_ORI'),
+('06401-KWW-900', 'GIR SET H.NEW REVO 110 / BLADE NEW ORI', NULL, 'NON_ORI'),
+('06401-KYE-900', 'GIRSET H.MEGAPRO MONOSHOCK', NULL, 'NON_ORI'),
+('06401-KYZ-900', 'GIR SET H.SUPRA X HELM IN/FI NEW ORI', NULL, 'NON_ORI'),
+('06435-KPP-901', 'DISC PAD BELAKANG H.SUPRA X 125 ORI', NULL, 'NON_ORI'),
+('06435-KSP-B01', 'DISC PAD BELAKANG H.CB ORI', NULL, 'NON_ORI'),
+('06455-K59-A71', 'DISC PAD H.VARIO 125 NEW ESP ORI', NULL, 'NON_ORI'),
+('06455-K84-902', 'DISC PAD H.PCX 150 ORI', NULL, 'NON_ORI'),
+('06455-KPH-403', 'DISC PAD H.KARISMA INDOPART', NULL, 'NON_ORI'),
+('06455-KPP-901', 'DISC PAD H.MEGAPRO ADV ORI', NULL, 'NON_ORI'),
+('06455-KPP-N01', 'DISC PAD H.MEGAPRO ADV ORI (06455-KPP-N02)', NULL, 'NON_ORI'),
+('06455-KR3-404', 'DISC PAD H.SUPRA X ORI', NULL, 'NON_ORI'),
+('06455-KRE-K02', 'DISC PAD H. PCX 160 ORI', NULL, 'NON_ORI'),
+('06455-KVB-401', 'DISC PAD H.VARIO LAMA ORI', NULL, 'NON_ORI'),
+('06455-KVB-T01', 'DISC PAD H.VARIO TECHNO/BEAT ORI', NULL, 'NON_ORI'),
+--
+CREATE TABLE IF NOT EXISTS `tblitem_jasa` (
+  `noitem` varchar(50) NOT NULL,
+  `namaitem` varchar(100) NOT NULL,
+  `waktu` int(11) NOT NULL,
+  `harga` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblitem_jasa`
+--
+
+INSERT INTO `tblitem_jasa` (`noitem`, `namaitem`, `waktu`, `harga`) VALUES
+('SVS001', 'Servis Standar Matic/bebek', 45, 40000),
+('SVS002', 'Ongkos Ganti Kampas Belakang', 30, 15000);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblitem_spart`
+--
+
+DROP TABLE IF EXISTS `tblitem_spart`;
+CREATE TABLE IF NOT EXISTS `tblitem_spart` (
+  `noitem` varchar(50) NOT NULL,
+  `kode_tipe` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblitem_spart`
+--
+
+INSERT INTO `tblitem_spart` (`noitem`, `kode_tipe`, `id`) VALUES
+('999-test', 1, 21),
+('999-test', 32, 22),
+('999-test', 63, 23),
+('999-test', 94, 24),
+('999-001', 1, 26),
+('999-xxx', 1, 31),
+('999-xxx', 31, 32),
+('999-xxx', 61, 33),
+('999-xxx', 91, 34),
+('all-999', 8, 41),
+('all-999', 41, 42),
+('all-999', 71, 43),
+('all-999', 72, 44),
+('all-999', 93, 45),
+('all-999', 94, 46),
+('100002', 61, 47),
+('100004', 61, 48),
+('100004', 31, 49),
+('100004', 31, 50),
+('100004', 61, 51),
+('100004', 61, 52),
+('100005', 61, 53),
+('100006', 61, 54),
+('10006', 61, 55),
+('10007', 61, 56),
+('10008', 61, 57),
+('10009', 31, 58),
+('10009', 91, 59),
+('100010', 61, 60),
+('10009', 61, 62),
+('10002', 61, 63),
+('COBA', 61, 66),
+('COBA', 62, 67),
+('DMY01', 61, 68),
+('DMY01', 62, 69),
+('IM-KB0001', 61, 70),
+('IM-KB0001', 62, 71);
+
+-- --------------------------------------------------------
+--
+CREATE TABLE IF NOT EXISTS `tblitem_stok` (
+  `noitem` varchar(20) NOT NULL,
+  `kode_cabang` varchar(3) NOT NULL,
+  `stokmin` int(11) NOT NULL,
+  `stok_maks` int(11) NOT NULL,
+  `stok_awal` int(11) NOT NULL,
+  `rakbarang` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblitem_stok`
+--
+
+INSERT INTO `tblitem_stok` (`noitem`, `kode_cabang`, `stokmin`, `stok_maks`, `stok_awal`, `rakbarang`) VALUES
+('01-D24-001-00AA', '001', 2, 10, 0, 16),
+('10008', '001', 5, 100, 0, 8),
+('IM-KB0001', 'PES', 0, 100, 0, 1),
+('00001', 'PES', 0, 0, 0, 0),
+('00001', 'PES', 0, 0, 0, 0),
+('IM-KB0001', 'PES', 0, 0, 0, 0),
+('01-C21-300-40AA', 'PES', 0, 0, 0, 0),
+('01-C21-300-40AA', 'PES', 0, 0, 0, 0),
+('01-C21-300-40AA', 'PES', 0, 0, 0, 0),
+('ZTHCCDI', 'PES', 0, 0, 0, 0),
+('ZSWVRO', 'PES', 0, 0, 0, 0),
+('YTZ7S', 'PES', 0, 0, 0, 0),
+('YTZ6V', 'PES', 0, 0, 0, 0),
+('YHK', 'PES', 0, 0, 0, 0),
+('YHK', 'PES', 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbljenis`
+--
+
+DROP TABLE IF EXISTS `tbljenis`;
+CREATE TABLE IF NOT EXISTS `tbljenis` (
+  `kodejenis` varchar(10) NOT NULL,
+  `namajenis` varchar(100) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `statusjenis` enum('1','0') DEFAULT '1',
+  PRIMARY KEY (`kodejenis`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbljenis`
+--
+
+INSERT INTO `tbljenis` (`kodejenis`, `namajenis`, `keterangan`, `statusjenis`) VALUES
+('ACCS', 'Aksesoris', 'Aksesoris kendaraan', '1'),
+('OLI', 'Oli & Pelumas', 'Oli dan pelumas', '1'),
+('SP', 'Spare Part', 'Suku cadang kendaraan', '1'),
+('TIRE', 'Ban & Velg', 'Ban dan velg kendaraan', '1'),
+('TOOL', 'Tools', 'Peralatan bengkel dan tools', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblkas_keluar_masuk`
+--
+
+DROP TABLE IF EXISTS `tblkas_keluar_masuk`;
+CREATE TABLE IF NOT EXISTS `tblkas_keluar_masuk` (
+  `kode_km` varchar(50) NOT NULL,
+  `no_bukti` varchar(50) NOT NULL,
+  `kode_akun` varchar(50) NOT NULL,
+  `tanggal` date NOT NULL,
+  `uraian` varchar(200) NOT NULL,
+  `masuk` double NOT NULL,
+  `keluar` double NOT NULL,
+  `jenis` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kode_akun_biaya` varchar(4) NOT NULL,
+  `tipe` varchar(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblkas_keluar_masuk`
+--
+
+INSERT INTO `tblkas_keluar_masuk` (`kode_km`, `no_bukti`, `kode_akun`, `tanggal`, `uraian`, `masuk`, `keluar`, `jenis`, `kd_cabang`, `user`, `kode_akun_biaya`, `tipe`) VALUES
+('KM25000000001', '', 'BNI', '2025-04-20', 'ewrwerwe', 242342341, 0, 'Masuk', '001', 'kasir', '4101', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblkeluhan`
+--
+
+DROP TABLE IF EXISTS `tblkeluhan`;
+CREATE TABLE IF NOT EXISTS `tblkeluhan` (
+  `id_keluhan` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_keluhan` varchar(20) NOT NULL,
+  `nama_keluhan` varchar(255) NOT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `estimasi_waktu` int(11) DEFAULT 0 COMMENT 'dalam menit',
+  `status` enum('aktif','nonaktif') DEFAULT 'aktif',
+  PRIMARY KEY (`id_keluhan`),
+  UNIQUE KEY `kode_keluhan` (`kode_keluhan`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tblkeluhan`
+--
+
+INSERT INTO `tblkeluhan` (`id_keluhan`, `kode_keluhan`, `nama_keluhan`, `deskripsi`, `estimasi_waktu`, `status`) VALUES
+(1, 'KLH001', 'Mesin tidak mau hidup', 'Mesin susah dihidupkan atau tidak mau hidup sama sekali', 60, 'aktif'),
+(2, 'KLH002', 'Rem blong', 'Sistem rem tidak berfungsi dengan baik', 45, 'aktif'),
+(3, 'KLH003', 'Oli bocor', 'Terdapat kebocoran oli pada mesin', 30, 'aktif'),
+(4, 'KLH004', 'Ban kempes', 'Ban kendaraan kempes atau bocor', 15, 'aktif'),
+(5, 'KLH005', 'Lampu mati', 'Lampu depan atau belakang tidak menyala', 20, 'aktif'),
+(6, 'KLH006', 'Suara mesin kasar', 'Mesin mengeluarkan suara tidak normal', 90, 'aktif'),
+(7, 'KLH007', 'Rantai kendor', 'Rantai motor kendor atau aus', 25, 'aktif'),
+(8, 'KLH008', 'CVT bermasalah', 'Masalah pada sistem CVT matic', 120, 'aktif');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblkendaraan`
+--
+
+DROP TABLE IF EXISTS `tblkendaraan`;
+CREATE TABLE IF NOT EXISTS `tblkendaraan` (
+  `nopolisi` varchar(20) NOT NULL,
+  `pemilik` varchar(50) NOT NULL,
+  `alamat` varchar(50) NOT NULL,
+  `kode_merek` int(11) NOT NULL,
+  `tipe` varchar(50) NOT NULL,
+  `kode_tipe` int(11) NOT NULL,
+  `jenis` varchar(50) NOT NULL,
+  `kode_jenis` int(11) NOT NULL,
+  `tahun_buat` varchar(10) NOT NULL,
+  `tahun_rakit` varchar(10) NOT NULL,
+  `silinder` varchar(30) DEFAULT NULL,
+  `warna` varchar(50) NOT NULL,
+  `kode_warna` int(11) NOT NULL,
+  `no_rangka` varchar(30) DEFAULT NULL,
+  `no_mesin` varchar(30) DEFAULT NULL,
+  `note` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblkendaraan`
+--
+
+INSERT INTO `tblkendaraan` (`nopolisi`, `pemilik`, `alamat`, `kode_merek`, `tipe`, `kode_tipe`, `jenis`, `kode_jenis`, `tahun_buat`, `tahun_rakit`, `silinder`, `warna`, `kode_warna`, `no_rangka`, `no_mesin`, `note`) VALUES
+('G 2637 SQ', 'BAPAK', 'ADIWERNA', 1, 'BEAT-110', 0, 'FI', 0, '05-2020', '', '', 'PUTIH MERAH', 0, '', '', ''),
+('G 3191 ZN', 'INARA, IBU', 'TUNON', 1, 'VARIO-110', 0, 'FI', 0, '11-2027', '', '', 'PUTIH', 0, '', '', ''),
+('0', 'FERDIYANSAH, BPK', 'TEGAL', 1, 'CB-150R', 0, 'FI', 0, '01-0', '', '', 'HITAM HIJAU', 0, '', '', ''),
+('081575224711', 'IMROATUN, IBU', 'PAGEDANGAN', 1, 'VARIO-110', 0, 'FI', 0, '03-2022', '', '', 'HITAM', 0, '', '', ''),
+('0895373199557', 'NAFI', '', 0, '', 0, '', 0, '', '', '', '', 0, '', '', ''),
+('17139-IV', 'SLAMET, BPK', 'DUKUHRAWA', 2, 'VIXION', 0, 'FI', 0, '01-0', '', '', 'HIJAU', 0, '', '', ''),
+('1719-IV', 'SUTRIMAN, BPK', 'TEGAL SELATAN', 2, 'VIXION', 0, 'FI', 0, '07-2026', '', '', 'HIJAU', 0, '', '', ''),
+('6779 IV', 'RIVAL, MAS', 'ASMIL 407', 1, 'CS1', 0, 'CARBU', 0, '', '', '', 'HIJAU', 0, '', '', ''),
+('A 2598 ZR', 'TITIN, MBA', 'DAWUHAN', 2, 'FINO', 0, 'FI', 0, '05-2022', '', '', 'PUTIH CROM', 0, '', '', ''),
+('A 2946 XQ', 'MAMAN, MAS', 'PESALAKAN', 1, 'VARIO-110', 0, 'CARBU', 0, '03-2023', '', '', 'BIRU', 0, '', '', ''),
+('A 3246 VL', 'M. DAVID MAULANA', 'PESAREAN', 1, 'VARIO-110', 0, 'FI', 0, '09-2024', '', '', 'MERAH', 0, '', '', ''),
+('A 3601 ZQ', 'NUR JANAH, MBAK', 'GUMALAR', 1, 'BEAT-110', 0, 'FI', 0, '05-2022', '', '', 'HITAM', 0, '', '', ''),
+('A 4557 MA', 'UUT, MAS', 'BULAKPACING', 1, 'BEAT-110', 0, 'FI', 0, '01-2024', '', '', 'PUTIH BIRU', 0, '', '', ''),
+('A 5517 PJ', 'ANITA,IBU', 'SETU', 1, 'SUPRA FIT', 0, 'CARBU', 0, '04-2022', '', '', 'HITAM SILVER', 0, '', '', ''),
+('A 5568 CU', 'ENDRIK, MAS', 'SIDAPURNA', 2, 'FINO', 0, 'FI', 0, '05-2022', '', '', 'SILVER ORANYE', 0, '', '', ''),
+('AA 2137 BD', 'Zakiyah, Sdr.', 'Adiwerna', 1, 'VARIO-110', 0, 'FI', 0, '', '', '', 'Hitam', 0, '', '', ''),
+('AA 2398 DQ', 'DASUKI, BPK', '', 1, 'BEAT-110', 0, 'FI', 0, '08-2019', '', '', 'PUTIH', 0, '', '', ''),
+('AA 2902 GL', 'BURHAN,MAS', 'PESALAKAN', 3, 'SHOGUN', 0, 'CARBU', 0, '04-20', '', '', 'HITAM', 0, '', '', ''),
+('AA 3010 SP', 'DIAN', 'PESAREAN', 1, 'BEAT-110', 0, 'FI', 0, '08-2020', '', '', 'PUTIH MERAH', 0, '', '', ''),
+('AA 3108 MG', 'BAGYO', 'PESALAKAN', 1, 'VARIO-125', 0, 'FI', 0, '04-2021', '', '', 'HITAM', 0, '', '', ''),
+('AA 3202 IJ', 'BAPAK', 'KARYAWAN GUDANG BESI PESALAKAN', 1, 'SCOOPY-110', 0, 'FI', 0, '01-2025', '', '', 'HITAM', 0, '', '', ''),
+('AA 3907 TJ', 'IMAM,MAS', 'SLAWI', 1, 'CBR150', 0, 'FI', 0, '09-2022', '', '', 'HITAM', 0, '', '', ''),
+('AA 4225 TM', 'ALFATH FIRDAUS, MAS', 'PESALAKAN', 1, 'SUPRA X-125', 0, 'FI', 0, '07-2019', '', '', 'HITAM', 0, '', '', ''),
+('AA 4260 YA', 'FAUZI, BPK', 'PESAWAHAN', 4, 'BLITS R', 0, 'CARBU', 0, '11-2020', '', '', 'HITAM ABU-ABU', 0, '', '', ''),
+('AA 4722 GM', 'AL FATH', 'PESALAKAN', 1, 'SUPRA X-125', 0, 'CARBU', 0, '05-2022', '', '', 'HITAM MERAH', 0, '', '', ''),
+('AA 4890 AN', 'SANTOSA,BPK', 'UJUNGRUSI', 2, 'MIO', 0, 'CARBU', 0, '10-2018', '', '', 'MERAH', 0, '', '', ''),
+('AA 5014 AE', 'BAPAK', 'PESALAKAN', 1, 'C70', 0, 'CARBU', 0, '10-2023', '', '', 'MERAH PUTIH', 0, '', '', ''),
+--
+CREATE TABLE IF NOT EXISTS `tblmekanik` (
+`nomekanik` varchar(20)
+,`nama` varchar(100)
+,`alamat` text
+,`telp` varchar(20)
+,`keahlian` varchar(1)
+,`status` varchar(5)
+,`email` varchar(100)
+,`tanggal_masuk` date
+,`gaji_pokok` binary(0)
+,`spesialisasi` text
+,`sertifikat` text
+,`created_at` timestamp
+,`updated_at` timestamp
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblnamabarang`
+--
+
+DROP TABLE IF EXISTS `tblnamabarang`;
+CREATE TABLE IF NOT EXISTS `tblnamabarang` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_barang` varchar(100) NOT NULL,
+  `sinonim_1` varchar(50) DEFAULT NULL,
+  `sinonim_2` varchar(50) DEFAULT NULL,
+  `sinonim_3` varchar(50) DEFAULT NULL,
+  `perlu_ukuran` enum('YA','TIDAK') NOT NULL DEFAULT 'TIDAK',
+  `keterangan` varchar(255) NOT NULL DEFAULT 'TIDAK PERLU UKURAN',
+  `satuan` varchar(50) NOT NULL DEFAULT 'PCS',
+  `status` enum('0','1') NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_nama_barang` (`nama_barang`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `tblnamabarang`
+--
+
+INSERT INTO `tblnamabarang` (`id`, `nama_barang`, `sinonim_1`, `sinonim_2`, `sinonim_3`, `perlu_ukuran`, `keterangan`, `satuan`, `status`) VALUES
+(22, 'FILTER', 'SARINGAN', 'PENYARING', '', 'YA', '10X8X5', 'PCS', '1'),
+(23, 'BUSI', 'SPARK', 'PLUG', '', 'TIDAK', 'TIDAK PERLU UKURAN', 'PCS', '1'),
+(24, 'BAN', 'TIRE', 'RODA', '', 'YA', '70X90X17', 'PCS', '1'),
+(25, 'KAMPAS', 'BRAKE', 'REM', '', 'YA', '5X10X2', 'SET', '1'),
+(26, 'RANTAI', 'CHAIN', 'GIGI', '', 'YA', '415X120X1', 'PCS', '1'),
+(27, 'VELG', 'PELEK', 'RIM', '', 'YA', '17X1.4X1', 'PCS', '1'),
+(28, 'OLI', 'PELUMAS', 'LUBRICANT', '', 'TIDAK', 'TIDAK PERLU UKURAN', 'LITER', '1'),
+(29, 'SPION', 'MIRROR', 'KACA', '', 'YA', '15X8X3', 'PCS', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblorderjual_detail`
+--
+
+DROP TABLE IF EXISTS `tblorderjual_detail`;
+CREATE TABLE IF NOT EXISTS `tblorderjual_detail` (
+  `no_order` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `qty_terima` int(11) NOT NULL,
+  `harga_jual` double NOT NULL,
+  `potongan` double NOT NULL,
+  `harga_sp` double NOT NULL,
+  `harga_pokok` double NOT NULL,
+  `total` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `margin_jual` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblorderjual_detail`
+--
+
+INSERT INTO `tblorderjual_detail` (`no_order`, `nobaris`, `no_item`, `quantity`, `qty_terima`, `harga_jual`, `potongan`, `harga_sp`, `harga_pokok`, `total`, `user`, `kd_cabang`, `status_trx`, `margin_jual`, `id`) VALUES
+('PJ25000000001', 0, 'airaccu', 1, 0, 3000, 0, 0, 0, 3000, 'pengadaan', '001', '1', 0, 1),
+('PJ25000000002', 0, 'GEN00006', 6, 0, 17000, 0, 0, 0, 102000, 'pengadaan', '001', '1', 0, 2),
+('PJ25000000003', 0, 'airaccu', 5, 0, 4000, 0, 0, 0, 20000, 'kasir', '001', '1', 0, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblorderjual_header`
+--
+
+DROP TABLE IF EXISTS `tblorderjual_header`;
+CREATE TABLE IF NOT EXISTS `tblorderjual_header` (
+  `no_order` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `no_sales` varchar(50) NOT NULL,
+  `no_pelanggan` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_terima` int(11) NOT NULL,
+  `total_jual` double NOT NULL,
+  `diskon` int(11) NOT NULL,
+  `total_diskon` double NOT NULL,
+  `pajak` int(11) NOT NULL,
+  `total_pajak` double NOT NULL,
+  `total_akhir` double NOT NULL,
+  `pembayaran` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `tipe_trx` varchar(20) NOT NULL,
+  `order_ke` varchar(10) NOT NULL,
+  `status_pesanan` varchar(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblorderjual_header`
+--
+
+INSERT INTO `tblorderjual_header` (`no_order`, `status`, `tanggal`, `no_sales`, `no_pelanggan`, `note`, `total_qty`, `total_terima`, `total_jual`, `diskon`, `total_diskon`, `pajak`, `total_pajak`, `total_akhir`, `pembayaran`, `user`, `id_tabel`, `kd_cabang`, `tipe_trx`, `order_ke`, `status_pesanan`) VALUES
+('PJ25000000001', '0', '2025-04-06', '', '', '', 1, 0, 3000, 0, 0, 0, 0, 3000, 3000, 'pengadaan', '', '001', 'Antar Cabang', '002', '0'),
+('PJ25000000002', '0', '2025-04-06', '', '', '', 6, 0, 102000, 0, 0, 0, 0, 102000, 102000, 'pengadaan', '', '001', 'Antar Cabang', '002', '0'),
+('PJ25000000003', '0', '2025-04-24', '', 'B 4550 SKZ', '', 5, 0, 20000, 0, 0, 0, 0, 20, 20000, 'kasir', '', '001', '', '', '0');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblorder_detail`
+--
+
+DROP TABLE IF EXISTS `tblorder_detail`;
+CREATE TABLE IF NOT EXISTS `tblorder_detail` (
+  `no_order` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `qty_terima` int(11) NOT NULL,
+  `harga_pokok` double NOT NULL,
+  `total` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  `kd_cabang` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblorder_detail`
+--
+
+INSERT INTO `tblorder_detail` (`no_order`, `nobaris`, `no_item`, `quantity`, `qty_terima`, `harga_pokok`, `total`, `user`, `status_trx`, `kd_cabang`, `id`) VALUES
+('', 0, 'ddddddddt5', 34, 0, 5334, 181356, 'admin', '0', '', 1),
+('', 0, 'ddddddddt5/MOTOT', 5, 0, 0, 0, 'admin', '0', '', 2),
+('', 0, 'wadadad', 0, 0, 0, 0, 'admin', '0', '', 3),
+('', 0, 'ddddddddt5/MOTOT', 0, 0, 0, 0, 'pengadaan', '0', '003', 4),
+('', 0, 'wadadad', 0, 0, 0, 0, 'pengadaan', '0', '003', 5),
+('PS25000000001', 0, '10008', 2, 0, 250000, 500000, 'admin', '1', '001', 6),
+('PS25000000002', 0, 'IP-06455-KVB-T01', 1, 0, 16000, 16000, 'admin', '1', 'PESALAKAN', 7),
+('PS25000000003', 0, 'ZTHCCDI', 5, 15, 33000, 165000, 'admin', '1', 'PST', 12),
+('PS25000000004', 0, '09355-50105L460', 2, 2, 8000, 16000, 'admin', '1', 'PESALAKAN', 13),
+('PS25000000004', 0, '17210-K0J-N00', 3, 3, 47500, 142500, 'admin', '1', 'PESALAKAN', 14),
+('PS25000000004', 0, '17210-K59-A70', 1, 1, 55000, 55000, 'admin', '1', 'PESALAKAN', 15),
+('PS25000000004', 0, '20W-50JASO MA', 5, 5, 39000, 195000, 'admin', '1', 'PESALAKAN', 16),
+('PS25000000004', 0, '23100-K36-J02', 2, 2, 122500, 245000, 'admin', '1', 'PESALAKAN', 17),
+('PS25000000004', 0, '23100-K44-V01', 2, 2, 97000, 194000, 'admin', '1', 'PESALAKAN', 18),
+('PS25000000004', 0, '8990876610040', 1, 1, 25500, 25500, 'admin', '1', 'PESALAKAN', 19),
+('PS25000000004', 0, '8990876610057', 1, 1, 27500, 27500, 'admin', '1', 'PESALAKAN', 20),
+('PS25000000004', 0, '90793AJ437', 5, 5, 51000, 255000, 'admin', '1', 'PESALAKAN', 21),
+('PS25000000004', 0, '20W-40MATIC', 10, 10, 41500, 415000, 'admin', '1', 'PESALAKAN', 22),
+('PS25000000004', 0, '91202-K0J-N01', 4, 4, 21000, 84000, 'admin', '1', 'PESALAKAN', 23),
+('PS25000000004', 0, '93306-300YK', 4, 4, 0, 0, 'admin', '1', 'PESALAKAN', 24),
+('PS25000000004', 0, 'AAJ', 2, 2, 3000, 6000, 'admin', '1', 'PESALAKAN', 25),
+('PS25000000004', 0, 'BOCU-R0J', 18, 18, 750, 13500, 'admin', '1', 'PESALAKAN', 26),
+('PS25000000004', 0, 'edrsae20w-40', 4, 4, 36017, 144068, 'admin', '1', 'PESALAKAN', 27),
+('PS25000000004', 0, 'ENDUROGEAR120', 1, 1, 13000, 13000, 'admin', '1', 'PESALAKAN', 28),
+('PS25000000004', 0, 'FRFLPB', 2, 2, 20000, 40000, 'admin', '1', 'PESALAKAN', 29),
+('PS25000000004', 0, 'FRFLPP', 9, 9, 20000, 180000, 'admin', '1', 'PESALAKAN', 30),
+('PS25000000004', 0, 'GEN000010', 5, 5, 9000, 45000, 'admin', '1', 'PESALAKAN', 31),
+('PS25000000004', 0, 'GEN00007', 17, 17, 5500, 93500, 'admin', '1', 'PESALAKAN', 32),
+('PS25000000004', 0, 'GP0125', 10, 10, 2000, 20000, 'admin', '1', 'PESALAKAN', 33),
+('PS25000000004', 0, 'GP0211', 4, 4, 17000, 68000, 'admin', '1', 'PESALAKAN', 34),
+('PS25000000004', 0, 'GP0212', 2, 2, 13500, 27000, 'admin', '1', 'PESALAKAN', 35),
+--
+CREATE TABLE IF NOT EXISTS `tblorder_header` (
+  `no_order` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `tglkirim` varchar(50) NOT NULL,
+  `no_supplier` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_terima` double NOT NULL,
+  `total_order` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `Id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_pesanan` varchar(1) NOT NULL DEFAULT '0',
+  `tipe_trx` varchar(20) NOT NULL,
+  `no_penjualan` varchar(50) NOT NULL,
+  `no_pr` varchar(50) DEFAULT NULL COMMENT 'Link ke PR',
+  `no_rfq` varchar(50) DEFAULT NULL COMMENT 'Link ke RFQ',
+  `status_approval` enum('draft','pending','approved','rejected') NOT NULL DEFAULT 'draft',
+  `approved_by` varchar(50) DEFAULT NULL,
+  `approved_date` datetime DEFAULT NULL,
+  `rejected_by` varchar(50) DEFAULT NULL,
+  `rejected_date` datetime DEFAULT NULL,
+  `reject_reason` mediumtext DEFAULT NULL,
+  `po_type` enum('regular','urgent','consignment') NOT NULL DEFAULT 'regular',
+  `payment_term` varchar(50) DEFAULT NULL COMMENT 'Net 30, Net 60, COD, dll',
+  `delivery_address` mediumtext DEFAULT NULL,
+  `contact_person` varchar(100) DEFAULT NULL,
+  `contact_phone` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`no_order`),
+  KEY `idx_pr` (`no_pr`),
+  KEY `idx_status_approval` (`status_approval`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tblorder_header`
+--
+
+INSERT INTO `tblorder_header` (`no_order`, `status`, `tanggal`, `tglkirim`, `no_supplier`, `note`, `total_qty`, `total_terima`, `total_order`, `user`, `Id_tabel`, `kd_cabang`, `status_pesanan`, `tipe_trx`, `no_penjualan`, `no_pr`, `no_rfq`, `status_approval`, `approved_by`, `approved_date`, `rejected_by`, `rejected_date`, `reject_reason`, `po_type`, `payment_term`, `delivery_address`, `contact_person`, `contact_phone`) VALUES
+('PS25000000001', '0', '2025-05-28', '', 'ABADI', '', 2, 0, 500000, 'admin', '', '001', '0', '', '', NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, 'regular', NULL, NULL, NULL, NULL),
+('PS25000000002', '0', '2025-09-12', '', 'D', '', 1, 0, 16000, 'admin', '', 'PESALAKAN', '0', '', '', NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, 'regular', NULL, NULL, NULL, NULL),
+('PS25000000003', '1', '2025-11-22', '', 'ADM', '', 5, 0, 165000, 'admin', '', 'PST', '0', '', '', 'PR2511PST00001', NULL, 'draft', NULL, NULL, NULL, NULL, NULL, 'regular', NULL, NULL, NULL, NULL),
+('PS25000000004', '0', '2025-11-23', '', 'AHASS', '', 132, 0, 2591068, 'admin', '', 'PESALAKAN', '0', '', '', 'PR202511PESALAKAN16186', NULL, 'approved', 'admin', '2025-11-23 11:50:13', NULL, NULL, NULL, 'regular', NULL, NULL, NULL, NULL),
+('PS25000000005', '1', '2025-11-24', '', 'AHASS', '', 132, 0, 2591068, 'admin', '', 'PST', '0', '', '', NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, 'regular', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpelanggan`
+--
+
+--
+CREATE TABLE IF NOT EXISTS `tblpelanggan` (
+  `nopelanggan` varchar(20) NOT NULL,
+  `namapelanggan` varchar(50) NOT NULL,
+  `alamat` varchar(100) NOT NULL,
+  `kota` varchar(20) NOT NULL,
+  `propinsi` varchar(20) NOT NULL,
+  `kodepost` varchar(10) NOT NULL,
+  `negara` varchar(20) NOT NULL,
+  `telephone` varchar(20) NOT NULL,
+  `fax` varchar(20) NOT NULL,
+  `kontakperson` varchar(30) NOT NULL,
+  `note` varchar(100) NOT NULL,
+  `potongan` decimal(10,0) NOT NULL,
+  `tipepot` varchar(1) NOT NULL,
+  `lavelharga` varchar(1) NOT NULL,
+  `kgrup` varchar(3) NOT NULL,
+  `patokan` varchar(200) NOT NULL,
+  `foto_tampak_rumah` varchar(255) DEFAULT NULL COMMENT 'Path foto tampak rumah/patokan pelanggan untuk penjemputan',
+  `link_gmaps` text DEFAULT NULL COMMENT 'Link Google Maps lokasi pelanggan',
+  `notlp` varchar(20) DEFAULT NULL,
+  `klat` varchar(30) NOT NULL,
+  `klong` varchar(30) NOT NULL,
+  `panggilan` varchar(30) NOT NULL,
+  `saldoawal` double NOT NULL,
+  `pertanggal` date NOT NULL,
+  `tgllahir` date NOT NULL,
+  `id_panggilan` int(11) NOT NULL,
+  `bl_pajak` varchar(2) DEFAULT NULL,
+  `th_pajak` varchar(4) DEFAULT NULL,
+  `merek_id` int(11) DEFAULT NULL,
+  `tipe_id` int(11) DEFAULT NULL,
+  `jenis_id` int(11) DEFAULT NULL,
+  `warna_id` int(11) DEFAULT NULL,
+  `gender` varchar(10) DEFAULT NULL,
+  `valid_tgl_lahir` varchar(10) DEFAULT NULL,
+  `informasi_sumber` varchar(50) DEFAULT NULL COMMENT 'Sumber informasi pelanggan (teman, sosmed, dll)',
+  KEY `merek_id` (`merek_id`),
+  KEY `tipe_id` (`tipe_id`),
+  KEY `jenis_id` (`jenis_id`),
+  KEY `warna_id` (`warna_id`),
+  KEY `idx_tblpelanggan_nopelanggan` (`nopelanggan`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblpelanggan`
+--
+
+INSERT INTO `tblpelanggan` (`nopelanggan`, `namapelanggan`, `alamat`, `kota`, `propinsi`, `kodepost`, `negara`, `telephone`, `fax`, `kontakperson`, `note`, `potongan`, `tipepot`, `lavelharga`, `kgrup`, `patokan`, `foto_tampak_rumah`, `link_gmaps`, `notlp`, `klat`, `klong`, `panggilan`, `saldoawal`, `pertanggal`, `tgllahir`, `id_panggilan`, `bl_pajak`, `th_pajak`, `merek_id`, `tipe_id`, `jenis_id`, `warna_id`, `gender`, `valid_tgl_lahir`, `informasi_sumber`) VALUES
+('AD 3219 RV', 'USMAN, BPK', 'PESALAKAN', '', '', '', '', '082241798984', '', 'WA', '0', 0, '', '', '001', '', NULL, NULL, NULL, '', '', '', 0, '0000-00-00', '0000-00-00', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Tidak Diketahui'),
+('AD 3407 RI', 'HAIFA, IBU', '', '', '', '', '', '089630324799', '', 'WA', '', 0, 'C', '3', '001', '', NULL, NULL, NULL, '', '', '', 0, '0000-00-00', '0000-00-00', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Tidak Diketahui'),
+('AD 3493 OH', 'MAZID, MAS', 'UJUNGRUSI', '', '', '', '', '085601000107', '', 'WA', '', 0, 'C', '3', '001', '', NULL, NULL, NULL, '', '', '', 0, '0000-00-00', '0000-00-00', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Tidak Diketahui'),
+--
+CREATE TABLE IF NOT EXISTS `tblpelanggangrup` (
+  `kgrup` varchar(3) NOT NULL,
+  `grup` varchar(30) NOT NULL,
+  `diskon` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblpelanggangrup`
+--
+
+INSERT INTO `tblpelanggangrup` (`kgrup`, `grup`, `diskon`) VALUES
+('001', 'BENGKEL', 0),
+('002', 'MEMBER GOLD', 5),
+('003', 'MEMBER SILVER', 10);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpembelian_detail`
+--
+
+DROP TABLE IF EXISTS `tblpembelian_detail`;
+CREATE TABLE IF NOT EXISTS `tblpembelian_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `qty_order` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `qty_retur` int(11) NOT NULL,
+  `harga_pokok` double NOT NULL,
+  `potongan` double NOT NULL,
+  `harga_sp` double NOT NULL,
+  `total` double NOT NULL,
+  `sts_order` varchar(50) NOT NULL,
+  `id_inv` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblpembelian_detail`
+--
+
+INSERT INTO `tblpembelian_detail` (`no_transaksi`, `nobaris`, `no_item`, `qty_order`, `quantity`, `qty_retur`, `harga_pokok`, `potongan`, `harga_sp`, `total`, `sts_order`, `id_inv`, `id`, `user`, `kd_cabang`, `status_trx`) VALUES
+('', 0, 'ddddddddt5/MOTOT', 0, 2, 0, 0, 3, 0, 0, '', '', 1, 'pengadaan', '003', '0'),
+('BL25000000001', 0, 'ZTHCCDI', 5, 5, 0, 33000, 0, 0, 165000, '', '', 3, 'admin', 'PST', '1'),
+('BL25000000002', 0, 'ZTHCCDI', 5, 5, 0, 33000, 0, 0, 165000, '', '', 4, 'admin', 'PST', '1'),
+('BL25000000002', 0, 'ZTHCCDI', 5, 5, 0, 33000, 0, 0, 165000, '', '', 5, 'admin', 'PST', '1'),
+('BL25000000003', 0, '09355-50105L460', 2, 2, 0, 8000, 0, 0, 16000, '', '', 6, 'admin', 'PST', '1'),
+('BL25000000003', 0, '17210-K0J-N00', 3, 3, 0, 47500, 0, 0, 142500, '', '', 7, 'admin', 'PST', '1'),
+('BL25000000003', 0, '17210-K59-A70', 1, 1, 0, 55000, 0, 0, 55000, '', '', 8, 'admin', 'PST', '1'),
+('BL25000000003', 0, '20W-50JASO MA', 5, 5, 0, 39000, 0, 0, 195000, '', '', 9, 'admin', 'PST', '1'),
+('BL25000000003', 0, '23100-K36-J02', 2, 2, 0, 122500, 0, 0, 245000, '', '', 10, 'admin', 'PST', '1'),
+('BL25000000003', 0, '23100-K44-V01', 2, 2, 0, 97000, 0, 0, 194000, '', '', 11, 'admin', 'PST', '1'),
+('BL25000000003', 0, '8990876610040', 1, 1, 0, 25500, 0, 0, 25500, '', '', 12, 'admin', 'PST', '1'),
+('BL25000000003', 0, '8990876610057', 1, 1, 0, 27500, 0, 0, 27500, '', '', 13, 'admin', 'PST', '1'),
+('BL25000000003', 0, '90793AJ437', 5, 5, 0, 51000, 0, 0, 255000, '', '', 14, 'admin', 'PST', '1'),
+('BL25000000003', 0, '20W-40MATIC', 10, 10, 0, 41500, 0, 0, 415000, '', '', 15, 'admin', 'PST', '1'),
+('BL25000000003', 0, '91202-K0J-N01', 4, 4, 0, 21000, 0, 0, 84000, '', '', 16, 'admin', 'PST', '1'),
+('BL25000000003', 0, '93306-300YK', 4, 4, 0, 0, 0, 0, 0, '', '', 17, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'AAJ', 2, 2, 0, 3000, 0, 0, 6000, '', '', 18, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'BOCU-R0J', 18, 18, 0, 750, 0, 0, 13500, '', '', 19, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'edrsae20w-40', 4, 4, 0, 36017, 0, 0, 144068, '', '', 20, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'ENDUROGEAR120', 1, 1, 0, 13000, 0, 0, 13000, '', '', 21, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'FRFLPB', 2, 2, 0, 20000, 0, 0, 40000, '', '', 22, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'FRFLPP', 9, 9, 0, 20000, 0, 0, 180000, '', '', 23, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'GEN000010', 5, 5, 0, 9000, 0, 0, 45000, '', '', 24, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'GEN00007', 17, 17, 0, 5500, 0, 0, 93500, '', '', 25, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'GP0125', 10, 10, 0, 2000, 0, 0, 20000, '', '', 26, 'admin', 'PST', '1'),
+('BL25000000003', 0, 'GP0211', 4, 4, 0, 17000, 0, 0, 68000, '', '', 27, 'admin', 'PST', '1'),
+--
+CREATE TABLE IF NOT EXISTS `tblpembelian_header` (
+  `notransaksi` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `carabayar` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `no_order` varchar(50) NOT NULL,
+  `tanggal_order` varchar(50) NOT NULL,
+  `no_supplier` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_qty_order` int(11) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_beli` double NOT NULL,
+  `diskon` decimal(10,1) NOT NULL,
+  `total_diskon` double NOT NULL,
+  `pajak` decimal(10,1) NOT NULL,
+  `total_pajak` double NOT NULL,
+  `total_akhir` double NOT NULL,
+  `total_retur` double NOT NULL,
+  `pembayaran` double NOT NULL,
+  `tanggal_jt` varchar(50) NOT NULL,
+  `tanggal_lunas` varchar(50) NOT NULL,
+  `jumlah_bayar` int(11) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `Id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_lunas` varchar(1) NOT NULL DEFAULT '0',
+  `lama_hari` int(11) NOT NULL,
+  `no_do` varchar(50) DEFAULT NULL COMMENT 'Link ke DO',
+  `no_pr` varchar(50) DEFAULT NULL COMMENT 'Link ke PR',
+  `status_qc` enum('pending','passed','failed','partial') DEFAULT 'pending',
+  `qc_by` varchar(50) DEFAULT NULL,
+  `qc_date` datetime DEFAULT NULL,
+  `qc_notes` text DEFAULT NULL,
+  KEY `idx_do` (`no_do`),
+  KEY `idx_pr` (`no_pr`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tblpembelian_header`
+--
+
+INSERT INTO `tblpembelian_header` (`notransaksi`, `status`, `carabayar`, `tanggal`, `no_order`, `tanggal_order`, `no_supplier`, `note`, `total_qty_order`, `total_qty`, `total_beli`, `diskon`, `total_diskon`, `pajak`, `total_pajak`, `total_akhir`, `total_retur`, `pembayaran`, `tanggal_jt`, `tanggal_lunas`, `jumlah_bayar`, `user`, `Id_tabel`, `kd_cabang`, `status_lunas`, `lama_hari`, `no_do`, `no_pr`, `status_qc`, `qc_by`, `qc_date`, `qc_notes`) VALUES
+('BL25000000001', 'Pembelian', 'Tunai', '2025-11-22', 'PS25000000003', '', 'ADM', '', 0, 5, 165000, 0.0, 0, 0.0, 0, 165, 0, 165000, '', '', 165000, 'admin', '', 'PST', '0', 0, 'DO2511PST00001', NULL, 'pending', NULL, NULL, NULL),
+('BL25000000002', 'Pembelian', 'Tunai', '2025-11-22', 'PS25000000003', '', 'ADM', '', 0, 10, 330000, 0.0, 0, 0.0, 0, 330, 0, 330000, '', '', 330000, 'admin', '', 'PST', '0', 0, NULL, NULL, 'pending', NULL, NULL, NULL),
+('BL25000000003', 'Pembelian', 'Tunai', '2025-11-24', 'PS25000000005', '', 'AHASS', '', 0, 132, 2591068, 0.0, 0, 0.0, 0, 2, 0, 2591068, '', '', 2591068, 'admin', '', 'PST', '0', 0, NULL, NULL, 'pending', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpenjualan_detail`
+--
+--
+CREATE TABLE IF NOT EXISTS `tblpenjualan_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `qty_order` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `qty_retur` int(11) NOT NULL,
+  `harga_jual` double NOT NULL,
+  `potongan` double NOT NULL,
+  `harga_sp` double NOT NULL,
+  `harga_pokok` double NOT NULL,
+  `total` double NOT NULL,
+  `sts_order` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_trx` varchar(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblpenjualan_detail`
+--
+
+INSERT INTO `tblpenjualan_detail` (`no_transaksi`, `nobaris`, `no_item`, `qty_order`, `quantity`, `qty_retur`, `harga_jual`, `potongan`, `harga_sp`, `harga_pokok`, `total`, `sts_order`, `id`, `user`, `kd_cabang`, `status_trx`) VALUES
+('JL25000000001', 0, 'airaccu', 0, 5, 0, 4000, 0, 0, 0, 20000, '', 1, 'kasir', '001', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpenjualan_header`
+--
+
+DROP TABLE IF EXISTS `tblpenjualan_header`;
+CREATE TABLE IF NOT EXISTS `tblpenjualan_header` (
+  `notransaksi` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `carabayar` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `no_order` varchar(50) NOT NULL,
+  `tanggal_order` varchar(50) NOT NULL,
+  `no_sales` varchar(50) NOT NULL,
+  `no_pelanggan` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_qty_order` int(11) NOT NULL,
+  `total_qty` int(11) NOT NULL,
+  `total_jual` double NOT NULL,
+  `diskon` decimal(10,1) NOT NULL,
+  `total_diskon` double NOT NULL,
+  `pajak` decimal(10,1) NOT NULL,
+  `total_pajak` double NOT NULL,
+  `total_akhir` double NOT NULL,
+  `total_retur` double NOT NULL,
+  `pembayaran` double NOT NULL,
+  `tanggal_jt` varchar(50) NOT NULL,
+  `tanggal_lunas` varchar(50) NOT NULL,
+  `jumlah_bayar` int(11) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL,
+  `status_lunas` varchar(1) NOT NULL DEFAULT '0',
+  `lama_hari` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `tblpenjualan_header`
+--
+
+INSERT INTO `tblpenjualan_header` (`notransaksi`, `status`, `carabayar`, `tanggal`, `no_order`, `tanggal_order`, `no_sales`, `no_pelanggan`, `note`, `total_qty_order`, `total_qty`, `total_jual`, `diskon`, `total_diskon`, `pajak`, `total_pajak`, `total_akhir`, `total_retur`, `pembayaran`, `tanggal_jt`, `tanggal_lunas`, `jumlah_bayar`, `user`, `id_tabel`, `kd_cabang`, `status_lunas`, `lama_hari`) VALUES
+('JL25000000001', 'Penjualan', 'Tunai', '2025-04-25', '1', '', 'SLS-02', 'G 3495 AF', '', 0, 5, 20000, 0.0, 0, 0.0, 0, 20, 0, 20000, '', '', 20000, 'kasir', '', '001', '0', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpiutang_detail`
+--
+
+DROP TABLE IF EXISTS `tblpiutang_detail`;
+CREATE TABLE IF NOT EXISTS `tblpiutang_detail` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_penjualan` varchar(50) NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `jumlah_piutang` double NOT NULL,
+  `jumlah_bayar` double NOT NULL,
+  `status` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpiutang_header`
+--
+
+DROP TABLE IF EXISTS `tblpiutang_header`;
+CREATE TABLE IF NOT EXISTS `tblpiutang_header` (
+  `no_transaksi` varchar(50) NOT NULL,
+  `tanggal` varchar(50) NOT NULL,
+  `no_pelanggan` varchar(50) NOT NULL,
+  `note` varchar(50) NOT NULL,
+  `total_bayar` double NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `id_tabel` varchar(50) NOT NULL,
+  `kd_cabang` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpo_approval_log`
+--
+
+DROP TABLE IF EXISTS `tblpo_approval_log`;
+CREATE TABLE IF NOT EXISTS `tblpo_approval_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_po` varchar(50) NOT NULL,
+  `level_approval` int(11) NOT NULL,
+  `approver` varchar(50) NOT NULL,
+  `action` enum('approved','rejected') NOT NULL,
+  `notes` text DEFAULT NULL,
+  `action_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `no_po` (`no_po`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Log approval PO';
+
+--
+-- Dumping data for table `tblpo_approval_log`
+--
+
+INSERT INTO `tblpo_approval_log` (`id`, `no_po`, `level_approval`, `approver`, `action`, `notes`, `action_date`) VALUES
+(1, 'PS25000000004', 1, 'admin', 'approved', '', '2025-11-23 04:50:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpr_approval_log`
+--
+
+DROP TABLE IF EXISTS `tblpr_approval_log`;
+CREATE TABLE IF NOT EXISTS `tblpr_approval_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_pr` varchar(50) NOT NULL,
+  `level_approval` int(11) NOT NULL COMMENT '1=Supervisor, 2=Manager, 3=Director',
+  `approver` varchar(50) NOT NULL,
+  `action` enum('approved','rejected') NOT NULL,
+  `notes` text DEFAULT NULL,
+  `action_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `no_pr` (`no_pr`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Log approval PR';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpr_tracking`
+--
+
+DROP TABLE IF EXISTS `tblpr_tracking`;
+CREATE TABLE IF NOT EXISTS `tblpr_tracking` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_pr` varchar(50) NOT NULL,
+  `status_old` varchar(50) DEFAULT NULL,
+  `status_new` varchar(50) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_no_pr` (`no_pr`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblpurchase_request_detail`
+--
+
+DROP TABLE IF EXISTS `tblpurchase_request_detail`;
+CREATE TABLE IF NOT EXISTS `tblpurchase_request_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_pr` varchar(50) NOT NULL,
+  `nobaris` int(11) NOT NULL,
+  `no_item` varchar(50) NOT NULL,
+  `nama_item` varchar(100) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `qty_approved` int(11) NOT NULL DEFAULT 0,
+  `qty_po` int(11) NOT NULL DEFAULT 0 COMMENT 'Qty yang sudah di-PO',
+  `satuan` varchar(20) NOT NULL,
+  `harga_estimasi` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `total_estimasi` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `keterangan` text DEFAULT NULL,
+  `status_item` enum('pending','approved','rejected','po_created') NOT NULL DEFAULT 'pending',
+  PRIMARY KEY (`id`),
+  KEY `no_pr` (`no_pr`),
+  KEY `idx_item` (`no_item`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Detail Purchase Request';
+
+--
+-- Dumping data for table `tblpurchase_request_detail`
+--
+
+INSERT INTO `tblpurchase_request_detail` (`id`, `no_pr`, `nobaris`, `no_item`, `nama_item`, `quantity`, `qty_approved`, `qty_po`, `satuan`, `harga_estimasi`, `total_estimasi`, `keterangan`, `status_item`) VALUES
+(2, 'PR202511PESALAKAN57324', 1, 'ZTHCCDI', 'CDI SUPRA FIT ZTHC', 5, 0, 0, 'PCS', 50000.00, 250000.00, 'A', 'pending'),
+(4, 'PR2511PST00001', 1, 'ZTHCCDI', 'CDI SUPRA FIT ZTHC', 5, 0, 5, 'PCS', 0.00, 0.00, 'A', 'pending'),
+(5, 'PR202511PESALAKAN16186', 1, '09355-50105L460', 'SELANG BENSIN S.SGP ORI', 2, 0, 2, 'PCS', 0.00, 0.00, '', 'pending'),
+(6, 'PR202511PESALAKAN16186', 2, '17210-K0J-N00', 'FILTER UDARA H.GENIO ORI', 3, 0, 3, 'PCS', 0.00, 0.00, '', 'pending'),
+(7, 'PR202511PESALAKAN16186', 3, '17210-K59-A70', 'FILTER UDARA H.VARIO 150 LED ESP ORI', 1, 0, 1, 'PCS', 0.00, 0.00, '', 'pending'),
+(8, 'PR202511PESALAKAN16186', 4, '20W-50JASO MA', 'OLI BEBEK ULTRATEC FEDERAL 0.8L', 5, 0, 5, 'BTL', 0.00, 0.00, '', 'pending'),
+(9, 'PR202511PESALAKAN16186', 5, '23100-K36-J02', 'FANBELT H.VARIO 150 ORI', 2, 0, 2, 'PCS', 0.00, 0.00, '', 'pending'),
+(10, 'PR202511PESALAKAN16186', 6, '23100-K44-V01', 'FANBELT H.BEAT FI ESP ORI', 2, 0, 2, 'PCS', 0.00, 0.00, '', 'pending'),
+(11, 'PR202511PESALAKAN16186', 7, '8990876610040', 'BAN DALAM 70/90-14 IRC', 1, 0, 1, 'PCS', 0.00, 0.00, '', 'pending'),
+(12, 'PR202511PESALAKAN16186', 8, '8990876610057', 'BAN DALAM 80/90-14 IRC', 1, 0, 1, 'PCS', 0.00, 0.00, '', 'pending'),
+(13, 'PR202511PESALAKAN16186', 9, '90793AJ437', 'OLI SPORT Y.YAMALUBE 1L', 5, 0, 5, 'PCS', 0.00, 0.00, '', 'pending'),
+(14, 'PR202511PESALAKAN16186', 10, '20W-40MATIC', 'OLI MATIC Y.YAMALUBE 0.8L', 10, 0, 10, 'BTL', 0.00, 0.00, '', 'pending'),
+(15, 'PR202511PESALAKAN16186', 11, '91202-K0J-N01', 'OIL SEAL KRUK AS / SIL KER AS H.GENIO/ 19.5X31.5X6', 4, 0, 4, 'PCS', 0.00, 0.00, '', 'pending'),
+(16, 'PR202511PESALAKAN16186', 12, '93306-300YK', '93306-300YK', 4, 0, 4, '', 0.00, 0.00, '', 'pending'),
+(17, 'PR202511PESALAKAN16186', 13, 'AAJ', 'AIR ACCU JAGO / AIR AKI', 2, 0, 2, 'PCS', 0.00, 0.00, '', 'pending'),
+(18, 'PR202511PESALAKAN16186', 14, 'BOCU-R0J', 'BOHLAM CUMI SPEEDOMETER IMI (PS)', 18, 0, 18, 'PCS', 0.00, 0.00, '', 'pending'),
+(19, 'PR202511PESALAKAN16186', 15, 'edrsae20w-40', 'OLI MATIC ENDURO G 0.8', 4, 0, 4, 'PCS', 0.00, 0.00, '', 'pending'),
+(20, 'PR202511PESALAKAN16186', 16, 'ENDUROGEAR120', 'OLI GEAR ENDURO 120ML', 1, 0, 1, 'PCS', 0.00, 0.00, '', 'pending'),

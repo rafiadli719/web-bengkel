@@ -29,8 +29,8 @@ try {
     $field_mappings = [
         'kepala_mekanik1' => ['field' => 'kepala_mekanik1', 'percentage' => 'persen_kepala_mekanik1'],
         'kepala_mekanik2' => ['field' => 'kepala_mekanik2', 'percentage' => 'persen_kepala_mekanik2'],
-        'admin1' => ['field' => 'mekanik1', 'percentage' => 'persen_mekanik1'], // Map admin1 to mekanik1
-        'admin2' => ['field' => 'mekanik2', 'percentage' => 'persen_mekanik2'], // Map admin2 to mekanik2
+        'admin1' => ['field' => 'admin1', 'percentage' => 'persen_admin1'],
+        'admin2' => ['field' => 'admin2', 'percentage' => 'persen_admin2'],
         'mekanik1' => ['field' => 'mekanik1', 'percentage' => 'persen_mekanik1'],
         'mekanik2' => ['field' => 'mekanik2', 'percentage' => 'persen_mekanik2'],
         'mekanik3' => ['field' => 'mekanik3', 'percentage' => 'persen_mekanik3'],

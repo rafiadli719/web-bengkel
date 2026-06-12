@@ -1,0 +1,3 @@
+no_service,tanggal,no_pelanggan,no_polisi,mekanik1,mekanik2,mekanik3,mekanik4,biayam1,biayam2,biayam3,biayam4,km_sekarang,km_berikut,total_waktu,status,keterangan,subtotal_jasa,subtotal_item,subtotal,diskon,total_diskon,pajak,total_pajak,total_akhir,pembayaran,user_input,id_tabel,no_baris,no_item,quantity,qty_retur,harga,potongan,total,kd_cabang,tanggal_data
+SV20000001097,2020-04-05 08:32:54,G 2497 ADF,G 2497 ADF,002,,,,100,0,0,0,0,0,45,3,NRANDET2,0,43000,43000,0,0,0,0,43000,43000,maprikha,20000001097,1,GP0127,1,0,2000,0,2000,PESALAKAN,2026-05-24 00:00:00
+SV20000001097,2020-04-05 08:32:54,G 2497 ADF,G 2497 ADF,002,,,,100,0,0,0,0,0,45,3,NRANDET2,0,43000,43000,0,0,0,0,43000,43000,maprikha,20000001097,2,BDKMCH,1,0,1500,0,1500,PESALAKAN,2026-05-24 00:00:00

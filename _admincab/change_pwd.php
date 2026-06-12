@@ -9,16 +9,16 @@
 		include "../config/koneksi.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
+                                        nama_user, user_akses, foto_user 
                                         FROM tbuser WHERE id='$id_user'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$_nama=$tm_cari['nama_user'];				        
-		$pwd=$tm_cari['password'];				        
 		$lvl_akses=$tm_cari['user_akses'];				                
 		$foto_user=$tm_cari['foto_user'];				
 		if($foto_user=='') {
 			$foto_user="file_upload/avatar.png";
 		}
+		$foto_user_src = "../" . ltrim($foto_user, "/");
 
     // ------- Data Cabang ----------
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -76,16 +76,6 @@
 		<script src="assets/js/html5shiv.min.js"></script>
 		<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
-	<script type="text/javascript" src="chartjs/Chart.js"></script>
-
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>	
-
-
-        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.css' rel='stylesheet' />
-		
 	</head>
 
 	<body class="no-skin">
@@ -127,7 +117,7 @@
 
 						<li class="light-blue dropdown-modal">
 							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-								<img class="nav-user-photo" src="../<?php echo $foto_user; ?>" alt="User Profil" />
+								<img class="nav-user-photo" src="<?php echo $foto_user_src; ?>" alt="User Profil" />
 								<span class="user-info">
 									<small>Welcome,</small>
 									<?php echo $_nama; ?>
@@ -206,16 +196,24 @@
 								<form class="form-horizontal" action="change_pwd_proses.php" method="post">
 									<input type="hidden" name="txtid"  class="form-control" value="<?php echo $id_user; ?>"/>
 									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Old Password </label>
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Password Saat Ini </label>
 										<div class="col-sm-9">
-											<input type="text" class="col-xs-10 col-sm-3" disabled value="<?php echo $pwd; ?>" />
+											<input type="password" id="txtpwd_lama" name="txtpwd_lama" class="col-xs-10 col-sm-3"
+											required autocomplete="current-password" />
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> New Password </label>
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Password Baru </label>
 										<div class="col-sm-9">
-											<input type="text" id="txtpwd" name="txtpwd" class="col-xs-10 col-sm-3" 
-											required autocomplete="off" />
+											<input type="password" id="txtpwd" name="txtpwd" class="col-xs-10 col-sm-3"
+											required minlength="6" autocomplete="new-password" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Konfirmasi Password Baru </label>
+										<div class="col-sm-9">
+											<input type="password" id="txtpwd_confirm" name="txtpwd_confirm" class="col-xs-10 col-sm-3"
+											required minlength="6" autocomplete="new-password" />
 										</div>
 									</div>
 
@@ -282,7 +280,7 @@ $query = "SELECT status, jumlah FROM view_graph_empl_status_rst"; // get the rec
 $getData = $connection->query($query);
 ?>
 <script>
-    // Build the chart
+    if (document.getElementById('container') && typeof Highcharts !== 'undefined') {
     Highcharts.chart('container', {
         chart: {
             plotBackgroundColor: null,
@@ -328,6 +326,7 @@ $getData = $connection->query($query);
             ]
         }]
     });
+    }
 </script>
 
 <?php
@@ -336,7 +335,7 @@ $query = "SELECT nama_divisi, jumlah FROM view_graph_empl_depts"; // get the rec
 $getData = $connection->query($query);
 ?>
 <script>
-    // Build the chart
+    if (document.getElementById('container1') && typeof Highcharts !== 'undefined') {
     Highcharts.chart('container1', {
         chart: {
             plotBackgroundColor: null,
@@ -382,11 +381,15 @@ $getData = $connection->query($query);
             ]
         }]
     });
+    }
 </script>
 
 		<!-- inline scripts related to this page -->
 		<script type="text/javascript">
 			jQuery(function($) {
+			if (!$('#calendar').length) {
+				return;
+			}
 
 /* initialize the external events
 	-----------------------------------------------------------------*/

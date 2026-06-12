@@ -1,0 +1,178 @@
+================================================================================
+QUICK REFERENCE - VIEWS DATABASE FITMOTOR
+================================================================================
+File: create_all_views.sql
+Tanggal: 2025-11-28
+Total Views: 16
+
+================================================================================
+DAFTAR VIEW
+================================================================================
+
+1. master_tarif_jemput
+   Source: master_tarif_jemput_range
+   Purpose: Tarif jemput motor berdasarkan jenis dan jarak
+
+2. tblmekanik
+   Source: tbuser_karyawan
+   Purpose: Data mekanik dari karyawan
+   Filter: Posisi MEKANIK atau KEPALA_MEKANIK
+
+3. tbl_master_kepala_mekanik
+   Source: tbuser_karyawan
+   Purpose: Data kepala mekanik per cabang
+   Filter: Level/Posisi KEPALA_MEKANIK
+
+4. view_absensi
+   Source: tbabsensi
+   Purpose: Data absensi dengan format extended
+
+5. view_cari_item
+   Source: tblitem, tblitemjenis
+   Purpose: Pencarian item/barang dengan detail
+   Filter: statusitem = '1'
+
+6. view_cari_kendaraan
+   Source: tblkendaraan, master_merek
+   Purpose: Pencarian kendaraan dengan detail merek
+
+7. view_cari_pelanggan
+   Source: tblpelanggan, tblpelanggangrup
+   Purpose: Pencarian pelanggan dengan grup
+
+8. view_keluhan_workorder
+   Source: tbmaster_keluhan_workorder, tbmaster_keluhan, tbworkorderheader
+   Purpose: Mapping keluhan ke workorder
+   Filter: status_aktif = '1'
+
+9. view_master_keluhan
+   Source: tbmaster_keluhan
+   Purpose: Master data keluhan aktif
+   Filter: status_aktif = '1'
+
+10. view_pelanggan_kendaraan
+    Source: tblkendaraan, master_merek, tblpelanggan
+    Purpose: Gabungan pelanggan dengan kendaraan
+
+11. view_servis_keluhan_lengkap
+    Source: tbservis_keluhan_status, tblservis, tblpelanggan,
+            tblkendaraan, tbworkorderheader
+    Purpose: Servis dengan detail keluhan lengkap
+    Features: - Hitung jumlah temuan
+              - Badge color berdasarkan status
+
+12. view_servis_workorder_lengkap
+    Source: tbservis_workorder, tbworkorderheader, tblservis,
+            tblpelanggan, tblkendaraan
+    Purpose: Servis dengan detail workorder lengkap
+    Features: - Hitung jumlah item/jasa/barang
+              - Badge color & progress percentage
+
+13. view_stok
+    Source: tbstok, tblitem
+    Purpose: Transaksi stok (masuk/keluar)
+    Features: Format tanggal DD-MM-YYYY
+
+14. view_stok_master
+    Source: tbstok
+    Purpose: Saldo stok per cabang per item
+    Features: Agregasi SUM(masuk - keluar)
+
+15. v_po_status
+    Source: tblorder_header, tblorder_detail,
+            tbldelivery_order_header, tbldelivery_order_detail
+    Purpose: Status Purchase Order
+    Features: - Hitung total item & qty
+              - Persentase penerimaan
+
+16. v_pr_status
+    Source: BELUM ADA
+    Purpose: Status Purchase Request (PLACEHOLDER)
+    Status: VIEW KOSONG - Akan diisi nanti
+
+================================================================================
+CARA INSTALL
+================================================================================
+
+OPSI 1: Via Command Line
+-------------------------
+mysql -u root -p fitmotor_dbbengkel < create_all_views.sql
+
+OPSI 2: Via phpMyAdmin
+----------------------
+1. Buka phpMyAdmin
+2. Pilih database fitmotor_dbbengkel
+3. Tab SQL
+4. Copy-paste isi file create_all_views.sql
+5. Klik Go/Kirim
+
+================================================================================
+VERIFIKASI
+================================================================================
+
+-- Lihat semua VIEW
+SHOW FULL TABLES WHERE table_type = 'VIEW';
+
+-- Test beberapa VIEW
+SELECT * FROM master_tarif_jemput LIMIT 5;
+SELECT * FROM tblmekanik LIMIT 5;
+SELECT * FROM view_cari_item LIMIT 5;
+SELECT * FROM view_stok_master LIMIT 10;
+
+================================================================================
+TABEL YANG MUNGKIN PERLU DISESUAIKAN
+================================================================================
+
+1. master_merek
+   Kemungkinan nama lain: tbmerek, tblmerek
+   Cek dengan: SHOW TABLES LIKE '%merek%';
+
+2. tbservis_keluhan_status
+   Pastikan tabel ini ada (bukan tbservis_keluhan)
+   Cek dengan: SHOW TABLES LIKE 'tbservis_keluhan%';
+
+3. tbservis_workorder_items
+   Diperlukan untuk view_servis_workorder_lengkap
+   Cek dengan: SHOW TABLES LIKE 'tbservis_workorder%';
+
+4. tbservis_temuan_penawaran
+   Diperlukan untuk view_servis_keluhan_lengkap
+   Cek dengan: SHOW TABLES LIKE '%temuan%';
+
+================================================================================
+CATATAN PENTING
+================================================================================
+
+PERUBAHAN STRUKTUR:
+- tbworkorderheader menggunakan kolom: keterangan, harga, waktu, status
+  (bukan: deskripsi_wo, harga_wo, estimasi_waktu, status_wo)
+
+- Tabel stok menggunakan nama: tbstok
+  (bukan: tblstokmasuk)
+
+JIKA ADA ERROR:
+1. Catat pesan error lengkap
+2. Cek nama tabel dengan: SHOW TABLES;
+3. Cek struktur tabel dengan: DESC nama_tabel;
+4. Sesuaikan query dalam file create_all_views.sql
+
+BACKUP:
+Selalu backup database sebelum menjalankan script:
+mysqldump -u root -p fitmotor_dbbengkel > backup_$(date +%Y%m%d).sql
+
+================================================================================
+FILES YANG DIBUAT
+================================================================================
+
+1. create_all_views.sql
+   File SQL utama berisi semua CREATE VIEW statement
+
+2. DOKUMENTASI_VIEWS.md
+   Dokumentasi lengkap untuk setiap VIEW
+
+3. QUICK_REFERENCE_VIEWS.txt (file ini)
+   Referensi cepat untuk lookup
+
+================================================================================
+END OF QUICK REFERENCE
+================================================================================

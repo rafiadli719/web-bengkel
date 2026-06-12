@@ -1,0 +1,145 @@
+Traceback (most recent call last):
+  File "C:\xampp\htdocs\web-bengkel\detailed_analysis.py", line 36, in <module>
+    print(f"{col}='{val}' ", end="")
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2193' in position 3: character maps to <undefined>
+=== ANALISIS LENGKAP FILE EXCEL: USULAN MASTER ITEM V.1.xlsx ===
+
+Jumlah Sheet: 9
+Nama Sheet: MASTER JENIS ITEM, MASTER JENIS MOTOR, MASTER KATEGORI MOTOR, MASTER SATUAN, MASTER NAMA BARANG, MASTER MERK MOTOR, MASTER TIPE HEADER, MASTER TIPE DETAIL, MASTER KATEGORI ITEM
+
+=== SHEET: MASTER JENIS ITEM ===
+Dimensi: 11 kolom x 49 baris
+
+Row 3: C='INPUT JENIS ITEM BARU' 
+Row 5: C='KODE' D=':' E='ORI' K='Kode berisi 3 digit huruf (tidak boleh ada kode yang sama persis).' 
+Row 7: C='KETERANGAN' D=':' E='ORISINIL GENUINE PART' K='Keterangan diisi bebas sesuai arti kode.' 
+Row 9: C='MARGIN JENIS' D=':' E='15' G='PERSEN' K='hanya bisa diisi angka' 
+Row 11: C='SIMPAN' E='LIHAT DAFTAR JENIS ITEM' G='KE MENU AWAL' K='Jika setelah klik simpan tapi kode sudah ada, maka muncul pesan info & kode harus diganti.' 
+Row 12: K='Jika berhasil tersimpan, muncul pesan : data berhasil tersimpan.' 
+Row 15: C='DAFTAR JENIS ITEM' H='KE MENU AWAL' 
+Row 17: C='CARI' D=':' H='INPUT BARU' K='Sebelum kolom cari diisi, semua daftar akan muncul.' 
+Row 18: K='Saat kolom cari diisi maka sistem otomatis mencari yang memuat kata tersebut.' 
+Row 19: C='KODE' E='KETERANGAN' F='MARGIN JENIS' G='AKSI' 
+Row 20: C='ORI' E='ORISINIL GENUINE PART' F='15' G='EDIT' H='HAPUS' 
+Row 21: C='IMI' E='MERK LAIN-LAIN' F='25' G='EDIT' H='HAPUS' K='JENIS  bisa dihapus jika belum ada transaksi.' 
+Row 25: C='EDIT JENIS ITEM' 
+Row 27: C='DATA AWAL' K='Data awal yang muncul hanya tampilan, bisa mengubahnya di kolom "edit menjadi".' 
+Row 28: C='KODE' D=':' E='ORI' 
+Row 29: C='KETERANGAN' D=':' E='ORISINIL' 
+Row 30: C='MARGIN JENIS' D=':' E='15' 
+Row 32: C='EDIT MENJADI' 
+Row 33: C='KETERANGAN' D=':' K='Muncul isi keterangan dari data awal, namun bisa diubah.' 
+Row 35: C='SIMPAN' E='LIHAT DAFTAR JENIS ITEM' G='KE MENU AWAL' 
+Row 39: C='HAPUS JENIS ITEM' 
+Row 41: C='DATA YANG AKAN DIHAPUS' 
+Row 42: C='KODE' D=':' E='VAR' 
+Row 43: C='KETERANGAN' D=':' E='VARIASI' 
+Row 44: C='MARGIN JENIS' D=':' E='40' 
+Row 46: C='HAPUS' E='LIHAT DAFTAR JENIS ITEM' G='KE MENU AWAL' K='Setelah hapus berhasil otomatis masuk ke halaman daftar JENIS  item' 
+Row 49: C='MASTER JENIS ITEM HANYA BISA DIAKSES PENUH OLEH ADMIN PENGADAAN, CS HANYA READ ONLY.' 
+
+--------------------------------------------------------------------------------
+
+=== SHEET: MASTER JENIS MOTOR ===
+Dimensi: 11 kolom x 45 baris
+
+Row 3: C='INPUT JENIS MOTOR BARU' 
+Row 5: C='JENIS MOTOR' D=':' E='FI' K='Hanya boleh 1 kata, tidak boleh ada spasi' 
+Row 7: C='KETERANGAN' D=':' E='FUEL INJECTION' K='Keterangan diisi bebas sesuai arti' 
+Row 9: C='SIMPAN' E='LIHAT DAFTAR JENIS MOTOR' G='KE MENU AWAL' K='Jika setelah klik simpan tapi jenis motor sudah ada, maka muncul pesan info & JENIS MOTOR harus diganti.' 
+Row 10: K='Jika berhasil tersimpan, muncul pesan : data berhasil tersimpan.' 
+Row 13: C='DAFTAR JENIS MOTOR' H='KE MENU AWAL' 
+Row 15: C='CARI' D=':' H='INPUT BARU' K='Sebelum kolom cari diisi, semua daftar akan muncul.' 
+Row 16: K='Saat kolom cari diisi maka sistem otomatis mencari yang memuat kata tersebut.' 
+Row 17: C='JENIS MOTOR' E='KETERANGAN' G='AKSI' 
+Row 18: C='CARBU' E='CARBURATOR' G='EDIT' H='HAPUS' 
+Row 19: C='FI' E='FUEL INJECTION' G='EDIT' H='HAPUS' K='JENIS MOTOR bisa dihapus jika belum ada transaksi.' 
+Row 23: C='EDIT JENIS MOTOR' 
+Row 25: C='DATA AWAL' K='Data awal yang muncul hanya tampilan, bisa mengubahnya di kolom "edit menjadi".' 
+Row 26: C='JENIS MOTOR' D=':' E='FI' 
+Row 27: C='KETERANGAN' D=':' E='FUEL INJECTION' 
+Row 29: C='EDIT MENJADI' 
+Row 30: C='KETERANGAN' D=':' E='FUEL INJECTION/YMJETFI/BLUECORE' K='Muncul isi keterangan dari data awal, namun bisa diubah.' 
+Row 32: C='SIMPAN' E='LIHAT DAFTAR JENIS MOTOR' G='KE MENU AWAL' 
+Row 36: C='HAPUS JENIS MOTOR' 
+Row 38: C='DATA YANG AKAN DIHAPUS' 
+Row 39: C='JENIS MOTOR' D=':' E='KARBU' 
+Row 40: C='KETERANGAN' D=':' E='KARBURATOR' 
+Row 42: C='HAPUS' E='LIHAT DAFTAR JENIS MOTOR' G='KE MENU AWAL' K='Setelah hapus berhasil otomatis masuk ke halaman daftar JENIS MOTOR' 
+Row 45: C='MASTER JENIS MOTOR HANYA BISA DIAKSES PENUH OLEH ADMIN PENGADAAN, CS HANYA READ ONLY.' 
+
+--------------------------------------------------------------------------------
+
+=== SHEET: MASTER KATEGORI MOTOR ===
+Dimensi: 11 kolom x 45 baris
+
+Row 3: C='INPUT KATEGORI MOTOR BARU' 
+Row 5: C='KATEGORI MOTOR' D=':' E='SUPERMATIC' K='Hanya boleh 1 kata, tidak boleh ada spasi' 
+Row 7: C='KETERANGAN' D=':' E='TRANSMISI OTOMATIS, BODY BESAR' K='Keterangan diisi bebas sesuai arti' 
+Row 9: C='SIMPAN' E='LIHAT DAFTAR KATEGORI MOTOR' G='KE MENU AWAL' K='Jika setelah klik simpan tapi KATEGORI MOTOR sudah ada, maka muncul pesan info & KATEGORI MOTOR harus diganti.' 
+Row 10: K='Jika berhasil tersimpan, muncul pesan : data berhasil tersimpan.' 
+Row 13: C='DAFTAR KATEGORI MOTOR' H='KE MENU AWAL' 
+Row 15: C='CARI' D=':' H='INPUT BARU' K='Sebelum kolom cari diisi, semua daftar akan muncul.' 
+Row 16: K='Saat kolom cari diisi maka sistem otomatis mencari yang memuat kata tersebut.' 
+Row 17: C='KATEGORI MOTOR' E='KETERANGAN' G='AKSI' 
+Row 18: C='MATIC' E='TRANSMISI OTOMATIS, BODY RAMPING' G='EDIT' H='HAPUS' 
+Row 19: C='SUPERMATIC' E='TRANSMISI OTOMATIS, BODY BESAR' G='EDIT' H='HAPUS' K='KATEGORI MOTOR bisa dihapus jika belum ada transaksi.' 
+Row 23: C='EDIT KATEGORI MOTOR' 
+Row 25: C='DATA AWAL' K='Data awal yang muncul hanya tampilan, bisa mengubahnya di kolom "edit menjadi".' 
+Row 26: C='KATEGORI MOTOR' D=':' E='BEBEK' 
+Row 27: C='KETERANGAN' D=':' E='MOTOR GIGI' 
+Row 29: C='EDIT MENJADI' 
+Row 30: C='KETERANGAN' D=':' E='TRANSMISI MANUAL, BODY RAMPING' K='Muncul isi keterangan dari data awal, namun bisa diubah.' 
+Row 32: C='SIMPAN' E='LIHAT DAFTAR KATEGORI MOTOR' G='KE MENU AWAL' 
+Row 36: C='HAPUS KATEGORI MOTOR' 
+Row 38: C='DATA YANG AKAN DIHAPUS' 
+Row 39: C='KATEGORI MOTOR' D=':' E='VESPA' 
+Row 40: C='KETERANGAN' D=':' E='SKUTER' 
+Row 42: C='HAPUS' E='LIHAT DAFTAR KATEGORI MOTOR' G='KE MENU AWAL' K='Setelah hapus berhasil otomatis masuk ke halaman daftar KATEGORI MOTOR' 
+Row 45: C='MASTER KATEGORI MOTOR HANYA BISA DIAKSES PENUH OLEH ADMIN PENGADAAN, CS HANYA READ ONLY.' 
+
+--------------------------------------------------------------------------------
+
+=== SHEET: MASTER SATUAN ===
+Dimensi: 11 kolom x 45 baris
+
+Row 3: C='INPUT SATUAN BARU' 
+Row 5: C='SATUAN' D=':' E='PASANG' K='Hanya boleh 1 kata, tidak boleh ada spasi' 
+Row 7: C='KETERANGAN' D=':' E='ISI 2' K='Keterangan diisi bebas sesuai arti' 
+Row 9: C='SIMPAN' E='LIHAT DAFTAR SATUAN' G='KE MENU AWAL' K='Jika setelah klik simpan tapi SATUAN sudah ada, maka muncul pesan info & SATUAN harus diganti.' 
+Row 10: K='Jika berhasil tersimpan, muncul pesan : data berhasil tersimpan.' 
+Row 13: C='DAFTAR SATUAN' H='KE MENU AWAL' 
+Row 15: C='CARI' D=':' H='INPUT BARU' K='Sebelum kolom cari diisi, semua daftar akan muncul.' 
+Row 16: K='Saat kolom cari diisi maka sistem otomatis mencari yang memuat kata tersebut.' 
+Row 17: C='SATUAN' E='KETERANGAN' G='AKSI' 
+Row 18: C='PASANG' E='ISI 2' G='EDIT' H='HAPUS' 
+Row 19: C='PCS' E='ISI 1' G='EDIT' H='HAPUS' K='SATUAN bisa dihapus jika belum ada transaksi.' 
+Row 23: C='EDIT SATUAN' 
+Row 25: C='DATA AWAL' K='Data awal yang muncul hanya tampilan, bisa mengubahnya di kolom "edit menjadi".' 
+Row 26: C='SATUAN' D=':' E='SET' 
+Row 27: C='KETERANGAN' D=':' E='ISI 1' 
+Row 29: C='EDIT MENJADI' 
+Row 30: C='KETERANGAN' D=':' E='BERISI BEBERAPA PART' K='Muncul isi keterangan dari data awal, namun bisa diubah.' 
+Row 32: C='SIMPAN' E='LIHAT DAFTAR SATUAN' G='KE MENU AWAL' 
+Row 36: C='HAPUS SATUAN' 
+Row 38: C='DATA YANG AKAN DIHAPUS' 
+Row 39: C='SATUAN' D=':' E='BUAH' 
+Row 40: C='KETERANGAN' D=':' E='ISI 1' 
+Row 42: C='HAPUS' E='LIHAT DAFTAR SATUAN' G='KE MENU AWAL' K='Setelah hapus berhasil otomatis masuk ke halaman daftar SATUAN' 
+Row 45: C='MASTER SATUAN HANYA BISA DIAKSES PENUH OLEH ADMIN PENGADAAN, CS HANYA READ ONLY.' 
+
+--------------------------------------------------------------------------------
+
+=== SHEET: MASTER NAMA BARANG ===
+Dimensi: 15 kolom x 73 baris
+
+Row 3: C='INPUT NAMA BARANG BARU' 
+Row 5: C='NAMA BARANG' D=':' E='SEAL KRUK AS' O='Nama barang memuat sebutan yang umum digunakan, tulisan bebas.' 
+Row 7: C='SINONIM 1' D=':' E='SIL KER AS' O='Sinonim memuat sebutan lain yang ada dipasaran.' 
+Row 8: O='Sinonim boleh dikosongi' 
+Row 9: C='SINONIM 2' D=':' 
+Row 11: C='SINONIM 3' D=':' 
+Row 13: C='PERLU UKURAN' D=':' E='YA' Error: 'charmap' codec can't encode character '\u2193' in position 3: character maps to <undefined>

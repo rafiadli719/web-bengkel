@@ -1,0 +1,2 @@
+NoTransaksi,NoBaris,Status,CaraBayar,Tanggal,NoOrder,TanggalOrder,NoSupplier,Note,TotalQtyOrder,TotalQty,TotalBeli,Diskon,TotalDiskon,Pajak,TotalPajak,TotalAkhir,Pembayaran,TanggalJT,TanggalLunas,JumlahBayar,User,IDTabel,NoItem,QtyOrder,Quantity,QtyRetur,HargaPokok,Potongan,HargaSP,Total,STSOrder
+PBTEST26060001,1,SELESAI,Tunai,2026-06-08,PO26060001,2026-06-08,SUP001,Upload sample pembelian,5,5,250000,0,0,0,0,250000,250000,2026-06-15,2026-06-08,250000,admin,1,BRG001,5,5,0,50000,0,50000,250000,OK

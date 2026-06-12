@@ -18,8 +18,8 @@
                                                         <label class="col-sm-5 control-label no-padding-right" for="form-field-1"> Cara Bayar </label>
                                                         <div class="col-sm-7">
                                                             <select class="form-control" id="cbocarabyr" name="cbocarabyr">
-																<option value="Kredit">Kredit</option>
-                                                                <option value="Tunai">Tunai</option>																
+																<option value="Kredit" <?php if($carabayar=='Kredit') { echo 'selected'; } ?>>Kredit</option>
+                                                                <option value="Tunai" <?php if($carabayar=='Tunai') { echo 'selected'; } ?>>Tunai</option>																
                                                             </select>
                                                         </div>
                                                     </div>
@@ -31,7 +31,7 @@
                                                     <div class="form-group">
                                                         <label class="col-sm-5 control-label no-padding-right" for="form-field-1"> Syarat </label>
                                                         <div class="col-sm-4">
-                                                            <input type="text" class="form-control" id="txtsyarat" name="txtsyarat" value="10" />
+                                                            <input type="text" class="form-control" id="txtsyarat" name="txtsyarat" value="<?php echo $tempo_hari_rule; ?>" />
                                                         </div>
                                                         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> hari </label>                                                        
                                                     </div>

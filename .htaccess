@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Universal app entry point: expose /panel/... while the legacy implementation
+# still lives physically under /_admincab/ during the transition phase.
+RewriteRule ^panel$ panel/ [R=302,L]
+RewriteRule ^panel/(.*)$ _admincab/$1 [L,QSA,NC]

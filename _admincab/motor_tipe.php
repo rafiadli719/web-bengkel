@@ -111,7 +111,7 @@
 							<td width="20%">
 								<a href="index.php" class="navbar-brand">
 									<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 									</small>							
 								</a>								
@@ -221,11 +221,10 @@
 													<tr>
 														<th class="center">No</th>
 														<th>Tipe</th>
+														<th class="center">Tahun</th>
 														<th class="center">Merek</th>
 														<th class="center">Kategori</th>
 														<th class="center">Aksi</th>
-														<th class="center"></th>
-                                                        <th class="center"></th>                                                        
 													</tr>
 												</thead>
 												<tbody>
@@ -252,7 +251,8 @@
 												?>
 													<tr>
 														<td class="center"><?php echo $no; ?></td>																										                                                        
-														<td><?php echo $tampil['tipe']?></td>														
+														<td><?php echo $tampil['tipe']?></td>
+														<td class="center"><?php echo !empty($tampil['tahun']) ? $tampil['tahun'] : '-'; ?></td>
                                                         <td class="center"><?php echo $merek; ?></td>
                                                         <td class="center"><?php echo $kategori; ?></td>                                                        
 														<td class="center">													
@@ -266,8 +266,6 @@
 																<i class="ace-icon fa fa-trash-o bigger-130"></i>
 															</a>							
 														</td>
-                                                        <td></td>
-                                                        <td></td>
 													</tr>
 
 
@@ -338,12 +336,12 @@
 				//.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
 				.DataTable( {
 					bAutoWidth: false,
-					"aoColumns": [
-					  { "bSortable": false },
-					  null, null,null, null, null,
-					  { "bSortable": false }
-					],
-					"aaSorting": [],
+				"aoColumns": [
+				  { "bSortable": false },
+				  null, null, null, null,
+				  { "bSortable": false }
+				],
+				"aaSorting": [],
 					
 					
 					//"bProcessing": true,

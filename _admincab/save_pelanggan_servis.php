@@ -26,12 +26,48 @@ $tipe_id = $_POST['cbotipe'] ?? '';
 $jenis_id = $_POST['cbojenis'] ?? '';
 $warna_id = $_POST['cbowarna'] ?? '';
 $no_wa = trim($_POST['txtnowa'] ?? '');
+$informasi_sumber = $_POST['cboinformasisumber'] ?? '';
 $kd_cabang = $_SESSION['_cabang'];
+$google_maps = trim($_POST['txtgooglemaps'] ?? '');
+$jenis_servis = $_POST['jenis_servis'] ?? 'reguler'; // reguler or jemput_antar
+
+// Handle foto rumah upload
+$foto_rumah = '';
+if (isset($_FILES['fotorumah']) && $_FILES['fotorumah']['error'] == 0) {
+    $allowed_types = ['image/jpeg', 'image/jpg', 'image/png'];
+    $max_size = 2 * 1024 * 1024; // 2MB
+
+    if (!in_array($_FILES['fotorumah']['type'], $allowed_types)) {
+        header("location:pelanggan_add_servis.php?error=" . urlencode("Tipe file tidak didukung. Gunakan JPG atau PNG."));
+        exit;
+    }
+
+    if ($_FILES['fotorumah']['size'] > $max_size) {
+        header("location:pelanggan_add_servis.php?error=" . urlencode("Ukuran file terlalu besar. Maksimal 2MB."));
+        exit;
+    }
+
+    $upload_dir = '../file_upload/foto_rumah/';
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+
+    $file_extension = pathinfo($_FILES['fotorumah']['name'], PATHINFO_EXTENSION);
+    $foto_rumah = 'rumah_' . strtoupper(str_replace(' ', '_', $nopelanggan)) . '_' . time() . '.' . $file_extension;
+    $upload_path = $upload_dir . $foto_rumah;
+
+    if (!move_uploaded_file($_FILES['fotorumah']['tmp_name'], $upload_path)) {
+        header("location:pelanggan_add_servis.php?error=" . urlencode("Gagal mengupload foto rumah."));
+        exit;
+    }
+
+    $foto_rumah = 'file_upload/foto_rumah/' . $foto_rumah;
+}
 
 // Validasi input wajib
-if (empty($namapelanggan) || empty($gender) || empty($tgl_lahir) || empty($valid_tgl_lahir) || 
-    empty($alamat_detail) || empty($provinsi) || empty($kota) || empty($kecamatan) || empty($nopelanggan) || empty($bl_pajak) || 
-    empty($th_pajak) || empty($merek_id) || empty($tipe_id) || empty($jenis_id) || empty($warna_id)) {
+if (empty($namapelanggan) || empty($gender) || empty($tgl_lahir) || empty($valid_tgl_lahir) ||
+    empty($alamat_detail) || empty($provinsi) || empty($kota) || empty($kecamatan) || empty($nopelanggan) || empty($bl_pajak) ||
+    empty($th_pajak) || empty($merek_id) || empty($tipe_id) || empty($jenis_id) || empty($warna_id) || empty($informasi_sumber)) {
     header("location:pelanggan_add_servis.php?error=" . urlencode("Semua field wajib diisi kecuali patokan dan nomor WA"));
     exit;
 }
@@ -123,11 +159,12 @@ $id_panggilan = 0;
 // Simpan data pelanggan ke tblpelanggan
 // Perbaikan: menggunakan jenis_id bukan jenis yang tidak ada di tabel
 $query = "INSERT INTO tblpelanggan (
-    nopelanggan, namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, kota, patokan, 
-    telephone, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id, 
-    propinsi, kodepost, negara, fax, kontakperson, note, potongan, tipepot, 
-    lavelharga, kgrup, klat, klong, panggilan, saldoawal, pertanggal, id_panggilan
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    nopelanggan, namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, kota, patokan,
+    telephone, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id,
+    propinsi, kodepost, negara, fax, kontakperson, note, potongan, tipepot,
+    lavelharga, kgrup, klat, klong, panggilan, saldoawal, pertanggal, id_panggilan, informasi_sumber,
+    google_maps, foto_rumah
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = mysqli_prepare($koneksi, $query);
 if ($stmt === false) {
     mysqli_rollback($koneksi);
@@ -135,13 +172,14 @@ if ($stmt === false) {
     exit;
 }
 
-mysqli_stmt_bind_param($stmt, "sssssssssssiiiissssssdssssssdsi", 
-    $nopelanggan, $namapelanggan, $gender, $tgl_lahir, $valid_tgl_lahir, 
-    $alamat_lengkap, $kota, $patokan, $no_wa, $bl_pajak, $th_pajak, 
-    $merek_id, $tipe_id, $jenis_id, $warna_id, 
-    $propinsi, $kodepost, $negara, $fax, $kontakperson, $note, 
-    $potongan, $tipepot, $lavelharga, $kgrup, $klat, $klong, 
-    $panggilan, $saldoawal, $pertanggal, $id_panggilan);
+mysqli_stmt_bind_param($stmt, "sssssssssssiiiissssssdssssssdsisss",
+    $nopelanggan, $namapelanggan, $gender, $tgl_lahir, $valid_tgl_lahir,
+    $alamat_lengkap, $kota, $patokan, $no_wa, $bl_pajak, $th_pajak,
+    $merek_id, $tipe_id, $jenis_id, $warna_id,
+    $propinsi, $kodepost, $negara, $fax, $kontakperson, $note,
+    $potongan, $tipepot, $lavelharga, $kgrup, $klat, $klong,
+    $panggilan, $saldoawal, $pertanggal, $id_panggilan, $informasi_sumber,
+    $google_maps, $foto_rumah);
 
 if (!mysqli_stmt_execute($stmt)) {
     mysqli_rollback($koneksi);
@@ -240,8 +278,14 @@ mysqli_stmt_close($stmt_kendaraan);
 // Commit transaksi
 mysqli_commit($koneksi);
 
-// Redirect ke input_garapan.php menggunakan nopelanggan sebagai parameter yang lebih reliable
-header("location:input_garapan.php?nopelanggan=" . urlencode($nopelanggan));
+// Redirect berdasarkan pilihan jenis servis
+if ($jenis_servis === 'jemput_antar') {
+    // Redirect ke servis jemput antar
+    header("location:servis-input-reguler-jemput.php?nopelanggan=" . urlencode($nopelanggan));
+} else {
+    // Default: Redirect ke servis reguler
+    header("location:servis-input-reguler.php?nopelanggan=" . urlencode($nopelanggan));
+}
 exit;
 
 mysqli_close($koneksi);

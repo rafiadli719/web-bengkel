@@ -392,19 +392,20 @@
                                     
                                     <div class="widget-body">
                                         <div class="widget-main no-padding">
-                                            <table class="table table-striped table-bordered table-hover">
+                                            <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover" style="table-layout: fixed; width: 100%;">
                                                 <thead>
                                                     <tr>
-                                                        <th class="center" width="5%">Aksi</th>
-                                                        <th width="10%">Kode Item</th>
-                                                        <th width="8%">Barcode</th>
-                                                        <th width="25%">Nama Item</th>
-                                                        <th width="10%">Jenis</th>
-                                                        <th class="center" width="8%">Stok</th>
-                                                        <th class="center" width="8%">Min.</th>
-                                                        <th width="8%">Satuan</th>
-                                                        <th width="8%">Rak</th>
-                                                        <th class="center" width="10%">Harga Jual</th>
+                                                        <th class="center" style="width: 40px;">Aksi</th>
+                                                        <th style="width: 100px;">Kode Item</th>
+                                                        <th style="width: 80px;">Barcode</th>
+                                                        <th>Nama Item</th>
+                                                        <th style="width: 130px;">Jenis</th>
+                                                        <th class="center" style="width: 45px;">Stok</th>
+                                                        <th class="center" style="width: 40px;">Min.</th>
+                                                        <th style="width: 50px;">Satuan</th>
+                                                        <th style="width: 45px;">Rak</th>
+                                                        <th class="center" style="width: 80px;">Harga Jual</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -413,6 +414,8 @@
                                                     while ($tampil = mysqli_fetch_array($sql)) {
                                                         $noitem=$tampil['noitem'];
                                                         $stokmin=$tampil['stokmin'];
+                                                        
+                                                        // Get stock info
                                                         $cari_kd=mysqli_query($koneksi,"SELECT saldo 
                                                                                         FROM view_stok_master 
                                                                                         WHERE 
@@ -420,32 +423,64 @@
                                                                                         no_item='$noitem'");			
                                                         $tm_cari=mysqli_fetch_array($cari_kd);
                                                         $saldo_akhir=$tm_cari['saldo'];	
-
-                                                        if($saldo_akhir=='0') {
+                                                        
+                                                        // Get status_harga_naik from tblitem
+                                                        $cari_harga=mysqli_query($koneksi,"SELECT status_harga_naik 
+                                                                                        FROM tblitem 
+                                                                                        WHERE noitem='$noitem'");			
+                                                        $tm_harga=mysqli_fetch_array($cari_harga);
+                                                        $status_harga_naik = isset($tm_harga['status_harga_naik']) ? $tm_harga['status_harga_naik'] : 0;
+                                                        
+                                                        // Stock & price validation
+                                                        $blocked_reason = "";
+                                                        
+                                                        if($saldo_akhir=='0' && $status_harga_naik=='1') {
+                                                            // CRITICAL: Stok habis DAN harga naik - BLOCK
                                                             $row_class="danger";
                                                             $stock_badge="danger";
                                                             $disabled="disabled";
+                                                            $blocked_reason = "STOK KOSONG & HARGA NAIK";
+                                                        } elseif($saldo_akhir=='0') {
+                                                            // Stok habis tapi harga normal - BLOCK
+                                                            $row_class="danger";
+                                                            $stock_badge="danger";
+                                                            $disabled="disabled";
+                                                            $blocked_reason = "STOK KOSONG";
+                                                        } elseif($status_harga_naik=='1') {
+                                                            // Harga naik tapi ada stok - WARNING (bisa dijual)
+                                                            $row_class="info";
+                                                            $stock_badge="info";
+                                                            $disabled="";
+                                                            $blocked_reason = "HARGA NAIK";
+                                                        } elseif($saldo_akhir<=$stokmin) {
+                                                            // Stok menipis - WARNING
+                                                            $row_class="warning";
+                                                            $stock_badge="warning";
+                                                            $disabled="";
+                                                            $blocked_reason = "";
                                                         } else {
-                                                            if($saldo_akhir<=$stokmin) {
-                                                                $row_class="warning";
-                                                                $stock_badge="warning";
-                                                                $disabled="";
-                                                            } else {
-                                                                $row_class="";
-                                                                $stock_badge="success";
-                                                                $disabled="";
-                                                            }
+                                                            // Normal
+                                                            $row_class="";
+                                                            $stock_badge="success";
+                                                            $disabled="";
+                                                            $blocked_reason = "";
                                                         }
                                                 ?>
                                                     <tr class="<?php echo $row_class; ?>">
                                                         <td class="center">
-                                                            <div class="btn-group">
-                                                                <a href="penjualan_add_rst.php?stgl=<?php echo $tgl_pilih; ?>&ssup=<?php echo $nopelanggan; ?>&ssales=<?php echo $cbosales; ?>&kd=<?php echo $tampil['noitem']; ?>&spesan=<?php echo $spesan; ?>" 
-                                                                   class="btn btn-xs btn-success <?php echo $disabled; ?>" title="Pilih Item">
-                                                                    <i class="ace-icon fa fa-check"></i>
-                                                                    Pilih
-                                                                </a>
-                                                            </div>                                                                                            
+                                                            <?php if($disabled == "disabled") { ?>
+                                                                <button class="btn btn-minier btn-danger" disabled title="Stok Kosong">
+                                                                    <i class="ace-icon fa fa-ban"></i>
+                                                                </button>
+                                                            <?php } else { ?>
+                                                                <div class="btn-group">
+                                                                    <a href="penjualan_add_rst.php?stgl=<?php echo $tgl_pilih; ?>&ssup=<?php echo $nopelanggan; ?>&ssales=<?php echo $cbosales; ?>&kd=<?php echo $tampil['noitem']; ?>&spesan=<?php echo $spesan; ?>" 
+                                                                       class="btn btn-xs btn-success" title="Pilih Item">
+                                                                        <i class="ace-icon fa fa-check"></i>
+                                                                        Pilih
+                                                                    </a>
+                                                                </div>
+                                                            <?php } ?>
                                                         </td>														
                                                         <td>
                                                             <strong><?php echo $tampil['noitem']; ?></strong>
@@ -456,8 +491,8 @@
                                                         <td>
                                                             <span class="text-primary"><?php echo $tampil['namaitem']; ?></span>
                                                         </td>                                            
-                                                        <td>
-                                                            <span class="label label-sm label-info"><?php echo $tampil['namajenis']; ?></span>
+                                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                            <span class="label label-sm label-info" title="<?php echo $tampil['namajenis']; ?>"><?php echo $tampil['namajenis']; ?></span>
                                                         </td>																											                                            
                                                         <td class="center">
                                                             <span class="badge badge-<?php echo $stock_badge; ?>"><?php echo $saldo_akhir; ?></span>
@@ -479,6 +514,7 @@
                                                 ?>
                                                 </tbody>                                    
                                             </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

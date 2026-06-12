@@ -10,6 +10,7 @@ if (!isset($_SESSION['_iduser'])) {
 
 // Include database connection
 include_once '../config/koneksi.php';
+include_once '_include_statistik_pelanggan.php';
 
 // Check if phone parameter is provided
 if (!isset($_POST['phone']) || empty($_POST['phone'])) {
@@ -22,8 +23,8 @@ $phone = trim($_POST['phone']);
 
 try {
     // Prepare and execute query to check if phone exists
-    $query = "SELECT namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, patokan, telephone, propinsi, kota 
-              FROM tblpelanggan 
+    $query = "SELECT namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, patokan, telephone, propinsi, kota, COALESCE(sp.status_member, 'Bronze') AS status_member 
+              FROM tblpelanggan LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = tblpelanggan.nopelanggan 
               WHERE telephone = ? 
               LIMIT 1";
     
@@ -49,7 +50,8 @@ try {
                 'patokan' => $row['patokan'],
                 'phone' => $row['telephone'],
                 'provinsi' => $row['propinsi'],
-                'kota' => $row['kota']
+                'kota' => $row['kota'],
+                'status_member' => $row['status_member']
             ]
         ];
     } else {

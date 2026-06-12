@@ -28,7 +28,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-															<div class="col-xs-8 col-sm-1">
+														<div class="col-xs-8 col-sm-1">
                                                                 <label>Jumlah :</label>
                                                                 <div class="row">
                                                                     <div class="col-xs-8 col-sm-12">
@@ -37,7 +37,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-															<div class="col-xs-8 col-sm-1">
+														<div class="col-xs-8 col-sm-1">
                                                                 <label>Pot. (%) :</label>
                                                                 <div class="row">
                                                                     <div class="col-xs-8 col-sm-12">
@@ -46,7 +46,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-															<div class="col-xs-8 col-sm-1">
+														<div class="col-xs-8 col-sm-1">
                                                                 <label>&nbsp;</label>
                                                                 <div class="row">
                                                                     <div class="col-xs-8 col-sm-12">
@@ -70,6 +70,7 @@
                                             <td width="30%">Nama Item</td>
                                             <td align="right" width="8%">Pesan</td>
                                             <td align="right" width="8%">Jumlah</td>
+                                            <td class="center" width="6%">Satuan</td>
                                             <td align="right" width="8%">Harga</td>
                                             <td align="right" width="8%">Pot.</td>
                                             <td align="right" width="13%">Total</td>
@@ -87,7 +88,7 @@
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];
-                                                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
+                                                $cari_kd=mysqli_query($koneksi,"SELECT namaitem, satuan 
                                                                                 FROM tblitem 
                                                                                 WHERE noitem='$no_item'");			
                                                 $tm_cari=mysqli_fetch_array($cari_kd);
@@ -111,13 +112,22 @@
                                                 </div><!-- /.btn-group -->                                                        
                                             </td>	
                                             <td class="center"><?php echo $no ?></td>
-                                            <td><?php echo $tampil['no_item']?></td>														
-                                            <td><?php echo $namaitem_tbl; ?></td>														                                                        
+                                            <td><?php echo $tampil['no_item']?></td>													
+                                            <td><?php echo $namaitem_tbl; ?></td>																					
                                             <td class="center"><?php echo $tampil['qty_order']?></td>
-                                            <td class="center"><?php echo $tampil['quantity']?></td>														                                                                                                                
-                                            <td align="right"><?php echo number_format($tampil['harga_jual'],0)?></td>														                                                        
+                                            <td class="center"><?php echo $tampil['quantity']?></td>																									
+                                            <?php
+                                                $satuan_tbl = isset($tm_cari['satuan']) ? $tm_cari['satuan'] : '';
+                                                $harga_jual = (float)$tampil['harga_jual'];
+                                                $potongan_persen = (float)$tampil['potongan'];
+                                                if ($potongan_persen < 0) { $potongan_persen = 0; }
+                                                if ($potongan_persen > 100) { $potongan_persen = 100; }
+                                                $harga_net = $harga_jual - ($harga_jual * $potongan_persen / 100);
+                                            ?>
+                                            <td class="center"><?php echo $satuan_tbl; ?></td>
+                                            <td align="right"><?php echo number_format($harga_net,0)?></td>																						
                                             <td align="right"><?php echo number_format($tampil['potongan'],0)?>%</td>
-                                            <td align="right"><?php echo number_format($tampil['total'],0)?></td>														                                                                                                                
+                                            <td align="right"><?php echo number_format($tampil['total'],0)?></td>																									
                                         </tr>
                                     <?php
                                         }

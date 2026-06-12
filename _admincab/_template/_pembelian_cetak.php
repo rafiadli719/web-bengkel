@@ -1,5 +1,4 @@
-
-
+                                                        <?php if (empty($mode_view_only)) { ?>
                                                         <div class="row">
 															<div class="col-xs-8 col-sm-3">
                                                                 <label>Ketik Kode/Nama Item :</label>
@@ -56,75 +55,92 @@
                                                                 </div>
                                                             </div>                                                            
                                                         </div>
+                                                        <?php } ?>
 
                                                         <div class="space space-8"></div>                                                                                                                
                                                         
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
                                 <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <td class="center" width="5%"></td>
-                                            <td class="center" width="5%">No</td>
-                                            <td width="15%">Kode</td>
-                                            <td width="30%">Nama Item</td>
-                                            <td align="right" width="8%">Pesan</td>
-                                            <td align="right" width="8%">Jumlah</td>
-                                            <td align="right" width="8%">Harga</td>
-                                            <td align="right" width="8%">Pot.</td>
-                                            <td align="right" width="13%">Total</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                            $no = 0 ;
-                                            $sql = mysqli_query($koneksi,"SELECT 
-                                                                        id, no_item, qty_order, quantity, 
-                                                                        harga_pokok, total, potongan 
-                                                                        FROM tblpembelian_detail 
-                                                                        WHERE 
-                                                                        no_transaksi='$nobl'");
-                                            while ($tampil = mysqli_fetch_array($sql)) {
-                                                $no++;
-                                                $no_item=$tampil['no_item'];
-                                                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                                                FROM tblitem 
-                                                                                WHERE noitem='$no_item'");			
-                                                $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $namaitem_tbl=$tm_cari['namaitem'];				 
-                                        ?>
-                                        <tr>
-                                            <td class="center">
-                                                <div class="btn-group">
-                                                    <button data-toggle="dropdown" class="btn disabled dropdown-toggle btn-minier btn-yellow">
-                                                        Aksi
-                                                        <span class="ace-icon fa fa-caret-down icon-on-right"></span>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-default">
-                                                        <li>
-                                                            <a href="pembelian_edit_item.php?kd=<?php echo $tampil['id']; ?>&kdsup=<?php echo $cbosupplier; ?>">Edit Item</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="pembelian_hapus_item.php?kd=<?php echo $tampil['id']; ?>&kdsup=<?php echo $cbosupplier; ?>">Hapus Item</a>
-                                                        </li>
-                                                    </ul>
-                                                </div><!-- /.btn-group -->                                                        
-                                            </td>	
-                                            <td class="center"><?php echo $no ?></td>
-                                            <td><?php echo $tampil['no_item']?></td>														
-                                            <td><?php echo $namaitem_tbl; ?></td>														                                                        
-                                            <td class="center"><?php echo $tampil['qty_order']?></td>
-                                            <td class="center"><?php echo $tampil['quantity']?></td>														                                                                                                                
-                                            <td align="right"><?php echo number_format($tampil['harga_pokok'],0)?></td>														                                                        
-                                            <td align="right"><?php echo number_format($tampil['potongan'],0)?>%</td>
-                                            <td align="right"><?php echo number_format($tampil['total'],0)?></td>														                                                                                                                
-                                        </tr>
-                                    <?php
-                                        }
-                                    ?>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
+            <thead>
+                <tr>
+                    <?php if (empty($mode_view_only)) { ?>
+                    <td class="center" width="5%"></td>
+                    <?php } ?>
+                    <td class="center" width="5%">No</td>
+                    <td width="15%">Kode</td>
+                    <td width="30%">Nama Item</td>
+                    <td align="right" width="8%">Pesan</td>
+                    <td align="right" width="8%">Jumlah</td>
+                    <td class="center" width="6%">Satuan</td>
+                    <td align="right" width="8%">Harga</td>
+                    <td align="right" width="8%">Pot.</td>
+                    <td align="right" width="13%">Total</td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                    $no = 0 ;
+                    $sql = mysqli_query($koneksi,"SELECT 
+                                                id, no_item, qty_order, quantity, 
+                                                harga_pokok, total, potongan 
+                                                FROM tblpembelian_detail 
+                                                WHERE 
+                                                no_transaksi='$nobl'");
+                    while ($tampil = mysqli_fetch_array($sql)) {
+                        $no++;
+                        $no_item=$tampil['no_item'];
+                        $cari_kd=mysqli_query($koneksi,"SELECT namaitem, satuan 
+                                                        FROM tblitem 
+                                                        WHERE noitem='$no_item'");			
+                        $tm_cari=mysqli_fetch_array($cari_kd);
+                        $namaitem_tbl=$tm_cari['namaitem'];				 
+                ?>
+                <tr>
+                    <?php if (empty($mode_view_only)) { ?>
+                    <td class="center">
+                        <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn disabled dropdown-toggle btn-minier btn-yellow">
+                                Aksi
+                                <span class="ace-icon fa fa-caret-down icon-on-right"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-default">
+                                <li>
+                                    <a href="pembelian_edit_item.php?kd=<?php echo $tampil['id']; ?>&kdsup=<?php echo $cbosupplier; ?>">Edit Item</a>
+                                </li>
+                                <li>
+                                    <a href="pembelian_hapus_item.php?kd=<?php echo $tampil['id']; ?>&kdsup=<?php echo $cbosupplier; ?>">Hapus Item</a>
+                                </li>
+                            </ul>
+                        </div><!-- /.btn-group -->                                                        
+                    </td>	
+                    <?php } ?>
+                    <td class="center"><?php echo $no ?></td>
+                    <td><?php echo $tampil['no_item']?></td>														
+                    <td><?php echo $namaitem_tbl; ?></td>														                                                        
+                    <td class="center"><?php echo $tampil['qty_order']?></td>
+                    <td class="center"><?php echo $tampil['quantity']?></td>																									
+
+                    <?php
+                        $satuan_tbl = isset($tm_cari['satuan']) ? $tm_cari['satuan'] : '';
+                        $harga_pokok = (float)$tampil['harga_pokok'];
+                        $potongan_persen = (float)$tampil['potongan'];
+                        if ($potongan_persen < 0) { $potongan_persen = 0; }
+                        if ($potongan_persen > 100) { $potongan_persen = 100; }
+                        $harga_net = $harga_pokok - ($harga_pokok * $potongan_persen / 100);
+                    ?>
+                    <td class="center"><?php echo $satuan_tbl; ?></td>
+                    <td align="right"><?php echo number_format($harga_net,0)?></td>																						
+
+                    <td align="right"><?php echo number_format($tampil['potongan'],0)?>%</td>
+                    <td align="right"><?php echo number_format($tampil['total'],0)?></td>																									
+
+                </tr>
+            <?php
+                }
+            ?>
+                
+            </tbody>
+        </table>
+    </div>
+</div>

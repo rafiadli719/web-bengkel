@@ -11,6 +11,10 @@
     $txtdp= $_POST['txtdp'];   
     $txtkekurangan= $_POST['txtkekurangan'];   
 
+    $kekurangan_num = (float)preg_replace('/[^0-9\-\.]/', '', (string)$txtkekurangan);
+    $status_lunas = ($kekurangan_num <= 0) ? '1' : '0';
+    $tanggal_lunas_val = ($status_lunas === '1') ? date('Y-m-d') : '';
+
     $cari_kd=mysqli_query($koneksi,"SELECT 
                                     sum(quantity) as tot 
                                     FROM tblpembelian_detail 
@@ -24,7 +28,12 @@
                                     WHERE notransaksi='$no_order'");
     $tm_cari=mysqli_fetch_array($cari_kd);	
     $tanggal_bl=$tm_cari['tanggal'];
-        
+    
+    // Cek apakah ada link DO pada pembelian ini; jika ada, stok tidak perlu diposting ulang
+    $hdr = mysqli_query($koneksi,"SELECT no_do FROM tblpembelian_header WHERE notransaksi='$no_order'");
+    $row_hdr = mysqli_fetch_array($hdr);
+    $linked_do = isset($row_hdr['no_do']) ? trim($row_hdr['no_do']) : '';
+
     mysqli_query($koneksi,"UPDATE tblpembelian_header 
                             SET 
                             total_qty='$totqty', 
@@ -35,27 +44,31 @@
                             total_pajak='$txtpajak_nom', 
                             total_akhir='$txtnet', 
                             pembayaran='$txtdp', 
-                            jumlah_bayar='$txtkekurangan' 
+                            jumlah_bayar='$txtkekurangan',
+                            status_lunas='$status_lunas',
+                            tanggal_lunas='$tanggal_lunas_val' 
                             WHERE 
                             notransaksi='$no_order'");
 
-    $sql = mysqli_query($koneksi,"SELECT 
-                                    no_item, quantity 
-                                    FROM tblpembelian_detail 
-                                    WHERE no_transaksi='$no_order'");
-    while ($tampil = mysqli_fetch_array($sql)) {
-        $no_item=$tampil['no_item'];
-        $quantity=$tampil['quantity'];
+    if($linked_do=='') {
+        $sql = mysqli_query($koneksi,"SELECT 
+                                        no_item, quantity 
+                                        FROM tblpembelian_detail 
+                                        WHERE no_transaksi='$no_order'");
+        while ($tampil = mysqli_fetch_array($sql)) {
+            $no_item=$tampil['no_item'];
+            $quantity=$tampil['quantity'];
 
-        mysqli_query($koneksi,"INSERT INTO tbstok 
-                        (tipe, no_transaksi, no_item, 
-                        tanggal, masuk, keluar, keterangan) 
-                        VALUES 
-                        ('2','$no_order','$no_item',
-                        '$tanggal_bl','$quantity',
-                        '0','Pembelian')");
+            mysqli_query($koneksi,"INSERT INTO tbstok 
+                            (tipe, no_transaksi, no_item, 
+                            tanggal, masuk, keluar, keterangan) 
+                            VALUES 
+                            ('2','$no_order','$no_item',
+                            '$tanggal_bl','$quantity',
+                            '0','Pembelian')");
+        }
     }
-                                                        
+
    echo"<script>window.alert('Data Pembelian berhasil disimpan!');
    window.location=('pembelian_add_print.php?nopesanan=$no_order');</script>";        
 ?>

@@ -18,32 +18,58 @@ if(empty($_SESSION['_iduser'])){
 
     // Handle form submissions
     if(isset($_POST['btnsimpan'])) {
-        $kode_keluhan = $_POST['kode_keluhan'];
-        $nama_keluhan = $_POST['nama_keluhan'];
-        $deskripsi = $_POST['deskripsi'];
-        $kategori = $_POST['kategori'];
-        $estimasi_waktu = $_POST['estimasi_waktu'];
-        $tingkat_prioritas = $_POST['tingkat_prioritas'];
+        $kode_keluhan = mysqli_real_escape_string($koneksi, $_POST['kode_keluhan']);
+        $nama_keluhan = mysqli_real_escape_string($koneksi, $_POST['nama_keluhan']);
+        $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+        $kategori = mysqli_real_escape_string($koneksi, $_POST['kategori']);
         
         if(isset($_POST['id']) && !empty($_POST['id'])) {
             // Update
-            $id = $_POST['id'];
+            $id = mysqli_real_escape_string($koneksi, $_POST['id']);
             mysqli_query($koneksi,"UPDATE tbmaster_keluhan SET 
                                   nama_keluhan='$nama_keluhan',
                                   deskripsi='$deskripsi',
-                                  kategori='$kategori',
-                                  estimasi_waktu='$estimasi_waktu',
-                                  tingkat_prioritas='$tingkat_prioritas'
+                                  kategori='$kategori'
                                   WHERE id='$id'");
+            echo "<script>alert('Data berhasil diupdate!'); window.location='master-keluhan.php';</script>";
         } else {
-            // Insert
+            // Insert - Keluhan baru perlu approval dari pusat
             mysqli_query($koneksi,"INSERT INTO tbmaster_keluhan 
-                                  (kode_keluhan, nama_keluhan, deskripsi, kategori, estimasi_waktu, tingkat_prioritas) 
+                                  (kode_keluhan, nama_keluhan, deskripsi, kategori, 
+                                   status_approval, requested_by, requested_from) 
                                   VALUES 
-                                  ('$kode_keluhan','$nama_keluhan','$deskripsi','$kategori','$estimasi_waktu','$tingkat_prioritas')");
+                                  ('$kode_keluhan','$nama_keluhan','$deskripsi','$kategori',
+                                   'pending', '$_nama', '$kd_cabang')");
+            echo "<script>alert('Keluhan baru berhasil diajukan!\\nMenunggu approval dari pusat.'); window.location='master-keluhan.php';</script>";
         }
+    }
+    
+    // Handle Approval (untuk user pusat)
+    if(isset($_POST['btnapprove'])) {
+        $id = mysqli_real_escape_string($koneksi, $_POST['id']);
+        $action = $_POST['action']; // 'approve' atau 'reject'
+        $rejection_reason = isset($_POST['rejection_reason']) ? mysqli_real_escape_string($koneksi, $_POST['rejection_reason']) : '';
         
-        echo "<script>alert('Data berhasil disimpan!'); window.location='master-keluhan.php';</script>";
+        if($action == 'approve') {
+            mysqli_query($koneksi,"UPDATE tbmaster_keluhan SET 
+                                  status_approval='approved',
+                                  approved_by='$_nama',
+                                  approved_at=NOW()
+                                  WHERE id='$id'");
+            echo "<script>alert('Keluhan berhasil diapprove!'); window.location='master-keluhan.php';</script>";
+        } else if($action == 'reject') {
+            if(empty($rejection_reason)) {
+                echo "<script>alert('Alasan penolakan harus diisi!'); window.history.back();</script>";
+                exit;
+            }
+            mysqli_query($koneksi,"UPDATE tbmaster_keluhan SET 
+                                  status_approval='rejected',
+                                  approved_by='$_nama',
+                                  approved_at=NOW(),
+                                  rejection_reason='$rejection_reason'
+                                  WHERE id='$id'");
+            echo "<script>alert('Keluhan ditolak!'); window.location='master-keluhan.php';</script>";
+        }
     }
 
     if(isset($_GET['del'])) {
@@ -69,33 +95,24 @@ if(empty($_SESSION['_iduser'])){
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="assets/css/ace.min.css" />
-    
-    <style>
-    .priority-badge {
-        font-size: 11px;
-        padding: 2px 6px;
-    }
-    .priority-rendah { background-color: #5cb85c; }
-    .priority-sedang { background-color: #f0ad4e; }
-    .priority-tinggi { background-color: #d9534f; }
-    .priority-darurat { background-color: #d9534f; animation: blink 1s infinite; }
-    
-    @keyframes blink {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-    </style>
 </head>
 
 <body class="no-skin">
     <div id="navbar" class="navbar navbar-default ace-save-state">
         <div class="navbar-container ace-save-state" id="navbar-container">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
             <div class="navbar-header pull-left">
                 <a href="index.php" class="navbar-brand">
-                    <small><i class="fa fa-leaf"></i> Bengkel System</small>							
+                    <small><?php include "../lib/logo.php"; ?> <?php include "../lib/subtitel.php"; ?></small>							
                 </a>								
             </div>
+            
             <div class="navbar-buttons navbar-header pull-right" role="navigation">
                 <ul class="nav ace-nav">
                     <li class="light-blue dropdown-modal">
@@ -117,6 +134,23 @@ if(empty($_SESSION['_iduser'])){
     </div>
     
     <div class="main-container ace-save-state" id="main-container">
+        <script type="text/javascript">
+            try{ace.settings.loadState('main-container')}catch(e){}
+        </script>
+        
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar responsive ace-save-state">
+            <script type="text/javascript">
+                try{ace.settings.loadState('sidebar')}catch(e){}
+            </script>
+            
+            <?php include "menu_adm01.php"; ?>
+            
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+        </div>
+        
         <div class="main-content">
             <div class="main-content-inner">
                 <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -151,39 +185,18 @@ if(empty($_SESSION['_iduser'])){
                                                 <label>Deskripsi</label>
                                                 <textarea class="form-control" name="deskripsi" rows="3"></textarea>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Kategori</label>
-                                                        <select class="form-control" name="kategori">
-                                                            <option value="">Pilih Kategori</option>
-                                                            <option value="Mesin">Mesin</option>
-                                                            <option value="Rem">Rem</option>
-                                                            <option value="Kelistrikan">Kelistrikan</option>
-                                                            <option value="Transmisi">Transmisi</option>
-                                                            <option value="Ban">Ban</option>
-                                                            <option value="Body">Body</option>
-                                                            <option value="Lainnya">Lainnya</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Estimasi Waktu (menit)</label>
-                                                        <input type="number" class="form-control" name="estimasi_waktu" value="0">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Tingkat Prioritas</label>
-                                                        <select class="form-control" name="tingkat_prioritas">
-                                                            <option value="rendah">Rendah</option>
-                                                            <option value="sedang" selected>Sedang</option>
-                                                            <option value="tinggi">Tinggi</option>
-                                                            <option value="darurat">Darurat</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="form-group">
+                                                <label>Kategori</label>
+                                                <select class="form-control" name="kategori">
+                                                    <option value="">Pilih Kategori</option>
+                                                    <option value="Mesin">Mesin</option>
+                                                    <option value="Rem">Rem</option>
+                                                    <option value="Kelistrikan">Kelistrikan</option>
+                                                    <option value="Transmisi">Transmisi</option>
+                                                    <option value="Ban">Ban</option>
+                                                    <option value="Body">Body</option>
+                                                    <option value="Lainnya">Lainnya</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <button type="submit" name="btnsimpan" class="btn btn-sm btn-primary">
@@ -214,20 +227,45 @@ if(empty($_SESSION['_iduser'])){
                                                         <th width="25%">Nama Keluhan</th>
                                                         <th width="20%">Deskripsi</th>
                                                         <th width="10%">Kategori</th>
-                                                        <th width="8%">Estimasi</th>
-                                                        <th width="10%">Prioritas</th>
-                                                        <th width="7%">Proses</th>
+                                                        <th width="10%">Status</th>
+                                                        <th width="15%">Request By</th>
                                                         <th width="5%">Aksi</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php 
                                                     $no = 1;
-                                                    $sql = mysqli_query($koneksi,"SELECT * FROM view_master_keluhan ORDER BY nama_keluhan");
+                                                    $sql = mysqli_query($koneksi,"SELECT * FROM tbmaster_keluhan WHERE status_aktif='1' ORDER BY 
+                                                                                  CASE status_approval 
+                                                                                    WHEN 'pending' THEN 1 
+                                                                                    WHEN 'approved' THEN 2 
+                                                                                    WHEN 'rejected' THEN 3 
+                                                                                  END, 
+                                                                                  created_at DESC");
                                                     while ($data = mysqli_fetch_array($sql)) {
-                                                        $priority_class = 'priority-' . $data['tingkat_prioritas'];
+                                                        $status_approval = $data['status_approval'] ?? 'approved';
+                                                        $requested_by = $data['requested_by'] ?? '-';
+                                                        $requested_from = $data['requested_from'] ?? '-';
+                                                        
+                                                        // Badge color based on status
+                                                        $badge_class = '';
+                                                        $badge_text = '';
+                                                        switch($status_approval) {
+                                                            case 'pending':
+                                                                $badge_class = 'label-warning';
+                                                                $badge_text = 'Pending';
+                                                                break;
+                                                            case 'approved':
+                                                                $badge_class = 'label-success';
+                                                                $badge_text = 'Approved';
+                                                                break;
+                                                            case 'rejected':
+                                                                $badge_class = 'label-danger';
+                                                                $badge_text = 'Rejected';
+                                                                break;
+                                                        }
                                                     ?>
-                                                    <tr>
+                                                    <tr class="<?php echo ($status_approval == 'pending') ? 'warning' : ''; ?>">
                                                         <td class="center"><?php echo $no++; ?></td>
                                                         <td><?php echo $data['kode_keluhan']; ?></td>
                                                         <td><?php echo $data['nama_keluhan']; ?></td>
@@ -237,25 +275,41 @@ if(empty($_SESSION['_iduser'])){
                                                         <td>
                                                             <span class="label label-info"><?php echo $data['kategori']; ?></span>
                                                         </td>
-                                                        <td class="center"><?php echo $data['estimasi_waktu']; ?> min</td>
-                                                        <td class="center">
-                                                            <span class="label <?php echo $priority_class; ?>">
-                                                                <?php echo ucfirst($data['tingkat_prioritas']); ?>
-                                                            </span>
+                                                        <td>
+                                                            <span class="label <?php echo $badge_class; ?>"><?php echo $badge_text; ?></span>
+                                                        </td>
+                                                        <td>
+                                                            <small>
+                                                                <?php echo $requested_by; ?><br>
+                                                                <span class="text-muted">(<?php echo $requested_from; ?>)</span>
+                                                            </small>
                                                         </td>
                                                         <td class="center">
-                                                            <span class="badge badge-info"><?php echo $data['total_proses']; ?></span>
-                                                        </td>
-                                                        <td class="center">
-                                                            <a href="keluhan-proses.php?kode=<?php echo $data['kode_keluhan']; ?>" 
-                                                               class="btn btn-xs btn-warning" title="Kelola Proses">
-                                                                <i class="fa fa-cogs"></i>
-                                                            </a>
-                                                            <a href="?del=<?php echo $data['id']; ?>" 
-                                                               class="btn btn-xs btn-danger" title="Hapus"
-                                                               onclick="return confirm('Yakin hapus data ini?')">
-                                                                <i class="fa fa-trash"></i>
-                                                            </a>
+                                                            <?php if($status_approval == 'pending') { ?>
+                                                                <!-- Tombol Approve/Reject untuk user pusat -->
+                                                                <button class="btn btn-xs btn-success" 
+                                                                        onclick="approveKeluhan(<?php echo $data['id']; ?>, '<?php echo addslashes($data['nama_keluhan']); ?>')" 
+                                                                        title="Approve">
+                                                                    <i class="fa fa-check"></i>
+                                                                </button>
+                                                                <button class="btn btn-xs btn-danger" 
+                                                                        onclick="rejectKeluhan(<?php echo $data['id']; ?>, '<?php echo addslashes($data['nama_keluhan']); ?>')" 
+                                                                        title="Reject">
+                                                                    <i class="fa fa-times"></i>
+                                                                </button>
+                                                            <?php } else if($status_approval == 'approved') { ?>
+                                                                <a href="?del=<?php echo $data['id']; ?>" 
+                                                                   class="btn btn-xs btn-danger" title="Hapus"
+                                                                   onclick="return confirm('Yakin hapus data ini?')">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </a>
+                                                            <?php } else if($status_approval == 'rejected') { ?>
+                                                                <button class="btn btn-xs btn-info" 
+                                                                        onclick="showRejectionReason('<?php echo addslashes($data['rejection_reason']); ?>')" 
+                                                                        title="Lihat Alasan">
+                                                                    <i class="fa fa-info-circle"></i>
+                                                                </button>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                     <?php } ?>
@@ -272,10 +326,125 @@ if(empty($_SESSION['_iduser'])){
         </div>
     </div>
 
+    <!-- Modal Approve -->
+    <div id="modalApprove" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fa fa-check-circle text-success"></i> Approve Keluhan</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="approve_id">
+                        <input type="hidden" name="action" value="approve">
+                        <p>Apakah Anda yakin ingin <strong>menyetujui</strong> keluhan berikut?</p>
+                        <div class="alert alert-info">
+                            <strong id="approve_nama_keluhan"></strong>
+                        </div>
+                        <p class="text-muted"><small>Keluhan yang diapprove akan tersedia untuk digunakan di semua cabang.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Batal
+                        </button>
+                        <button type="submit" name="btnapprove" class="btn btn-sm btn-success">
+                            <i class="fa fa-check"></i> Approve
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reject -->
+    <div id="modalReject" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fa fa-times-circle text-danger"></i> Reject Keluhan</h4>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="reject_id">
+                        <input type="hidden" name="action" value="reject">
+                        <p>Apakah Anda yakin ingin <strong>menolak</strong> keluhan berikut?</p>
+                        <div class="alert alert-warning">
+                            <strong id="reject_nama_keluhan"></strong>
+                        </div>
+                        <div class="form-group">
+                            <label>Alasan Penolakan <span class="text-danger">*</span></label>
+                            <textarea name="rejection_reason" class="form-control" rows="4" 
+                                      placeholder="Jelaskan alasan penolakan..." required></textarea>
+                            <small class="text-muted">Alasan penolakan akan dikirim ke cabang yang mengajukan.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Batal
+                        </button>
+                        <button type="submit" name="btnapprove" class="btn btn-sm btn-danger">
+                            <i class="fa fa-times-circle"></i> Reject
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Rejection Reason -->
+    <div id="modalRejectionReason" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fa fa-info-circle text-danger"></i> Alasan Penolakan</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <p id="rejection_reason_text"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                        <i class="fa fa-times"></i> Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="assets/js/jquery-2.1.4.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/ace.min.js"></script>
+    
+    <script>
+    function approveKeluhan(id, nama) {
+        $('#approve_id').val(id);
+        $('#approve_nama_keluhan').text(nama);
+        $('#modalApprove').modal('show');
+    }
+    
+    function rejectKeluhan(id, nama) {
+        $('#reject_id').val(id);
+        $('#reject_nama_keluhan').text(nama);
+        $('#modalReject').modal('show');
+    }
+    
+    function showRejectionReason(reason) {
+        $('#rejection_reason_text').text(reason);
+        $('#modalRejectionReason').modal('show');
+    }
+    
+    // Auto-hide alerts after 5 seconds
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    });
+    </script>
 </body>
 </html>
 

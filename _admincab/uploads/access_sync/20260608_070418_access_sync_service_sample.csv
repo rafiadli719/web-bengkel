@@ -1,0 +1,2 @@
+NoService,Tanggal,Jam,NoPelanggan,NoPolisi,Mekanik1,Mekanik2,Mekanik3,Mekanik4,BiayaM1,BiayaM2,BiayaM3,BiayaM4,KmSekarang,KmBerikut,TotalWaktu,Status,Keterangan,SubTotalJasa,SubTotalItem,SubTotal,Diskon,TotalDiskon,Pajak,TotalPajak,TotalAkhir,Pembayaran,User,IDTabel
+SVTEST26060001,2026-06-08,09:30,PLG001,G3495AF,MKN001,,,,25000,0,0,0,15000,17000,60,SELESAI,Upload sample service,75000,50000,125000,0,0,0,0,125000,125000,admin,1

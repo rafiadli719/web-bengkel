@@ -7,6 +7,9 @@ if(empty($_SESSION['_iduser'])){
     $id_user=$_SESSION['_iduser'];	
     $kd_cabang=$_SESSION['_cabang'];		                	
     include "../config/koneksi.php";
+    include_once "../lib/rbac.php";
+    rbac_require_any(array('lihat_servis_read','servis_reguler_read','servis_menu_read','service_read'));
+    include "_include_statistik_pelanggan.php";
     
     // User data
     $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -63,11 +66,28 @@ if(empty($_SESSION['_iduser'])){
         }
     }
     
-    // Main query
-    $sql_query = "SELECT s.*, p.namapelanggan, v.merek, v.tipe, v.warna
+    // Main query (include robust computed total for display)
+    $sql_query = "SELECT 
+                    s.*, 
+                    p.namapelanggan, 
+                    COALESCE(v.merek, vk.tipe) AS merek, 
+                    COALESCE(v.tipe, vk.jenis) AS tipe, 
+                    COALESCE(v.warna, vk.warna) AS warna,
+                    COALESCE(
+                        NULLIF(s.total_grand, 0),
+                        NULLIF(s.total_akhir, 0),
+                        NULLIF(s.subtotal - COALESCE(s.total_diskon,0) + COALESCE(s.total_pajak,0), 0),
+                        (
+                            (SELECT COALESCE(SUM(total),0) FROM tblservis_jasa sj WHERE sj.no_service = s.no_service)
+                            +
+                            (SELECT COALESCE(SUM(total),0) FROM tblservis_barang sb WHERE sb.no_service = s.no_service)
+                            - COALESCE(s.total_diskon,0) + COALESCE(s.total_pajak,0)
+                        )
+                    ) AS total_display
                   FROM tblservice s
                   LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
                   LEFT JOIN view_cari_kendaraan v ON s.no_polisi = v.nopolisi
+                  LEFT JOIN tblkendaraan vk ON s.no_polisi = vk.nopolisi
                   $where_clause
                   ORDER BY s.tanggal DESC, s.jam DESC
                   LIMIT 100";
@@ -140,7 +160,7 @@ if(empty($_SESSION['_iduser'])){
 
             <div class="navbar-header pull-left">
                 <a href="index.php" class="navbar-brand">
-                    <small><i class="fa fa-leaf"></i> <?php include "../lib/subtitel.php"; ?></small>
+                    <small><?php include "../lib/logo.php"; ?> <?php include "../lib/subtitel.php"; ?></small>
                 </a>
             </div>
 
@@ -269,34 +289,62 @@ if(empty($_SESSION['_iduser'])){
                                                 // Handle status_jemput
                                                 $status_jemput = $tampil['status_jemput'] ?? '0';
                                                 $status = $tampil['status'] ?? '1';
-                                                
-                                                // Determine status description
-                                                switch($status) {
-                                                    case '0':
-                                                        $ket_status = 'Draft';
-                                                        $status_class = 'status-draft';
-                                                        break;
-                                                    case '1':
-                                                        if ($status_jemput == '1') {
-                                                            $ket_status = 'Dijemput';
-                                                            $status_class = 'status-active';
-                                                        } else {
-                                                            $ket_status = 'Aktif';
-                                                            $status_class = 'status-active';
-                                                        }
-                                                        break;
-                                                    case '2':
+                                                $status_servis = strtolower(trim($tampil['status_servis'] ?? ''));
+                                                if ($status_servis !== '') {
+                                                    if ($status_servis === 'bayar') {
+                                                        $ket_status = 'Bayar';
+                                                        $status_class = 'status-completed';
+                                                    } elseif ($status_servis === 'selesai') {
                                                         $ket_status = 'Selesai';
                                                         $status_class = 'status-completed';
-                                                        break;
-                                                    case '3':
+                                                    } elseif ($status_servis === 'diproses') {
+                                                        $ket_status = 'Di Proses';
+                                                        $status_class = 'status-active';
+                                                    } elseif ($status_servis === 'dijemput') {
+                                                        $ket_status = 'Dijemput';
+                                                        $status_class = 'status-active';
+                                                    } elseif ($status_servis === 'datang') {
+                                                        $ket_status = 'Aktif';
+                                                        $status_class = 'status-active';
+                                                    } elseif ($status_servis === 'cancel' || $status_servis === 'batal') {
                                                         $ket_status = 'Batal';
                                                         $status_class = 'status-cancelled';
-                                                        break;
-                                                    default:
-                                                        $ket_status = 'Unknown';
-                                                        $status_class = '';
-                                                        break;
+                                                    } else {
+                                                        $ket_status = ucfirst($status_servis);
+                                                        $status_class = 'status-active';
+                                                    }
+                                                } else {
+                                                    switch($status) {
+                                                        case '0':
+                                                            $ket_status = 'Draft';
+                                                            $status_class = 'status-draft';
+                                                            break;
+                                                        case '1':
+                                                            if ($status_jemput == '1') {
+                                                                $ket_status = 'Dijemput';
+                                                                $status_class = 'status-active';
+                                                            } else {
+                                                                $ket_status = 'Aktif';
+                                                                $status_class = 'status-active';
+                                                            }
+                                                            break;
+                                                        case '2':
+                                                            $ket_status = 'Selesai';
+                                                            $status_class = 'status-completed';
+                                                            break;
+                                                        case '3':
+                                                            $ket_status = 'Batal';
+                                                            $status_class = 'status-cancelled';
+                                                            break;
+                                                        case '4':
+                                                            $ket_status = 'Selesai';
+                                                            $status_class = 'status-completed';
+                                                            break;
+                                                        default:
+                                                            $ket_status = 'Unknown';
+                                                            $status_class = '';
+                                                            break;
+                                                    }
                                                 }
                                                 
                                                 // Highlight search results
@@ -317,11 +365,35 @@ if(empty($_SESSION['_iduser'])){
                                                         <span class="ace-icon fa fa-caret-down icon-on-right"></span>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
-                                                        <li>
-                                                            <a href="servis-input-reguler.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>">
-                                                                <i class="ace-icon fa fa-edit"></i> Edit Servis
-                                                            </a>
-                                                        </li>
+                                                        <?php if (false): // DISABLED BLOCK - merged with below logic ?>
+                                                            <!-- LEAVE EMPTY TO ALLOW FALLTHROUGH TO UNIVERSAL LINK LOGIC -->
+                                                        <?php else: ?>
+                                                            <!-- Status BELUM SELESAI - Bisa EDIT -->
+                                                            <li>
+                                                                <?php
+                                                                // Determine correct edit URL based on service type and status
+                                                                // If finished/bayar, force RST (Read Only)
+                                                                $is_finished = ($status_servis == 'selesai' || $status_servis == 'bayar' || $status == '2');
+                                                                
+                                                                if ($status_jemput == '1') {
+                                                                    // Servis Jemput
+                                                                    $edit_url = $is_finished ? 'servis-input-reguler-jemput-rst.php' : 'servis-input-reguler-jemput.php';
+                                                                    $edit_label = $is_finished ? 'Lihat Servis Jemput' : 'Edit Servis Jemput';
+                                                                } elseif (strpos(strtolower($tampil['tipe_service'] ?? ''), 'garansi') !== false) {
+                                                                    // Servis Garansi
+                                                                    $edit_url = $is_finished ? 'servis-garansi-rst.php' : 'servis-garansi.php';
+                                                                    $edit_label = $is_finished ? 'Lihat Servis Garansi' : 'Edit Servis Garansi';
+                                                                } else {
+                                                                    // Servis Reguler
+                                                                    $edit_url = $is_finished ? 'servis-input-reguler-rst.php' : 'servis-input-reguler.php';
+                                                                    $edit_label = $is_finished ? 'Lihat Servis Reguler' : 'Edit Servis Reguler';
+                                                                }
+                                                                ?>
+                                                                <a href="<?php echo $edit_url; ?>?snoserv=<?php echo urlencode($tampil['no_service']); ?>">
+                                                                    <i class="ace-icon fa <?php echo $is_finished ? 'fa-eye' : 'fa-edit'; ?>"></i> <?php echo $edit_label; ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
                                                         <?php if ($status_jemput == '1'): ?>
                                                         <li>
                                                             <a href="sp-ambil-motor.php?snosrv=<?php echo urlencode($tampil['no_service']); ?>" target="_blank">
@@ -372,7 +444,7 @@ if(empty($_SESSION['_iduser'])){
                                             </td>
                                             <td class="text-right">
                                                 <?php 
-                                                $total = $tampil['total_grand'] ?? 0;
+                                                $total = isset($tampil['total_display']) ? (float)$tampil['total_display'] : (float)($tampil['total_grand'] ?? 0);
                                                 echo 'Rp ' . number_format($total, 0, ',', '.');
                                                 ?>
                                             </td>

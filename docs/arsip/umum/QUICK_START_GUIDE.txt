@@ -1,0 +1,261 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║         🚀 QUICK START GUIDE - PERHITUNGAN JARAK OTOMATIS 🚀             ║
+║                                                                           ║
+║  Sistem Web Bengkel - Fitur Jemput Antar dengan Auto Distance Calculator ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+📋 YANG SUDAH DIBUAT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ haversine-distance.js
+   📁 Lokasi: aplikasi/_admincab/assets/js/haversine-distance.js
+   📝 Fungsi: Library JavaScript untuk hitung jarak GPS & tarif
+
+✅ UPDATE_DATABASE_JARAK_OTOMATIS.sql
+   📁 Lokasi: web-bengkel/UPDATE_DATABASE_JARAK_OTOMATIS.sql
+   📝 Fungsi: SQL script untuk update database schema
+
+✅ IMPLEMENTASI_PERHITUNGAN_JARAK_OTOMATIS.md
+   📁 Lokasi: web-bengkel/IMPLEMENTASI_PERHITUNGAN_JARAK_OTOMATIS.md
+   📝 Fungsi: Dokumentasi lengkap step-by-step
+
+✅ README_FITUR_BARU.md
+   📁 Lokasi: web-bengkel/README_FITUR_BARU.md
+   📝 Fungsi: Summary fitur & checklist
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 LANGKAH IMPLEMENTASI (5 MENIT):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: UPDATE DATABASE (1 menit)
+──────────────────────────────────────────────────────────────────────────
+
+1. Buka phpMyAdmin: http://localhost/phpmyadmin
+2. Pilih database: fitmotor_dbbengkel
+3. Klik tab "SQL"
+4. Buka file: UPDATE_DATABASE_JARAK_OTOMATIS.sql
+5. Copy semua isi file
+6. Paste ke SQL tab
+7. Klik "Go"
+8. Tunggu sampai selesai
+9. ✅ Cek hasil: Scroll ke bawah, lihat tabel hasil verifikasi
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: UPDATE FILE PHP (3 menit)
+──────────────────────────────────────────────────────────────────────────
+
+📖 Buka file: IMPLEMENTASI_PERHITUNGAN_JARAK_OTOMATIS.md
+
+Ikuti section:
+→ Section 2: Update cabang_add.php
+→ Section 3: Update save_cabang.php
+→ Section 4: Update cabang_edit.php
+→ Section 5: Update cabang_edit_proses.php
+→ Section 6: Update servis-reguler-jemput.php
+→ Section 7: Update cabang.php
+
+Setiap section sudah ada code snippet LENGKAP yang tinggal copy-paste!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: TESTING (1 menit)
+──────────────────────────────────────────────────────────────────────────
+
+1. Login ke sistem
+2. Menu: Data Master → Cabang
+3. Klik "Edit" pada cabang PST
+4. Isi form:
+   - Alamat: Jl. Industri No. 1, Jakarta Pusat
+   - Google Maps: https://www.google.com/maps/@-6.1751,106.8650,15z
+   - (Lat/Long akan otomatis terisi)
+5. Klik "Save"
+6. ✅ Cek: Lat & Long tersimpan di database
+
+7. Menu: Servis Jemput → Jadwal Penjemputan
+8. Pilih nomor polisi (yang sudah ada koordinat pelanggan)
+9. ✅ Cek: Jarak otomatis dihitung
+10. Pilih kondisi motor: Jalan / Mogok
+11. Klik tombol "Hitung"
+12. ✅ Cek: Tarif otomatis muncul
+13. Klik "Jadwalkan Penjemputan"
+14. ✅ Cek: Data tersimpan ke database
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 FILE STRUCTURE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+web-bengkel/
+├── 📄 UPDATE_DATABASE_JARAK_OTOMATIS.sql ✅ SUDAH DIBUAT
+├── 📄 IMPLEMENTASI_PERHITUNGAN_JARAK_OTOMATIS.md ✅ SUDAH DIBUAT
+├── 📄 README_FITUR_BARU.md ✅ SUDAH DIBUAT
+├── 📄 QUICK_START_GUIDE.txt ✅ FILE INI
+│
+├── _admin/ (FOLDER ADMIN PUSAT)
+│   ├── cabang.php → PERLU UPDATE (Section 7)
+│   ├── cabang_add.php → PERLU UPDATE (Section 2)
+│   ├── cabang_edit.php → PERLU UPDATE (Section 4)
+│   ├── save_cabang.php → PERLU UPDATE (Section 3)
+│   └── cabang_edit_proses.php → PERLU UPDATE (Section 5)
+│
+└── aplikasi/aplikasi/_admincab/ (FOLDER CABANG)
+    ├── servis-reguler-jemput.php → PERLU UPDATE (Section 6)
+    └── assets/js/
+        └── haversine-distance.js ✅ SUDAH DIBUAT
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 TIPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Gunakan code editor yang support search & replace (VS Code, Sublime, etc)
+2. Backup file sebelum edit (copy ke folder backup/)
+3. Test satu-satu setiap file yang diupdate
+4. Gunakan browser Console (F12) untuk debug JavaScript
+5. Cek database setelah setiap perubahan
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 CARA DAPAT GOOGLE MAPS LINK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Buka Google Maps: https://www.google.com/maps
+2. Cari lokasi cabang/pelanggan
+3. Klik kanan di lokasi → "What's here?"
+4. Koordinat muncul di bawah (contoh: -6.1751, 106.8650)
+5. Klik koordinat → URL berubah jadi format @lat,long
+6. Copy URL dari address bar
+7. Paste ke form
+
+Atau:
+
+1. Buka Google Maps
+2. Cari lokasi
+3. Klik tombol "Share"
+4. Copy link
+5. Paste ke form
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 DATABASE SCHEMA YANG DITAMBAHKAN:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TABEL: tbcabang
+┌──────────────────────┬───────────────┬─────────────────────────────┐
+│ Field                │ Type          │ Comment                     │
+├──────────────────────┼───────────────┼─────────────────────────────┤
+│ alamat_cabang        │ TEXT          │ Alamat lengkap cabang       │
+│ google_maps_cabang   │ VARCHAR(500)  │ Link Google Maps cabang     │
+│ lat_cabang           │ VARCHAR(30)   │ Latitude cabang             │
+│ long_cabang          │ VARCHAR(30)   │ Longitude cabang            │
+└──────────────────────┴───────────────┴─────────────────────────────┘
+
+TABEL: tblservice
+┌──────────────────────┬───────────────┬─────────────────────────────┐
+│ Field                │ Type          │ Comment                     │
+├──────────────────────┼───────────────┼─────────────────────────────┤
+│ kondisi_motor        │ ENUM          │ jalan / mogok               │
+│ jarak_jemput         │ DECIMAL(5,1)  │ Jarak dalam KM              │
+│ tarif_jemput         │ INT(11)       │ Tarif dalam rupiah          │
+└──────────────────────┴───────────────┴─────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 TARIF JEMPUT ANTAR (AUTO-CALCULATE):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MOTOR JALAN:
+├─ 0 - 1.0 km → GRATIS
+├─ 1.5 km → Rp 8,000
+├─ 2.0 km → Rp 10,000
+├─ 2.5 km → Rp 12,000
+├─ 3.0 km → Rp 14,000
+├─ 4.0 km → Rp 18,000
+└─ 5.0 km → Rp 22,000
+
+MOTOR MOGOK:
+├─ 0 - 1.0 km → GRATIS
+├─ 1.5 km → Rp 11,000
+├─ 2.0 km → Rp 14,000
+├─ 2.5 km → Rp 17,000
+├─ 3.0 km → Rp 20,000
+├─ 4.0 km → Rp 26,000
+└─ 5.0 km → Rp 32,000
+
+Formula:
+  Jalan: Base Rp 8,000 + (kelipatan 0.5km × Rp 2,000)
+  Mogok: Base Rp 11,000 + (kelipatan 0.5km × Rp 3,000)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 CHECKLIST IMPLEMENTASI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DATABASE:
+☐ Import UPDATE_DATABASE_JARAK_OTOMATIS.sql
+☐ Verifikasi field tbcabang (4 field baru)
+☐ Verifikasi field tblservice (3 field baru)
+
+FILE PHP (_admin/):
+☐ Update cabang_add.php (Section 2)
+☐ Update save_cabang.php (Section 3)
+☐ Update cabang_edit.php (Section 4)
+☐ Update cabang_edit_proses.php (Section 5)
+☐ Update cabang.php (Section 7)
+
+FILE PHP (aplikasi/_admincab/):
+☐ Update servis-reguler-jemput.php (Section 6)
+
+JAVASCRIPT:
+☑ haversine-distance.js (SUDAH DIBUAT)
+☐ Include di servis-reguler-jemput.php
+☐ Include di cabang_add.php
+☐ Include di cabang_edit.php
+
+TESTING:
+☐ Test tambah cabang dengan Google Maps
+☐ Test edit cabang
+☐ Test jadwal penjemputan
+☐ Test auto-calculate jarak
+☐ Test auto-calculate tarif (motor jalan)
+☐ Test auto-calculate tarif (motor mogok)
+☐ Test simpan ke database
+☐ Verify data di tblservice
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 BANTUAN:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dokumentasi Lengkap:
+→ IMPLEMENTASI_PERHITUNGAN_JARAK_OTOMATIS.md (Step-by-step detail)
+
+Summary Fitur:
+→ README_FITUR_BARU.md (Overview & checklist)
+
+SQL Script:
+→ UPDATE_DATABASE_JARAK_OTOMATIS.sql (Database schema)
+
+JavaScript Library:
+→ aplikasi/_admincab/assets/js/haversine-distance.js (GPS calculator)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 SELAMAT MENGIMPLEMENTASIKAN! 🎉
+
+Estimasi waktu: 5-10 menit
+Kesulitan: ⭐⭐☆☆☆ (Easy)
+
+Semua code sudah siap pakai, tinggal copy-paste! 🚀
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Version: 1.0
+Date: 2025-10-06
+Developer: Claude Code
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

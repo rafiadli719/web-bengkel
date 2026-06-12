@@ -150,3 +150,47 @@
 2025-06-05 16:47:17 WIB - ✅ Item 1 SUCCESS via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
 2025-06-05 16:47:17 WIB - 🏁 SYNC COMPLETED. Success: YES, Count: 1/1
 2025-06-05 16:47:17 WIB - 🎉 ACCURATE SYNC SUCCESS! All 1 items synchronized via https://zeus.accurate.id/accurate/api/item-adjustment/save.do
+
+======= NEW TRANSACTION: IM25000000081 =======
+[2025-11-13 14:58:25 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000081 - SUCCESS ✅
+2025-11-13 14:58:25 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-11-13 14:58:25 WIB - 📦 Processing Item 1/1: BL275-17AHM (Qty: 6.000000)
+2025-11-13 14:58:25 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-11-13 14:58:25 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-11-13 14:58:25 WIB - 📊 api-token.do HTTP Code: 500
+2025-11-13 14:58:25 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
+2025-11-13 14:58:25 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-11-13 14:58:25 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000082 =======
+[2025-11-17 08:27:40 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000082 - SUCCESS ✅
+2025-11-17 08:27:40 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-11-17 08:27:40 WIB - 📦 Processing Item 1/1: ICCLNR (Qty: 50.000000)
+2025-11-17 08:27:40 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-11-17 08:27:40 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-11-17 08:27:42 WIB - 📊 api-token.do HTTP Code: 500
+2025-11-17 08:27:42 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
+2025-11-17 08:27:42 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-11-17 08:27:42 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000083 =======
+[2025-11-17 08:29:05 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000083 - SUCCESS ✅
+2025-11-17 08:29:05 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-11-17 08:29:05 WIB - 📦 Processing Item 1/1: SAE 10W-30 API SL (Qty: 100.000000)
+2025-11-17 08:29:05 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-11-17 08:29:05 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-11-17 08:29:07 WIB - 📊 api-token.do HTTP Code: 500
+2025-11-17 08:29:07 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
+2025-11-17 08:29:07 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-11-17 08:29:07 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)
+
+======= NEW TRANSACTION: IM25000000084 =======
+[2025-11-19 10:30:21 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM25000000084 - SUCCESS ✅
+2025-11-19 10:30:21 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2025-11-19 10:30:21 WIB - 📦 Processing Item 1/1: 20w-50 (Qty: 5.000000)
+2025-11-19 10:30:21 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2025-11-19 10:30:21 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2025-11-19 10:30:22 WIB - 📊 api-token.do HTTP Code: 500
+2025-11-19 10:30:22 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
+2025-11-19 10:30:22 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2025-11-19 10:30:22 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)

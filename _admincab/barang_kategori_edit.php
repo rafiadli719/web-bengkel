@@ -120,10 +120,13 @@ if (empty($_SESSION['_iduser'])) {
 
     // Get data kategori untuk edit
     $kd = $_GET['kd'];
-    $cari_kd = mysqli_query($koneksi, "SELECT jenis, namajenis FROM tblitemjenis WHERE id='$kd'");
+    $cari_kd = mysqli_query($koneksi, "SELECT * FROM tblitemjenis WHERE id='$kd'");
     $tm_cari = mysqli_fetch_array($cari_kd);    
     $jenis = $tm_cari['jenis'];
     $namajenis = $tm_cari['namajenis'];
+    $keterangan = $tm_cari['keterangan'] ?? '';
+    $ikut_margin_jenis = $tm_cari['ikut_margin_jenis'] ?? '1';
+    $margin_khusus = $tm_cari['margin_khusus'] ?? '';
 }
 ?>
 
@@ -275,7 +278,7 @@ if (empty($_SESSION['_iduser'])) {
                             <li>
                                 <a href="barang_kategori.php">Kategori Barang</a>
                             </li>                                                                                    
-                            <li class="active">Edit Data</li>
+                            <li class="active">Edit Kategori Item</li>
                         </ul><!-- /.breadcrumb -->
                     </div>
 
@@ -299,22 +302,92 @@ if (empty($_SESSION['_iduser'])) {
                         <br>
                         <div class="row">
                             <div class="col-xs-12">
-                                <form class="form-horizontal" action="barang_kategori_edit_proses.php" method="post">
+                                <form class="form-horizontal" action="barang_kategori_edit_proses_updated.php" method="post">
                                     <input type="hidden" name="txtid" class="form-control" value="<?php echo $kd; ?>"/>
                                     
+                                    <h4><strong>DATA AWAL</strong></h4>
+                                    <div class="alert alert-info">
+                                        <small>Data awal yang muncul hanya tampilan, bisa mengubahnya di kolom "edit menjadi"</small>
+                                    </div>
+                                    
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label no-padding-right" for="txtkd"> Kode </label>
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>KATEGORI ITEM</strong></label>
                                         <div class="col-sm-9">
-                                            <input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-6" 
-                                            value="<?php echo $jenis; ?>" autocomplete="off" />
+                                            <input type="text" class="form-control" value="<?php echo $jenis; ?>" readonly style="background-color: #f5f5f5;" />
                                         </div>
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label no-padding-right" for="txtnama"> Kategori Barang </label>
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>KETERANGAN</strong></label>
                                         <div class="col-sm-9">
-                                            <input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-6" 
-                                            value="<?php echo $namajenis; ?>" autocomplete="off" />
+                                            <textarea class="form-control" rows="2" readonly style="background-color: #f5f5f5;"><?php echo $keterangan; ?></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>MARGIN SESUAI JENIS</strong></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" value="<?php echo ($ikut_margin_jenis == '1') ? 'YA' : 'TIDAK'; ?>" readonly style="background-color: #f5f5f5;" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>MARGIN KATEGORI</strong></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" value="<?php echo ($margin_khusus != '') ? $margin_khusus . '%' : '-'; ?>" readonly style="background-color: #f5f5f5;" />
+                                        </div>
+                                    </div>
+                                    
+                                    <hr style="border-top: 2px solid #ddd; margin: 30px 0;">
+                                    <h4><strong>EDIT MENJADI</strong></h4>
+                                    <div class="alert alert-warning">
+                                        <small>Muncul isi data dari awal, namun bisa diubah sesuai kebutuhan</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>KATEGORI ITEM</strong></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="txtkategori" class="form-control" value="<?php echo $jenis; ?>" required />
+                                            <small class="text-muted">Kode kategori item (hanya 1 kata, tidak boleh spasi)</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>NAMA KATEGORI</strong></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="txtnama" class="form-control" value="<?php echo $namajenis; ?>" required />
+                                            <small class="text-muted">Nama lengkap kategori</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>KETERANGAN</strong></label>
+                                        <div class="col-sm-9">
+                                            <textarea name="txtketerangan" class="form-control" rows="3" required><?php echo $keterangan; ?></textarea>
+                                            <small class="text-muted">Keterangan diisi bebas sesuai arti</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>MARGIN SESUAI JENIS</strong></label>
+                                        <div class="col-sm-9">
+                                            <select name="margin_sesuai_jenis" class="form-control" required>
+                                                <option value="">-- Pilih --</option>
+                                                <option value="YA" <?php echo ($ikut_margin_jenis == '1') ? 'selected' : ''; ?>>YA</option>
+                                                <option value="TIDAK" <?php echo ($ikut_margin_jenis == '0') ? 'selected' : ''; ?>>TIDAK</option>
+                                            </select>
+                                            <small class="text-muted">Hanya bisa diisi YA/TIDAK</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group" id="margin_kategori_group" style="<?php echo ($ikut_margin_jenis == '0') ? 'display: block;' : 'display: none;'; ?>">
+                                        <label class="col-sm-3 control-label no-padding-right"><strong>MARGIN KATEGORI</strong></label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="number" name="txtmargin" class="form-control" min="0" max="100" step="0.01" value="<?php echo $margin_khusus; ?>" />
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <small class="text-muted">Kolom margin kategori aktif jika jawaban sebelumnya "TIDAK", hanya bisa diisi angka</small>
                                         </div>
                                     </div>
                                     
@@ -595,5 +668,30 @@ if (empty($_SESSION['_iduser'])) {
                 console.log('Auto-checking Accurate status...');
             }, 300000); // 5 menit
         </script>
-    </body>
+    <script>
+$(document).ready(function() {
+    // Handle margin sesuai jenis change
+    $('select[name="margin_sesuai_jenis"]').on('change', function() {
+        var value = $(this).val();
+        if (value === 'TIDAK') {
+            $('#margin_kategori_group').show();
+            $('input[name="txtmargin"]').prop('required', true);
+        } else {
+            $('#margin_kategori_group').hide();
+            $('input[name="txtmargin"]').prop('required', false);
+            $('input[name="txtmargin"]').val('');
+        }
+    });
+    
+    // Auto-uppercase untuk kategori dan keterangan
+    $('input[name="txtkategori"]').on('input', function() {
+        this.value = this.value.toUpperCase().replace(/\s/g, '');
+    });
+    
+    $('textarea[name="txtketerangan"]').on('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+});
+</script>
+</body>
 </html>

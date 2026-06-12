@@ -1,0 +1,338 @@
+<?php
+/**
+ * Handler untuk Update Status Keluhan & Work Order
+ * Include file ini di servis-input-*.php
+ */
+
+// ============================================
+// HANDLER UPDATE STATUS KELUHAN
+// ============================================
+
+if(isset($_POST['btnupdatestatuskeluhan'])) {
+    $keluhan_id = mysqli_real_escape_string($koneksi, $_POST['keluhan_id_status']);
+    $status_pengerjaan = mysqli_real_escape_string($koneksi, $_POST['status_keluhan_update']);
+    $keterangan = isset($_POST['keterangan_keluhan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_keluhan']) : '';
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+    
+    // Validate: keterangan wajib jika status tidak_selesai
+    if($status_pengerjaan == 'tidak_selesai' && empty($keterangan)) {
+        echo "<script>alert('Keterangan wajib diisi untuk status Tidak Selesai!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+        exit;
+    }
+    
+    // Update status keluhan
+    $query_update = "UPDATE tbservis_keluhan_status 
+                    SET status_pengerjaan = '$status_pengerjaan',
+                        keterangan_tidak_selesai = " . ($status_pengerjaan == 'tidak_selesai' ? "'$keterangan'" : "NULL") . "
+                    WHERE id = '$keluhan_id'";
+    
+    if(mysqli_query($koneksi, $query_update)) {
+        // Jika status tidak_selesai, tambahkan ke catatan servis
+        if($status_pengerjaan == 'tidak_selesai' && !empty($keterangan)) {
+            // Get keluhan text
+            $q_keluhan = mysqli_query($koneksi, "SELECT keluhan FROM tbservis_keluhan_status WHERE id = '$keluhan_id'");
+            $keluhan_data = mysqli_fetch_array($q_keluhan);
+            $keluhan_text = $keluhan_data['keluhan'];
+            
+            // Get current catatan
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $service_data = mysqli_fetch_array($q_service);
+            $catatan_lama = $service_data['catatan'] ?? '';
+            
+            // Append new note
+            $catatan_baru = $catatan_lama;
+            if(!empty($catatan_lama)) {
+                $catatan_baru .= "\n\n";
+            }
+            $catatan_baru .= "[KELUHAN TIDAK SELESAI] $keluhan_text: $keterangan";
+            
+            // Update catatan
+            $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+        }
+        
+        echo "<script>alert('Status keluhan berhasil diupdate!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+    } else {
+        echo "<script>alert('Gagal update status keluhan: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+    }
+    exit;
+}
+
+if(isset($_POST['btnapprove_wo_bulk'])) {
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
+    $ids = isset($_POST['selected_item_ids']) ? $_POST['selected_item_ids'] : [];
+    $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
+    $ok = 0; $fail = 0;
+    if(!is_array($ids)) { $ids = [$ids]; }
+    foreach($ids as $rid) {
+        $item_id = mysqli_real_escape_string($koneksi, $rid);
+        if($item_id === '') { $fail++; continue; }
+        $q = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id='$item_id' AND no_service='$no_service' AND status_approval='pending'");
+        if(!$q || mysqli_num_rows($q) == 0) { $fail++; continue; }
+        $item = mysqli_fetch_array($q);
+        $tipe = $item['tipe'];
+        $kode_item = $item['kode_item'];
+        $quantity = (int)$item['quantity'];
+        $harga_satuan = (float)$item['harga_satuan'];
+        $total = (float)$item['total'];
+        $waktu = (int)($item['waktu'] ?? 0);
+        if($tipe === 'barang') {
+            $ins = mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total) VALUES ('$no_service', '$kode_item', '$quantity', 0, '$harga_satuan', 0, '$total')");
+            if(!$ins) { $fail++; continue; }
+        } else {
+            $has_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
+            if($has_waktu && mysqli_num_rows($has_waktu) > 0) {
+                $ins = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, no_item, harga, waktu, potongan, total) VALUES ('$no_service', '$kode_item', '$harga_satuan', '$waktu', 0, '$total')");
+            } else {
+                $ins = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, no_item, harga, potongan, total) VALUES ('$no_service', '$kode_item', '$harga_satuan', 0, '$total')");
+            }
+            if(!$ins) { $fail++; continue; }
+        }
+        mysqli_query($koneksi, "UPDATE tbservis_pending_items SET status_approval='disetujui', approved_by='$user', approved_at=NOW() WHERE id='$item_id'");
+        $ok++;
+    }
+    $msg = 'Bulk approve selesai. Berhasil: ' . $ok . ', Gagal: ' . $fail;
+    echo "<script>alert('" . addslashes($msg) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+    exit;
+}
+
+if(isset($_POST['btnreject_wo_bulk'])) {
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
+    $ids = isset($_POST['selected_item_ids']) ? $_POST['selected_item_ids'] : [];
+    $alasan = mysqli_real_escape_string($koneksi, $_POST['alasan_reject'] ?? '');
+    $ket = isset($_POST['keterangan_reject']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_reject']) : '';
+    $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
+    if(empty($alasan)) {
+        echo "<script>alert('Alasan penolakan wajib dipilih.'); window.history.back();</script>"; exit;
+    }
+    if(!is_array($ids)) { $ids = [$ids]; }
+    $ok = 0; $fail = 0; $notes = [];
+    foreach($ids as $rid) {
+        $item_id = mysqli_real_escape_string($koneksi, $rid);
+        if($item_id === '') { $fail++; continue; }
+        $q = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id='$item_id' AND no_service='$no_service' AND status_approval='pending'");
+        if(!$q || mysqli_num_rows($q) == 0) { $fail++; continue; }
+        $item = mysqli_fetch_array($q);
+        $upd = mysqli_query($koneksi, "UPDATE tbservis_pending_items SET status_approval='ditolak', alasan_tolak='$alasan', keterangan_tolak=" . (empty($ket) ? "NULL" : "'$ket'") . ", approved_by='$user', approved_at=NOW() WHERE id='$item_id'");
+        if(!$upd) { $fail++; continue; }
+        $tipe_readable = ($item['tipe'] == 'barang') ? 'Barang' : 'Jasa';
+        $alasan_readable = str_replace('_', ' ', ucwords($alasan, '_'));
+        $note = "$tipe_readable: {$item['nama_item']} - Alasan: $alasan_readable" . (empty($ket) ? '' : " - $ket");
+        $notes[] = $note;
+        $ok++;
+    }
+    if($ok > 0) {
+        $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+        $service_data = mysqli_fetch_array($q_service);
+        $catatan_lama = $service_data['catatan'] ?? '';
+        $catatan_baru = $catatan_lama;
+        if(!empty($catatan_lama)) { $catatan_baru .= "\n\n"; }
+        $catatan_baru .= "[ITEM WO DITOLAK - BULK]\n- " . implode("\n- ", $notes);
+        $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
+        mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+    }
+    $msg = 'Bulk reject selesai. Ditolak: ' . $ok . ', Gagal: ' . $fail;
+    echo "<script>alert('" . addslashes($msg) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+    exit;
+}
+
+// ============================================
+// HANDLER UPDATE STATUS WORK ORDER
+// ============================================
+
+if(isset($_POST['btnupdatestatuswo'])) {
+    $wo_id = mysqli_real_escape_string($koneksi, $_POST['wo_id_status']);
+    $status_pengerjaan = mysqli_real_escape_string($koneksi, $_POST['status_wo_update']);
+    $keterangan = isset($_POST['keterangan_wo']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_wo']) : '';
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+    
+    // Validate: keterangan wajib jika status tidak_selesai
+    if($status_pengerjaan == 'tidak_selesai' && empty($keterangan)) {
+        echo "<script>alert('Keterangan wajib diisi untuk status Tidak Selesai!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+        exit;
+    }
+    
+    // Update status work order
+    $query_update = "UPDATE tbservis_workorder 
+                    SET status_pengerjaan = '$status_pengerjaan',
+                        keterangan_tidak_selesai = " . ($status_pengerjaan == 'tidak_selesai' ? "'$keterangan'" : "NULL") . "
+                    WHERE id = '$wo_id'";
+    
+    if(mysqli_query($koneksi, $query_update)) {
+        // Jika status tidak_selesai, tambahkan ke catatan servis
+        if($status_pengerjaan == 'tidak_selesai' && !empty($keterangan)) {
+            // Get work order name
+            $q_wo = mysqli_query($koneksi, "
+                SELECT wh.nama_wo 
+                FROM tbservis_workorder sw
+                LEFT JOIN tbworkorderheader wh ON sw.kode_wo = wh.kode_wo
+                WHERE sw.id = '$wo_id'
+            ");
+            $wo_data = mysqli_fetch_array($q_wo);
+            $nama_wo = $wo_data['nama_wo'];
+            
+            // Get current catatan
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $service_data = mysqli_fetch_array($q_service);
+            $catatan_lama = $service_data['catatan'] ?? '';
+            
+            // Append new note
+            $catatan_baru = $catatan_lama;
+            if(!empty($catatan_lama)) {
+                $catatan_baru .= "\n\n";
+            }
+            $catatan_baru .= "[WORK ORDER TIDAK SELESAI] $nama_wo: $keterangan";
+            
+            // Update catatan
+            $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+        }
+        
+        echo "<script>alert('Status work order berhasil diupdate!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+    } else {
+        echo "<script>alert('Gagal update status work order: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
+    }
+    exit;
+}
+
+// ============================================
+// HANDLER APPROVE WO ITEM (Barang/Jasa)
+// ============================================
+
+if(isset($_POST['btnsetujuiitem'])) {
+    $item_id = mysqli_real_escape_string($koneksi, $_POST['item_id']);
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+    $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
+    
+    // Get item data
+    $query_item = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id = '$item_id'");
+    $item = mysqli_fetch_array($query_item);
+    
+    if($item) {
+        $tipe = $item['tipe'];
+        $kode_item = $item['kode_item'];
+        $nama_item = $item['nama_item'];
+        $quantity = $item['quantity'];
+        $harga_satuan = $item['harga_satuan'];
+        $total = $item['total'];
+        $waktu = $item['waktu'] ?? 0;
+        
+        if($tipe == 'barang') {
+            // Insert to tblservis_barang
+            $query_barang = "INSERT INTO tblservis_barang 
+                            (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total)
+                            VALUES 
+                            ('$no_service', '$kode_item', '$quantity', 0, '$harga_satuan', 0, '$total')";
+            
+            if(mysqli_query($koneksi, $query_barang)) {
+                // Update status
+                mysqli_query($koneksi, "UPDATE tbservis_pending_items 
+                                       SET status_approval='disetujui', 
+                                           approved_by='$user', 
+                                           approved_at=NOW()
+                                       WHERE id='$item_id'");
+                
+                echo "<script>alert('Item barang berhasil disetujui dan ditambahkan ke service!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+            } else {
+                echo "<script>alert('Gagal menambahkan item barang: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+            }
+        } else { // jasa
+            // Insert to tblservis_jasa
+            $check_waktu_col = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
+            
+            if(mysqli_num_rows($check_waktu_col) > 0) {
+                // Insert with waktu
+                $query_jasa = "INSERT INTO tblservis_jasa 
+                              (no_service, no_item, harga, waktu, potongan, total)
+                              VALUES 
+                              ('$no_service', '$kode_item', '$harga_satuan', '$waktu', 0, '$total')";
+            } else {
+                // Insert without waktu
+                $query_jasa = "INSERT INTO tblservis_jasa 
+                              (no_service, no_item, harga, potongan, total)
+                              VALUES 
+                              ('$no_service', '$kode_item', '$harga_satuan', 0, '$total')";
+            }
+            
+            if(mysqli_query($koneksi, $query_jasa)) {
+                // Update status
+                mysqli_query($koneksi, "UPDATE tbservis_pending_items 
+                                       SET status_approval='disetujui', 
+                                           approved_by='$user', 
+                                           approved_at=NOW()
+                                       WHERE id='$item_id'");
+                
+                echo "<script>alert('Item jasa berhasil disetujui dan ditambahkan ke service!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+            } else {
+                echo "<script>alert('Gagal menambahkan item jasa: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+            }
+        }
+    } else {
+        echo "<script>alert('Item tidak ditemukan!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+    }
+    exit;
+}
+
+// ============================================
+// HANDLER REJECT WO ITEM (Barang/Jasa)
+// ============================================
+
+if(isset($_POST['btntolakitem'])) {
+    $item_id = mysqli_real_escape_string($koneksi, $_POST['item_id']);
+    $alasan_tolak = mysqli_real_escape_string($koneksi, $_POST['alasan_tolak']);
+    $keterangan_tolak = isset($_POST['keterangan_tolak']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_tolak']) : '';
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+    $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
+    
+    // Validate alasan
+    if(empty($alasan_tolak)) {
+        echo "<script>alert('Alasan penolakan harus dipilih!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+        exit;
+    }
+    
+    // Get item info for catatan
+    $query_item = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id = '$item_id'");
+    $item = mysqli_fetch_array($query_item);
+    
+    if($item) {
+        // Update status
+        $query_reject = "UPDATE tbservis_pending_items 
+                        SET status_approval = 'ditolak',
+                            alasan_tolak = '$alasan_tolak',
+                            keterangan_tolak = " . (empty($keterangan_tolak) ? "NULL" : "'$keterangan_tolak'") . ",
+                            approved_by = '$user',
+                            approved_at = NOW()
+                        WHERE id = '$item_id'";
+        
+        if(mysqli_query($koneksi, $query_reject)) {
+            // Tambahkan ke catatan servis
+            $tipe_readable = ($item['tipe'] == 'barang') ? 'Barang' : 'Jasa';
+            $alasan_readable = str_replace('_', ' ', ucwords($alasan_tolak, '_'));
+            
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $service_data = mysqli_fetch_array($q_service);
+            $catatan_lama = $service_data['catatan'] ?? '';
+            
+            $catatan_baru = $catatan_lama;
+            if(!empty($catatan_lama)) {
+                $catatan_baru .= "\n\n";
+            }
+            
+            $catatan_baru .= "[ITEM WO DITOLAK] $tipe_readable: {$item['nama_item']} - Alasan: $alasan_readable";
+            if(!empty($keterangan_tolak)) {
+                $catatan_baru .= " - $keterangan_tolak";
+            }
+            
+            $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+            
+            echo "<script>alert('Item ditolak dan dicatat!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+        } else {
+            echo "<script>alert('Gagal menolak item: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+        }
+    } else {
+        echo "<script>alert('Item tidak ditemukan!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+    }
+    exit;
+}
+?>

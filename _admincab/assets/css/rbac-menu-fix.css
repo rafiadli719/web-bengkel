@@ -1,0 +1,40 @@
+<style>
+/* RBAC Menu - Force submenu to expand downward instead of sideways */
+/* Override Ace Admin template's default horizontal popup behavior */
+
+/* Prevent sidebar from using hover popout menus */
+.sidebar.menu-min .nav-list > li > .submenu {
+    display: none !important;
+    position: relative !important;
+    float: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* When parent is active/open, show submenu below */
+.sidebar.menu-min .nav-list > li.open > .submenu,
+.sidebar.menu-min .nav-list > li.active.open > .submenu {
+    display: block !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+}
+
+/* Force submenu to display as normal dropdown (below parent) */
+.sidebar .nav-list > li > .submenu {
+    position: relative;
+    display: none;
+}
+
+.sidebar .nav-list > li.open > .submenu{
+    display: block;
+}
+
+/* Ensure submenu items are visible and styled correctly */
+.sidebar .nav-list > li > .submenu > li {
+    padding-left: 18px;
+}
+
+.sidebar .nav-list > li > .submenu > li > a {
+    padding-left: 34px !important;
+}

@@ -384,109 +384,133 @@
 
                         <form class="form-horizontal" action="" method="post" role="form">
                         <input type="hidden" name="txttotal_harga"  class="form-control" value="<?php echo $tot; ?>"/>
-						<div class="row">
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">	
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-4">
-                                                    <div class="form-group">
-                                                        <label class="col-sm-4 control-label no-padding-right" for="txtno"> No :</label>									
-                                                        <div class="col-sm-7">
-                                                            <input type="text" id="txtno" name="txtno" class="form-control" 
-                                                            value="<?php echo $LastID; ?>" readonly="true" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-4">                                                
-                                                    <div class="form-group">
-                                                        <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Tanggal :</label>									
-                                                        <div class="col-sm-7">
-                                                            <div class="input-group">
-                                                                <input class="form-control date-picker" id="id-date-picker-1" name="id-date-picker-1" type="text" autocomplete="off" 
-                                                                value="<?php echo $tgl_pilih; ?>" data-date-format="dd/mm/yyyy" />
-                                                                <span class="input-group-addon">
-                                                                    <i class="fa fa-calendar bigger-110"></i>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-4">                                                                                                
-                                                    <div class="form-group">
-                                                        <label class="col-sm-3 control-label no-padding-right" for="txtuser"> User :</label>									
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" 
-                                                            value="<?php echo $_nama; ?>" disabled />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+						<ul class="nav nav-tabs" id="skTab">
+							<li class="active">
+								<a data-toggle="tab" href="#sk-header" aria-expanded="true">
+									<i class="green ace-icon fa fa-list-alt bigger-120"></i>
+									Header
+								</a>
+							</li>
+							<li>
+								<a data-toggle="tab" href="#sk-items" aria-expanded="false">
+									<i class="blue ace-icon fa fa-cubes bigger-120"></i>
+									Item Barang
+								</a>
+							</li>
+							<li>
+								<a data-toggle="tab" href="#sk-summary" aria-expanded="false">
+									<i class="purple ace-icon fa fa-calculator bigger-120"></i>
+									Ringkasan
+								</a>
+							</li>
+						</ul>
+
+						<div class="tab-content">
+							<div id="sk-header" class="tab-pane fade active in">
+								<div class="row">
+									<div class="col-xs-12 col-sm-12">
+										<div class="widget-box">
+											<div class="widget-body">
+												<div class="widget-main">
+													<br>
+													<div class="row">
+														<div class="col-xs-12 col-sm-4">
+															<div class="form-group">
+																<label class="col-sm-4 control-label no-padding-right" for="txtno"> No :</label>
+																<div class="col-sm-7">
+																	<input type="text" id="txtno" name="txtno" class="form-control" value="<?php echo $LastID; ?>" readonly="true" />
+																</div>
+															</div>
+														</div>
+														<div class="col-xs-12 col-sm-4">
+															<div class="form-group">
+																<label class="col-sm-4 control-label no-padding-right" for="id-date-picker-1"> Tanggal :</label>
+																<div class="col-sm-7">
+																	<div class="input-group">
+																		<input class="form-control date-picker" id="id-date-picker-1" name="id-date-picker-1" type="text" autocomplete="off" value="<?php echo $tgl_pilih; ?>" data-date-format="dd/mm/yyyy" />
+																		<span class="input-group-addon">
+																			<i class="fa fa-calendar bigger-110"></i>
+																		</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="col-xs-12 col-sm-4">
+															<div class="form-group">
+																<label class="col-sm-3 control-label no-padding-right" for="txtuser"> User :</label>
+																<div class="col-sm-8">
+																	<input type="text" class="form-control" value="<?php echo $_nama; ?>" disabled />
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
-								</div>	
+								</div>
 							</div>
-                            
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
 
-                                            <?php include "_template/_stok_keluar_detail.php"; ?>
+							<div id="sk-items" class="tab-pane fade">
+								<div class="row">
+									<div class="col-xs-12 col-sm-12">
+										<div class="widget-box">
+											<div class="widget-body">
+												<div class="widget-main">
+													<?php include "_template/_stok_keluar_detail.php"; ?>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-<div class="space space-8"></div>
-							<div class="col-xs-12 col-sm-12">
-                                <div class="form-group">
-                                    <label class="col-sm-1 control-label no-padding-right" for="form-field-1"> Keterangan </label>
-                                    <div class="col-sm-11">
-                                        <input type="text" id="txtket" name="txtket" 
-                                        class="col-xs-10 col-sm-12" 
-                                        autocomplete="off" />
-                                    </div>
-                                </div>
-                            </div>
-<div class="space space-8"></div>                            
-							<div class="col-xs-12 col-sm-3">
-                                <button class="btn btn-primary btn-block" type="submit" 
-                                id="btnsimpan" name="btnsimpan">
-                                    Simpan
-                                </button>
-                            </div>
-                        </form> 
-                                                                                       
-							<div class="col-xs-12 col-sm-3">
-                                <a href="stok_keluar_batal.php?suser=<?php echo $_nama; ?>&scabang=<?php echo $kd_cabang; ?>" 
-                                onclick="return confirm('Inputan Stok Item Masuk akan dibatalkan. Lanjutkan?')">                                                                    
-                                    <button class="btn btn-primary btn-block" type="button">
-                                        Batal
-                                    </button>
-                                </a>
-                            </div>
-                            
-							<div class="col-xs-12 col-sm-3">
-                                <button class="btn disabled btn-primary btn-block" type="submit" 
-                                id="btncetak" name="btncetak">
-                                    Cetak
-                                </button>
-                            </div>                            
+							<div id="sk-summary" class="tab-pane fade">
+								<div class="row">
+									<div class="col-xs-12 col-sm-8">
+										<div class="form-group">
+											<label class="col-sm-2 control-label no-padding-right" for="txtket"> Keterangan </label>
+											<div class="col-sm-10">
+												<input type="text" id="txtket" name="txtket" class="col-xs-10 col-sm-12" autocomplete="off" />
+											</div>
+										</div>
+									</div>
+									<div class="col-xs-12 col-sm-4">
+										<div class="widget-box">
+											<div class="widget-body">
+												<div class="widget-main">
+													<div class="row">
+														<div class="col-xs-12">
+															<h4 style="margin-top:0;margin-bottom:10px;">Total Nilai</h4>
+															<input type="text" class="form-control" value="<?php echo number_format((float)$tot,0,',','.'); ?>" disabled />
+														</div>
+													</div>
+													<div class="space space-8"></div>
+													<button class="btn btn-primary btn-block" type="submit" id="btnsimpan" name="btnsimpan">Simpan</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
 
-							<div class="col-xs-12 col-sm-3">
-                                <a href="penyesuaian-stok-keluar-manual.php">
-                                <button class="btn btn-primary btn-block" type="button">
-                                    Tutup
-                                </button>
-                                </a>
-                            </div>                            
-                        </div>
-
-                        
-                        </form>
+					<div class="row" style="margin-top:10px;">
+						<div class="col-xs-12 col-sm-3">
+							<a href="stok_keluar_batal.php?suser=<?php echo $_nama; ?>&scabang=<?php echo $kd_cabang; ?>" onclick="return confirm('Inputan Stok Item Masuk akan dibatalkan. Lanjutkan?')">
+								<button class="btn btn-primary btn-block" type="button">Batal</button>
+							</a>
+						</div>
+						<div class="col-xs-12 col-sm-3">
+							<button class="btn disabled btn-primary btn-block" type="button" id="btncetak" name="btncetak">Cetak</button>
+						</div>
+						<div class="col-xs-12 col-sm-3">
+							<a href="penyesuaian-stok-keluar-manual.php">
+								<button class="btn btn-primary btn-block" type="button">Tutup</button>
+							</a>
+						</div>
+					</div>
 
 					</div><!-- /.page-content -->
 				</div>
@@ -545,9 +569,16 @@
 		<script src="assets/js/ace-elements.min.js"></script>
 		<script src="assets/js/ace.min.js"></script>
 
-		<!-- inline scripts related to this page -->
-		<script type="text/javascript">
-			jQuery(function($) {
+		        <!-- inline scripts related to this page -->
+        <script type="text/javascript">
+            jQuery(function($) {
+                var skActive = localStorage.getItem('sk_active_tab');
+                if (skActive && $('#skTab a[href="' + skActive + '"]').length) {
+                    $('#skTab a[href="' + skActive + '"]').tab('show');
+                }
+                $('#skTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    localStorage.setItem('sk_active_tab', $(e.target).attr('href'));
+                });
 				$('#id-disable-check').on('click', function() {
 					var inp = $('#form-input-readonly').get(0);
 					if(inp.hasAttribute('disabled')) {

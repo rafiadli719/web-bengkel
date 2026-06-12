@@ -1,0 +1,373 @@
+================================================================================
+STRUKTUR FOLDER _ADMINCAB - RINGKASAN LENGKAP
+================================================================================
+
+LOKASI: c:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab\
+TOTAL FILES: 51+ files
+TOTAL SIZE: ~2015 items (including subdirectories)
+
+================================================================================
+1. MAIN PAGES (5 files)
+================================================================================
+
+index.php
+├─ Purpose: Dashboard utama admin cabang
+├─ Features: Menu, statistics, quick access
+├─ Session Check: YES
+└─ Database: tbuser, tbcabang
+
+barang.php
+├─ Purpose: Master data barang/item
+├─ Features: List, filter, pagination, add/edit/delete
+├─ Session Check: YES
+└─ Database: tblitem, tbcabang, tbuser
+
+master-keluhan.php
+├─ Purpose: Master keluhan (complaints)
+├─ Features: CRUD, approval workflow, filter
+├─ Session Check: YES
+└─ Database: tbmaster_keluhan
+
+master-keluhan-crud.php
+├─ Purpose: CRUD operations untuk keluhan
+├─ Features: Add, edit, delete, approve, reject
+├─ Session Check: YES
+└─ Database: tbmaster_keluhan
+
+master-workorder-mapping.php
+├─ Purpose: Mapping keluhan ke workorder
+├─ Features: Create mapping, prioritas, filter
+├─ Session Check: YES
+└─ Database: tbmaster_keluhan_workorder
+
+================================================================================
+2. BARANG MANAGEMENT (20+ files)
+================================================================================
+
+MAIN PAGES:
+├─ barang.php                    - List barang (MAIN)
+├─ barang_add.php               - Form tambah barang
+├─ barang_add_improved.php       - Form tambah barang (improved)
+├─ barang_edit.php              - Form edit barang
+├─ barang_edit_improved.php     - Form edit barang (improved)
+├─ barang_edit_proses.php       - Process edit barang
+├─ barang_del.php               - Delete barang
+├─ barang_asli.php              - Backup file
+├─ barang_rst.php               - Reset/search barang
+└─ barang_list_improved.php     - Card mode view
+
+KATEGORI MANAGEMENT:
+├─ barang_kategori.php          - List kategori
+├─ barang_kategori_add.php      - Tambah kategori
+├─ barang_kategori_edit.php     - Edit kategori
+├─ barang_kategori_del.php      - Delete kategori
+├─ barang_kategori_backup.php   - Backup file
+├─ barang_kategori_del_old.php  - Old delete version
+└─ barang_kategori_del_new.php  - New delete version
+
+STOK MANAGEMENT:
+├─ barang_kartu_stok.php        - Kartu stok barang
+├─ barang_kartu_stok_rst.php    - Reset kartu stok
+└─ barang_history_hp.php        - History barang
+
+SEARCH & UTILITY:
+├─ barang-search-popup.php      - Search popup
+└─ barang_edit - Copy.php       - Copy file (deprecated)
+
+================================================================================
+3. AJAX HANDLERS (11 files)
+================================================================================
+
+SEARCH OPERATIONS:
+├─ ajax-search-barang.php               - Search items by name/code
+├─ ajax-search-keluhan-dynamic.php      - Search complaints dynamically
+└─ ajax-search-workorder-dynamic.php    - Search work orders dynamically
+
+DATA RETRIEVAL:
+├─ ajax-get-customer-by-vehicle.php     - Get customer by vehicle
+├─ ajax-get-workorder-detail.php        - Get work order details
+└─ ajax-get-mapping-detail.php          - Get mapping details (inferred)
+
+DATA VALIDATION:
+└─ ajax-check-mapping-exists.php        - Check if mapping exists
+
+DATA MANIPULATION:
+├─ ajax-save-proses-tracking.php        - Save process tracking
+├─ ajax-hapus-keluhan-workorder.php     - Delete complaint from WO
+└─ ajax-submit-keluhan-baru-debug.php   - Submit new complaint
+
+CALCULATION:
+└─ ajax-hitung-tarif-jemput.php         - Calculate pickup tariff
+
+PREVIEW:
+└─ ajax-preview-proses.php              - Preview process
+
+================================================================================
+4. CONFIGURATION & UTILITY (8 files)
+================================================================================
+
+CONFIG:
+├─ config/                      - Config folder (5 items)
+│  ├─ koneksi.php              - Database connection
+│  ├─ accurate_config.php       - Accurate API config
+│  └─ ... (3 more files)
+└─ lib/                         - Library folder (5 items)
+   ├─ titel.php                - Page title
+   ├─ subtitel.php             - Subtitle
+   ├─ footer.php               - Footer
+   └─ ... (2 more files)
+
+UTILITY:
+├─ apply_patch.php             - Apply patch
+└─ AUTO_PATCH.bat              - Batch file untuk patch
+
+================================================================================
+5. LOG & DEBUG FILES (12+ files)
+================================================================================
+
+ACCURATE API LOGS:
+├─ accurate_debug.log          - Debug log
+├─ accurate_endpoint_test.txt  - Endpoint test
+├─ accurate_item_save_log.txt  - Item save log
+├─ accurate_item_edit_log.txt  - Item edit log
+├─ accurate_unit_edit_log.txt  - Unit edit log
+├─ accurate_unit_delete_log.txt - Unit delete log
+├─ accurate_supplier_add_log.txt - Supplier add log
+├─ accurate_stock_update_log.txt - Stock update log
+├─ accurate_pabrik_save_log.txt - Factory save log
+├─ accurate_category_update_log.txt - Category update log
+├─ accurate_category_edit_log.txt - Category edit log
+└─ accurate_category_delete_log.txt - Category delete log
+
+ERROR LOGS:
+├─ error_log                    - General error log
+└─ add_tahun_column.sql         - SQL migration file
+
+================================================================================
+6. DEPRECATED/BACKUP FILES (3 files)
+================================================================================
+
+├─ barang_add - Copy.php
+├─ barang_edit - Copy.php
+└─ barang_edit_proses - Copy.php
+
+================================================================================
+7. SUBDIRECTORIES
+================================================================================
+
+dashboard/                      - Dashboard folder (22 items)
+├─ index.php
+├─ ... (21 more files)
+└─ (Various dashboard pages and components)
+
+assets/                         - Static assets (CSS, JS, fonts)
+├─ css/
+├─ js/
+├─ font-awesome/
+└─ img/
+
+file_upload/                    - File upload directory
+├─ avatar.png                  - Default avatar
+└─ ... (user uploads)
+
+================================================================================
+LOGIN_DASHBOARD FOLDER STRUCTURE
+================================================================================
+
+LOCATION: c:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\login_dashboard\
+
+FILES:
+├─ login.php                    - Main login page (51KB)
+├─ logout.php                   - Logout handler
+├─ config.php                   - Configuration
+├─ get_branches.php             - Get branches data
+├─ get_employees.php            - Get employees data
+├─ error_log                    - Error log (89KB)
+│
+├─ dashboard/                   - Dashboard folder (22 items)
+│  ├─ index.php
+│  ├─ ... (21 more files)
+│  └─ (Dashboard pages)
+│
+└─ password/                    - Password management (7 items)
+   ├─ change_password.php
+   ├─ reset_password.php
+   ├─ ... (5 more files)
+   └─ (Password related pages)
+
+================================================================================
+FILE STATISTICS
+================================================================================
+
+Total Files: 51+ in _admincab, 35+ in login_dashboard
+Total Lines of Code: ~50,000+ lines
+Languages:
+├─ PHP: 95%
+├─ JavaScript: 3%
+└─ SQL: 2%
+
+File Size Distribution:
+├─ Large files (>10KB): 15 files
+├─ Medium files (1-10KB): 25 files
+└─ Small files (<1KB): 11 files
+
+================================================================================
+MAIN WORKFLOW PATTERNS
+================================================================================
+
+1. MASTER DATA MANAGEMENT:
+   Display List → Form Input → Process → Redirect to List
+
+2. APPROVAL WORKFLOW:
+   Submit Request → Pending Status → Admin Review → Approved/Rejected
+
+3. SEARCH & FILTER:
+   User Input → POST/GET → Build WHERE → Query DB → Display Results
+
+4. AJAX OPERATIONS:
+   Client Request → AJAX Handler → Query DB → JSON Response
+
+================================================================================
+DATABASE TABLES USED
+================================================================================
+
+MASTER TABLES:
+├─ tbuser                       - User account (legacy)
+├─ tbcabang                     - Branch data
+├─ tblitem                      - Item/barang master
+├─ tbmaster_keluhan             - Complaint master
+├─ tbmaster_workorder           - Work order master
+├─ tbmaster_keluhan_workorder   - Keluhan-WO mapping
+└─ tbworkorderheader            - Work order header
+
+TRANSACTION TABLES:
+├─ tblservice                   - Service transactions
+├─ tblkeluhan                   - Complaint transactions
+└─ tblworkorder                 - Work order transactions
+
+VIEW TABLES:
+├─ view_cari_item              - Item search view
+└─ (Other views)
+
+REFERENCE TABLES:
+├─ tb_master_posisi            - Position master
+├─ tb_master_level             - Level master
+└─ tb_master_karyawan          - Employee master
+
+================================================================================
+SECURITY FEATURES (CURRENT)
+================================================================================
+
+✓ Session check on page load
+✓ User data retrieval from session
+✓ Branch validation
+✓ Input sanitization (mysqli_real_escape_string)
+✓ Error logging
+
+✗ No prepared statements
+✗ No CSRF token protection
+✗ No session timeout
+✗ No rate limiting
+✗ No password hashing
+✗ Plain text password storage
+✗ No audit logging
+✗ No 2FA
+
+================================================================================
+SECURITY VULNERABILITIES
+================================================================================
+
+🔴 CRITICAL:
+1. SQL Injection - Direct string concatenation in queries
+2. Plain Text Passwords - Passwords stored without hashing
+3. No Session Timeout - Sessions never expire
+4. No CSRF Protection - Forms vulnerable to CSRF attacks
+
+🟡 HIGH:
+5. No Rate Limiting - Unlimited login attempts
+6. Weak Access Control - Numeric levels only
+7. No Audit Logging - No activity tracking
+8. Error Information Disclosure - Errors shown to users
+
+🟠 MEDIUM:
+9. No Input Validation - Only sanitization, no validation
+10. Duplicate Code - Code duplication across files
+11. No API Documentation - Undocumented endpoints
+12. No Unit Tests - No automated testing
+
+================================================================================
+RECOMMENDED IMPROVEMENTS
+================================================================================
+
+PRIORITY 1 (URGENT):
+1. Convert all queries to prepared statements
+2. Implement password hashing
+3. Add session timeout
+4. Add CSRF token protection
+
+PRIORITY 2 (HIGH):
+5. Add database indexes
+6. Implement audit logging
+7. Add input validation
+8. Implement rate limiting
+
+PRIORITY 3 (MEDIUM):
+9. Refactor duplicate code
+10. Add API documentation
+11. Implement caching
+12. Add unit tests
+
+================================================================================
+INTEGRATION POINTS
+================================================================================
+
+WITH OTHER MODULES:
+├─ _admincab ↔ _admin (Admin functions)
+├─ _admincab ↔ _kasir (Cashier functions)
+├─ _admincab ↔ _mekanik (Mechanic functions)
+├─ _admincab ↔ _pengadaan (Procurement)
+└─ _admincab ↔ _managemen (Management)
+
+WITH EXTERNAL SYSTEMS:
+├─ _admincab ↔ Accurate API (Accounting)
+├─ _admincab ↔ OAuth (Authentication)
+└─ _admincab ↔ Email System (Notifications)
+
+WITH DATABASE:
+├─ _admincab ↔ fitmotor_dbbengkel (Main DB)
+└─ _admincab ↔ fitmotor_maintance-beta (Maintenance DB)
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. SECURITY AUDIT
+   - Review all SQL queries for injection vulnerabilities
+   - Identify all plain text password locations
+   - Check session management implementation
+
+2. PASSWORD MIGRATION
+   - Implement password hashing
+   - Migrate existing passwords
+   - Update login verification
+
+3. SESSION MANAGEMENT
+   - Add timeout functionality
+   - Implement CSRF protection
+   - Add session regeneration
+
+4. CODE REFACTORING
+   - Remove duplicate code
+   - Standardize patterns
+   - Add documentation
+
+5. TESTING
+   - Create unit tests
+   - Create integration tests
+   - Create security tests
+
+================================================================================
+Last Updated: 16 November 2025
+Version: 1.0
+Status: ⚠️ SECURITY ISSUES IDENTIFIED - URGENT FIXES NEEDED
+================================================================================

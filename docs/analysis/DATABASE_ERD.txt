@@ -1,0 +1,299 @@
+====================================================================================================
+DATABASE ERD (Entity Relationship Diagram) - FITMOTOR BENGKEL SYSTEM
+====================================================================================================
+Generated: 2025-11-28
+
+====================================================================================================
+
+Legend:
+  [PK] = Primary Key
+  [FK] = Foreign Key
+  1 ----< * = One to Many relationship
+  * >----< * = Many to Many relationship
+
+
+====================================================================================================
+MODULE 1: CUSTOMER & VEHICLE MANAGEMENT
+====================================================================================================
+
++-------------------------------------+
+|      TBLPELANGGAN (Customer)        |
++-------------------------------------+
+| [PK] no_pelanggan                   |
+|      nama_pelanggan                 |
+|      alamat                         |
+|      telepon                        |
+|      hp                             |
+|      email                          |
+|      kategori                       |
+|      ... (35 columns total)         |
++-------------------------------------+
+       |
+       | 1
+       |
+       | *
+       V
++-------------------------------------+
+|      TBLKENDARAAN (Vehicle)         |
++-------------------------------------+
+| [PK] nopol                          |
+| [FK] no_pelanggan                   |
+|      kode_tipe                      |
+|      tahun                          |
+|      warna                          |
+|      no_rangka                      |
+|      no_mesin                       |
+|      ... (16 columns total)         |
++-------------------------------------+
+
+
+====================================================================================================
+MODULE 2: SERVICE MANAGEMENT
+====================================================================================================
+
++-------------------------------------+         +-------------------------------------+
+|      TBLKENDARAAN                   |         |      TBLPELANGGAN                   |
++-------------------------------------+         +-------------------------------------+
+       |                                                 |
+       | 1                                               | 1
+       |                                                 |
+       | *                                               | *
+       V                                                 V
++-----------------------------------------------------------------------------------+
+|                    TBLSERVICE (Service Transaction Header)                        |
++-----------------------------------------------------------------------------------+
+| [PK] no_service                                                                   |
+| [FK] no_pelanggan, nopol                                                          |
+|      tanggal, tanggal_keluar, tanggal_estimasi                                    |
+|      km, keluhan, saran, diagnosa                                                 |
+|      total_jasa, total_barang, total_akhir, ppn, diskon                           |
+|      status_bayar, status_service, jenis_service                                  |
+|      ... (68 columns total)                                                       |
++-----------------------------------------------------------------------------------+
+       |
+       +------------+-----------+-------------+--------------+
+       | *          | *         | *           | *            | *
+       V            V           V             V              V
++--------------+ +----------+ +------------+ +------------+ +--------------+
+| TBLSERVIS_   | | TBLSERVIS| | TBSERVIS_  | | TBSERVIS_  | | TBSERVIS_    |
+| BARANG       | | _JASA    | | KELUHAN    | | TEMUAN     | | WORKORDER    |
++--------------+ +----------+ +------------+ +------------+ +--------------+
+| [PK] id      | |[PK] id   | |[PK] id     | |[PK] id     | |[PK] id       |
+| [FK] no_serv | |[FK] no_  | |[FK] no_    | |[FK] no_    | |[FK] no_      |
+| [FK] kode_brg| |    service| |    service | |    service | |    service   |
+|      qty     | |    kode_ | |    id_     | |    jenis_  | |    id_       |
+|      harga   | |    jasa  | |    keluhan | |    temuan  | |    keluhan   |
+|      total   | |    qty   | |    status  | |    deskripsi| |    status   |
++--------------+ +----------+ +------------+ +------------+ +--------------+
+
+
+====================================================================================================
+MODULE 3: SALES & PURCHASE TRANSACTIONS
+====================================================================================================
+
++-------------------------------------+
+|      TBLSUPPLIER                    |
++-------------------------------------+
+       | 1
+       |
+       | *
+       V
++-------------------------------------+         +-------------------------------------+
+|  TBLPEMBELIAN_HEADER (Purchase)     |         |  TBLPENJUALAN_HEADER (Sales)        |
++-------------------------------------+         +-------------------------------------+
+| [PK] no_pembelian                   |         | [PK] no_penjualan                   |
+| [FK] kode_supplier                  |         | [FK] no_pelanggan                   |
+|      tanggal                        |         |      tanggal                        |
+|      total, ppn, grand_total        |         |      total, ppn, grand_total        |
+|      ... (32 columns)               |         |      ... (27 columns)               |
++-------------------------------------+         +-------------------------------------+
+       | 1                                               | 1
+       |                                                 |
+       | *                                               | *
+       V                                                 V
++-------------------------------------+         +-------------------------------------+
+|  TBLPEMBELIAN_DETAIL                |         |  TBLPENJUALAN_DETAIL                |
++-------------------------------------+         +-------------------------------------+
+| [PK] id                             |         | [PK] id                             |
+| [FK] no_pembelian, kode_barang      |         | [FK] no_penjualan, kode_barang      |
+|      qty, harga, subtotal           |         |      qty, harga, subtotal           |
++-------------------------------------+         +-------------------------------------+
+
+
+====================================================================================================
+MODULE 4: INVENTORY MANAGEMENT
+====================================================================================================
+
++---------------------------------------------------------------+
+|                    TBLITEM (Item/Product Master)              |
++---------------------------------------------------------------+
+| [PK] kode_barang                                              |
+|      nama_barang, deskripsi                                   |
+|      kategori_barang, jenis_barang, satuan                    |
+|      harga_beli, harga_jual                                   |
+|      ... (49 columns total)                                   |
++---------------------------------------------------------------+
+       |
+       +--------------+--------------+--------------+
+       | 1            | 1            | 1            | 1
+       |              |              |              |
+       | *            | *            | *            | *
+       V              V              V              V
++--------------+ +----------+ +------------+ +------------+
+| TBLITEM_STOK | | TBLITEM_ | | TBLITEM_   | | TBSTOK     |
+|              | | JASA     | | SPART      | |            |
++--------------+ +----------+ +------------+ +------------+
+| kode_barang  | |kode_jasa | | id         | | id         |
+| kode_cabang  | |nama_jasa | | kode_      | | kode_brg   |
+| stok_awal    | |harga     | | barang     | | kode_cab   |
+| stok_masuk   | |kategori  | | kode_      | | stok       |
+| stok_keluar  | |          | | supplier   | | tanggal    |
+| stok_akhir   | |          | |            | |            |
++--------------+ +----------+ +------------+ +------------+
+
+
+====================================================================================================
+MODULE 5: PROCUREMENT (PR -> PO -> DO)
+====================================================================================================
+
++------------------------------+
+| TBLPURCHASE_REQUEST_HEADER   |  Step 1: Purchase Request
++------------------------------+
+| [PK] no_pr                   |
+|      tanggal_pr              |
+|      status_approval         |
++------------------------------+
+       | 1
+       |
+       | *
+       V
++------------------------------+
+| TBLPURCHASE_REQUEST_DETAIL   |
++------------------------------+
+| [PK] id                      |
+| [FK] no_pr, kode_barang      |
++------------------------------+
+       |
+       V
++------------------------------+
+| TBLORDER_HEADER (PO)         |  Step 2: Purchase Order
++------------------------------+
+| [PK] no_order                |
+| [FK] no_pr                   |
+|      kode_supplier           |
++------------------------------+
+       | 1
+       |
+       | *
+       V
++------------------------------+
+| TBLORDER_DETAIL              |
++------------------------------+
+| [PK] id                      |
+| [FK] no_order, kode_barang   |
++------------------------------+
+       |
+       V
++------------------------------+
+| TBLDELIVERY_ORDER_HEADER     |  Step 3: Delivery Order
++------------------------------+
+| [PK] no_do                   |
+| [FK] no_order                |
+|      tanggal_kirim           |
++------------------------------+
+       | 1
+       |
+       | *
+       V
++------------------------------+
+| TBLDELIVERY_ORDER_DETAIL     |
++------------------------------+
+| [PK] id                      |
+| [FK] no_do, kode_barang      |
++------------------------------+
+
+
+====================================================================================================
+MODULE 6: USER MANAGEMENT & RBAC
+====================================================================================================
+
++-------------------------+         +-------------------------+
+| TB_USER_ACCOUNT         |         | TB_USER_ROLES           |
++-------------------------+         +-------------------------+
+| [PK] id                 |         | [PK] id                 |
+|      username           | * >-----< *  role_name             |
+|      password           |         |      role_description   |
+|      role_id            |         |      permissions        |
++-------------------------+         +-------------------------+
+       | 1                                   | 1
+       |                                     |
+       | *                                   | *
+       V                                     V
++-------------------------+         +-------------------------+
+| TB_USER_ACTIVITY_LOG    |         | TB_PERMISSIONS          |
++-------------------------+         +-------------------------+
+| [PK] id                 |         | [PK] id                 |
+| [FK] user_id            |         |      permission_name    |
+|      action             |         |      permission_type    |
+|      timestamp          |         |      module             |
++-------------------------+         +-------------------------+
+
+
+====================================================================================================
+MODULE 7: MASTER DATA & LOOKUP TABLES
+====================================================================================================
+
+Vehicle Type Hierarchy:
+
++---------------------+
+| TBPABRIK_MOTOR      |  (Brand: Honda, Yamaha, etc)
++---------------------+
+       | 1
+       |
+       | *
+       V
++---------------------+
+| TBJENIS_MOTOR       |  (Type: Sport, Matic, etc)
++---------------------+
+       | 1
+       |
+       | *
+       V
++---------------------+
+| TBKATEGORI_MOTOR    |  (Category)
++---------------------+
+       | 1
+       |
+       | *
+       V
++---------------------+
+| TBTIPE_MOTOR        |  (Model: Beat, Vario, etc)
++---------------------+
+
+
+====================================================================================================
+HEADER-DETAIL RELATIONSHIP PAIRS
+====================================================================================================
+
+tbbrg_keluar_header                      1 ----< * tbbrg_keluar_detail
+tbbrg_masuk_header                       1 ----< * tbbrg_masuk_detail
+tbitem_keluar_header                     1 ----< * tbitem_keluar_detail
+tbitem_masuk_header                      1 ----< * tbitem_masuk_detail
+tbkas_kasir_header                       1 ----< * tbkas_kasir_detail
+tbkoreksi_stok_header                    1 ----< * tbkoreksi_stok_detail
+tbldelivery_order_header                 1 ----< * tbldelivery_order_detail
+tblhutang_header                         1 ----< * tblhutang_detail
+tblorderjual_header                      1 ----< * tblorderjual_detail
+tblorder_header                          1 ----< * tblorder_detail
+tblpembelian_header                      1 ----< * tblpembelian_detail
+tblpenjualan_header                      1 ----< * tblpenjualan_detail
+tblpiutang_header                        1 ----< * tblpiutang_detail
+tblpurchase_request_header               1 ----< * tblpurchase_request_detail
+tblretur_pembelian_header                1 ----< * tblretur_pembelian_detail
+tblretur_penjualan_header                1 ----< * tblretur_penjualan_detail
+tblrfq_header                            1 ----< * tblrfq_detail
+tbmaster_tipe_header                     1 ----< * tbmaster_tipe_detail
+tbso_header                              1 ----< * tbso_detail
+view_pembelian_header                    1 ----< * view_pembelian_detail
+view_penjualan_header                    1 ----< * view_penjualan_detail
+view_pesanan_pembelian_header            1 ----< * view_pesanan_pembelian_detail

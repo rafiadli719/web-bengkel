@@ -383,19 +383,21 @@
 
                         <div class="row">
 							<div class="col-xs-12 col-sm-2">
-                                <button type="submit" class="btn disabled btn-block">
-                                    <i class="ace-icon fa fa-save icon-on-right bigger-110"></i>
-                                    &nbsp;Simpan
-                                </button>
-                            </div>
+								<a target="_blank" href="pembelian_struk.php?snobl=<?php echo $nobl; ?>&mode=download">
+								<button type="button" class="btn btn-primary btn-block">
+									<i class="ace-icon fa fa-download icon-on-right bigger-110"></i>
+									&nbsp;Download PDF
+								</button>
+								</a>
+							</div>
 							<div class="col-xs-12 col-sm-2">
-                                <a target="_blank"  href="pembelian_struk.php?snobl=<?php echo $nobl; ?>">                            
-                                <button type="submit" class="btn btn-primary btn-block">
-                                    <i class="ace-icon fa fa-print icon-on-right bigger-110"></i>
-                                    &nbsp;Cetak
-                                </button>                            
-                                </a>
-                            </div>
+								<a target="_blank"  href="pembelian_struk.php?snobl=<?php echo $nobl; ?>&mode=print">                            
+								<button type="submit" class="btn btn-primary btn-block">
+									<i class="ace-icon fa fa-print icon-on-right bigger-110"></i>
+									&nbsp;Cetak
+								</button>                            
+								</a>
+							</div>
 							<div class="col-xs-12 col-sm-2">
                                 <a href="pembelian_add.php">
                                 <button type="submit" class="btn btn-primary btn-block">

@@ -40,26 +40,161 @@
         $txtflt="asc";
         $tipebtn1="btn-danger";
         $tipebtn2="btn-info";
-        $hasil_cari="Hasil Pencarian ditemukan 0 data";
-                
-        $sql_query="SELECT * FROM view_pembayaran_hutang 
-                            WHERE 
-                            no_transaksi='0'";      
-        // == End Default ==========    
-        
-		if(isset($_POST['btnasc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
-			echo"<script>window.location=('pmby_hutang_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";            
+        $txttgl_periode = "";
+        $cbocari = "";
+        $cbourut = "";
+
+        $hutang_error = '';
+        $view_cols = [];
+        $col_res = mysqli_query($koneksi, "SHOW COLUMNS FROM view_pembayaran_hutang");
+        if ($col_res) {
+            while ($r = mysqli_fetch_assoc($col_res)) {
+                $view_cols[strtolower($r['Field'])] = true;
+            }
+        } else {
+            $hutang_error = mysqli_error($koneksi);
         }
 
-		if(isset($_POST['btndesc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
-			echo"<script>window.location=('pmby_hutang_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";            
+        $has_col = function($name) use ($view_cols) {
+            return isset($view_cols[strtolower($name)]);
+        };
+
+        $trx_field = $has_col('no_transaksi') ? 'no_transaksi' : ($has_col('notransaksi') ? 'notransaksi' : '');
+        $tgl_field = $has_col('tanggal') ? 'tanggal' : ($has_col('created_at') ? 'created_at' : '');
+        $nosupplier_field = $has_col('no_supplier') ? 'no_supplier' : ($has_col('nosupplier') ? 'nosupplier' : '');
+        $namasupplier_field = $has_col('namasupplier') ? 'namasupplier' : ($has_col('nama_supplier') ? 'nama_supplier' : '');
+        $total_field = $has_col('total_bayar') ? 'total_bayar' : ($has_col('total') ? 'total' : ($has_col('total_akhir') ? 'total_akhir' : ''));
+        $cabang_field = $has_col('kd_cabang') ? 'kd_cabang' : ($has_col('kode_cabang') ? 'kode_cabang' : '');
+        
+        // Filter logic
+        $where_clause = "WHERE 1=1";
+        if ($cabang_field !== '') {
+            $where_clause .= " AND $cabang_field='$kd_cabang'";
         }
+        
+        if(isset($_REQUEST['btnasc']) || isset($_REQUEST['btndesc'])) {
+            $txtkey = isset($_REQUEST['txtkey']) ? $_REQUEST['txtkey'] : "";
+            $cbocari = isset($_REQUEST['cbocari']) ? $_REQUEST['cbocari'] : "";
+            $cbourut = isset($_REQUEST['cbourut']) ? $_REQUEST['cbourut'] : "";
+            $txttgl_periode = isset($_REQUEST['txttgl_periode']) ? $_REQUEST['txttgl_periode'] : "";
+            
+            // Build Where Clause
+            if(!empty($txtkey)) {
+                if(!empty($cbocari)) {
+                     // Get column name from tbcari if needed or just use logic here
+                     // For simplicity, assuming standard search. 
+                     // You typically query tbcari to get the field name.
+                     $q_cari = mysqli_query($koneksi, "select field FROM tbcari where id='$cbocari'");
+                     if ($q_cari) {
+                         $r_cari = mysqli_fetch_array($q_cari);
+                         if ($r_cari) {
+                            $field = $r_cari['field'];
+                            $where_clause .= " AND $field LIKE '%$txtkey%'";
+                         }
+                     } else {
+                         if ($hutang_error === '') {
+                             $hutang_error = mysqli_error($koneksi);
+                         }
+                     }
+                } else {
+                     // Default search all fields
+                     $search_trx = $trx_field !== '' ? $trx_field : 'no_transaksi';
+                     $search_sup = $namasupplier_field !== '' ? $namasupplier_field : 'namasupplier';
+                     $where_clause .= " AND ($search_trx LIKE '%$txtkey%' OR $search_sup LIKE '%$txtkey%')";
+                }
+            }
+            
+            // Date Filter
+            if(!empty($txttgl_periode)) {
+                $range = explode(" - ", $txttgl_periode);
+                if(count($range) == 2) {
+                    $start_date = date('Y-m-d', strtotime(str_replace('/', '-', $range[0])));
+                    $end_date = date('Y-m-d', strtotime(str_replace('/', '-', $range[1])));
+                    $date_field = $tgl_field !== '' ? $tgl_field : 'tanggal';
+                    $where_clause .= " AND $date_field BETWEEN '$start_date' AND '$end_date'";
+                }
+            }
+            
+            // Order logic
+            $order_tgl = $tgl_field !== '' ? $tgl_field : 'tanggal';
+            $order_trx = $trx_field !== '' ? $trx_field : 'no_transaksi';
+            $order_clause = "ORDER BY $order_tgl DESC, $order_trx DESC";
+            if(!empty($cbourut)) {
+                 $q_urut = mysqli_query($koneksi, "select field FROM tburut where id='$cbourut'");
+                 if ($q_urut) {
+                     $r_urut = mysqli_fetch_array($q_urut);
+                     if ($r_urut) {
+                         $field_urut = $r_urut['field'];
+                         $direction = isset($_POST['btnasc']) ? "ASC" : "DESC";
+                         $order_clause = "ORDER BY $field_urut $direction";
+                         
+                         if(isset($_POST['btnasc'])) { $tipebtn1="btn-danger"; $tipebtn2="btn-white"; }
+                         else { $tipebtn1="btn-white"; $tipebtn2="btn-info"; }
+                     }
+                 } else {
+                     if ($hutang_error === '') {
+                         $hutang_error = mysqli_error($koneksi);
+                     }
+                 }
+            }
+        } else {
+            // Default view - show recent or specific range if requested via GET logic (optional)
+            $order_tgl = $tgl_field !== '' ? $tgl_field : 'tanggal';
+            $order_trx = $trx_field !== '' ? $trx_field : 'no_transaksi';
+            $order_clause = "ORDER BY $order_tgl DESC, $order_trx DESC";
+        }
+
+        // Pagination variables
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($limit < 1) {
+            $limit = 10;
+        }
+        if ($page < 1) {
+            $page = 1;
+        }
+        $offset = ($page - 1) * $limit;
+        
+        // Count total records
+        $count_query = "SELECT COUNT(*) as total FROM view_pembayaran_hutang $where_clause";
+        $count_result = mysqli_query($koneksi, $count_query);
+        if ($count_result) {
+            $tmp_count = mysqli_fetch_array($count_result);
+            $total_records = isset($tmp_count['total']) ? (int)$tmp_count['total'] : 0;
+        } else {
+            $total_records = 0;
+            if ($hutang_error === '') {
+                $hutang_error = mysqli_error($koneksi);
+            }
+        }
+        $total_pages = (int)ceil($total_records / $limit);
+        if ($total_pages < 1) {
+            $total_pages = 1;
+        }
+        if ($page > $total_pages) {
+            $page = $total_pages;
+        }
+        $offset = ($page - 1) * $limit;
+        
+        $hasil_cari = "Menampilkan data - Total: $total_records data (Halaman $page dari $total_pages)";
+                
+        $sel_trx = $trx_field !== '' ? $trx_field : "''";
+        $sel_tgl = $tgl_field !== '' ? $tgl_field : "CURDATE()";
+        $sel_nosup = $nosupplier_field !== '' ? $nosupplier_field : "''";
+        $sel_namasup = $namasupplier_field !== '' ? $namasupplier_field : "''";
+        $sel_total = $total_field !== '' ? $total_field : "0";
+
+        $sql_query = "SELECT 
+                        $sel_trx AS no_transaksi,
+                        $sel_tgl AS tanggal,
+                        $sel_nosup AS no_supplier,
+                        $sel_namasup AS namasupplier,
+                        $sel_total AS total_bayar
+                     FROM view_pembayaran_hutang 
+                     $where_clause
+                     $order_clause 
+                     LIMIT $limit OFFSET $offset";      
+        // == End Default ==========
 ?>
 
 <!DOCTYPE html>
@@ -210,7 +345,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_pembelian03.php"; ?>
+<?php include "menu_pembelian02.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -251,11 +386,24 @@
  <div class="space space-8"></div> 
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
-
 													<a href="pmby_hutang_add.php">
 													<button class="btn btn-success btn-block" type="button">Input Data</button>
 													</a>
-
+							</div>
+							<div class="col-xs-12 col-sm-9">
+								<div class="pull-right">
+									<form method="GET" style="display: inline-block; margin-right: 10px;">
+										<label>Tampilkan: </label>
+										<select name="limit" onchange="this.form.submit()" class="form-control" style="display: inline-block; width: auto;">
+											<option value="5" <?php echo $limit == 5 ? 'selected' : ''; ?>>5</option>
+											<option value="10" <?php echo $limit == 10 ? 'selected' : ''; ?>>10</option>
+											<option value="25" <?php echo $limit == 25 ? 'selected' : ''; ?>>25</option>
+											<option value="50" <?php echo $limit == 50 ? 'selected' : ''; ?>>50</option>
+											<option value="100" <?php echo $limit == 100 ? 'selected' : ''; ?>>100</option>
+										</select>
+										<label> data per halaman</label>
+									</form>
+								</div>
 							</div>
 						</div>
  <div class="space space-8"></div> 
@@ -264,7 +412,12 @@
 								<div class="table-header">
                                     <?php echo $hasil_cari; ?>
 								</div>                            
-                                <table class="table table-bordered">
+								<?php if ($hutang_error !== '') { ?>
+									<div class="alert alert-danger" style="margin:10px 0;">
+										<?php echo $hutang_error; ?>
+									</div>
+								<?php } ?>
+                                <table id="dynamic-table" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <td class="center" width="5%"></td>                                        
@@ -278,7 +431,34 @@
                                     <tbody>
                                     <?php 
                                         $sql = mysqli_query($koneksi,$sql_query);
-                                        while ($tampil = mysqli_fetch_array($sql)) {
+                                        if (!$sql) {
+                                            $err = mysqli_error($koneksi);
+                                            if ($hutang_error === '') {
+                                                $hutang_error = $err;
+                                            }
+                                    ?>
+                                        <tr>
+                                            <td class="center">&nbsp;</td>
+                                            <td><?php echo $err; ?></td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    <?php
+                                        } else if (mysqli_num_rows($sql) < 1) {
+                                    ?>
+                                        <tr>
+                                            <td class="center">&nbsp;</td>
+                                            <td class="center">Data tidak ditemukan</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    <?php
+                                        } else {
+                                            while ($tampil = mysqli_fetch_array($sql)) {
                                             //$status_order=$tampil['status'];
 					//				if($status_order=='0') {
 					//					$ket_status="Open";
@@ -313,9 +493,47 @@
 
 <?php
             				}
+          			}
           			?>
 												</tbody>
                                 </table>
+                                
+                                <!-- Pagination -->
+                                <?php if ($total_pages > 1): ?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="text-center">
+                                            <ul class="pagination">
+                                                <!-- Previous -->
+                                                <?php 
+                                                    $params = "&txtkey=$txtkey&cbocari=$cbocari&cbourut=$cbourut&txttgl_periode=" . urlencode($txttgl_periode) . "&limit=$limit";
+                                                    if(isset($_POST['btnasc']) || isset($_GET['btnasc'])) $params .= "&btnasc=1";
+                                                    if(isset($_POST['btndesc']) || isset($_GET['btndesc'])) $params .= "&btndesc=1";
+                                                ?>
+                                                <?php if ($page > 1): ?>
+                                                    <li><a href="?page=<?php echo $page-1; ?><?php echo $params; ?>">&laquo; Sebelumnya</a></li>
+                                                <?php endif; ?>
+                                                
+                                                <!-- Page numbers -->
+                                                <?php 
+                                                $start_page = max(1, $page - 2);
+                                                $end_page = min($total_pages, $page + 2);
+                                                for ($i = $start_page; $i <= $end_page; $i++): 
+                                                ?>
+                                                    <li class="<?php echo $i == $page ? 'active' : ''; ?>">
+                                                        <a href="?page=<?php echo $i; ?><?php echo $params; ?>"><?php echo $i; ?></a>
+                                                    </li>
+                                                <?php endfor; ?>
+                                                
+                                                <!-- Next -->
+                                                <?php if ($page < $total_pages): ?>
+                                                    <li><a href="?page=<?php echo $page+1; ?><?php echo $params; ?>">Berikutnya &raquo;</a></li>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                             
@@ -376,8 +594,7 @@
 					bAutoWidth: false,
 					"aoColumns": [
 					  { "bSortable": false },
-					  null, null,null, null, null,
-					  { "bSortable": false }
+					  null, null, null, null, null
 					],
 					"aaSorting": [],
 					
@@ -521,6 +738,20 @@
 			
 			
 			
+				
+				//initiate date range picker for ID
+				if ($.fn.daterangepicker) {
+					$('#id-date-range-picker-1').daterangepicker({
+						'applyClass' : 'btn-sm btn-success',
+						'cancelClass' : 'btn-sm btn-default',
+						locale: {
+							applyLabel: 'Apply',
+							cancelLabel: 'Cancel',
+	                        format: 'DD/MM/YYYY'
+						}
+					});
+				}
+
 				$(document).on('click', '#dynamic-table .dropdown-toggle', function(e) {
 					e.stopImmediatePropagation();
 					e.stopPropagation();

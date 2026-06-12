@@ -222,10 +222,39 @@
 								<form class="form-horizontal" action="save_cabang.php" method="post">
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Kode Cabang </label>
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tahun Berdiri </label>
 										<div class="col-sm-9">
-											<input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-6" 
-											required autocomplete="off" />
+											<select class="col-xs-10 col-sm-3" name="entry_year" id="entry_year" required>
+												<option value="">- Pilih Tahun -</option>
+												<?php
+													$current_year = date('Y');
+													for ($y = $current_year + 1; $y >= 2000; $y--) {
+														$selected = ($y == $current_year) ? 'selected' : '';
+														echo "<option value=\"$y\" $selected>$y</option>";
+													}
+												?>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Bulan Berdiri </label>
+										<div class="col-sm-9">
+											<select class="col-xs-10 col-sm-3" name="entry_month" id="entry_month" required>
+												<option value="">- Pilih Bulan -</option>
+												<?php
+													$months = array(
+														'01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+														'05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+														'09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+													);
+													$current_month = date('m');
+													foreach ($months as $num => $name) {
+														$selected = ($num == $current_month) ? 'selected' : '';
+														echo "<option value=\"$num\" $selected>$name</option>";
+													}
+												?>
+											</select>
 										</div>
 									</div>
 									<div class="form-group">

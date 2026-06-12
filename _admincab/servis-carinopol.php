@@ -4,8 +4,10 @@
 		header("location:../index.php");
 	} else {
 		$id_user=$_SESSION['_iduser'];	
-		$kd_cabang=$_SESSION['_cabang'];		                	
+		$kd_cabang=$_SESSION['_cabang'];		                
 		include "../config/koneksi.php";
+        include_once "../lib/rbac.php";
+        rbac_require_any(array('input_servis_read','servis_reguler_read','servis_menu_read','service_create','service_update'));
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -29,44 +31,117 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
+    // ------- Load Setting Highlight Member ----------
+    $highlight_settings = array();
+    $query_highlight = mysqli_query($koneksi, "SELECT kategori_member, background_color, text_color, border_color, border_width, is_bold, opacity, is_active FROM setting_highlight_member WHERE is_active = 1");
+    while($row_highlight = mysqli_fetch_assoc($query_highlight)) {
+        $highlight_settings[$row_highlight['kategori_member']] = $row_highlight;
+    }
+    // --------------------
+    
 		$tgl_skr=date('d');	
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $sql_query="SELECT 
-                    nopolisi, pemilik, tipe, jenis, warna, merek, telephone 
-                    FROM 
-                    view_pelanggan_kendaraan 
-                    WHERE 
-                    nopolisi='00'";    
+        // Query alternatif yang lebih fleksibel menggunakan LEFT JOIN
+        $serviceCustomerMapSql = "(SELECT ts.no_polisi, SUBSTRING_INDEX(GROUP_CONCAT(ts.no_pelanggan ORDER BY ts.tanggal DESC, ts.jam DESC, ts.no_service DESC SEPARATOR '||'), '||', 1) AS no_pelanggan_map
+                                   FROM tblservice ts
+                                   WHERE ts.no_pelanggan IS NOT NULL AND ts.no_pelanggan <> ''
+                                   GROUP BY ts.no_polisi)";
 
-        $hasil="Hasil Pencarian";
+        $sql_query="SELECT
+                    k.nopolisi as nopolisi,
+                    COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) as pemilik,
+                    k.tipe,
+                    k.jenis,
+                    k.warna,
+                    COALESCE(pm.merek, 'Unknown') as merek,
+                    COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
+                    COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                    FROM tblkendaraan k
+                    LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
+                    LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
+                    LEFT JOIN tblpelanggan p_plate ON p_plate.nopelanggan = k.nopolisi
+                    LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
+                    LEFT JOIN statistik_pelanggan sp_map ON p_map.nopelanggan = sp_map.no_pelanggan
+                    LEFT JOIN statistik_pelanggan sp_plate ON p_plate.nopelanggan = sp_plate.no_pelanggan
+                    ORDER BY COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) ASC
+                    LIMIT 50";
+
+        $hasil="Data Pelanggan & Kendaraan (50 data terbaru)";
         $txtsearch="";
 
-                        
-		if(isset($_POST['btncari'])) {				
-			$txtsearch= $_POST['txtsearch'];
-            $sql_query="SELECT 
-                        nopolisi, pemilik, tipe, jenis, warna, merek, telephone 
-                        FROM 
-                        view_pelanggan_kendaraan 
-                        WHERE 
-                        (nopolisi like '%".$txtsearch."%') OR 
-                        (pemilik like '%".$txtsearch."%') OR 
-                        (telephone like '%".$txtsearch."%') 
-                        order by pemilik asc";    
+        // Hitung total data dari tblkendaraan
+        $cari_total=mysqli_query($koneksi,"SELECT count(*) as total FROM tblkendaraan");
+        $tm_total=mysqli_fetch_array($cari_total);
+        $total_data=$tm_total['total'];
 
-            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                            count(nopolisi) as tot 
-                                            FROM 
-                                            view_pelanggan_kendaraan 
-                                            WHERE 
-                                            (nopolisi like '%".$txtsearch."%') OR 
-                                            (pemilik like '%".$txtsearch."%') OR 
-                                            (telephone like '%".$txtsearch."%')");			
-            $tm_cari=mysqli_fetch_array($cari_kd);
-            $tot=$tm_cari['tot'];
-            $hasil="Hasil Pencarian ditemukan ".$tot." data.";
+		if(isset($_POST['btncari'])) {
+			$txtsearch= mysqli_real_escape_string($koneksi, $_POST['txtsearch']);
+
+            if(!empty(trim($txtsearch))) {
+                $sql_query="SELECT
+                            k.nopolisi as nopolisi,
+                            COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) as pemilik,
+                            k.tipe,
+                            k.jenis,
+                            k.warna,
+                            COALESCE(pm.merek, 'Unknown') as merek,
+                            COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
+                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                            FROM tblkendaraan k
+                            LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
+                            LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
+                            LEFT JOIN tblpelanggan p_plate ON p_plate.nopelanggan = k.nopolisi
+                            LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
+                            LEFT JOIN statistik_pelanggan sp_map ON p_map.nopelanggan = sp_map.no_pelanggan
+                            LEFT JOIN statistik_pelanggan sp_plate ON p_plate.nopelanggan = sp_plate.no_pelanggan
+                            WHERE
+                            (k.nopolisi like '%".$txtsearch."%') OR
+                            (COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) like '%".$txtsearch."%') OR
+                            (COALESCE(p_map.telephone, p_plate.telephone, '') like '%".$txtsearch."%')
+                            ORDER BY COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) ASC";
+
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot
+                                                FROM tblkendaraan k
+                                                LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
+                                                LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
+                                                LEFT JOIN tblpelanggan p_plate ON p_plate.nopelanggan = k.nopolisi
+                                                WHERE
+                                                (k.nopolisi like '%".$txtsearch."%') OR
+                                                (COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) like '%".$txtsearch."%') OR
+                                                (COALESCE(p_map.telephone, p_plate.telephone, '') like '%".$txtsearch."%')");
+                $tm_cari=mysqli_fetch_array($cari_kd);
+                $tot=$tm_cari['tot'];
+
+                if($tot > 0) {
+                    $hasil="Hasil Pencarian untuk '<strong>".$txtsearch."</strong>' ditemukan ".$tot." data.";
+                } else {
+                    $hasil="Pencarian untuk '<strong>".$txtsearch."</strong>' tidak ditemukan. Total data keseluruhan: ".$total_data;
+                }
+            } else {
+                // Jika search kosong, kembali ke default
+                $sql_query="SELECT
+                            k.nopolisi as nopolisi,
+                            COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) as pemilik,
+                            k.tipe,
+                            k.jenis,
+                            k.warna,
+                            COALESCE(pm.merek, 'Unknown') as merek,
+                            COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
+                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                            FROM tblkendaraan k
+                            LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
+                            LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
+                            LEFT JOIN tblpelanggan p_plate ON p_plate.nopelanggan = k.nopolisi
+                            LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
+                            LEFT JOIN statistik_pelanggan sp_map ON p_map.nopelanggan = sp_map.no_pelanggan
+                            LEFT JOIN statistik_pelanggan sp_plate ON p_plate.nopelanggan = sp_plate.no_pelanggan
+                            ORDER BY COALESCE(p_map.namapelanggan, p_plate.namapelanggan, k.pemilik) ASC
+                            LIMIT 50";
+                $hasil="Mohon masukkan kata kunci pencarian. Total data keseluruhan: ".$total_data;
+            }
         }        
 ?>
 
@@ -117,6 +192,40 @@
 		<![endif]-->
 	<script type="text/javascript" src="chartjs/Chart.js"></script>
 
+    <!-- Custom CSS for Member Highlight -->
+    <style>
+        /* Highlight Styles untuk Kategori Member */
+        /* Highlight Styles untuk Kategori Member */
+        <?php foreach($highlight_settings as $kategori => $setting): ?>
+        .member-highlight-<?php echo strtolower(str_replace(' ', '-', $kategori)); ?> {
+            background-color: <?php echo $setting['background_color']; ?> !important;
+            color: <?php echo $setting['text_color']; ?> !important;
+            opacity: <?php echo $setting['opacity']; ?>;
+            <?php if($setting['border_width'] > 0 && $setting['border_color']): ?>
+            border-left: <?php echo $setting['border_width']; ?>px solid <?php echo $setting['border_color']; ?> !important;
+            <?php endif; ?>
+            <?php if($setting['is_bold']): ?>
+            font-weight: bold !important;
+            <?php endif; ?>
+            transition: all 0.3s ease;
+        }
+        .member-highlight-<?php echo strtolower(str_replace(' ', '-', $kategori)); ?>:hover {
+            opacity: 1 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        <?php endforeach; ?>
+        
+        /* Legend untuk Kategori Member */
+        .member-legend {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -147,7 +256,7 @@
 							<td width="20%">
 								<a href="index.php" class="navbar-brand">
 									<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 									</small>							
 								</a>								
@@ -253,34 +362,68 @@
 						</div><!-- /.page-header -->
 
 						<div class="row">
-							<div class="col-xs-8">
+							<div class="col-xs-10">
                                 <form class="form-horizontal" role="form" action="" method="post">
 									<div class="form-group">
-										<label class="col-sm-5 control-label no-padding-right" for="txtsearch"> 
+										<label class="col-sm-4 control-label no-padding-right" for="txtsearch">
                                         No. Polisi / Nama Pemilik / No. Telepon : </label>
-										<div class="col-sm-7">
+										<div class="col-sm-8">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" 
-                                                name="txtsearch" id="txtsearch" 
-                                                value="<?php echo $txtsearch; ?>" required autocomplete="off" />
+                                                <input type="text" class="form-control"
+                                                name="txtsearch" id="txtsearch"
+                                                value="<?php echo htmlspecialchars($txtsearch); ?>"
+                                                placeholder="Masukkan kata kunci pencarian..." autocomplete="off" />
                                                 <div class="input-group-btn">
-                                                    <button type="submit" class="btn btn-default no-border btn-sm" 
-                                                    id="btncari" name="btncari" >
-                                                        <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+                                                    <button type="submit" class="btn btn-primary btn-sm"
+                                                    id="btncari" name="btncari" title="Cari Data">
+                                                        <i class="ace-icon fa fa-search"></i>
                                                     </button>
+                                                    <?php if(!empty($txtsearch)): ?>
+                                                    <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-warning btn-sm" title="Clear Search">
+                                                        <i class="ace-icon fa fa-times"></i>
+                                                    </a>
+                                                    <?php endif; ?>
+                                                    <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-info btn-sm" title="Refresh Data">
+                                                        <i class="ace-icon fa fa-refresh"></i>
+                                                    </a>
                                                 </div>
                                             </div>
+                                            <span class="help-block">
+                                                <small>Cari berdasarkan nomor polisi, nama pemilik, atau nomor telepon</small>
+                                            </span>
 										</div>
-									</div> 
+									</div>
                                 </form>
                             </div>
-                            <div class="col-xs-2"></div>
                             <div class="col-xs-2">
-                                <button class="btn btn-danger btn-block" onclick="tambahPelangganBaru()">+ Pelanggan Baru</button>
+                                <div class="text-right">
+                                    <button class="btn btn-success btn-block" onclick="window.location.href='input_pelanggan_awal.php'">
+                                        <i class="ace-icon fa fa-plus"></i>
+                                        Pelanggan Baru
+                                    </button>
+                                </div>
                             </div>                            
 
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
+                                <!-- Legend Kategori Member -->
+                                <div class="alert alert-info" style="margin-bottom: 10px; padding: 10px;">
+                                    <strong><i class="ace-icon fa fa-info-circle"></i> Legend Kategori Member:</strong>
+                                    <div style="margin-top: 8px;">
+                                        <?php foreach($highlight_settings as $kategori => $setting): ?>
+                                        <span class="member-legend member-highlight-<?php echo strtolower(str_replace(' ', '-', $kategori)); ?>" 
+                                              style="background-color: <?php echo $setting['background_color']; ?>; 
+                                                     color: <?php echo $setting['text_color']; ?>;
+                                                     border-left: <?php echo $setting['border_width']; ?>px solid <?php echo $setting['border_color']; ?>;">
+                                            <?php echo strtoupper($kategori); ?>
+                                        </span>
+                                        <?php endforeach; ?>
+                                        <a href="setting-highlight-member.php" class="btn btn-xs btn-warning pull-right" title="Atur Warna Highlight">
+                                            <i class="ace-icon fa fa-cog"></i> Atur Highlight
+                                        </a>
+                                    </div>
+                                </div>
+
 								<div class="table-header">
 									<?php echo $hasil; ?>
 								</div>                            
@@ -294,15 +437,20 @@
                                             <td width="15%" align="center">Jenis</td>
                                             <td width="10%">Telepon</td>
                                             <td width="15%" align="center">Warna</td>
-                                            <td width="10%" align="center">Grup</td>                                            
+                                            <td width="10%" align="center">Kategori Member</td>                                            
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
+                                        <?php
                                             $sql = mysqli_query($koneksi,$sql_query);
-                                            while ($tampil = mysqli_fetch_array($sql)) {
+                                            $jumlah_data = mysqli_num_rows($sql);
+
+                                            if($jumlah_data > 0) {
+                                                while ($tampil = mysqli_fetch_array($sql)) {
+                                                    $kategori_member = $tampil['kategori_member'];
+                                                    $highlight_class = 'member-highlight-' . strtolower(str_replace(' ', '-', $kategori_member));
                                         ?>
-                                        <tr>
+                                        <tr class="<?php echo $highlight_class; ?>">
                                             <td class="center">
                                                 <div class="btn-group">
                                                     <button data-toggle="dropdown" class="btn dropdown-toggle btn-minier btn-yellow">
@@ -311,25 +459,84 @@
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="save-no-servis-reguler.php?snopol=<?php echo $tampil['nopolisi']; ?>">Input Servis Baru</a>
+                                                            <a href="#" onclick="validatePhoneNumber('<?php echo htmlspecialchars($tampil['nopolisi']); ?>', '<?php echo htmlspecialchars($tampil['telephone']); ?>', '<?php echo htmlspecialchars($tampil['pemilik']); ?>', 'reguler')">
+                                                                <i class="fa fa-wrench blue"></i> Input Servis Reguler
+                                                            </a>
                                                         </li>
                                                         <li>
-                                                            <a href="servis-reguler-jemput.php?snopol=<?php echo $tampil['nopolisi']; ?>">Input Servis Baru + Jemput Antar</a>
+                                                            <a href="#" onclick="validatePhoneNumber('<?php echo htmlspecialchars($tampil['nopolisi']); ?>', '<?php echo htmlspecialchars($tampil['telephone']); ?>', '<?php echo htmlspecialchars($tampil['pemilik']); ?>', 'jemput')">
+                                                                <i class="fa fa-truck orange"></i> Input Servis Jemput Antar
+                                                            </a>
                                                         </li>
                                                     </ul>
-                                                </div><!-- /.btn-group -->                                                        
-                                            </td>														
-                                            <td><?php echo $tampil['nopolisi']?></td>														
-                                            <td><?php echo $tampil['pemilik']?></td>	
-                                            <td class="center"><?php echo $tampil['tipe']?></td>
-                                            <td class="center"><?php echo $tampil['jenis']?></td>
-                                            <td><?php echo $tampil['telephone']?></td>														                                                                                                                                                                                                                                                                                                                                                                            
-                                            <td class="center"><?php echo $tampil['warna']?></td>														
-                                            <td class="center"></td>														                                                                                                                                                                                                                                                                    
+                                                </div><!-- /.btn-group -->
+                                            </td>
+                                            <td><strong><?php echo htmlspecialchars($tampil['nopolisi']); ?></strong></td>
+                                            <td><?php echo htmlspecialchars($tampil['pemilik']); ?></td>
+                                            <td class="center"><?php echo htmlspecialchars($tampil['tipe']); ?></td>
+                                            <td class="center"><?php echo htmlspecialchars($tampil['jenis']); ?></td>
+                                            <td>
+                                                <?php
+                                                    $phone = $tampil['telephone'];
+                                                    if($phone && $phone != 'N/A') {
+                                                        echo '<i class="ace-icon fa fa-phone green"></i> ' . htmlspecialchars($phone);
+                                                    } else {
+                                                        echo '<span class="text-muted">Tidak ada</span>';
+                                                    }
+                                                ?>
+                                            </td>
+                                            <td class="center"><?php echo htmlspecialchars($tampil['warna']); ?></td>
+                                            <td class="center">
+                                                <?php
+                                                    $kategori = $tampil['kategori_member'];
+                                                    
+                                                    // Use settings from database if available, otherwise fallback
+                                                    $setting = $highlight_settings[$kategori] ?? null;
+                                                    
+                                                    // Get icon from master_kategori_member if possible, or use default
+                                                    // Ideally we should join with master_kategori_member in the main query, 
+                                                    // but for now let's rely on the highlight settings or a simple lookup if needed.
+                                                    // Since we don't have the icon in $tampil, we can try to match with common ones or leave it.
+                                                    // However, the user wants it dynamic. 
+                                                    // Let's assume the icon is part of the category name or we just display the name with the style.
+                                                    
+                                                    // Better approach: The highlight settings are already loaded in $highlight_settings
+                                                    // We can use the style from there.
+                                                    
+                                                    if($setting) {
+                                                        $style = "background-color: {$setting['background_color']}; color: {$setting['text_color']}; border: 1px solid {$setting['border_color']};";
+                                                        echo '<span class="label" style="' . $style . '">' . strtoupper($kategori) . '</span>';
+                                                    } else {
+                                                        echo '<span class="label label-default">' . strtoupper($kategori) . '</span>';
+                                                    }
+                                                ?>
+                                            </td>
                                         </tr>
-                                    <?php
-                                        }
-                                    ?>
+                                        <?php
+                                                }
+                                            } else {
+                                        ?>
+                                        <tr>
+                                            <td colspan="8" class="center">
+                                                <div class="alert alert-warning" style="margin: 20px;">
+                                                    <i class="ace-icon fa fa-exclamation-triangle bigger-120"></i>
+                                                    <strong>Tidak ada data!</strong><br>
+                                                    <?php if(isset($_POST['btncari']) && !empty($txtsearch)): ?>
+                                                        Tidak ditemukan data untuk pencarian "<strong><?php echo htmlspecialchars($txtsearch); ?></strong>".
+                                                    <?php else: ?>
+                                                        Belum ada data pelanggan dan kendaraan.
+                                                    <?php endif; ?>
+                                                    <br><br>
+                                                    <a href="input_pelanggan_awal.php" class="btn btn-primary btn-sm">
+                                                        <i class="ace-icon fa fa-plus"></i>
+                                                        Tambah Data Baru
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                            }
+                                        ?>
                                     </tbody>                                    
                                 </table>
                             </div>
@@ -383,6 +590,91 @@
 		<script src="assets/js/ace.min.js"></script>
 
 		<!-- inline scripts related to this page -->
+
+		<!-- Modal Preview Diskon -->
+		<style>
+			#discountPreviewModal .modal-body {
+				max-height: 60vh;
+				overflow-y: auto;
+			}
+			#discountPreviewModal .modal-footer {
+				background: #f5f5f5;
+				border-top: 2px solid #ddd;
+				padding: 15px 20px;
+			}
+			#discountPreviewModal .modal-footer .btn {
+				min-width: 150px;
+				padding: 10px 20px;
+				font-size: 14px;
+			}
+			#discountPreviewModal .modal-footer .btn-success {
+				background: linear-gradient(135deg, #27ae60, #2ecc71);
+				border: none;
+			}
+			#discountPreviewModal .modal-footer .btn-warning {
+				background: linear-gradient(135deg, #e67e22, #f39c12);
+				border: none;
+				color: white;
+			}
+			.service-type-badge {
+				display: inline-block;
+				padding: 5px 15px;
+				border-radius: 20px;
+				font-weight: bold;
+				margin-left: 10px;
+			}
+			.service-type-reguler {
+				background: #3498db;
+				color: white;
+			}
+			.service-type-jemput {
+				background: #e67e22;
+				color: white;
+			}
+		</style>
+		<div class="modal fade" id="discountPreviewModal" tabindex="-1" role="dialog" data-backdrop="static">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white;">
+						<button type="button" class="close" data-dismiss="modal" style="color: white; opacity: 1;">&times;</button>
+						<h4 class="modal-title">
+							<i class="ace-icon fa fa-gift"></i>
+							Preview Diskon & Riwayat Servis
+							<span id="serviceTypeBadge" class="service-type-badge"></span>
+						</h4>
+					</div>
+					<div class="modal-body" id="discountPreviewContent">
+						<div class="text-center">
+							<i class="ace-icon fa fa-spinner fa-spin fa-3x blue"></i>
+							<p class="bigger-110">Memuat data...</p>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="hidden" id="previewNopol" value="">
+						<input type="hidden" id="previewServiceType" value="">
+						<input type="hidden" id="previewDiscountType" value="">
+						<input type="hidden" id="previewDiscountValue" value="">
+
+						<div class="row" style="width: 100%;">
+							<div class="col-xs-4 text-left">
+								<button type="button" class="btn btn-default btn-lg" data-dismiss="modal">
+									<i class="ace-icon fa fa-times"></i> Batal
+								</button>
+							</div>
+							<div class="col-xs-8 text-right">
+								<button type="button" class="btn btn-warning btn-lg" id="btnSkipDiscount" onclick="proceedWithoutDiscount()">
+									<i class="ace-icon fa fa-forward"></i> Tanpa Diskon
+								</button>
+								<button type="button" class="btn btn-success btn-lg" id="btnApplyDiscount" onclick="proceedWithDiscount()">
+									<i class="ace-icon fa fa-check"></i> Terapkan Diskon & Lanjut
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<script type="text/javascript">
 			jQuery(function($) {
 				//initiate dataTables plugin
@@ -423,46 +715,9 @@
 			
 				
 				
-				$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
-				
-				new $.fn.dataTable.Buttons( myTable, {
-					buttons: [
-					  {
-						"extend": "colvis",
-						"text": "<i class='fa fa-search bigger-110 blue'></i> <span class='hidden'>Show/hide columns</span>",
-						"className": "btn btn-white btn-primary btn-bold",
-						columns: ':not(:first):not(:last)'
-					  },
-					  {
-						"extend": "copy",
-						"text": "<i class='fa fa-copy bigger-110 pink'></i> <span class='hidden'>Copy to clipboard</span>",
-						"className": "btn btn-white btn-primary btn-bold"
-					  },
-					  {
-						"extend": "csv",
-						"text": "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>Export to CSV</span>",
-						"className": "btn btn-white btn-primary btn-bold"
-					  },
-					  {
-						"extend": "excel",
-						"text": "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>Export to Excel</span>",
-						"className": "btn btn-white btn-primary btn-bold"
-					  },
-					  {
-						"extend": "pdf",
-						"text": "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>Export to PDF</span>",
-						"className": "btn btn-white btn-primary btn-bold"
-					  },
-					  {
-						"extend": "print",
-						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
-						"className": "btn btn-white btn-primary btn-bold",
-						autoPrint: false,
-						message: 'This print was produced using the Print button for DataTables'
-					  }		  
-					]
-				} );
-				myTable.buttons().container().appendTo( $('.tableTools-container') );
+				// Export buttons are disabled on this page because the legacy
+				// DataTables Buttons bundle is incompatible with the local setup
+				// and breaks the primary service entry flow.
 				
 				//style the message box
 				var defaultCopyAction = myTable.button(1).action();
@@ -614,69 +869,787 @@
 				).css('padding-top', '12px');
 				*/
 			
-			
 			})
-		</script>
-		
-		<script type="text/javascript">
-			function tambahPelangganBaru() {
-				// Step 1: Input nomor WA
-				var nomorWA = prompt("Masukkan Nomor WhatsApp pelanggan:", "");
-				if (nomorWA != null && nomorWA != "") {
-					// Check if phone number exists
-					$.ajax({
-						url: 'check_phone.php',
-						method: 'POST',
-						data: { phone: nomorWA },
-						dataType: 'json',
-						success: function(response) {
-							if (response.exists) {
-								// Customer exists, now ask for nopol
-								alert('Pelanggan ditemukan: ' + response.data.nama + ' (' + response.data.phone + ')');
-								var nopol = prompt("Masukkan No. Polisi kendaraan:", "");
-								if (nopol != null && nopol != "") {
-									checkNopolForExistingCustomer(nopol, response.data.phone, response.data.nama);
-								}
-							} else {
-								// New customer, redirect to add form
-								window.location.href = 'pelanggan_add_servis.php?phone=' + encodeURIComponent(nomorWA);
-							}
-						},
-						error: function() {
-							alert('Terjadi kesalahan saat memeriksa data.');
-						}
-					});
-				}
-			}
 
-			function checkNopolForExistingCustomer(nopol, phone, nama) {
-				$.ajax({
-					url: 'check_nopol_for_customer.php',
-					method: 'POST',
-					data: { nopol: nopol, phone: phone },
-					dataType: 'json',
-					success: function(response) {
-						if (response.exists) {
-							alert('Kendaraan ' + nopol + ' sudah terdaftar untuk pelanggan ' + nama);
-							// Redirect to search with the nopol
-							document.getElementById('txtsearch').value = nopol;
-							document.forms[0].submit();
-						} else {
-							// Add new vehicle for existing customer
-							if(confirm('Tambah kendaraan baru (' + nopol + ') untuk pelanggan ' + nama + '?')) {
-								window.location.href = 'pelanggan_add_servis.php?phone=' + encodeURIComponent(phone) + '&nopol=' + encodeURIComponent(nopol) + '&mode=add_vehicle';
-							}
-						}
-					},
-					error: function() {
-						alert('Terjadi kesalahan saat memeriksa data kendaraan.');
+			// Phone Number Validation Function
+			function validatePhoneNumber(nopol, currentPhone, customerName, serviceType) {
+				// Clean phone number for display
+				var displayPhone = currentPhone && currentPhone !== 'N/A' ? currentPhone : '';
+				
+				// Create modal content
+				var modalContent = `
+					<div class="modal fade" id="phoneValidationModal" tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title">
+										<i class="ace-icon fa fa-phone blue"></i> 
+										Validasi Nomor WhatsApp
+									</h4>
+								</div>
+								<div class="modal-body">
+									<div class="alert alert-info">
+										<i class="ace-icon fa fa-info-circle"></i>
+										<strong>Verifikasi data pelanggan sebelum input servis</strong>
+									</div>
+									
+									<div class="form-horizontal">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Nomor Polisi:</label>
+											<div class="col-sm-8">
+												<p class="form-control-static"><strong>${nopol}</strong></p>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Nama Pelanggan:</label>
+											<div class="col-sm-8">
+												<p class="form-control-static">${customerName}</p>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Jenis Servis:</label>
+											<div class="col-sm-8">
+												<p class="form-control-static">
+													<span class="label ${serviceType === 'reguler' ? 'label-primary' : 'label-warning'}">
+														<i class="ace-icon fa ${serviceType === 'reguler' ? 'fa-wrench' : 'fa-truck'}"></i>
+														${serviceType === 'reguler' ? 'Servis Reguler' : 'Servis Jemput Antar'}
+													</span>
+												</p>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Nomor WA Tersimpan:</label>
+											<div class="col-sm-8">
+												<p class="form-control-static">
+													${displayPhone ? '<i class="ace-icon fa fa-phone green"></i> ' + displayPhone : '<span class="text-muted">Tidak ada nomor tersimpan</span>'}
+												</p>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-4 control-label"><span class="text-danger">*</span> Nomor WA Aktif:</label>
+											<div class="col-sm-8">
+												<input type="text" id="newPhoneNumber" class="form-control" 
+													   placeholder="Masukkan nomor WA aktif (08xxx atau +628xxx)" 
+													   value="${displayPhone}" autocomplete="off" 
+													   data-original="${displayPhone}" />
+												<span class="help-block">
+													<small>Pastikan nomor WA ini aktif untuk komunikasi servis</small>
+												</span>
+											</div>
+										</div>
+									</div>
+									
+									<div class="alert alert-warning">
+										<i class="ace-icon fa fa-exclamation-triangle"></i>
+										<strong>Penting:</strong> Nomor WA akan digunakan untuk komunikasi progress servis. 
+										Pastikan nomor yang dimasukkan benar dan aktif.
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">
+										<i class="ace-icon fa fa-times"></i> Batal
+									</button>
+									<button type="button" class="btn btn-primary" onclick="checkPhoneChanges('${nopol}', '${serviceType}')">
+										<i class="ace-icon fa fa-arrow-right"></i> Lanjut ke Input Servis
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+				
+				// Remove existing modal if any
+				$('#phoneValidationModal').remove();
+				
+				// Add modal to body
+				$('body').append(modalContent);
+				
+				// Show modal
+				$('#phoneValidationModal').modal('show');
+				
+				// Focus on phone input
+				$('#phoneValidationModal').on('shown.bs.modal', function() {
+					$('#newPhoneNumber').focus().select();
+				});
+				
+				// Handle Enter key
+				$('#newPhoneNumber').on('keypress', function(e) {
+					if (e.which === 13) {
+						checkPhoneChanges(nopol, serviceType);
 					}
 				});
 			}
+
+			// Check Phone Changes Function
+			function checkPhoneChanges(nopol, serviceType) {
+				var newPhone = $('#newPhoneNumber').val().trim();
+				var originalPhone = $('#newPhoneNumber').data('original') || '';
+				
+				// Basic validation first
+				if (!newPhone) {
+					alert('Nomor WA harus diisi!');
+					$('#newPhoneNumber').focus();
+					return;
+				}
+				
+				// Basic phone validation
+				var phonePattern = /^(\+62|62|0)[0-9]{9,13}$/;
+				if (!phonePattern.test(newPhone)) {
+					alert('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
+					$('#newPhoneNumber').focus().select();
+					return;
+				}
+				
+				// Normalize phone numbers for comparison (remove spaces, dashes, etc.)
+				var normalizedNew = newPhone.replace(/[\s\-\(\)]/g, '');
+				var normalizedOriginal = originalPhone.replace(/[\s\-\(\)]/g, '');
+				
+				// Check if phone number has changed
+				if (normalizedNew !== normalizedOriginal && originalPhone !== '') {
+					showPhoneChangeOptions(nopol, serviceType, newPhone, originalPhone);
+				} else {
+					// No change or no original phone, proceed directly
+					proceedToService(nopol, serviceType, false);
+				}
+			}
+
+			// Show Phone Change Options Function
+			function showPhoneChangeOptions(nopol, serviceType, newPhone, originalPhone) {
+				// Close the validation modal first
+				$('#phoneValidationModal').modal('hide');
+				
+				var optionsContent = `
+					<div class="modal fade" id="phoneChangeModal" tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title">
+										<i class="ace-icon fa fa-question-circle orange"></i> 
+										Nomor WhatsApp Berbeda
+									</h4>
+								</div>
+								<div class="modal-body">
+									<div class="alert alert-warning">
+										<i class="ace-icon fa fa-exclamation-triangle"></i>
+										<strong>Perhatian!</strong> Nomor WA yang dimasukkan berbeda dengan yang tersimpan.
+									</div>
+									
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="widget-box widget-color-blue2">
+												<div class="widget-header">
+													<h5 class="widget-title smaller">
+														<i class="ace-icon fa fa-database"></i>
+														Nomor Tersimpan
+													</h5>
+												</div>
+												<div class="widget-body">
+													<div class="widget-main">
+														<p class="text-center">
+															<i class="ace-icon fa fa-phone green bigger-150"></i><br>
+															<strong>${originalPhone}</strong>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="widget-box widget-color-orange2">
+												<div class="widget-header">
+													<h5 class="widget-title smaller">
+														<i class="ace-icon fa fa-edit"></i>
+														Nomor Baru
+													</h5>
+												</div>
+												<div class="widget-body">
+													<div class="widget-main">
+														<p class="text-center">
+															<i class="ace-icon fa fa-phone orange bigger-150"></i><br>
+															<strong>${newPhone}</strong>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="alert alert-info">
+										<i class="ace-icon fa fa-info-circle"></i>
+										<strong>Pilih salah satu opsi:</strong>
+										<ul style="margin-top: 10px; margin-bottom: 0;">
+											<li><strong>Update Nomor:</strong> Simpan nomor baru ke database dan lanjut servis</li>
+											<li><strong>Gunakan Nomor Lama:</strong> Abaikan perubahan dan gunakan nomor tersimpan</li>
+										</ul>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">
+										<i class="ace-icon fa fa-times"></i> Batal
+									</button>
+									<button type="button" class="btn btn-warning" onclick="useOriginalPhone('${nopol}', '${serviceType}', '${originalPhone}')">
+										<i class="ace-icon fa fa-undo"></i> Gunakan Nomor Lama
+									</button>
+									<button type="button" class="btn btn-success" onclick="updatePhoneAndProceed('${nopol}', '${serviceType}', '${newPhone}')">
+										<i class="ace-icon fa fa-save"></i> Update Nomor & Lanjut
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+				
+				// Remove existing modal if any
+				$('#phoneChangeModal').remove();
+				
+				// Add modal to body
+				$('body').append(optionsContent);
+				
+				// Show modal
+				$('#phoneChangeModal').modal('show');
+			}
+
+			// Use Original Phone Function
+			function useOriginalPhone(nopol, serviceType, originalPhone) {
+				$('#phoneChangeModal').modal('hide');
+				
+				// Set the phone back to original and proceed without updating
+				$('#newPhoneNumber').val(originalPhone);
+				proceedToService(nopol, serviceType, false);
+			}
+
+			// Update Phone and Proceed Function
+			function updatePhoneAndProceed(nopol, serviceType, newPhone) {
+				$('#phoneChangeModal').modal('hide');
+				
+				// Set the new phone and proceed with update
+				$('#newPhoneNumber').val(newPhone);
+				proceedToService(nopol, serviceType, true);
+			}
+
+			// Proceed to Service Function
+			function proceedToService(nopol, serviceType, forceUpdate) {
+				var newPhone = $('#newPhoneNumber').val().trim();
+				forceUpdate = forceUpdate || false;
+				
+				// Validate phone number
+				if (!newPhone) {
+					alert('Nomor WA harus diisi!');
+					$('#newPhoneNumber').focus();
+					return;
+				}
+				
+				// Basic phone validation
+				var phonePattern = /^(\+62|62|0)[0-9]{9,13}$/;
+				if (!phonePattern.test(newPhone)) {
+					alert('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
+					$('#newPhoneNumber').focus().select();
+					return;
+				}
+				
+				// Show loading on active modal
+				var activeModal = $('#phoneValidationModal:visible, #phoneChangeModal:visible');
+				if (activeModal.length > 0) {
+					activeModal.find('.modal-footer .btn-primary, .modal-footer .btn-success').prop('disabled', true).html('<i class="ace-icon fa fa-spinner fa-spin"></i> Memproses...');
+				}
+				
+				// Update phone number via AJAX if forced or changed
+				var originalPhone = $('#newPhoneNumber').data('original') || '';
+				if (forceUpdate || (newPhone !== originalPhone && originalPhone !== '')) {
+					$.ajax({
+						url: 'update_customer_phone.php',
+						type: 'POST',
+						data: {
+							nopol: nopol,
+							phone: newPhone
+						},
+						dataType: 'json',
+						success: function(response) {
+							if (response.success) {
+								redirectToService(nopol, serviceType);
+							} else {
+								alert('Gagal update nomor WA: ' + response.message);
+								if (activeModal.length > 0) {
+									activeModal.find('.modal-footer .btn-primary, .modal-footer .btn-success').prop('disabled', false).html('<i class="ace-icon fa fa-arrow-right"></i> Lanjut ke Input Servis');
+								}
+							}
+						},
+						error: function() {
+							// Continue even if update fails
+							console.log('Warning: Failed to update phone number');
+							redirectToService(nopol, serviceType);
+						}
+					});
+				} else {
+					// No change, proceed directly
+					redirectToService(nopol, serviceType);
+				}
+			}
+
+			// Redirect to Service Function - Modified to show discount preview first
+			function redirectToService(nopol, serviceType) {
+				$('#phoneValidationModal').modal('hide');
+				$('#phoneChangeModal').modal('hide');
+
+				// Show discount preview modal
+				showDiscountPreview(nopol, serviceType);
+			}
+
+			// Show Discount Preview Modal
+			function showDiscountPreview(nopol, serviceType) {
+				$('#previewNopol').val(nopol);
+				$('#previewServiceType').val(serviceType);
+
+				// Set service type badge
+				var badgeHtml = '';
+				if(serviceType === 'reguler') {
+					badgeHtml = '<span class="service-type-badge service-type-reguler"><i class="fa fa-wrench"></i> REGULER</span>';
+				} else if(serviceType === 'jemput') {
+					badgeHtml = '<span class="service-type-badge service-type-jemput"><i class="fa fa-motorcycle"></i> JEMPUT</span>';
+				}
+				$('#serviceTypeBadge').html(badgeHtml);
+
+				// Reset content
+				$('#discountPreviewContent').html(`
+					<div class="text-center">
+						<i class="ace-icon fa fa-spinner fa-spin fa-3x blue"></i>
+						<p class="bigger-110">Memuat data diskon dan riwayat servis...</p>
+					</div>
+				`);
+
+				// Show modal
+				$('#discountPreviewModal').modal('show');
+
+				// Load data via AJAX
+				$.ajax({
+					url: '_ajax/ajax-get-discount-preview.php',
+					type: 'POST',
+					data: {
+						nopol: nopol,
+						service_type: serviceType
+					},
+					dataType: 'json',
+					success: function(response) {
+						if(response.success) {
+							renderDiscountPreview(response);
+						} else {
+							$('#discountPreviewContent').html(`
+								<div class="alert alert-danger">
+									<i class="ace-icon fa fa-exclamation-triangle"></i>
+									${response.message || 'Gagal memuat data'}
+								</div>
+							`);
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error('AJAX Error:', error);
+						$('#discountPreviewContent').html(`
+							<div class="alert alert-warning">
+								<i class="ace-icon fa fa-exclamation-triangle"></i>
+								Tidak dapat memuat data diskon. Anda tetap dapat melanjutkan input servis.
+							</div>
+						`);
+					}
+				});
+			}
+
+			// Render Discount Preview Content
+			function renderDiscountPreview(data) {
+				var html = '';
+				var customer = data.customer;
+				var hasDiscount = false;
+
+				// Customer Info Section
+				html += `
+				<div class="row">
+					<div class="col-md-12">
+						<div class="widget-box widget-color-blue2">
+							<div class="widget-header">
+								<h5 class="widget-title"><i class="ace-icon fa fa-user"></i> Data Pelanggan</h5>
+							</div>
+							<div class="widget-body">
+								<div class="widget-main">
+									<div class="row">
+										<div class="col-sm-6">
+											<p><strong>No. Polisi:</strong> ${customer.nopolisi}</p>
+											<p><strong>Nama:</strong> ${customer.nama_pelanggan || '-'}</p>
+											<p><strong>Telepon:</strong> ${customer.telephone || '-'}</p>
+										</div>
+										<div class="col-sm-6">
+											<p><strong>Motor:</strong> ${customer.merek || '-'} ${customer.tipe || ''}</p>
+											<p><strong>Total Kunjungan:</strong> ${customer.jumlah_kunjungan || 0}x</p>
+											<p><strong>Total Transaksi:</strong> Rp ${formatNumber(customer.total_nominal || 0)}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>`;
+
+				// Discount Section
+				html += '<div class="row">';
+
+				// Priority: Diskon Periode > Diskon Member
+				if(data.discount_type === 'periode' && data.discount_periode && data.discount_periode.length > 0) {
+					hasDiscount = true;
+					$('#previewDiscountType').val('periode');
+
+					html += `
+					<div class="col-md-12">
+						<div class="alert alert-success" style="border-left: 5px solid #2ecc71;">
+							<h4><i class="ace-icon fa fa-star"></i> PROMO AKTIF!</h4>
+							<p>Ada promo spesial yang berlaku untuk servis ini:</p>
+						</div>
+					</div>`;
+
+					data.discount_periode.forEach(function(promo, index) {
+						var diskonText = promo.tipe_promo === 'persen'
+							? promo.nilai_promo + '%'
+							: 'Rp ' + formatNumber(promo.nilai_promo);
+
+						html += `
+						<div class="col-md-6">
+							<div class="widget-box widget-color-green2" style="margin-bottom: 15px;">
+								<div class="widget-header">
+									<h5 class="widget-title">
+										<i class="ace-icon fa fa-tag"></i> ${promo.nama_promo}
+									</h5>
+									<span class="widget-toolbar">
+										<span class="badge badge-warning">${diskonText}</span>
+									</span>
+								</div>
+								<div class="widget-body">
+									<div class="widget-main">
+										<p>${promo.deskripsi || 'Promo spesial untuk pelanggan setia'}</p>
+										<p><small><i class="ace-icon fa fa-calendar"></i> Berlaku: ${promo.tanggal_mulai} s/d ${promo.tanggal_selesai}</small></p>
+										<p><small><i class="ace-icon fa fa-cube"></i> Untuk: ${promo.target_type} - ${promo.target_nama || promo.target_id}</small></p>
+									</div>
+								</div>
+							</div>
+						</div>`;
+					});
+
+					// Store first promo value
+					var firstPromo = data.discount_periode[0];
+					$('#previewDiscountValue').val(JSON.stringify({
+						type: 'periode',
+						promo_id: firstPromo.id_promo,
+						tipe_promo: firstPromo.tipe_promo,
+						nilai: firstPromo.nilai_promo
+					}));
+
+				} else if(data.discount_type === 'member' && data.discount_member) {
+					hasDiscount = true;
+					$('#previewDiscountType').val('member');
+
+					var member = data.discount_member;
+					var badgeStyle = `background-color: ${member.warna || '#cd7f32'}; color: white;`;
+
+					html += `
+					<div class="col-md-12">
+						<div class="alert alert-info" style="border-left: 5px solid ${member.warna || '#3498db'};">
+							<h4>
+								<span class="label" style="${badgeStyle}">
+									${member.icon || '🏅'} ${member.nama_kategori}
+								</span>
+								DISKON MEMBER
+							</h4>
+							<p>Anda berhak mendapat diskon sebagai member ${member.nama_kategori}:</p>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="widget-box" style="border: 2px solid ${member.warna || '#3498db'};">
+							<div class="widget-header" style="background: ${member.warna || '#3498db'}; color: white;">
+								<h5 class="widget-title"><i class="ace-icon fa fa-wrench"></i> Diskon Jasa</h5>
+							</div>
+							<div class="widget-body">
+								<div class="widget-main text-center">
+									<h1 class="text-success">${member.diskon_jasa || 0}%</h1>
+									<p>untuk semua jasa servis</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="widget-box" style="border: 2px solid ${member.warna || '#3498db'};">
+							<div class="widget-header" style="background: ${member.warna || '#3498db'}; color: white;">
+								<h5 class="widget-title"><i class="ace-icon fa fa-cube"></i> Diskon Barang</h5>
+							</div>
+							<div class="widget-body">
+								<div class="widget-main text-center">
+									<h1 class="text-primary">${member.diskon_barang || 0}%</h1>
+									<p>untuk sparepart</p>
+								</div>
+							</div>
+						</div>
+					</div>`;
+
+					// Benefits
+					if(member.benefit_text) {
+						html += `
+						<div class="col-md-12" style="margin-top: 15px;">
+							<div class="alert alert-warning">
+								<strong><i class="ace-icon fa fa-gift"></i> Benefit Member ${member.nama_kategori}:</strong>
+								<ul style="margin-top: 10px;">
+									${member.benefit_text.split('\n').map(b => '<li>' + b + '</li>').join('')}
+								</ul>
+							</div>
+						</div>`;
+					}
+
+					// Store member discount value
+					$('#previewDiscountValue').val(JSON.stringify({
+						type: 'member',
+						kategori: member.nama_kategori,
+						diskon_jasa: member.diskon_jasa,
+						diskon_barang: member.diskon_barang
+					}));
+
+				} else {
+					// No discount available
+					$('#previewDiscountType').val('none');
+
+					html += `
+					<div class="col-md-12">
+						<div class="alert alert-default" style="background: #f9f9f9; border: 1px solid #ddd;">
+							<h4><i class="ace-icon fa fa-info-circle"></i> Tidak Ada Diskon Aktif</h4>
+							<p>Saat ini tidak ada promo periode atau diskon member yang berlaku.</p>
+						</div>
+					</div>`;
+				}
+
+				// Next Tier Info
+				if(data.next_tier && data.to_next_tier > 0) {
+					html += `
+					<div class="col-md-12" style="margin-top: 15px;">
+						<div class="alert alert-info">
+							<i class="ace-icon fa fa-arrow-up"></i>
+							<strong>Naik ke ${data.next_tier.nama_kategori}!</strong>
+							Butuh ${data.exclude_mode === 'kunjungan'
+								? Math.ceil(data.to_next_tier) + ' kunjungan lagi'
+								: 'Rp ' + formatNumber(data.to_next_tier) + ' transaksi lagi'}
+							untuk mendapat diskon ${data.next_tier.diskon_jasa}% jasa & ${data.next_tier.diskon_barang}% barang!
+						</div>
+					</div>`;
+				}
+
+				// Excluded Categories Info
+				if(data.excluded_categories && data.excluded_categories.length > 0 && hasDiscount) {
+					html += `
+					<div class="col-md-12" style="margin-top: 10px;">
+						<div class="alert alert-warning">
+							<small>
+								<i class="ace-icon fa fa-exclamation-circle"></i>
+								<strong>Catatan:</strong> Diskon member tidak berlaku untuk kategori:
+								${data.excluded_categories.map(c => c.jenis).join(', ')}
+							</small>
+						</div>
+					</div>`;
+				}
+
+				html += '</div>';
+
+				// Service History Section
+				html += `<hr style="margin: 20px 0;">
+				<div class="row">
+					<div class="col-md-12">
+						<h4><i class="ace-icon fa fa-history blue"></i> Riwayat Servis Sebelumnya</h4>`;
+
+				if(data.service_history && data.service_history.length > 0) {
+					html += `
+					<div class="table-responsive">
+						<table class="table table-bordered table-striped table-condensed">
+							<thead>
+								<tr class="info">
+									<th>No. Service</th>
+									<th>Tanggal</th>
+									<th>Keluhan</th>
+									<th>Mekanik</th>
+									<th>Status</th>
+									<th>Total</th>
+								</tr>
+							</thead>
+							<tbody>`;
+
+					data.service_history.forEach(function(hist) {
+						var statusClass = hist.status_servis === 'bayar' ? 'success' :
+							(hist.status_servis === 'proses' ? 'warning' : 'default');
+						var statusText = hist.status_servis === 'bayar' ? 'Selesai' :
+							(hist.status_servis === 'proses' ? 'Proses' : hist.status_servis);
+
+						html += `
+						<tr>
+							<td><small>${hist.no_service}</small></td>
+							<td>${hist.tanggal}</td>
+							<td>${hist.keluhan || '-'}</td>
+							<td>${hist.mekanik_nama || '-'}</td>
+							<td><span class="label label-${statusClass}">${statusText}</span></td>
+							<td class="text-right">Rp ${formatNumber(hist.total_akhir || hist.subtotal || 0)}</td>
+						</tr>`;
+					});
+
+					html += `</tbody></table></div>`;
+				} else {
+					html += `
+					<div class="alert alert-info">
+						<i class="ace-icon fa fa-info-circle"></i>
+						Belum ada riwayat servis untuk kendaraan ini. Ini adalah kunjungan pertama!
+					</div>`;
+				}
+
+				html += '</div></div>';
+
+				// Keluhan History Section
+				if(data.keluhan_history && data.keluhan_history.length > 0) {
+					html += `
+					<hr style="margin: 20px 0;">
+					<div class="row">
+						<div class="col-md-12">
+							<h4><i class="ace-icon fa fa-comments orange"></i> Riwayat Keluhan</h4>
+							<div class="table-responsive">
+								<table class="table table-bordered table-condensed">
+									<thead>
+										<tr class="warning">
+											<th width="15%">Tanggal</th>
+											<th width="50%">Keluhan</th>
+											<th width="15%">Status</th>
+											<th width="20%">Catatan</th>
+										</tr>
+									</thead>
+									<tbody>`;
+
+					data.keluhan_history.forEach(function(kel) {
+						var statusClass = kel.status_keluhan === 'selesai' ? 'success' :
+							(kel.status_keluhan === 'pending' ? 'danger' : 'warning');
+						var statusIcon = kel.status_keluhan === 'selesai' ? 'check-circle' :
+							(kel.status_keluhan === 'pending' ? 'exclamation-circle' : 'clock-o');
+
+						html += `
+						<tr>
+							<td><small>${kel.tanggal_service || '-'}</small></td>
+							<td>${kel.keluhan || '-'}</td>
+							<td>
+								<span class="label label-${statusClass}">
+									<i class="ace-icon fa fa-${statusIcon}"></i>
+									${kel.status_keluhan || 'Tidak diketahui'}
+								</span>
+							</td>
+							<td><small>${kel.catatan_penyelesaian || '-'}</small></td>
+						</tr>`;
+					});
+
+					html += `</tbody></table></div></div></div>`;
+				}
+
+				// Get service type info for buttons and destination
+				var serviceType = $('#previewServiceType').val();
+				var serviceLabel = (serviceType === 'jemput') ? 'Input Servis Jemput' : 'Input Servis Reguler';
+				var serviceIcon = (serviceType === 'jemput') ? 'fa-motorcycle' : 'fa-wrench';
+
+				// Add destination info at bottom of content
+				html += `
+				<div class="alert alert-default" style="background: #eef7ff; border: 1px solid #3498db; margin-top: 15px;">
+					<i class="ace-icon fa ${serviceIcon} blue bigger-120"></i>
+					<strong>Tujuan:</strong> Anda akan diarahkan ke halaman <strong>${serviceLabel}</strong>
+				</div>`;
+
+				// Update modal content
+				$('#discountPreviewContent').html(html);
+
+				// Update buttons based on discount availability and service type
+				if(!hasDiscount) {
+					$('#btnApplyDiscount').hide();
+					$('#btnSkipDiscount')
+						.html('<i class="ace-icon fa ' + serviceIcon + '"></i> Lanjut ke ' + serviceLabel)
+						.removeClass('btn-warning').addClass('btn-primary');
+				} else {
+					$('#btnApplyDiscount')
+						.html('<i class="ace-icon fa fa-check"></i> Terapkan Diskon & Lanjut ke ' + serviceLabel)
+						.show();
+					$('#btnSkipDiscount')
+						.html('<i class="ace-icon fa fa-forward"></i> Tanpa Diskon')
+						.removeClass('btn-primary').addClass('btn-warning');
+				}
+			}
+
+			// Format number helper
+			function formatNumber(num) {
+				return parseFloat(num || 0).toLocaleString('id-ID');
+			}
+
+			// Proceed with discount
+			function proceedWithDiscount() {
+				var nopol = $('#previewNopol').val();
+				var serviceType = $('#previewServiceType').val();
+				var discountType = $('#previewDiscountType').val();
+				var discountValue = $('#previewDiscountValue').val();
+
+				// Save discount to session via AJAX
+				$.ajax({
+					url: '_ajax/ajax-save-discount-session.php',
+					type: 'POST',
+					data: {
+						nopol: nopol,
+						service_type: serviceType,
+						discount_type: discountType,
+						discount_value: discountValue,
+						apply_discount: 1
+					},
+					dataType: 'json',
+					success: function(response) {
+						finalRedirectToService(nopol, serviceType);
+					},
+					error: function() {
+						// Continue anyway
+						finalRedirectToService(nopol, serviceType);
+					}
+				});
+			}
+
+			// Proceed without discount
+			function proceedWithoutDiscount() {
+				var nopol = $('#previewNopol').val();
+				var serviceType = $('#previewServiceType').val();
+
+				// Save to session that user skipped discount
+				$.ajax({
+					url: '_ajax/ajax-save-discount-session.php',
+					type: 'POST',
+					data: {
+						nopol: nopol,
+						service_type: serviceType,
+						discount_type: 'none',
+						discount_value: '',
+						apply_discount: 0
+					},
+					dataType: 'json',
+					complete: function() {
+						finalRedirectToService(nopol, serviceType);
+					}
+				});
+			}
+
+			// Final redirect to service page
+			function finalRedirectToService(nopol, serviceType) {
+				$('#discountPreviewModal').modal('hide');
+
+				// Redirect based on service type
+				if (serviceType === 'reguler') {
+					window.location.href = 'save-no-servis-reguler.php?snopol=' + encodeURIComponent(nopol);
+				} else if (serviceType === 'jemput') {
+					window.location.href = 'servis-reguler-jemput.php?snopol=' + encodeURIComponent(nopol);
+				}
+			}
 		</script>
+		
 	</body>
 </html>
 
 <?php 
-	}
+}
 ?>

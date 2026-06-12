@@ -36,28 +36,114 @@
         include "function_penjualan.php";
 		$LastID=FormatNoTrans(OtomatisID());	
 
-        $txtcaribrg=$_GET['kd'];
-        $tgl_pilih=$_GET['stgl'];
-        $nopelanggan=$_GET['ssup'];
-        $cbosales=$_GET['ssales'];                                                            
-        $nopesanan=$_GET['spesan'];                                                            
+		$txtcaribrg=isset($_GET['kd']) ? $_GET['kd'] : '';
+		$tgl_pilih=isset($_GET['stgl']) ? $_GET['stgl'] : date('d/m/Y');
+		$nopelanggan=isset($_GET['ssup']) ? $_GET['ssup'] : '';
+		$cbosales=isset($_GET['ssales']) ? $_GET['ssales'] : '';
+		$nopesanan=isset($_GET['spesan']) ? $_GET['spesan'] : '';
+		$auto=isset($_GET['auto']) ? $_GET['auto'] : '';
+		$imported=isset($_GET['imported']) ? $_GET['imported'] : '';
+
+		mysqli_query(
+			$koneksi,
+			"UPDATE tblpenjualan_detail 
+			 SET potongan='0', total=(harga_jual*quantity) 
+			 WHERE user='$_nama' 
+			 AND kd_cabang='$kd_cabang' 
+			 AND status_trx='0' 
+			 AND (potongan >= 100) 
+			 AND (total <= 0) 
+			 AND (harga_jual > 0) 
+			 AND (quantity > 0)"
+		);
 
     // Cari Nama Barang ==========
-        $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                        FROM view_cari_item 
-                                        WHERE 
-                                        noitem='$txtcaribrg'");			
-        $tm_cari=mysqli_fetch_array($cari_kd);
-        $txtnamaitem=$tm_cari['namaitem'];
+		$txtnamaitem='';
+		if($txtcaribrg<>''){
+			$cari_kd=mysqli_query($koneksi,"SELECT namaitem 
+									FROM view_cari_item 
+									WHERE 
+									noitem='$txtcaribrg'");			
+			$tm_cari=mysqli_fetch_array($cari_kd);
+			$txtnamaitem=$tm_cari['namaitem'];
+		}
 
     // Cari Nama Pelanggan ==========
-        $cari_kd=mysqli_query($koneksi,"SELECT 
-                                            namapelanggan 
-                                            FROM tblpelanggan 
-                                            WHERE 
-                                            nopelanggan='$nopelanggan'");			
-        $tm_cari=mysqli_fetch_array($cari_kd);
-        $nmpelanggan=$tm_cari['namapelanggan'];
+		$nmpelanggan='';
+		if($nopelanggan<>''){
+			$cari_kd=mysqli_query($koneksi,"SELECT 
+										namapelanggan 
+										FROM tblpelanggan 
+										WHERE 
+										nopelanggan='$nopelanggan'");			
+			$tm_cari=mysqli_fetch_array($cari_kd);
+			$nmpelanggan=$tm_cari['namapelanggan'];
+		}
+
+		if($auto=='1' && $imported<>'1' && $nopesanan<>''){
+			$cari_kd=mysqli_query($koneksi,"SELECT count(*) as tot FROM tblpenjualan_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+			$tm_cari=mysqli_fetch_array($cari_kd);
+			$tot_draft=$tm_cari['tot'];
+			if($tot_draft>0){
+				echo"<script>window.alert('Masih ada draft penjualan (item belum disimpan). Silakan hapus/selesaikan dulu sebelum import dari pesanan.');window.location=('penjualan_add_rst.php?stgl=$tgl_pilih&ssup=$nopelanggan&ssales=$cbosales&kd=&spesan=$nopesanan&imported=1');</script>";
+				exit;
+			}
+
+			$data = mysqli_query($koneksi,"SELECT 
+									no_order 
+									FROM 
+									tblorderjual_header 
+									WHERE 
+									no_order='$nopesanan' and 
+									status='0'");
+			$cek = mysqli_num_rows($data);
+			if($cek > 0){
+				$cari_kd=mysqli_query($koneksi,"SELECT 
+										no_pelanggan, no_sales 
+										FROM 
+										tblorderjual_header 
+										WHERE 
+										no_order='$nopesanan'");			
+				$tm_cari=mysqli_fetch_array($cari_kd);
+				$nopelanggan=$tm_cari['no_pelanggan'];	
+				$cbosales=$tm_cari['no_sales'];	
+				$cari_kd=mysqli_query($koneksi,"SELECT 
+													namapelanggan 
+													FROM tblpelanggan 
+													WHERE 
+													nopelanggan='$nopelanggan'");			
+				$tm_cari=mysqli_fetch_array($cari_kd);
+				$nmpelanggan=$tm_cari['namapelanggan'];			
+
+
+				$sql = mysqli_query($koneksi,"SELECT * FROM tblorderjual_detail 
+										WHERE no_order='$nopesanan'");
+				while ($tampil = mysqli_fetch_array($sql)) {
+					$no_item=$tampil['no_item'];
+					$txthargabarang=$tampil['harga_jual'];
+					$txtqty=$tampil['quantity']; 
+					$txtpot=$tampil['potongan'];
+					$subtotal=$tampil['total'];					
+
+					if ((float)$txtpot >= 100 && (float)$subtotal <= 0 && (float)$txthargabarang > 0 && (float)$txtqty > 0) {
+						$txtpot = 0;
+						$subtotal = ((float)$txthargabarang * (float)$txtqty);
+					}
+
+
+					mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail 
+										(no_transaksi, no_item, harga_jual, 
+										quantity, qty_order, potongan, total, 
+										user, kd_cabang) 
+										VALUES 
+										('', '$no_item','$txthargabarang',
+										'$txtqty','$txtqty','$txtpot','$subtotal',
+										'$_nama','$kd_cabang')");						  
+				}
+				echo"<script>window.location=('penjualan_add_rst.php?stgl=$tgl_pilih&ssup=$nopelanggan&ssales=$cbosales&kd=&spesan=$nopesanan&imported=1');</script>";
+				exit;
+			}
+		}
                 
     // Total Transaksi ======        
             $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -126,6 +212,11 @@
                         $txtqty=$tampil['quantity']; 
                         $txtpot=$tampil['potongan'];
                         $subtotal=$tampil['total'];                       
+
+                        if ((float)$txtpot >= 100 && (float)$subtotal <= 0 && (float)$txthargabarang > 0 && (float)$txtqty > 0) {
+                            $txtpot = 0;
+                            $subtotal = ((float)$txthargabarang * (float)$txtqty);
+                        }
 
                         mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail 
                                                 (no_transaksi, no_item, harga_jual, 
@@ -269,7 +360,9 @@
         if(isset($_POST['btnsimpan'])) {
             $txttotal_harga= $_POST['txttotal_harga'];            
             if($txttotal_harga=='0') {
-                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
+                $tgl_back = isset($_POST['id-date-picker-1']) ? $_POST['id-date-picker-1'] : $tgl_pilih;
+                $kdbrg = "";
+                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('penjualan_add_rst.php?stgl=$tgl_back&ssup=$nopelanggan&ssales=$cbosales&kd=$kdbrg&spesan=$nopesanan');</script>";			                            
             } else {
             // insert ke order header                
                 date_default_timezone_set('Asia/Jakarta');
@@ -545,7 +638,7 @@ VALUES
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_penjualan02.php"; ?>
+<?php include "menu_penjualan_unified.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -588,30 +681,30 @@ VALUES
 										<div class="widget-main padding-12 no-padding-left no-padding-right">
 											<div class="tabbable">
 												<ul class="nav nav-tabs" id="myTab">
-													<li class="active">
-														<a data-toggle="tab" href="#sales-details" aria-expanded="true">
+													<li class="">
+														<a data-toggle="tab" href="#sales-details" aria-expanded="false">
 															<i class="green ace-icon fa fa-list-alt bigger-120"></i>
 															Sales Details
 														</a>
 													</li>
 
-													<li class="">
-														<a data-toggle="tab" href="#sales-items" aria-expanded="false">
+													<li class="active">
+														<a data-toggle="tab" href="#sales-items" aria-expanded="true">
 															<i class="blue ace-icon fa fa-shopping-cart bigger-120"></i>
 															Item Barang
 														</a>
 													</li>
 
 													<li class="">
-														<a data-toggle="tab" href="#payment-info" aria-expanded="false">
-															<i class="orange ace-icon fa fa-credit-card bigger-120"></i>
-															Payment Information
+														<a data-toggle="tab" href="#sales-actions" aria-expanded="false">
+															<i class="orange ace-icon fa fa-cogs bigger-120"></i>
+															Actions
 														</a>
 													</li>
 												</ul>
 
 												<div class="tab-content">
-													<div id="sales-details" class="tab-pane fade active in">
+													<div id="sales-details" class="tab-pane fade">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">
@@ -634,7 +727,7 @@ VALUES
 														</div>
 													</div>
 
-													<div id="sales-items" class="tab-pane fade">
+													<div id="sales-items" class="tab-pane fade active in">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">
@@ -644,7 +737,7 @@ VALUES
 														</div>
 													</div>
 
-													<div id="payment-info" class="tab-pane fade">
+													<div id="sales-actions" class="tab-pane fade">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">

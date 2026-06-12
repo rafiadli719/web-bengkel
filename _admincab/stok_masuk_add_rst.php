@@ -39,82 +39,7 @@ if (empty($_SESSION['_iduser'])) {
     // Global variable untuk session Accurate
     $GLOBALS['ACCURATE_SESSION_ID'] = null;
 
-    /**
-     * Helper function untuk format timestamp
-     */
-    function formatTimestamp() {
-        return gmdate('Y-m-d\TH:i:s.000\Z');
-    }
-
-    /**
-     * Helper function untuk generate API signature
-     */
-    function generateApiSignature($timestamp, $secret) {
-        return base64_encode(hash_hmac('sha256', $timestamp, $secret, true));
-    }
-
-    /**
-     * Function untuk establish session dengan Accurate
-     */
-    function establishAccurateSession($log_file) {
-        try {
-            global $GLOBALS;
-            $api_token = ACCURATE_API_TOKEN;
-            $signature_secret = ACCURATE_SIGNATURE_SECRET;
-            $base_url = ACCURATE_API_BASE_URL;
-
-            $timestamp = formatTimestamp();
-            $signature = generateApiSignature($timestamp, $signature_secret);
-
-            $url = $base_url . '/api/open-session.do';
-
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                "Authorization: Bearer $api_token",
-                "X-Api-Timestamp: $timestamp",
-                "X-Api-Signature: $signature",
-                "Content-Type: application/x-www-form-urlencoded",
-                "Accept: application/json"
-            ]);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'FitMotor/1.0');
-
-            $response = curl_exec($ch);
-            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curl_error = curl_error($ch);
-            curl_close($ch);
-
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - 🔍 open-session.do: HTTP $http_code\n", FILE_APPEND);
-
-            if (!empty($curl_error)) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - ❌ open-session.do cURL Error: $curl_error\n", FILE_APPEND);
-                return false;
-            }
-
-            if ($http_code == 200) {
-                $result = json_decode($response, true);
-                if ($result && isset($result['s']) && $result['s'] == true && isset($result['session'])) {
-                    $GLOBALS['ACCURATE_SESSION_ID'] = $result['session'];
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - ✅ Session established: " . $result['session'] . "\n", FILE_APPEND);
-                    $_SESSION['accurate_status'] = 'connected';
-                    return $result['session'];
-                }
-            }
-
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - ❌ Session establishment failed\n", FILE_APPEND);
-            $_SESSION['accurate_status'] = 'disconnected';
-            return false;
-
-        } catch (Exception $e) {
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - ❌ Session Exception: " . $e->getMessage() . "\n", FILE_APPEND);
-            $_SESSION['accurate_status'] = 'disconnected';
-            return false;
-        }
-    }
+    // Function establishAccurateSession() is already defined in accurate_config.php
 
     /**
      * Function untuk get host dengan detection yang lebih robust
@@ -132,7 +57,7 @@ if (empty($_SESSION['_iduser'])) {
             $signature_secret = ACCURATE_SIGNATURE_SECRET;
             $base_url = ACCURATE_API_BASE_URL;
 
-            $timestamp = formatTimestamp();
+            $timestamp = gmdate('Y-m-d\TH:i:s.000\Z');
             $signature = generateApiSignature($timestamp, $signature_secret);
 
             $url = $base_url . '/api/api-token.do';
@@ -266,7 +191,7 @@ if (empty($_SESSION['_iduser'])) {
             }
 
             // Establish session
-            $session_id = establishAccurateSession($log_file);
+            $session_id = establishAccurateSession($host);
             if (!$session_id) {
                 return [
                     'success' => false,
@@ -293,7 +218,7 @@ if (empty($_SESSION['_iduser'])) {
             // Generate timestamp dan signature
             $api_token = ACCURATE_API_TOKEN;
             $signature_secret = ACCURATE_SIGNATURE_SECRET;
-            $timestamp = formatTimestamp();
+            $timestamp = gmdate('Y-m-d\TH:i:s.000\Z');
             $signature = generateApiSignature($timestamp, $signature_secret);
 
             // Build URL
@@ -401,8 +326,15 @@ if (empty($_SESSION['_iduser'])) {
         }
 
         $cari_kd = mysqli_query($koneksi, "SELECT sum(total) as tot FROM tbitem_masuk_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+        if (!$cari_kd) {
+            die("Query failed: " . mysqli_error($koneksi));
+        }
         $tm_cari = mysqli_fetch_array($cari_kd);
-        $tot = $tm_cari['tot'];
+        if ($tm_cari) {
+            $tot = $tm_cari['tot'];
+        } else {
+            $tot = 0;
+        }
     }
 
     if (isset($_POST['btnadd'])) {
@@ -410,9 +342,13 @@ if (empty($_SESSION['_iduser'])) {
         $txtqty = $_POST['txtqty'];
         $tgl_pilih = $_POST['id-date-picker-1'];
 
-        $cari_kd = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");
-        $tm_cari = mysqli_fetch_array($cari_kd);
-        $txthargabarang = $tm_cari['hargapokok'];
+        $cari_kd = mysqli_query($koneksi, "SELECT hargapokok FROM view_cari_item WHERE noitem='$txtkdbarang'");
+        if ($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+            $tm_cari = mysqli_fetch_array($cari_kd);
+            $txthargabarang = $tm_cari['hargapokok'];
+        } else {
+            $txthargabarang = 0;
+        }
 
         $subtotal = $txthargabarang * $txtqty;
         if ($txtkdbarang <> '') {
@@ -560,13 +496,21 @@ if (empty($_SESSION['_iduser'])) {
         $txtnamaitem = "";
     } else {
         $cari_kd = mysqli_query($koneksi, "SELECT namaitem FROM view_cari_item WHERE noitem='$txtcaribrg'");
-        $tm_cari = mysqli_fetch_array($cari_kd);
-        $txtnamaitem = $tm_cari['namaitem'];
+        if ($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+            $tm_cari = mysqli_fetch_array($cari_kd);
+            $txtnamaitem = $tm_cari['namaitem'];
+        } else {
+            $txtnamaitem = "Item tidak ditemukan";
+        }
     }
 
     $cari_kd = mysqli_query($koneksi, "SELECT sum(total) as tot FROM tbitem_masuk_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
-    $tm_cari = mysqli_fetch_array($cari_kd);
-    $tot = $tm_cari['tot'];
+    if ($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+        $tm_cari = mysqli_fetch_array($cari_kd);
+        $tot = $tm_cari['tot'];
+    } else {
+        $tot = 0;
+    }
 ?>
 
 <!DOCTYPE html>

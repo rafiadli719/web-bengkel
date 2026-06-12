@@ -1,0 +1,57 @@
+import xml.etree.ElementTree as ET
+import os
+
+base_path = r"C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\excel_xml"
+shared_strings_file = os.path.join(base_path, "xl", "sharedStrings.xml")
+sheet_file = os.path.join(base_path, "xl", "worksheets", "sheet20.xml")
+
+strings = []
+if os.path.exists(shared_strings_file):
+    tree = ET.parse(shared_strings_file)
+    root = tree.getroot()
+    ns = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+    for si in root.findall('ns:si', ns):
+        t = si.find('ns:t', ns)
+        if t is not None:
+            strings.append(t.text if t.text else "")
+        else:
+            text_parts = []
+            for r in si.findall('ns:r', ns):
+                rt = r.find('ns:t', ns)
+                if rt is not None and rt.text:
+                    text_parts.append(rt.text)
+            strings.append("".join(text_parts))
+
+if os.path.exists(sheet_file):
+    context = ET.iterparse(sheet_file, events=('start', 'end'))
+    ns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+    
+    found_row = False
+    for event, elem in context:
+        if event == 'end' and elem.tag == f'{{{ns}}}row':
+            r_idx = elem.get('r')
+            if r_idx == "4":
+                found_row = True
+                cols = {}
+                for c in elem.findall(f'{{{ns}}}c'):
+                    ref = c.get('r')
+                    # Strip row number from ref to get column
+                    col = "".join([x for x in ref if not x.isdigit()])
+                    v_elem = c.find(f'{{{ns}}}v')
+                    v = ""
+                    if v_elem is not None:
+                        if c.get('t') == 's': v = strings[int(v_elem.text)]
+                        else: v = v_elem.text
+                    cols[col] = v
+                
+                # Print columns A to Z if they exist
+                result = []
+                for i in range(26):
+                    col_letter = chr(ord('A') + i)
+                    val = cols.get(col_letter, "(empty)")
+                    result.append(f"{col_letter}:{val}")
+                print(" | ".join(result))
+                break
+            elem.clear()
+    if not found_row: print("Row 4 not found")
+else: print("Sheet20 missing")

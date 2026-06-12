@@ -397,12 +397,50 @@
                         <form class="form-horizontal" action="" method="post" role="form">
                         <input type="hidden" name="txttotal_harga"  class="form-control" value="<?php echo $tot; ?>"/>
 						<div class="row">
-							<div class="col-xs-12 col-sm-12">
+							<div class="col-xs-12">
 								<div class="widget-box">
+									<div class="widget-header widget-header-blue widget-header-flat">
+										<h4 class="widget-title lighter">
+											<i class="ace-icon fa fa-file-text orange"></i>
+											Pesanan Pembelian #<?php echo $LastID; ?>
+										</h4>
+                                        <div class="widget-toolbar">
+                                            <span class="label label-warning arrowed-in arrowed-in-right">Purchase Order</span>
+                                        </div>
+									</div>
+
 									<div class="widget-body">
-										<div class="widget-main">	
-                                            <br>
-                                            <div class="row">
+										<div class="widget-main padding-12 no-padding-left no-padding-right">
+											<div class="tabbable">
+												<ul class="nav nav-tabs" id="myTab">
+													<li class="">
+														<a data-toggle="tab" href="#order-details" aria-expanded="false">
+															<i class="green ace-icon fa fa-list-alt bigger-120"></i>
+															Order Details
+														</a>
+													</li>
+
+													<li class="active">
+														<a data-toggle="tab" href="#order-items" aria-expanded="true">
+															<i class="blue ace-icon fa fa-truck bigger-120"></i>
+															Item Barang
+														</a>
+													</li>
+
+													<li class="">
+														<a data-toggle="tab" href="#order-actions" aria-expanded="false">
+															<i class="orange ace-icon fa fa-cogs bigger-120"></i>
+															Actions
+														</a>
+													</li>
+												</ul>
+
+												<div class="tab-content">
+													<div id="order-details" class="tab-pane fade">
+														<div class="row">
+															<div class="col-xs-12">
+																<div class="padding-18">
+																	<div class="row">
                                                 <div class="col-xs-12 col-sm-5">
                                                     <div class="form-group">
                                                         <label class="col-sm-4 control-label no-padding-right" for="txtnopesanan"> No. Pesanan :</label>									
@@ -453,60 +491,83 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
+                                                		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div id="order-items" class="tab-pane fade active in">
+														<div class="row">
+															<div class="col-xs-12">
+																<div class="padding-18">
+																	<?php include "_template/_pesanan_pembelian_detail.php"; ?>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div id="order-actions" class="tab-pane fade">
+														<div class="row">
+															<div class="col-xs-12">
+																<div class="padding-18">
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<h5 class="blue">
+																				<i class="ace-icon fa fa-cogs"></i>
+																				Aksi Pesanan
+																			</h5>
+																			<div class="space-6"></div>
+																		</div>
+																	</div>
+																	
+																	<div class="hr hr-24"></div>
+																	
+																	<div class="row">
+																		<div class="col-xs-3">
+																			<button class="btn btn-success btn-block" type="submit" 
+																			id="btnsimpan" name="btnsimpan">
+																				<i class="ace-icon fa fa-save"></i>
+																				Simpan
+																			</button>                                                
+																		</div>
+																		<div class="col-xs-3">
+																			<a href="pesanan_pembelian_batal.php?suser=<?php echo $_nama; ?>&scabang=<?php echo $kd_cabang; ?>" 
+																			onclick="return confirm('Inputan Pesanan Pembelian akan dibatalkan. Lanjutkan?')">                                                                    
+																				<button class="btn btn-warning btn-block" type="button">
+																					<i class="ace-icon fa fa-times"></i>
+																					Batal
+																				</button>
+																			</a>                                                
+																		</div>
+																		<div class="col-xs-3">
+																			<button class="btn btn-info btn-block disabled" type="button" 
+																			id="btncetak" name="btncetak">
+																				<i class="ace-icon fa fa-print"></i>
+																				Cetak
+																			</button>                                                
+																		</div>
+																		<div class="col-xs-3">
+																			<a href="pesanan_pembelian.php">
+																			<button class="btn btn-default btn-block" type="button">
+																				<i class="ace-icon fa fa-arrow-left"></i>
+																				Tutup
+																			</button>  
+																			</a>
+																		</div>                                                
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
-								</div>	
+								</div>
 							</div>
-                            
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
 
-                                            <?php include "_template/_pesanan_pembelian_detail.php"; ?>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-							<div class="col-xs-12 col-sm-3">
-                                <button class="btn btn-primary btn-block" type="submit" 
-                                id="btnsimpan" name="btnsimpan">
-                                    Simpan
-                                </button>
-                            </div>
-                        </form> 
-                                                                                       
-							<div class="col-xs-12 col-sm-3">
-                                <a href="pesanan_pembelian_batal.php?suser=<?php echo $_nama; ?>&scabang=<?php echo $kd_cabang; ?>" 
-                                onclick="return confirm('Inputan Pesanan Pembelian akan dibatalkan. Lanjutkan?')">                                                                    
-                                    <button class="btn btn-primary btn-block" type="button">
-                                        Batal
-                                    </button>
-                                </a>
-                            </div>
-                            
-							<div class="col-xs-12 col-sm-3">
-                                <button class="btn disabled btn-primary btn-block" type="submit" 
-                                id="btncetak" name="btncetak">
-                                    Cetak
-                                </button>
-                            </div>  
-
-							<div class="col-xs-12 col-sm-3">
-                                <a href="pesanan_pembelian.php">
-                                <button class="btn btn-primary btn-block" type="button">
-                                    Tutup
-                                </button>
-                                </a>
-                            </div>                            
-                          
-                        </div>
-
-                        
                         </form>
 
 					</div><!-- /.page-content -->

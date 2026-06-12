@@ -2,22 +2,28 @@
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
-	} else {
-		$id_user=$_SESSION['_iduser'];		
-		$kd_cabang=$_SESSION['_cabang'];		                
-		include "../config/koneksi.php";
+		exit;
+	}
+    
+	header("Location: penerimaan_antarcab.php");
+	exit;
+
+	__halt_compiler();
+	$id_user=$_SESSION['_iduser'];		
+	$kd_cabang=$_SESSION['_cabang'];		                
+	include "../config/koneksi.php";
         
-		$cari_kd=mysqli_query($koneksi,"SELECT 
+	$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
                                         FROM tbuser WHERE id='$id_user'");			
-		$tm_cari=mysqli_fetch_array($cari_kd);
-		$_nama=$tm_cari['nama_user'];				        
-		$pwd=$tm_cari['password'];				        
-		$lvl_akses=$tm_cari['user_akses'];				                
-		$foto_user=$tm_cari['foto_user'];				
-		if($foto_user=='') {
-			$foto_user="file_upload/avatar.png";
-		}
+	$tm_cari=mysqli_fetch_array($cari_kd);
+	$_nama=$tm_cari['nama_user'];				        
+	$pwd=$tm_cari['password'];				        
+	$lvl_akses=$tm_cari['user_akses'];				                
+	$foto_user=$tm_cari['foto_user'];				
+	if($foto_user=='') {
+		$foto_user="file_upload/avatar.png";
+	}
 
     // ------- Data Cabang ----------
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -43,6 +49,37 @@
         $note=$tm_cari['note']; 
         $diskon=$tm_cari['diskon'];
         $pajak=$tm_cari['pajak'];
+
+		$cari_kd=mysqli_query($koneksi,"SELECT 
+                                        tipe_cabang 
+                                        FROM tbcabang 
+                                        WHERE kode_cabang='$drcabang'");			
+		$tm_cari=mysqli_fetch_array($cari_kd);
+		$tipe_cabang_dr=$tm_cari['tipe_cabang'];					        
+
+        $carabayar="Kredit";
+        $diskon_persen_rule="0";
+        $tempo_hari_rule="10";
+        $q_setting=mysqli_query($koneksi,"SELECT 
+                                            diskon_persen, cara_bayar, tempo_hari 
+                                            FROM 
+                                            tbl_setting_antarcabang 
+                                            WHERE 
+                                            aktif='1' AND 
+                                            tipe_cabang_tujuan='$tipe_cabang_dr' AND 
+                                            (kd_cabang='$kd_cabang' OR kd_cabang='') 
+                                            ORDER BY kd_cabang DESC 
+                                            LIMIT 1");
+        if($q_setting) {
+            $tm_setting=mysqli_fetch_array($q_setting);
+            if($tm_setting) {
+                $diskon_persen_rule=$tm_setting['diskon_persen'];
+                $carabayar=$tm_setting['cara_bayar'];
+                $tempo_hari_rule=$tm_setting['tempo_hari'];
+            }
+        }
+
+        $diskon=$diskon_persen_rule;
         
     // =========
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -60,7 +97,6 @@
         $netto=$total_jual-$total_diskon+$total_pajak;
         $dp=$netto;
         $kekurangan=$netto-$dp;
-        $carabayar="Kredit";
 
         include "function_penjualan.php";
 		$LastID=FormatNoTrans(OtomatisID());	
@@ -89,6 +125,14 @@
             $txtdp = $_POST['txtdp'];
             $sisa = $txtnet-$txtdp;
             $total_pajak=($txtpajak_persen/100)*$txtsubtotal;
+
+            $tanggal_jt='';
+            if($cbocarabyr=='Kredit') {
+                $tempo_int=(int)$txtsyarat;
+                if($tempo_int>0) {
+                    $tanggal_jt=date('Y-m-d', strtotime($txttgljl.' +'.$tempo_int.' days'));
+                }
+            }
             
             mysqli_query($koneksi,"INSERT INTO tblpenjualan_header 
                                     (notransaksi, status, carabayar, tanggal, 
@@ -107,7 +151,7 @@
                                     '$total_qty_order','$total_qty_order','$txtsubtotal',
                                     '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                     '$txtpajak_persen','$total_pajak',
-                                    '$txtnet','','$txtdp','','',
+                                    '$txtnet','','$txtdp','$tanggal_jt','',
                                     '$sisa','$_nama','$kd_cabang')");
 
             // Pindahkan Data Pesanan ke Penjualan

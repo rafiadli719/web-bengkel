@@ -25,18 +25,18 @@
                 if($stok_akhir=='0') {
                     // Pesan Stok Kosong
                     echo"<script>window.alert('Stok Barang kosong!');
-                    window.location=('servis-input-reguler-rst.php?snoserv=$no_service&kd=$txtkdbarang&kdjasa=$txtcarisrv');</script>";			                                                    
+                    window.location=('servis-input-reguler-rst.php?snoserv=$no_service&tab=items');</script>";			                                                    
                 } else {
                     if($txtqty>$stok_akhir) {
                         // Pesan Stok tidak cukup
                         echo"<script>window.alert('Stok Barang tidak mencukupi!');
-                        window.location=('servis-input-reguler-rst.php?snoserv=$no_service&kd=$txtkdbarang&kdjasa=$txtcarisrv');</script>";			                                                    
+                        window.location=('servis-input-reguler-rst.php?snoserv=$no_service&tab=items');</script>";			                                                    
                     } else {
                         $stok_proses=$stok_akhir-$txtqty;
                         if($stok_proses<0) {
                             // Pesan Stok tidak cukup                        
                             echo"<script>window.alert('Stok Barang tidak mencukupi!');
-                            window.location=('servis-input-reguler-rst.php?snoserv=$no_service&kd=$txtkdbarang&kdjasa=$txtcarisrv');</script>";			                                                    
+                            window.location=('servis-input-reguler-rst.php?snoserv=$no_service&tab=items');</script>";			                                                    
                         } else {
                             // Baru Proses Simpan Data
                             
@@ -49,7 +49,7 @@
                             if($cek > 0){
                                 $txtkdbarang="";
                                 echo"<script>window.alert('Item Barang sudah ada!');
-                                window.location=('servis-input-reguler-rst.php?snoserv=$no_service&kd=$txtkdbarang&kdjasa=$txtcarisrv');</script>";			                                                    
+                                window.location=('servis-input-reguler-rst.php?snoserv=$no_service&tab=items');</script>";			                                                    
                             } else {
                                 // 1. Mencari Harga Jual ========
                                 $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -96,7 +96,7 @@
                 }
             } else {
                 echo"<script>window.alert('Belum ada item barang yang dipilih!');
-                    window.location=('servis-input-reguler-rst.php?snoserv=$no_service&kd=$txtkdbarang&kdjasa=$txtcarisrv');</script>";			                                                    
+                    window.location=('servis-input-reguler-rst.php?snoserv=$no_service&tab=items');</script>";			                                                    
             }
 
             // == Total dari Item Barang ==============

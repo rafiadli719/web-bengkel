@@ -1,7 +1,6 @@
 <?php
 // Aktifkan error reporting
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include file konfigurasi database
@@ -10,11 +9,12 @@ include "../config/koneksi.php";
 // Ambil data dari form
 $txtkd = $_POST['txtkd'] ?? null;
 $txtnama = $_POST['txtnama'] ?? null;
+$txtketerangan = $_POST['txtketerangan'] ?? null;
+$margin_sesuai_jenis = $_POST['margin_sesuai_jenis'] ?? null;
+$txtmargin = $_POST['txtmargin'] ?? null;
 
 // Inisialisasi file log
 $log_file = 'accurate_category_update_log.txt';
-
-// Log field hapus jika ada
 $hapus_fields = [
     'hapus1' => $_POST['hapus1'] ?? 'Not set',
     'hapus2' => $_POST['hapus2'] ?? 'Not set',
@@ -32,14 +32,28 @@ file_put_contents(
 );
 
 // Validasi field wajib
-if (empty($txtkd) || empty($txtnama)) {
-    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Field wajib kosong: txtkd atau txtnama\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Kode dan Nama Kategori harus diisi.');window.location=('barang_kategori.php');</script>";
+if (empty($txtkd) || empty($txtnama) || empty($txtketerangan) || empty($margin_sesuai_jenis)) {
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Field wajib kosong\n", FILE_APPEND | LOCK_EX);
+    echo "<script>window.alert('Error: Semua field wajib harus diisi.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
+// Validasi margin jika diperlukan
+if ($margin_sesuai_jenis === 'TIDAK' && (empty($txtmargin) || $txtmargin < 0)) {
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Margin kategori harus diisi\n", FILE_APPEND | LOCK_EX);
+    echo "<script>window.alert('Error: Margin Kategori harus diisi dengan nilai yang valid.');window.location=('barang_kategori.php');</script>";
+    exit;
+}
+
+// Set nilai untuk database
+$ikut_margin_jenis = ($margin_sesuai_jenis === 'YA') ? '1' : '0';
+$margin_khusus = ($margin_sesuai_jenis === 'TIDAK') ? $txtmargin : null;
+
 // Simpan ke database lokal
-$result = mysqli_query($koneksi, "INSERT INTO tblitemjenis (jenis, namajenis) VALUES ('$txtkd', '$txtnama')");
+$sql = "INSERT INTO tblitemjenis (jenis, namajenis, keterangan, ikut_margin_jenis, margin_khusus, status, _default) 
+        VALUES ('$txtkd', '$txtnama', '$txtketerangan', '$ikut_margin_jenis', " . 
+        ($margin_khusus !== null ? $margin_khusus : 'NULL') . ", '1', '0')";
+$result = mysqli_query($koneksi, $sql);
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal menyimpan ke database lokal: $error\n", FILE_APPEND | LOCK_EX);

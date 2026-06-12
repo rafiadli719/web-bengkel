@@ -1,12 +1,13 @@
 <?php
     include "../config/koneksi.php";
 	$nobl = $_GET['snobl'];
+	$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
     
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
-    $alamat=$tm_cari['alamat'];	
+	$alamat_perusahaan=$tm_cari['alamat'];	
     $notlp=$tm_cari['notlp'];	
     $fax=$tm_cari['fax'];	
     $file_logo=$tm_cari['file_logo'];	    
@@ -14,17 +15,19 @@
 
 // Data Transaksi Pembelian ==========       
 		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        tanggal, no_supplier, user, 
+                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, no_supplier, user, 
                                         total_qty, total_beli, 
                                         diskon, total_diskon, 
                                         pajak, total_pajak,
-                                        total_akhir, pembayaran, jumlah_bayar 
+                                        total_akhir, pembayaran, jumlah_bayar,
+                                        carabayar, lama_hari, DATE_FORMAT(tanggal_jt,'%d/%m/%Y') AS tanggal_tempo,
+                                        note
                                         FROM 
                                         tblpembelian_header 
                                         WHERE 
                                         notransaksi='$nobl'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$tanggal_order=$tm_cari['tanggal'];
+		$tanggal_order=$tm_cari['tanggal_trx'];
 		$no_supplier=$tm_cari['no_supplier'];
 		$user_order=$tm_cari['user'];
         $total_qty=$tm_cari['total_qty']; 
@@ -36,6 +39,14 @@
         $total_akhir=$tm_cari['total_akhir'];
         $pembayaran=$tm_cari['pembayaran'];
         $jumlah_bayar=$tm_cari['jumlah_bayar'];
+		$carabayar=$tm_cari['carabayar'];
+		$syarat_hari=$tm_cari['lama_hari'];
+		$tanggal_tempo=$tm_cari['tanggal_tempo'];
+		$note=$tm_cari['note'];
+		if($carabayar<>'Kredit') {
+			$syarat_hari = 0;
+			$tanggal_tempo = '';
+		}
 // =====================
 
 	$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -44,7 +55,7 @@
                                     WHERE nosupplier='$no_supplier'");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$namasupplier=$tm_cari['namasupplier'];
-	$alamat=$tm_cari['alamat'];
+	$alamat_supplier=$tm_cari['alamat'];
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         sum(qty_order) as tot_order, 
@@ -63,10 +74,6 @@
                                                                         FROM tblpembelian_detail 
                                                                         WHERE no_transaksi='$nobl'");
 														
-	require_once("dompdf/autoload.inc.php");
-	use Dompdf\Dompdf;
-	$dompdf = new Dompdf();
-
 	$html = '<head>
 				<style>
 					html, body {
@@ -102,13 +109,13 @@ div.page_break + div.page_break{
                     <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
                         <b>'.$nama_perusahaan.'</b><br>
                         <font size="2">
-                            '.$alamat.'<br>
+                            '.$alamat_perusahaan.'<br>
                             Telp. '.$notlp.'<br>
                             Fax. '.$fax.'
                         </font>
                     </td> 			                    
                     <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>&nbsp;FAKTUR PEMBELIAN</b><br>
+                        <b>&nbsp;BUKTI PEMBELIAN</b><br>
                         <table style="margin: 0 0pt; width: 100%;">
                             <tr>
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2"><b>No. Transaksi</b></font></td> 			
@@ -128,7 +135,7 @@ div.page_break + div.page_break{
                             <tr>
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Alamat</font></td> 			
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat.'</font></td>                    
+                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat_supplier.'</font></td>                    
                             </tr>                                                 
                         </table>
                     </td> 			
@@ -178,39 +185,71 @@ div.page_break + div.page_break{
             }
 
         $html .= '</table>        
-            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-                        <tr>
-                <td colspan="4"><hr></td>
-            </tr>
-            <tr>																			
-                <td align="right" width="59%"><font size="2"><b>Sub Total :</b></font></td>
-                <td width="9%" align="right"><font size="2"><b>'.$tot_qty_beli.'</b></font></td>
-                <td colspan="2" align="right"><font size="2"><b>'.number_format($total_beli,0).'</b></font></td>                
-            </tr>
-            <tr>																			
-                <td colspan="3" align="right" width="59%"><font size="2">Potongan Faktur :</font></td>
-                <td width="9%" align="right"><font size="2">'.number_format($total_diskon,0).'</font></td>                
-            </tr>
-            <tr>																			
-                <td colspan="3" align="right" width="59%"><font size="2">Pajak :</font></td>
-                <td width="9%" align="right"><font size="2">'.number_format($total_pajak,0).'</font></td>                
-            </tr>
-            <tr>																			
-                <td colspan="3" align="right" width="59%"><font size="2">Total Netto :</font></td>
-                <td width="9%" align="right"><font size="2">'.number_format($total_akhir,0).'</font></td>                
-            </tr>
-            <tr>																			
-                <td colspan="3" align="right" width="59%"><font size="2">DP/Uang Muka :</font></td>
-                <td width="9%" align="right"><font size="2">'.number_format($pembayaran,0).'</font></td>                
-            </tr>
-            <tr>																			
-                <td colspan="3" align="right" width="59%"><font size="2"><b>Kekurangan :</b></font></td>
-                <td width="9%" align="right"><font size="2"><b>'.number_format($jumlah_bayar,0).'</b></font></td>                
-            </tr>
-            </table>
+			<table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">									
+		
+						<tr>
+							<td colspan="4"><hr></td>
+						</tr>
+						<tr>											
+							<td width="14%"><font size="2">Cara Bayar</font></td>
+							<td width="2%"><font size="2">:</font></td>
+							<td width="34%"><font size="2">'.$carabayar.'</font></td>
+							<td width="50%"></td>
+						</tr>
+						<tr>
+							<td width="14%"><font size="2">Syarat</font></td>
+							<td width="2%"><font size="2">:</font></td>
+							<td width="34%"><font size="2">'.$syarat_hari.' Hari</font></td>
+							<td width="50%"></td>
+						</tr>
+						<tr>
+							<td width="14%"><font size="2">Jatuh Tempo</font></td>
+							<td width="2%"><font size="2">:</font></td>
+							<td width="34%"><font size="2">'.$tanggal_tempo.'</font></td>
+							<td width="50%"></td>
+						</tr>
+						<tr>
+							<td width="14%"><font size="2">Keterangan</font></td>
+							<td width="2%"><font size="2">:</font></td>
+							<td width="84%" colspan="2"><font size="2">'.$note.'</font></td>
+						</tr>
+			</table>
+			<table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">									
+		
+						<tr>
+							<td colspan="4"><hr></td>
+						</tr>
+						<tr>											
+							<td align="right" width="59%"><font size="2"><b>Sub Total :</b></font></td>
+							<td width="9%" align="right"><font size="2"><b>'.$tot_qty_beli.'</b></font></td>
+							<td width="9%" align="right"><font size="2"><b>'.number_format($total_beli,0).'</b></font></td>                
+							<td width="23%" align="right"></td>                
+						</tr>
+						<tr>											
+							<td colspan="3" align="right" width="59%"><font size="2">Potongan Faktur :</font></td>
+							<td width="9%" align="right"><font size="2">'.number_format($total_diskon,0).'</font></td>                
+						</tr>
+						<tr>											
+							<td colspan="3" align="right" width="59%"><font size="2">Pajak :</font></td>
+							<td width="9%" align="right"><font size="2">'.number_format($total_pajak,0).'</font></td>                
+						</tr>
+						<tr>											
+							<td colspan="3" align="right" width="59%"><font size="2">Total Netto :</font></td>
+							<td width="9%" align="right"><font size="2">'.number_format($total_akhir,0).'</font></td>                
+						</tr>
+						<tr>											
+							<td colspan="3" align="right" width="59%"><font size="2">DP/Uang Muka :</font></td>
+							<td width="9%" align="right"><font size="2">'.number_format($pembayaran,0).'</font></td>                
+						</tr>
+						<tr>											
+							<td colspan="3" align="right" width="59%"><font size="2"><b>Kekurangan :</b></font></td>
+							<td width="9%" align="right"><font size="2"><b>'.number_format($jumlah_bayar,0).'</b></font></td>                
+						</tr>
+			</table>
             <br>&nbsp;
-            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-            <tr>																			
+            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">									
+		
+            <tr>											
                 <td width="50%" align="center">
                 <font size="2">Mengetahui</font>
                 <br>&nbsp;
@@ -233,11 +272,19 @@ div.page_break + div.page_break{
             </table>';
 							
 $html .= "</div></body></html>";
-$dompdf->loadHtml($html);
-// Setting ukuran dan orientasi kertas
-$dompdf->setPaper('A4', 'landscape');
-// Rendering dari HTML Ke PDF
-$dompdf->render();
-// Melakukan output file Pdf
-$dompdf->stream('surat-penawaran.pdf',array("Attachment"=>0));
+
+	if($mode === 'print') {
+		header('Content-Type: text/html; charset=UTF-8');
+		echo $html;
+		echo '<script>window.onload=function(){window.print();};</script>';
+		exit;
+	}
+
+	require_once("dompdf/autoload.inc.php");
+	$dompdf = new \Dompdf\Dompdf();
+	$dompdf->loadHtml($html);
+	$dompdf->setPaper('A4', 'landscape');
+	$dompdf->render();
+	$attachment = ($mode === 'download') ? 1 : 0;
+	$dompdf->stream('Bukti-Pembelian-'.$nobl.'.pdf',array("Attachment"=>$attachment));
 ?>

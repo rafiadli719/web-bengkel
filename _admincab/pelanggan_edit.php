@@ -372,21 +372,45 @@
                                         ?>
                                         </select>
                                     </div>
-                                </div>                                
+                                </div>
+
+                                <!-- Google Maps Link untuk Auto-Extract GPS -->
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Koordinat </label>
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                                        <i class="fa fa-map-marker"></i> Google Maps Link
+                                    </label>
                                     <div class="col-sm-8">
-                                        <input type="text" id="txtlat" name="txtlat" class="col-xs-10 col-sm-12" 
-                                        value="<?php echo $klat; ?>" 
-                                        autocomplete="off" placeholder="contoh : -6.91691934373329" />
+                                        <input type="url" id="txtgooglemaps" name="txtgooglemaps" class="col-xs-10 col-sm-12"
+                                        placeholder="https://www.google.com/maps/@-6.123456,106.123456,17z"
+                                        autocomplete="off" />
+                                        <small class="text-muted">
+                                            <i class="fa fa-info-circle"></i> Paste link Google Maps lokasi pelanggan, koordinat akan otomatis ter-extract
+                                        </small>
                                     </div>
-                                </div>                                
+                                </div>
+
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Koordinat </label>
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                                        <i class="fa fa-crosshairs"></i> Latitude
+                                    </label>
                                     <div class="col-sm-8">
-                                        <input type="text" id="txtlong" name="txtlong" class="col-xs-10 col-sm-12" 
-                                        value="<?php echo $klong; ?>" 
-                                        autocomplete="off" placeholder="contoh : 107.67576715396766" />
+                                        <input type="text" id="txtlat" name="txtlat" class="col-xs-10 col-sm-12"
+                                        value="<?php echo $klat; ?>"
+                                        readonly style="background-color: #f5f5f5;"
+                                        placeholder="Auto-filled dari Google Maps" />
+                                        <small class="text-muted"><i class="fa fa-check"></i> Otomatis terisi dari Google Maps link</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                                        <i class="fa fa-crosshairs"></i> Longitude
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="txtlong" name="txtlong" class="col-xs-10 col-sm-12"
+                                        value="<?php echo $klong; ?>"
+                                        readonly style="background-color: #f5f5f5;"
+                                        placeholder="Auto-filled dari Google Maps" />
+                                        <small class="text-muted"><i class="fa fa-check"></i> Otomatis terisi dari Google Maps link</small>
                                     </div>
                                 </div>                                                                                                
 							</div>									
@@ -915,6 +939,40 @@
 					$('.daterangepicker.dropdown-menu,.colorpicker.dropdown-menu,.bootstrap-datetimepicker-widget.dropdown-menu').remove();
 				});
 			
+			});
+
+			// ========================================
+			// Auto-extract GPS coordinates from Google Maps URL
+			// ========================================
+			$('#txtgooglemaps').on('blur', function() {
+				var mapsUrl = $(this).val().trim();
+				if (mapsUrl) {
+					// Try pattern 1: @lat,lng (https://www.google.com/maps/@-6.123,106.123,17z)
+					var match = mapsUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+
+					if (!match) {
+						// Try pattern 2: q=lat,lng (https://www.google.com/maps?q=-6.123,106.123)
+						match = mapsUrl.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+					}
+
+					if (!match) {
+						// Try pattern 3: ll=lat,lng
+						match = mapsUrl.match(/ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+					}
+
+					if (match) {
+						$('#txtlat').val(match[1]);
+						$('#txtlong').val(match[2]);
+
+						// Show success message
+						alert('✅ Koordinat berhasil di-extract:\n\nLatitude: ' + match[1] + '\nLongitude: ' + match[2]);
+					} else {
+						// Show error if no match
+						if (mapsUrl.includes('google.com/maps')) {
+							alert('⚠️ Format Google Maps URL tidak dikenali.\n\nPastikan URL mengandung koordinat seperti:\n@-6.123456,106.123456');
+						}
+					}
+				}
 			});
 		</script>
 

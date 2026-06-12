@@ -267,28 +267,23 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th class="center" width="5%"></th>
-                                            <th class="center" width="9%">No. Transaksi</th>
-                                            <th class="center" width="9%">Tanggal</th>
-                                            <th class="center" width="9%">Cara Bayar</th>
-                                            <th class="center" width="9%">No. Pesanan</th>
-                                            <th class="center" width="9%">Tgl Pesanan</th>
-                                            <th width="10%">Kode Supplier</th>
-                                            <th width="15%">Nama Supplier</th>
-                                            <th class="center" width="10%">Total Akhir</th> 
-                                            <th width="15%">Keterangan</th>
+                                            <th class="center" width="4%"></th>
+                                            <th class="center" width="8%">No. Transaksi</th>
+                                            <th class="center" width="7%">Tanggal</th>
+                                            <th class="center" width="7%">Cara Bayar</th>
+                                            <th class="center" width="8%">No. Faktur</th>
+                                            <th class="center" width="7%">Tgl Faktur</th>
+                                            <th class="center" width="8%">No. Pesanan</th>
+                                            <th width="8%">Kode Supplier</th>
+                                            <th width="12%">Nama Supplier</th>
+                                            <th class="center" width="9%">Total Akhir</th> 
+                                            <th width="12%">Keterangan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     <?php 
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
-                                            //$status_order=$tampil['status'];
-					//				if($status_order=='0') {
-					//					$ket_status="Open";
-					//				} else {
-					//					$ket_status="Closed";
-					//				}
                                     ?>
                                         <tr>
 													<td class="center">
@@ -309,9 +304,10 @@
                                                         </td>														
 														<td class="center"><?php echo $tampil['notransaksi']?></td>														
 														<td class="center"><?php echo $tampil['tanggal']?></td>														                                                        
-														<td class="center"><?php echo $tampil['carabayar']?></td>														                                                                                                                
+														<td class="center"><?php echo $tampil['carabayar']?></td>
+														<td class="center"><?php echo isset($tampil['no_faktur']) ? $tampil['no_faktur'] : '-'; ?></td>
+														<td class="center"><?php echo isset($tampil['tanggal_faktur']) && $tampil['tanggal_faktur'] ? date('d/m/Y', strtotime($tampil['tanggal_faktur'])) : '-'; ?></td>
 														<td class="center"><?php echo $tampil['no_order']?></td>														                                                                                                                
-														<td class="center"><?php echo $tampil['tanggal_order']?></td>														                                                                                                                                                                        
 														<td><?php echo $tampil['no_supplier']?></td>														
 														<td><?php echo $tampil['namasupplier']?></td>														                                                        
 														<td align="right"><?php echo number_format($tampil['total_akhir'],0)?></td>														                                                        

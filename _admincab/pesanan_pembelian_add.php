@@ -40,7 +40,53 @@
         $txtnamaitem="";
         $tgl_pilih=date('d/m/Y');
         $cbo_supplier="";
+        $msg = '';
+        // Ambil PR dari GET terlebih dahulu, fallback ke POST agar persist saat submit form
+        $no_pr = isset($_GET['pr']) ? $_GET['pr'] : (isset($_POST['no_pr']) ? $_POST['no_pr'] : "");
+        $force = isset($_GET['force']) ? $_GET['force'] : '';
         $tot="0";
+
+        // Prefill item dari PR jika parameter ?pr=... ada.
+        // Jika user sudah punya draft items dan PR berbeda dengan sesi sebelumnya, bersihkan dulu agar tidak tercampur.
+        if($no_pr !== ""){
+            $no_pr_esc = mysqli_real_escape_string($koneksi, $no_pr);
+            $current_src = isset($_SESSION['po_source_pr']) ? $_SESSION['po_source_pr'] : '';
+            // Hitung draft saat ini
+            $cekDraft = mysqli_query($koneksi, "SELECT COUNT(*) AS c FROM tblorder_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+            $c = $cekDraft ? mysqli_fetch_assoc($cekDraft) : null;
+            $draftCount = $c ? (int)$c['c'] : 0;
+
+            // Prioritaskan prefill dari PR:
+            // - jika force=1 ATAU belum ada sumber PR tersimpan ATAU PR berbeda dari sumber sebelumnya, bersihkan draft dulu
+            if(($force==='1' || $current_src==='' || $current_src !== $no_pr) && $draftCount>0){
+                mysqli_query($koneksi, "DELETE FROM tblorder_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+                $draftCount = 0;
+            }
+
+            // Jika belum ada draft (baru atau habis dibersihkan), lakukan prefill dari PR
+            if($draftCount===0){
+                $qpr = mysqli_query($koneksi, "SELECT d.no_item, d.quantity, d.qty_po FROM tblpurchase_request_detail d WHERE d.no_pr='$no_pr_esc'");
+                if($qpr){
+                    while($row = mysqli_fetch_assoc($qpr)){
+                        $no_item = mysqli_real_escape_string($koneksi, $row['no_item']);
+                        $qty_remain = ((int)$row['quantity']) - ((int)$row['qty_po']);
+                        if($qty_remain<=0){ continue; }
+                        $qh = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE noitem='$no_item'");
+                        $h = $qh ? mysqli_fetch_assoc($qh) : null;
+                        $harga = ($h && isset($h['hargapokok'])) ? (float)$h['hargapokok'] : 0;
+                        $subtotal = $harga * $qty_remain;
+                        mysqli_query($koneksi, "INSERT INTO tblorder_detail (no_order, no_item, harga_pokok, quantity, total, user, kd_cabang) VALUES ('', '$no_item', '$harga', '$qty_remain', '$subtotal', '$_nama', '$kd_cabang')");
+                    }
+                }
+                // tandai sumber draft saat ini dari PR ini
+                $_SESSION['po_source_pr'] = $no_pr;
+            }
+
+            // Hitung ulang total dari draft apapun kondisinya (prefill baru atau draft lama)
+            $rs = mysqli_query($koneksi, "SELECT SUM(total) AS tot FROM tblorder_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+            $totRow = $rs ? mysqli_fetch_assoc($rs) : null;
+            if($totRow && isset($totRow['tot'])){ $tot = $totRow['tot']; }
+        }
 
 		if(isset($_POST['btncari'])) {				
 			$txtcaribrg= $_POST['txtcaribrg'];	
@@ -140,11 +186,14 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= $_POST['txttotal_harga'];            
-            if($txttotal_harga=='0') {
-                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
-            } else {
-            // insert ke order header                
+            $txttotal_harga= isset($_POST['txttotal_harga']) ? $_POST['txttotal_harga'] : '0';           
+            $cbosupplier= isset($_POST['cbosupplier']) ? trim($_POST['cbosupplier']) : '';
+            if($cbosupplier===''){
+                $msg = 'Supplier wajib dipilih.';
+            }
+            // Validasi item akan dihitung ulang di server (jangan andalkan hidden input)
+            if($msg===''){
+                // insert ke order header                
                 date_default_timezone_set('Asia/Jakarta');
                 $waktuaja_skr=date('h:i');
                 function ubahformatTgl($tanggal) {
@@ -156,46 +205,113 @@
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
                 $txtnopesanan= $_POST['txtnopesanan'];
+                $no_pr = isset($_POST['no_pr']) ? $_POST['no_pr'] : '';
                 $cbosupplier= $_POST['cbosupplier'];
+                $cbo_supplier = $cbosupplier;
                 $txttotal_harga= $_POST['txttotal_harga'];
-        
-                $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot 
+
+                if($no_pr!=''){
+                    $no_pr_esc = mysqli_real_escape_string($koneksi, $no_pr);
+                    $qitems = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblorder_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
+                    while($qitems && ($it = mysqli_fetch_assoc($qitems))){
+                        $no_item_chk = mysqli_real_escape_string($koneksi, $it['no_item']);
+                        $qty_new = (int)$it['quantity'];
+                        $qpr = mysqli_query($koneksi, "SELECT COALESCE(SUM(quantity),0) AS qty_pr, COALESCE(SUM(qty_po),0) AS qty_po FROM tblpurchase_request_detail WHERE no_pr='$no_pr_esc' AND no_item='$no_item_chk'");
+                        $pr = $qpr ? mysqli_fetch_assoc($qpr) : null;
+                        $qty_pr = $pr ? (int)$pr['qty_pr'] : 0;
+                        $qty_po_acc = $pr ? (int)$pr['qty_po'] : 0;
+                        if($qty_pr<=0){
+                            echo"<script>window.alert('Item $no_item_chk tidak ada di PR $no_pr');window.location=('pesanan_pembelian_add.php?pr=$no_pr');</script>"; exit;
+                        }
+                        $sisa = $qty_pr - $qty_po_acc;
+                        if($qty_new > $sisa){
+                            echo"<script>window.alert('Qty PO untuk item $no_item_chk melebihi sisa PR ($sisa). Kurangi qty.');window.location=('pesanan_pembelian_add.php?pr=$no_pr');</script>"; exit;
+                        }
+                    }
+                }
+
+                // Hitung ulang total qty dan total nilai order di server
+                $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot, sum(total) as tot_money 
                                                 FROM tblorder_detail 
                                                 WHERE 
                                                 user='$_nama' and 
                                                 kd_cabang='$kd_cabang' and 
-                                                status_trx='0'");			
+                                                status_trx='0'");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot_qty=$tm_cari['tot'];                 
+                $tot_qty = $tm_cari && isset($tm_cari['tot']) ? $tm_cari['tot'] : 0;                
+                $tot_money = $tm_cari && isset($tm_cari['tot_money']) ? $tm_cari['tot_money'] : 0;                
+                if($tot_money <= 0){
+                    $msg = ($msg? $msg.' ' : '').'Belum ada item dipilih.';
+                }
                              
                 $data = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header 
                                                 WHERE 
                                                 no_order='$LastID'");
                 $cek = mysqli_num_rows($data);
                 if($cek > 0){
-                    
-                } else {
-                    mysqli_query($koneksi,"INSERT INTO tblorder_header 
-                                            (no_order, status, tanggal, 
+                    // regenerate once if duplicated
+                    $LastID = FormatNoTrans(OtomatisID());
+                }
+                $data2 = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header WHERE no_order='$LastID'");
+                $cek2 = mysqli_num_rows($data2);
+                if($cek2 == 0 && $msg===''){
+                    $ok_header = mysqli_query($koneksi,"INSERT INTO tblorder_header 
+                                            (no_order, status, tanggal, no_pr, 
                                             no_supplier, total_qty, total_order, 
                                             user, kd_cabang) 
                                             VALUES 
-                                            ('$LastID','0','$txttglpesan',
-                                            '$cbosupplier','$tot_qty','$txttotal_harga',
+                                            ('$LastID','0','$txttglpesan', '".mysqli_real_escape_string($koneksi,$no_pr)."',
+                                            '$cbosupplier','$tot_qty','$tot_money',
                                             '$_nama','$kd_cabang')");
+                    if(!$ok_header){
+                        $msg = 'Gagal menyimpan header PO: '.mysqli_error($koneksi);
+                    }
 
-                    mysqli_query($koneksi,"UPDATE tblorder_detail 
-                                            SET 
-                                            no_order='$LastID', status_trx='1' 
-                                            WHERE 
-                                            user='$_nama' and 
-                                            kd_cabang='$kd_cabang' and 
-                                            status_trx='0'");
-                                            
-                    echo"<script>window.location=('pesanan_pembelian_cetak.php?nopesanan=$LastID');</script>";                            
+                    if($msg===''){
+                        $ok_det = mysqli_query($koneksi,"UPDATE tblorder_detail 
+                                                SET 
+                                                no_order='$LastID', status_trx='1' 
+                                                WHERE 
+                                                user='$_nama' and 
+                                                kd_cabang='$kd_cabang' and 
+                                                status_trx='0'");
+                        if(!$ok_det){
+                            $msg = 'Gagal mengikat detail ke PO: '.mysqli_error($koneksi);
+                        }
+                    }
+
+                    if($msg==='' && $no_pr!=''){
+                        $no_pr_esc = mysqli_real_escape_string($koneksi, $no_pr);
+                        $qdet = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblorder_detail WHERE no_order='$LastID'");
+                        while($qdet && ($dd = mysqli_fetch_assoc($qdet))){
+                            $ni = mysqli_real_escape_string($koneksi, $dd['no_item']);
+                            $remain = (int)$dd['quantity'];
+                            $qprrows = mysqli_query($koneksi, "SELECT id, quantity, qty_po FROM tblpurchase_request_detail WHERE no_pr='$no_pr_esc' AND no_item='$ni' ORDER BY id ASC");
+                            while($remain>0 && $qprrows && ($r = mysqli_fetch_assoc($qprrows))){
+                                $capacity = ((int)$r['quantity']) - ((int)$r['qty_po']);
+                                if($capacity<=0){ continue; }
+                                $use = $remain < $capacity ? $remain : $capacity;
+                                $idrow = (int)$r['id'];
+                                mysqli_query($koneksi, "UPDATE tblpurchase_request_detail SET qty_po = qty_po + $use WHERE id=$idrow");
+                                $remain -= $use;
+                            }
+                        }
+                        // Tutup PR jika semua item sudah ter-PO seluruhnya
+                        $qopen = mysqli_query($koneksi, "SELECT COUNT(1) AS open_count FROM tblpurchase_request_detail WHERE no_pr='$no_pr_esc' AND qty_po < quantity");
+                        $open_count = $qopen ? (int)mysqli_fetch_assoc($qopen)['open_count'] : 0;
+                        if($open_count===0){
+                            mysqli_query($koneksi, "UPDATE tblpurchase_request_header SET status_pr='closed' WHERE no_pr='$no_pr_esc'");
+                        }
+                    }
+                    // clear context PR setelah tersimpan supaya tidak mengganggu input berikutnya
+                    if($msg===''){
+                        if(isset($_SESSION['po_source_pr'])){ unset($_SESSION['po_source_pr']); }
+                        echo"<script>window.location=('pesanan_pembelian_cetak.php?nopesanan=$LastID');</script>";                            
+                    }
+                } else if($msg==='') {
+                    $msg = 'Gagal menyimpan: nomor PO sudah ada. Silakan simpan ulang.';
                 }
 
-                
             }
         }             
 ?>
@@ -348,7 +464,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_pembelian01.php"; ?>
+<?php include "menu_pembelian02.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -375,8 +491,14 @@
 
 					<div class="page-content">
 
-                        <form class="form-horizontal" action="" method="post" role="form">
+                        <?php if(isset($msg) && $msg!==''){ ?>
+                        <div class="alert alert-warning">
+                            <?php echo htmlspecialchars($msg); ?>
+                        </div>
+                        <?php } ?>
+                        <form class="form-horizontal" action="" method="post" role="form" novalidate>
                         <input type="hidden" name="txttotal_harga"  class="form-control" value="<?php echo $tot; ?>"/>
+                        <input type="hidden" name="no_pr" value="<?php echo htmlspecialchars($no_pr); ?>" />
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="widget-box">
@@ -385,14 +507,16 @@
 											<i class="ace-icon fa fa-file-text orange"></i>
 											Pesanan Pembelian #<?php echo $LastID; ?>
 										</h4>
-                                        <div class="widget-toolbar">
-                                            <span class="label label-warning arrowed-in arrowed-in-right">Purchase Order</span>
-                                        </div>
-									</div>
-
-									<div class="widget-body">
-										<div class="widget-main padding-12 no-padding-left no-padding-right">
-											<div class="tabbable">
+                                        <div class="widget-main padding-12 no-padding-left no-padding-right">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i>
+                                                <?php if($no_pr!=''){ ?>
+                                                Ini adalah Pesanan Pembelian (PO). Dokumen ini tidak mempengaruhi stok. Sumber PR: <strong><?php echo htmlspecialchars($no_pr); ?></strong>.
+                                                <?php } else { ?>
+                                                Ini adalah Pesanan Pembelian (PO). Dokumen ini tidak mempengaruhi stok.
+                                                <?php } ?>
+                                            </div>
+                                            <div class="tabbable">
 												<ul class="nav nav-tabs" id="myTab">
 													<li class="active">
 														<a data-toggle="tab" href="#order-details" aria-expanded="true">
@@ -454,7 +578,7 @@
 																			<div class="form-group">
 																				<label class="col-sm-3 control-label no-padding-right"> Supplier :</label>									
 																				<div class="col-sm-9">
-																					<select class="form-control" name="cbosupplier" id="cbosupplier" required >
+																					<select class="form-control" name="cbosupplier" id="cbosupplier">
 																					<option value="">- Pilih Supplier -</option>
 																					<?php
 																						$q = mysqli_query($koneksi,"select nosupplier, namasupplier FROM tblsupplier order by namasupplier asc");
@@ -561,9 +685,6 @@
                         </div>
                         </form>                            
                         </div>
-
-                        
-                        </form>
 
 					</div><!-- /.page-content -->
 				</div>

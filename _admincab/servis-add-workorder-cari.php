@@ -34,6 +34,31 @@
         $_cari=$_GET['_cari'];
         $_urut=$_GET['_urut'];
         $_flt=$_GET['_flt'];
+
+        // Derive motor category context for applicability checks (prefer kd_kategori_motor)
+        $kd_kategori_motor = 0;
+        if (!empty($no_service)) {
+            $no_service_safe = mysqli_real_escape_string($koneksi, $no_service);
+            $q_kd = mysqli_query($koneksi, "SELECT kd_kategori_motor FROM view_service_kategori_motor WHERE no_service='{$no_service_safe}'");
+            if ($q_kd && mysqli_num_rows($q_kd) > 0) {
+                $r_kd = mysqli_fetch_assoc($q_kd);
+                $kd_kategori_motor = intval($r_kd['kd_kategori_motor'] ?? 0);
+            }
+            if ($kd_kategori_motor <= 0) {
+                $q_kdj = mysqli_query($koneksi, "SELECT kd_jenis_motor FROM view_service_jenis_motor WHERE no_service='{$no_service_safe}'");
+                if ($q_kdj && mysqli_num_rows($q_kdj) > 0) {
+                    $r_kdj = mysqli_fetch_assoc($q_kdj);
+                    $kd_kategori_motor = intval($r_kdj['kd_jenis_motor'] ?? 0);
+                }
+            }
+        }
+
+        // Detect mapping column name for workorder mapping table
+        $wo_map_col = 'kd_kategori_motor';
+        $chk_wo_map = mysqli_query($koneksi, "SHOW COLUMNS FROM tbworkorder_jenis_motor LIKE 'kd_kategori_motor'");
+        if (!$chk_wo_map || mysqli_num_rows($chk_wo_map) == 0) {
+            $wo_map_col = 'kd_jenis_motor';
+        }
 ?>
 
 <!DOCTYPE html>
@@ -202,7 +227,7 @@
 											</span>
                                             <input type="text" class="hide" id="_key" name="_key" value="<?php echo $_key; ?>" />
 											<input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                            <a href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>" class="btn btn-warning btn-sm">Kembali</a>
+                                            <a href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>&tab=workorder" class="btn btn-warning btn-sm">Kembali</a>
 										</form>
 									</div>
 								</div>
@@ -253,20 +278,43 @@
                                                         
                                                         while ($tampil = mysqli_fetch_array($sql)) {
                                                             $no++;
+                                                            // Compute applicability (permissive-by-default)
+                                                            $is_applicable = 1;
+                                                            if ($kd_kategori_motor > 0) {
+                                                                $kode_wo_safe = mysqli_real_escape_string($koneksi, $tampil['kode_wo']);
+                                                                $exists_any = mysqli_query($koneksi, "SELECT 1 FROM tbworkorder_jenis_motor WHERE kode_wo='{$kode_wo_safe}' LIMIT 1");
+                                                                $has_any_map = ($exists_any && mysqli_num_rows($exists_any) > 0);
+                                                                if ($has_any_map) {
+                                                                    $q_app = mysqli_query($koneksi, "SELECT 1 FROM tbworkorder_jenis_motor WHERE kode_wo='{$kode_wo_safe}' AND {$wo_map_col}={$kd_kategori_motor} LIMIT 1");
+                                                                    $is_applicable = ($q_app && mysqli_num_rows($q_app) > 0) ? 1 : 0;
+                                                                }
+                                                            }
                                                     ?>
-                                                    <tr>
+                                                    <tr<?php echo ($is_applicable === 1 ? '' : ' style="opacity:0.55;"'); ?>>
                                                         <td class="center"><?php echo $no ?></td>
                                                         <td><?php echo $tampil['kode_wo']?></td>
-                                                        <td><?php echo $tampil['nama_wo']?></td>
+                                                        <td>
+                                                            <?php echo $tampil['nama_wo']?>
+                                                            <?php if ($is_applicable !== 1) { ?>
+                                                                <br><span class="label label-danger" style="font-size:10px;">Not applicable</span>
+                                                            <?php } ?>
+                                                        </td>
                                                         <td><?php echo $tampil['keterangan']?></td>
                                                         <td class="center"><?php echo $tampil['waktu']?></td>
                                                         <td class="center">
                                                             <div class="btn-group">
-                                                                <a class="btn btn-success btn-xs" 
-                                                                   href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>&kdwo=<?php echo $tampil['kode_wo']; ?>">
-                                                                    <i class="ace-icon fa fa-check bigger-120"></i>
-                                                                    Pilih
-                                                                </a>
+                                                                <?php if ($is_applicable !== 1) { ?>
+                                                                    <button class="btn btn-danger btn-xs" disabled title="TIDAK APPLICABLE">
+                                                                        <i class="ace-icon fa fa-ban bigger-120"></i>
+                                                                        Tidak Applicable
+                                                                    </button>
+                                                                <?php } else { ?>
+                                                                    <a class="btn btn-success btn-xs" 
+                                                                       href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>&kdwo=<?php echo $tampil['kode_wo']; ?>&tab=workorder">
+                                                                        <i class="ace-icon fa fa-check bigger-120"></i>
+                                                                        Pilih
+                                                                    </a>
+                                                                <?php } ?>
                                                             </div>
                                                         </td>
                                                     </tr>

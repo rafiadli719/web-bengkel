@@ -1,0 +1,128 @@
+================================================================================
+  IMPLEMENTASI APPROVAL KELUHAN DI SERVIS INPUT REGULER - SELESAI
+================================================================================
+
+RINGKASAN:
+Fitur approval keluhan telah berhasil diimplementasikan di halaman Servis Input Reguler.
+
+FITUR YANG DITAMBAHKAN:
+1. Modal Search Keluhan - menampilkan keluhan yang sudah approved
+2. Tombol "Tambah Keluhan Baru (Perlu Approval)"
+3. Modal form untuk ajukan keluhan baru
+4. Integrasi dengan master-keluhan-crud.php untuk approval
+
+================================================================================
+FILE YANG DIMODIFIKASI:
+================================================================================
+
+1. _template/_servis_add_header_kanan_workorder_only.php
+   - Menambahkan include modal-search-keluhan.php
+   - Menambahkan fungsi showModalSearchKeluhan()
+   - Menambahkan fungsi pilihKeluhan()
+
+2. _template/modal-search-keluhan.php
+   - Query hanya menampilkan keluhan approved
+   - Tombol "Tambah Keluhan Baru"
+   - Modal form ajukan keluhan baru
+   - Field "Alasan Pengajuan" menjadi opsional
+
+3. ajax-submit-keluhan-baru.php
+   - Validasi "Alasan Pengajuan" dihapus (opsional)
+   - Query INSERT sesuai struktur tabel
+
+4. master-keluhan-crud.php
+   - Menampilkan keluhan pending
+   - Badge notifikasi pending
+   - Tombol approve/reject
+
+================================================================================
+CARA MENGGUNAKAN:
+================================================================================
+
+A. DARI SERVIS INPUT REGULER:
+
+   1. Buka: servis-input-reguler.php
+   2. Pilih tab "Work Order"
+   3. Klik tombol "Cari Keluhan"
+   4. Modal muncul dengan 2 opsi:
+      a. Pilih keluhan yang sudah approved
+      b. Klik "Tambah Keluhan Baru (Perlu Approval)"
+   5. Jika pilih opsi b:
+      - Isi form (Nama, Kategori, Deskripsi, Alasan)
+      - Submit
+      - Alert: "Keluhan berhasil diajukan"
+      - Status: PENDING (menunggu approval)
+
+B. APPROVE/REJECT DI MASTER KELUHAN:
+
+   1. Buka: master-keluhan-crud.php
+   2. Badge notifikasi: "X Pending Approval"
+   3. Alert box kuning muncul
+   4. Keluhan pending di baris pertama (highlight kuning)
+   5. Klik tombol:
+      - Approve (centang hijau) -> Status jadi "Approved"
+      - Reject (silang merah) -> Isi alasan -> Status jadi "Rejected"
+
+================================================================================
+TESTING:
+================================================================================
+
+TEST 1: Pilih Keluhan Approved
+- Buka servis-input-reguler.php
+- Klik "Cari Keluhan"
+- Pilih keluhan dari daftar
+- Keluhan terisi di field input
+- Klik "Tambah Keluhan"
+- Keluhan masuk ke SPK
+
+TEST 2: Ajukan Keluhan Baru
+- Buka servis-input-reguler.php
+- Klik "Cari Keluhan"
+- Klik "Tambah Keluhan Baru"
+- Isi form dan submit
+- Alert: "Keluhan berhasil diajukan"
+- Buka master-keluhan-crud.php
+- Keluhan muncul dengan status PENDING
+
+TEST 3: Approve Keluhan
+- Buka master-keluhan-crud.php
+- Badge: "1 Pending Approval"
+- Klik Approve
+- Status berubah jadi "Approved"
+- Keluhan bisa digunakan di servis input
+
+TEST 4: Reject Keluhan
+- Buka master-keluhan-crud.php
+- Klik Reject
+- Isi alasan penolakan
+- Status berubah jadi "Rejected"
+- Keluhan tidak bisa digunakan
+
+================================================================================
+CATATAN PENTING:
+================================================================================
+
+1. Kolom database yang digunakan:
+   - kode_keluhan
+   - nama_keluhan
+   - deskripsi
+   - kategori
+   - status_aktif
+   - status_approval (pending/approved/rejected)
+   - requested_by
+   - requested_from
+
+2. Kolom yang TIDAK digunakan (sudah dihapus):
+   - estimasi_waktu
+   - tingkat_prioritas
+   - workorder_default
+
+3. Alasan Pengajuan sekarang OPSIONAL (tidak wajib diisi)
+
+4. Hanya keluhan dengan status_approval='approved' yang muncul di modal search
+
+5. Keluhan pending harus di-approve dulu sebelum bisa digunakan
+
+================================================================================
+SELESAI - IMPLEMENTASI BERHASIL
+================================================================================

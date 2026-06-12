@@ -10,20 +10,26 @@ include "../config/koneksi.php";
 if(isset($_POST['provinsi']) && isset($_POST['kota'])) {
     $provinsi = mysqli_real_escape_string($koneksi, $_POST['provinsi']);
     $kota = mysqli_real_escape_string($koneksi, $_POST['kota']);
-    
-    $query = "SELECT DISTINCT kecamatan FROM tbwilayah 
-              WHERE provinsi = '$provinsi' AND kota_kabupaten = '$kota' 
+
+    // Menggunakan prepared statement untuk keamanan
+    $query = "SELECT DISTINCT kecamatan FROM tbwilayah
+              WHERE provinsi = ? AND kota_kabupaten = ?
               ORDER BY kecamatan ASC";
-    $result = mysqli_query($koneksi, $query);
-    
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, "ss", $provinsi, $kota);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
     $districts = [];
     while($row = mysqli_fetch_array($result)) {
         $districts[] = $row['kecamatan'];
     }
-    
+
+    mysqli_stmt_close($stmt);
     header('Content-Type: application/json');
     echo json_encode($districts);
 } else {
+    header('Content-Type: application/json');
     echo json_encode([]);
 }
 ?>

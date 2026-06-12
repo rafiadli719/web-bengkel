@@ -246,7 +246,7 @@
 							<td width="20%">
 								<a href="index.php" class="navbar-brand">
 									<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 									</small>							
 								</a>								
@@ -388,19 +388,20 @@
                                     
                                     <div class="widget-body">
                                         <div class="widget-main no-padding">
-                                            <table class="table table-striped table-bordered table-hover">
+                                            <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover" style="table-layout: fixed; width: 100%;">
                                                 <thead>
                                                     <tr>
-                                                        <th class="center" width="5%">Aksi</th>
-                                                        <th width="10%">Kode Item</th>
-                                                        <th width="8%">Barcode</th>
-                                                        <th width="25%">Nama Item</th>
-                                                        <th width="10%">Jenis</th>
-                                                        <th class="center" width="8%">Stok</th>
-                                                        <th class="center" width="8%">Min.</th>
-                                                        <th width="8%">Satuan</th>
-                                                        <th width="8%">Rak</th>
-                                                        <th class="center" width="10%">Harga Jual</th>
+                                                        <th class="center" style="width: 40px;">Aksi</th>
+                                                        <th style="width: 100px;">Kode Item</th>
+                                                        <th style="width: 80px;">Barcode</th>
+                                                        <th>Nama Item</th>
+                                                        <th style="width: 130px;">Jenis</th>
+                                                        <th class="center" style="width: 45px;">Stok</th>
+                                                        <th class="center" style="width: 40px;">Min.</th>
+                                                        <th style="width: 50px;">Satuan</th>
+                                                        <th style="width: 45px;">Rak</th>
+                                                        <th class="center" style="width: 80px;">Harga Jual</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -415,7 +416,7 @@
                                                                                         kd_cabang='$kd_cabang' AND 
                                                                                         no_item='$noitem'");			
                                                         $tm_cari=mysqli_fetch_array($cari_kd);
-                                                        $saldo_akhir=$tm_cari['saldo'];	
+                                                        $saldo_akhir = ($tm_cari && isset($tm_cari['saldo'])) ? $tm_cari['saldo'] : 0;
 
                                                         if($saldo_akhir=='0') {
                                                             $row_class="danger";
@@ -435,13 +436,19 @@
                                                 ?>
                                                     <tr class="<?php echo $row_class; ?>">
                                                         <td class="center">
-                                                            <div class="btn-group">
-                                                                <a href="pesanan_penjualan_add_rst.php?stgl=<?php echo $tgl_pilih; ?>&ssup=<?php echo $nopelanggan; ?>&ssales=<?php echo $cbosales; ?>&kd=<?php echo $tampil['noitem']; ?>&tab=item-barang" 
-                                                                   class="btn btn-xs btn-success <?php echo $disabled; ?>" title="Pilih Item">
-                                                                    <i class="ace-icon fa fa-check"></i>
-                                                                    Pilih
-                                                                </a>
-                                                            </div>                                                                                            
+                                                            <?php if($disabled == "disabled") { ?>
+                                                                <button class="btn btn-minier btn-danger" disabled title="Stok Kosong">
+                                                                    <i class="ace-icon fa fa-ban"></i>
+                                                                </button>
+                                                            <?php } else { ?>
+                                                                <div class="btn-group">
+                                                                    <a href="pesanan_penjualan_add_rst.php?stgl=<?php echo $tgl_pilih; ?>&ssup=<?php echo $nopelanggan; ?>&ssales=<?php echo $cbosales; ?>&kd=<?php echo $tampil['noitem']; ?>&tab=item-barang" 
+                                                                       class="btn btn-xs btn-success" title="Pilih Item">
+                                                                        <i class="ace-icon fa fa-check"></i>
+                                                                        Pilih
+                                                                    </a>
+                                                                </div>
+                                                            <?php } ?>
                                                         </td>														
                                                         <td>
                                                             <strong><?php echo $tampil['noitem']; ?></strong>
@@ -452,8 +459,8 @@
                                                         <td>
                                                             <span class="text-primary"><?php echo $tampil['namaitem']; ?></span>
                                                         </td>                                            
-                                                        <td>
-                                                            <span class="label label-sm label-info"><?php echo $tampil['namajenis']; ?></span>
+                                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                            <span class="label label-sm label-info" title="<?php echo $tampil['namajenis']; ?>"><?php echo $tampil['namajenis']; ?></span>
                                                         </td>																											                                            
                                                         <td class="center">
                                                             <span class="badge badge-<?php echo $stock_badge; ?>"><?php echo $saldo_akhir; ?></span>
@@ -475,6 +482,7 @@
                                                 ?>
                                                 </tbody>                                    
                                             </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

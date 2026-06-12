@@ -6,6 +6,7 @@
 		$id_user=$_SESSION['_iduser'];
 		$kd_cabang=$_SESSION['_cabang'];		                		
 		include "../config/koneksi.php";
+		include_once "_include_statistik_pelanggan.php";
         include "../config/koneksi1.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -315,7 +316,7 @@
                                             </td>			
                                             <td align="center"><?php echo $no++; ?></td>
                                             <td><?php echo $row['nopolisi']?></td>														
-                                            <td><?php echo $row['pemilik']?></td>														                                                        
+                                            <td><?php echo $row['pemilik']?><?php if(isset($row['status_member'])) { echo ' '.displayStatusMemberBadge($row['status_member']); } ?></td>														                                                        
                                             <td><?php echo $row['alamat']?></td>														                                                                                                                
                                             <td class="center"><?php echo $row['merek']?></td>														                                                                                                                
                                             <td class="center"><?php echo $row['tipe']?></td>														                                                                                                                                                                                                        

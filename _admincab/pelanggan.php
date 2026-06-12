@@ -6,6 +6,7 @@
 		$id_user=$_SESSION['_iduser'];	
 		$kd_cabang=$_SESSION['_cabang'];		                	
 		include "../config/koneksi.php";
+		include_once "_include_statistik_pelanggan.php";
         include "../config/koneksi1.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -276,11 +277,12 @@
                                             <th class="center" width="5%"></th>
                                             <td class="center" width="5%">No</td>
                                             <th width="10%">Kode</th>
-                                            <th width="20%">Nama Pelanggan</th>
-                                            <th width="30%">Alamat</th>
-                                            <th width="10%">Kota</th>
-                                            <th width="10%">No. Telepon</th>                                                        
-                                            <th width="10%" class="center">Kategori</th>
+                                            <th width="18%">Nama Pelanggan</th>
+                                            <th width="25%">Alamat</th>
+                                            <th width="8%">Kota</th>
+                                            <th width="10%">No. Telepon</th>
+                                            <th width="8%" class="center">Kategori</th>
+                                            <th width="8%" class="center">GPS</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -289,7 +291,7 @@
                                           $limit = 100;
                                           $limitStart = ($page - 1) * $limit;
                                                     
-                                          $SqlQuery = mysqli_query($con, "SELECT * FROM view_cari_pelanggan order by namapelanggan LIMIT ".$limitStart.",".$limit);                                      
+                                          $SqlQuery = mysqli_query($con, "SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan order by namapelanggan LIMIT ".$limitStart.",".$limit);                                      
                                           $no = $limitStart + 1;
                                           
                                           while($row = mysqli_fetch_array($SqlQuery)){ 
@@ -318,12 +320,32 @@
                                                 </div><!-- /.btn-group -->                                                        
                                             </td>			
                                             <td align="center"><?php echo $no++; ?></td>
-                                            <td><?php echo $row['nopelanggan']?></td>														
-                                            <td><?php echo $row['namapelanggan']?></td>														                                                        
-                                            <td><?php echo $row['alamat']?></td>														                                                                                                                
-                                            <td><?php echo $row['kota']?></td>														                                                                                                                
-                                            <td><?php echo $row['telephone']?></td>														                                                                                                                                                                                                        
-                                            <td class="center"><?php echo $row['grup']?></td>														                                                                                                                
+                                            <td><?php echo $row['nopelanggan']?></td>
+                                            <td><?php echo $row['namapelanggan']?></td>
+                                            <td><?php echo $row['alamat']?></td>
+                                            <td><?php echo $row['kota']?></td>
+                                            <td><?php echo $row['telephone']?></td>
+                                            <td class="center"><?php echo $row['grup']?><br><?php echo displayStatusMemberBadge(isset($row['kategori_member']) ? $row['kategori_member'] : 'Bronze'); ?></td>
+                                            <td class="center">
+                                                <?php
+                                                // Check GPS coordinates
+                                                $check_gps = mysqli_query($con, "SELECT klat, klong FROM tblpelanggan WHERE nopelanggan='{$row['nopelanggan']}'");
+                                                $gps_data = mysqli_fetch_array($check_gps);
+                                                if(!empty($gps_data['klat']) && !empty($gps_data['klong'])) {
+                                                    $maps_url = "https://www.google.com/maps/@{$gps_data['klat']},{$gps_data['klong']},17z";
+                                                    echo '<span class="label label-success" title="Latitude: ' . $gps_data['klat'] . ', Longitude: ' . $gps_data['klong'] . '">';
+                                                    echo '<i class="fa fa-check-circle"></i> GPS OK';
+                                                    echo '</span>';
+                                                    echo '<br><a href="' . $maps_url . '" target="_blank" class="btn btn-xs btn-info" style="margin-top: 3px;">';
+                                                    echo '<i class="fa fa-map-marker"></i> Maps';
+                                                    echo '</a>';
+                                                } else {
+                                                    echo '<span class="label label-warning">';
+                                                    echo '<i class="fa fa-warning"></i> No GPS';
+                                                    echo '</span>';
+                                                }
+                                                ?>
+                                            </td>														                                                                                                                
                                         </tr>
                                     <?php           
                                           }

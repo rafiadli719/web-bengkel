@@ -7,6 +7,7 @@
         $kd_cabang=$_SESSION['_cabang'];
 	
 		include "../config/koneksi.php";
+		include_once "_include_statistik_pelanggan.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -91,7 +92,7 @@
     // end ===========
 
         if($txtflt=='asc') {
-            $sql_query=" SELECT * FROM tblpelanggan 
+            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM tblpelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -100,7 +101,7 @@
             $tm_cari=mysqli_fetch_array($cari_kd);
             $tot=$tm_cari['tot'];				        
         } else {
-            $sql_query=" SELECT * FROM tblpelanggan 
+            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM tblpelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -395,7 +396,7 @@
                                             <td class="center" width="9%">Propinsi</td>
                                             <td class="center" width="9%">No. Telepon</td>
                                             <td class="center" width="9%">Kontak Person</td>
-                                            <td class="center" width="9%">Grup Pelanggan</td>
+                                            <td class="center" width="9%">Member</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -424,7 +425,7 @@
                                             <td class="center"><?php echo $tampil['propinsi']?></td>														
                                             <td class="center"><?php echo $tampil['telephone']?></td>														                                                        
                                             <td class="center"><?php echo $tampil['kontakperson']?></td>														                                                                                                                														                                                                                                                                                                        
-                                            <td class="center"><?php echo $tampil['kgrup']?></td>														
+                                            <td class="center"><?php echo displayStatusMemberBadge(isset($tampil['kategori_member']) ? $tampil['kategori_member'] : 'Bronze'); ?></td>														
                                         </tr>
                                     <?php
                                         }

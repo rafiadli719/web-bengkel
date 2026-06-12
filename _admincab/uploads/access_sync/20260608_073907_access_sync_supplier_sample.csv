@@ -1,0 +1,2 @@
+NoSupplier,NamaSupplier,Alamat,Kota,Propinsi,KodePost,Negara,Telephone,Fax,NamaBank,NoAccount,AtasNama,KontakPerson,Email,Note,SaldoAwal,PerTanggal,JmlBayar,Sisa
+SUPTEST26060001,PT Supplier Test,Jl. Bengkel No. 1,Semarang,Jawa Tengah,50123,Indonesia,081234567890,024123456,BCA,1234567890,FIT MOTOR TEST,Budi,budi@supplier.test,Supplier sample,1000000,2026-06-08,250000,750000

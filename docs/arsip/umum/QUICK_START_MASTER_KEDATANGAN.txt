@@ -1,0 +1,265 @@
+═══════════════════════════════════════════════════════════════
+  QUICK START - MASTER KEDATANGAN PELANGGAN
+  Sistem Tracking Kunjungan Pelanggan Berbasis Kedatangan
+═══════════════════════════════════════════════════════════════
+
+📋 INSTALASI CEPAT
+═══════════════════════════════════════════════════════════════
+
+1. IMPORT DATABASE
+   ─────────────────────────────────────────────────────────────
+   • Buka phpMyAdmin atau MySQL Command Line
+   • Pilih database: fitmotor_dbbengkel
+   • Import file: database_master_kedatangan_pelanggan.sql
+   
+   Via Command Line:
+   mysql -u root -p fitmotor_dbbengkel < database_master_kedatangan_pelanggan.sql
+
+2. REFRESH DATA AWAL (Opsional)
+   ─────────────────────────────────────────────────────────────
+   Jika sudah ada data servis lama, jalankan:
+   
+   CALL sp_refresh_master_kedatangan();
+   
+   • Ini akan generate data kedatangan dari semua transaksi lama
+   • Proses bisa memakan waktu 1-5 menit tergantung jumlah data
+
+3. VERIFIKASI INSTALASI
+   ─────────────────────────────────────────────────────────────
+   • Cek total record:
+   SELECT COUNT(*) FROM master_kedatangan_pelanggan;
+   
+   • Lihat data sample:
+   SELECT * FROM view_ringkasan_kedatangan_pelanggan LIMIT 10;
+
+═══════════════════════════════════════════════════════════════
+📊 KONSEP DASAR
+═══════════════════════════════════════════════════════════════
+
+PERBEDAAN SISTEM LAMA VS BARU
+─────────────────────────────────────────────────────────────
+
+Sistem Lama (Statistik):
+• Basis: Total nominal transaksi (Rupiah)
+• Member: Bronze < 2jt, Silver 2-5jt, Gold 5-10jt, Platinum >10jt
+• Focus: Nilai transaksi
+
+Sistem Baru (Kedatangan):
+• Basis: Jumlah kunjungan (Frekuensi)
+• Member: Bronze <5x, Silver 5-10x, Gold 10-20x, Platinum >20x
+• Focus: Loyalitas pelanggan
+
+KATEGORI MEMBER BARU
+─────────────────────────────────────────────────────────────
+
+🥉 Bronze    : < 5 kunjungan
+🥈 Silver    : 5-9 kunjungan (Diskon 10%)
+🥇 Gold      : 10-19 kunjungan (Diskon 15%)
+💎 Platinum  : ≥ 20 kunjungan (Diskon 20%)
+
+═══════════════════════════════════════════════════════════════
+⚙️ CARA KERJA TRIGGER
+═══════════════════════════════════════════════════════════════
+
+ALUR OTOMATIS
+─────────────────────────────────────────────────────────────
+
+1. Kasir input servis seperti biasa
+2. Kasir klik tombol BAYAR
+3. Status servis berubah: 'selesai' → 'bayar'
+4. Trigger otomatis jalan di background
+5. Sistem catat kedatangan ke tabel master_kedatangan_pelanggan
+6. Data tersimpan otomatis (kasir tidak perlu lakukan apapun!)
+
+DATA YANG DICATAT
+─────────────────────────────────────────────────────────────
+
+• Kedatangan ke berapa (1, 2, 3, dst)
+• Tanggal datang sekarang
+• Tanggal datang sebelumnya
+• Jarak hari dari kunjungan sebelumnya
+• Total transaksi
+• Jumlah item servis
+• Rata-rata nilai per item
+• Estimasi datang berikutnya (+30 hari)
+• Status garansi
+
+═══════════════════════════════════════════════════════════════
+📊 QUERY PENTING
+═══════════════════════════════════════════════════════════════
+
+1. LIHAT RINGKASAN SEMUA PELANGGAN
+   ─────────────────────────────────────────────────────────────
+   SELECT * FROM view_ringkasan_kedatangan_pelanggan
+   ORDER BY jumlah_kedatangan DESC
+   LIMIT 50;
+
+2. LIHAT RIWAYAT KEDATANGAN PER PELANGGAN
+   ─────────────────────────────────────────────────────────────
+   SELECT * FROM view_riwayat_kedatangan_detail
+   WHERE no_pelanggan = 'AD 1234 AB'
+   ORDER BY kedatangan_ke DESC;
+
+3. PELANGGAN PERLU FOLLOW-UP
+   ─────────────────────────────────────────────────────────────
+   SELECT * FROM view_pelanggan_perlu_followup
+   WHERE prioritas = 'Urgent'
+   ORDER BY hari_tidak_datang DESC;
+
+4. TOP 10 PELANGGAN SETIA
+   ─────────────────────────────────────────────────────────────
+   SELECT * FROM view_top_pelanggan_kunjungan
+   LIMIT 10;
+
+5. ANALISIS POLA KUNJUNGAN
+   ─────────────────────────────────────────────────────────────
+   SELECT 
+       kedatangan_ke,
+       COUNT(*) AS jumlah_pelanggan,
+       AVG(jarak_hari) AS rata2_jarak_hari,
+       AVG(total_transaksi) AS rata2_transaksi
+   FROM master_kedatangan_pelanggan
+   WHERE kedatangan_ke > 1
+   GROUP BY kedatangan_ke
+   ORDER BY kedatangan_ke;
+
+═══════════════════════════════════════════════════════════════
+🎯 FITUR UTAMA
+═══════════════════════════════════════════════════════════════
+
+✅ UPDATE OTOMATIS
+   • Kedatangan tercatat otomatis saat kasir klik BAYAR
+   • Kasir tidak perlu input manual
+   • Trigger bekerja di background
+
+✅ TRACKING LENGKAP
+   • Riwayat setiap kunjungan tersimpan detail
+   • Tahu kapan pelanggan datang terakhir
+   • Tahu jarak antar kunjungan
+
+✅ KATEGORI MEMBER OTOMATIS
+   • Bronze/Silver/Gold/Platinum berdasarkan jumlah kunjungan
+   • Update otomatis setiap kunjungan baru
+   • Diskon sesuai level member
+
+✅ FOLLOW-UP SISTEMATIS
+   • Identifikasi pelanggan lama tidak datang
+   • Prioritas: Normal / Perlu Follow-up / Urgent
+   • Template pesan WhatsApp otomatis
+
+✅ ANALISIS POLA
+   • Rata-rata jarak antar kunjungan
+   • Pola kunjungan per pelanggan
+   • Estimasi kunjungan berikutnya
+
+═══════════════════════════════════════════════════════════════
+💻 INTEGRASI DASHBOARD
+═══════════════════════════════════════════════════════════════
+
+FILE YANG PERLU DIBUAT
+─────────────────────────────────────────────────────────────
+
+1. dashboard_kedatangan_pelanggan.php
+   • Dashboard utama untuk monitoring
+   • Summary cards & grafik
+   • Tabel data pelanggan
+
+2. detail_kedatangan.php
+   • Detail riwayat kedatangan per pelanggan
+   • Grafik pola kunjungan
+   • Tombol kirim WhatsApp
+
+3. kirim_wa_reminder.php
+   • Handler kirim WhatsApp reminder
+   • Template pesan otomatis
+   • Link WhatsApp Web
+
+Lihat file: DOKUMENTASI_MASTER_KEDATANGAN_PELANGGAN.md
+untuk contoh kode lengkap!
+
+═══════════════════════════════════════════════════════════════
+📱 WHATSAPP AUTOMATION
+═══════════════════════════════════════════════════════════════
+
+CONTOH PESAN OTOMATIS
+─────────────────────────────────────────────────────────────
+
+🏍️ *Halo Budi Santoso!*
+
+Sudah 35 hari sejak servis terakhir Anda di Fit Motor.
+
+📊 *Riwayat Anda:*
+• Total kunjungan: 15x
+• Member: 🥇 Gold
+• Terakhir servis: 01/10/2025
+
+⏰ *Waktunya servis motor Anda!*
+
+Kami tunggu kedatangan Anda di bengkel kami.
+
+Terima kasih,
+*Tim Fit Motor* 🔧
+
+CARA IMPLEMENTASI
+─────────────────────────────────────────────────────────────
+
+1. Manual: Generate link WhatsApp Web
+2. Otomatis: Integrasi dengan API WhatsApp (Fonnte, Wablas, dll)
+
+Lihat dokumentasi lengkap untuk contoh kode!
+
+═══════════════════════════════════════════════════════════════
+🔧 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+PROBLEM: Trigger tidak jalan
+─────────────────────────────────────────────────────────────
+SOLUSI:
+• Cek trigger exist: SHOW TRIGGERS LIKE 'tblservice';
+• Cek status servis berubah ke 'bayar'
+• Cek foreign key constraint (no_pelanggan harus exist)
+
+PROBLEM: Data tidak muncul di view
+─────────────────────────────────────────────────────────────
+SOLUSI:
+• Cek view exist: SHOW FULL TABLES WHERE Table_type = 'VIEW';
+• Refresh view: DROP VIEW dan CREATE VIEW ulang
+• Cek data di tabel master: SELECT * FROM master_kedatangan_pelanggan;
+
+PROBLEM: Performa lambat
+─────────────────────────────────────────────────────────────
+SOLUSI:
+• Cek index: SHOW INDEX FROM master_kedatangan_pelanggan;
+• Tambah index jika perlu
+• Optimize table: OPTIMIZE TABLE master_kedatangan_pelanggan;
+
+═══════════════════════════════════════════════════════════════
+📝 CHECKLIST INSTALASI
+═══════════════════════════════════════════════════════════════
+
+□ Import database_master_kedatangan_pelanggan.sql
+□ Refresh data awal (jika ada data lama)
+□ Verifikasi trigger exist
+□ Verifikasi view exist
+□ Test dengan transaksi baru
+□ Cek data masuk ke tabel master_kedatangan_pelanggan
+□ Implementasi dashboard PHP (opsional)
+□ Setup WhatsApp automation (opsional)
+
+═══════════════════════════════════════════════════════════════
+🎉 SELESAI!
+═══════════════════════════════════════════════════════════════
+
+Sistem Master Kedatangan Pelanggan siap digunakan!
+
+Untuk dokumentasi lengkap, baca:
+• DOKUMENTASI_MASTER_KEDATANGAN_PELANGGAN.md
+
+Untuk pertanyaan & support:
+• Hubungi tim development
+
+═══════════════════════════════════════════════════════════════
+Dibuat: 3 November 2025
+Versi: 1.0
+Status: ✅ SIAP DIGUNAKAN
+═══════════════════════════════════════════════════════════════

@@ -32,7 +32,7 @@
 		$nopesanan=$_GET['nopesanan'];        
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
-                                        no_supplier, total_qty, total_order 
+                                        no_supplier, note, payment_term, total_qty, total_order 
                                         FROM tblorder_header 
                                         WHERE no_order='$nopesanan'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
@@ -40,6 +40,8 @@
 		$cbo_supplier=$tm_cari['no_supplier'];
 		$total_qty=$tm_cari['total_qty'];
         $tot=$tm_cari['total_order'];
+        $payment_term=$tm_cari['payment_term'];
+        $note=$tm_cari['note'];
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasupplier, alamat 
@@ -48,6 +50,51 @@
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$namasupplier=$tm_cari['namasupplier'];				        
         $alamat=$tm_cari['alamat'];
+
+        $carabayar = 'Tunai';
+        $syarat = '';
+        if (!empty($payment_term)) {
+            if (strpos($payment_term, 'Kredit:') === 0) {
+                $carabayar = 'Kredit';
+                $syarat = trim(substr($payment_term, 7));
+            } elseif (strpos($payment_term, 'Tunai:') === 0) {
+                $carabayar = 'Tunai';
+                $syarat = '';
+            }
+        }
+
+        $tgl_jt = '';
+        if ($carabayar === 'Kredit' && $syarat !== '') {
+            $dt = DateTime::createFromFormat('d/m/Y', $tgl_pilih);
+            if ($dt) {
+                $dt->modify('+' . ((int)$syarat) . ' day');
+                $tgl_jt = $dt->format('d/m/Y');
+            }
+        }
+
+        $total_beli = 0;
+        $qsum = mysqli_query($koneksi, "SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order='$nopesanan'");
+        while ($r = mysqli_fetch_array($qsum)) {
+            $harga = (float)$r['harga_pokok'];
+            if ($harga <= 0) {
+                $no_item_tmp = mysqli_real_escape_string($koneksi, $r['no_item']);
+                $qh = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE (noitem='$no_item_tmp' OR kodebarcode='$no_item_tmp') LIMIT 1");
+                if ($qh && mysqli_num_rows($qh) > 0) {
+                    $rh = mysqli_fetch_assoc($qh);
+                    $harga = (float)$rh['hargapokok'];
+                }
+            }
+            $qty = (int)$r['quantity'];
+            $total_beli += ($harga * $qty);
+        }
+
+        $diskon = 0;
+        $total_diskon = 0;
+        $pajak = 0;
+        $total_pajak = 0;
+        $netto = $total_beli;
+        $dp = 0;
+        $kekurangan = $netto;
 ?>
 
 <!DOCTYPE html>
@@ -106,6 +153,65 @@
         <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.css' rel='stylesheet' />
 		
 	</head>
+    <style type="text/css">
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0.5cm;
+            }
+            #navbar, #sidebar, .breadcrumbs, .footer, .btn-scroll-up, .no-print {
+                display: none !important;
+            }
+            .main-content {
+                margin: 0;
+                padding: 0;
+            }
+            .page-content {
+                margin: 0;
+                padding: 0;
+            }
+            .widget-box {
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            .widget-body {
+                border: none;
+            }
+            .form-control, input[type="text"], textarea {
+                 border: none !important;
+                 background-color: transparent !important;
+                 box-shadow: none !important;
+                 padding: 0 !important;
+                 height: auto !important;
+            }
+             /* Force full width for print */
+            .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+                float: left;
+            }
+            .col-sm-12 { width: 100%; }
+            .col-sm-7 { width: 58.33333333%; }
+            .col-sm-5 { width: 41.66666667%; }
+            .col-sm-6 { width: 50%; }
+            
+            /* Hide buttons explicitly */
+            button, a.btn {
+                display: none !important;
+            }
+        }
+        
+        /* Cleanup View Only Mode */
+        .view-only-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .view-only-value {
+            display: block;
+            margin-bottom: 8px;
+        }
+    </style>
 
 	<body class="no-skin">
 		<div id="navbar" class="navbar navbar-default          ace-save-state">
@@ -127,7 +233,7 @@
 							<td width="20%">
 								<a href="index.php" class="navbar-brand">
 									<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 									</small>							
 								</a>								
@@ -287,56 +393,78 @@
                                             </div>
 										</div>
 									</div>
-								</div>	
-							</div>
-                            
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
 
-                                            <?php include "_template/_pesanan_pembelian_cetak.php"; ?>
+<?php $mode_view_only = true; include "_template/_pesanan_pembelian_cetak.php"; ?>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+</div>
+</div>
+</div>
+</div>
 
-							<div class="col-xs-12 col-sm-3">
-                                <a href="pesanan_pembelian_add.php">
-                                    <button class="btn btn-primary btn-block" type="button" 
-                                    id="btnsimpan" name="btnsimpan">
-                                        Input
-                                    </button>
-                                </a>
-                            </div>
-                        </form> 
-                                                                                       
-							<div class="col-xs-12 col-sm-3">
-                                <button class="btn disabled btn-primary btn-block" type="button">
-                                    Batal
-                                </button>
-                            </div>
-                            
-							<div class="col-xs-12 col-sm-3">
-                                <a target="_blank"  href="pesanan_pembelian_struk.php?snopesanan=<?php echo $nopesanan; ?>">                            
-                                    <button class="btn btn-primary btn-block" type="button" 
-                                    id="btncetak" name="btncetak">
-                                        Cetak
-                                    </button>
-                                </a>
-                            </div>
+<div class="col-xs-12 col-sm-7">
+    <div class="widget-box">
+        <div class="widget-body">
+            <div class="widget-main">
+                <table class="table table-borderless" style="width: 100%;">
+                    <tr>
+                        <td width="20%"><strong>Cara Bayar</strong></td>
+                        <td width="30%">: <?php echo $carabayar; ?></td>
+                        <td width="20%"><strong>Jml. Pesan</strong></td>
+                        <td width="30%">: <?php echo $total_qty; ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Syarat</strong></td>
+                        <td>: <?php echo $syarat; ?> Hari</td>
+                        <td><strong>Jml. Beli</strong></td>
+                        <td>: <?php echo $total_qty; ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jatuh Tempo</strong></td>
+                        <td>: <?php echo $tgl_jt; ?></td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding-top: 10px;">
+                            <strong>Keterangan :</strong><br/>
+                            <?php echo nl2br($note); ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-xs-12 col-sm-5">
+<div class="widget-box">
+<div class="widget-body">
+<div class="widget-main">
+<?php include "_template/_pembelian_total_cetak.php"; ?>
+</div>
+</div>
+</div>
+</div>
 
-							<div class="col-xs-12 col-sm-3">
-                                <a href="pesanan_pembelian.php">
-                                <button class="btn btn-primary btn-block" type="button">
-                                    Tutup
-                                </button>
-                                </a>
-                            </div>                            
-                            
-                        </div>
+<?php if (empty($mode_view_only)) { ?>
+<div class="col-xs-12 col-sm-3">
+    <button class="btn disabled btn-primary btn-block" type="button">
+        Batal
+    </button>
+</div>
+<?php } ?>
 
+<div class="col-xs-12 col-sm-3 no-print">
+    <button class="btn btn-primary btn-block" type="button" onclick="window.print()">
+        Cetak
+    </button>
+</div>
+
+<div class="col-xs-12 col-sm-3 no-print">
+    <a href="pesanan_pembelian.php">
+    <button class="btn btn-primary btn-block" type="button">
+        Tutup
+    </button>
+    </a>
+</div>                            
                         
                         </form>
 

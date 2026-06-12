@@ -1,24 +1,67 @@
 <?php
-	session_start();
-    $id_user=$_SESSION['_iduser'];		#
-    $kd_cabang=$_SESSION['_cabang'];        
-    
-	date_default_timezone_set('Asia/Jakarta');
-	$tgl_skr=date('Y/m/d');
-    $waktu_skr=date('h:i');
-	$nopol= $_GET['snopol'];
-    
-    include "../config/koneksi.php";
-    include "function_servis.php";
-    $LastID=FormatNoTrans(OtomatisID());	        
-        
-    mysqli_query($koneksi,"INSERT INTO tblservice 
-                            (no_service, tanggal, jam, 
-                            no_pelanggan, no_polisi, 
-                            kd_cabang, id_user) 
-                            VALUES 
-                            ('$LastID','$tgl_skr','$waktu_skr',
-                            '$nopol','$nopol',
-                            '$kd_cabang','$id_user')");
-    echo"<script>window.location=('servis-input-reguler.php?snoserv=$LastID');</script>";        
+session_start();
+
+if (empty($_SESSION['_iduser']) || empty($_SESSION['_cabang'])) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$id_user = (int) $_SESSION['_iduser'];
+$kd_cabang = $_SESSION['_cabang'];
+$nopol = isset($_GET['snopol']) ? trim($_GET['snopol']) : '';
+
+if ($nopol === '') {
+    echo "<script>window.alert('Nomor polisi tidak valid.');window.location=('servis-carinopol.php');</script>";
+    exit;
+}
+
+include "../config/koneksi.php";
+include "function_servis.php";
+
+date_default_timezone_set('Asia/Jakarta');
+$tgl_skr = date('Y/m/d');
+$waktu_skr = date('H:i');
+
+$stmtVehicle = mysqli_prepare($koneksi, "SELECT nopolisi FROM tblkendaraan WHERE nopolisi = ? LIMIT 1");
+mysqli_stmt_bind_param($stmtVehicle, "s", $nopol);
+mysqli_stmt_execute($stmtVehicle);
+$vehicleResult = mysqli_stmt_get_result($stmtVehicle);
+if (!$vehicleResult || mysqli_num_rows($vehicleResult) === 0) {
+    mysqli_stmt_close($stmtVehicle);
+    echo "<script>window.alert('Data kendaraan tidak ditemukan.');window.location=('servis-carinopol.php');</script>";
+    exit;
+}
+mysqli_stmt_close($stmtVehicle);
+
+$stmtDuplicate = mysqli_prepare(
+    $koneksi,
+    "SELECT no_service FROM tblservice WHERE no_polisi = ? AND COALESCE(status_servis, '') NOT IN ('selesai', 'bayar', 'cancel') ORDER BY tanggal DESC, jam DESC LIMIT 1"
+);
+mysqli_stmt_bind_param($stmtDuplicate, "s", $nopol);
+mysqli_stmt_execute($stmtDuplicate);
+$duplicateResult = mysqli_stmt_get_result($stmtDuplicate);
+if ($duplicateResult && ($duplicateRow = mysqli_fetch_assoc($duplicateResult))) {
+    mysqli_stmt_close($stmtDuplicate);
+    $existingService = urlencode($duplicateRow['no_service']);
+    echo "<script>window.alert('Masih ada service aktif untuk nomor polisi ini.');window.location=('servis-input-reguler.php?snoserv={$existingService}');</script>";
+    exit;
+}
+mysqli_stmt_close($stmtDuplicate);
+
+$lastID = FormatNoTrans(OtomatisID());
+$stmtInsert = mysqli_prepare(
+    $koneksi,
+    "INSERT INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user, status_servis) VALUES (?, ?, ?, ?, ?, ?, ?, 'datang')"
+);
+mysqli_stmt_bind_param($stmtInsert, "ssssssi", $lastID, $tgl_skr, $waktu_skr, $nopol, $nopol, $kd_cabang, $id_user);
+
+if (!mysqli_stmt_execute($stmtInsert)) {
+    mysqli_stmt_close($stmtInsert);
+    echo "<script>window.alert('Gagal membuat service reguler.');window.location=('servis-carinopol.php');</script>";
+    exit;
+}
+
+mysqli_stmt_close($stmtInsert);
+echo "<script>window.location=('servis-input-reguler.php?snoserv=" . urlencode($lastID) . "');</script>";
+exit;
 ?>

@@ -83,6 +83,8 @@ if($carabayar<>'Kredit') {
                                         nopelanggan='$nopelanggan'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $nmpelanggan=$tm_cari['namapelanggan'];                 
+
+        $mode_view_only = true;
 ?>
 
 <!DOCTYPE html>
@@ -162,7 +164,7 @@ if($carabayar<>'Kredit') {
 							<td width="20%">
 								<a href="index.php" class="navbar-brand">
 									<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 									</small>							
 								</a>								
@@ -313,6 +315,7 @@ if($carabayar<>'Kredit') {
 										<div class="widget-main">
 
                                             <div class="row">
+                                                <?php if (empty($mode_view_only)) { ?>
                                                 <div class="col-xs-8 col-sm-3">
                                                     <a href="penjualan_add.php">
                                                     <button class="btn btn-primary btn-block" type="button">
@@ -326,6 +329,7 @@ if($carabayar<>'Kredit') {
                                                         </button>
                                                                                                     
                                                 </div>
+                                                <?php } ?>
                                                 <div class="col-xs-8 col-sm-3">
                                                     <a target="_blank"  href="penjualan_struk.php?snobl=<?php echo $nojl; ?>">                            
                                                         <button class="btn btn-primary btn-block" type="button" 

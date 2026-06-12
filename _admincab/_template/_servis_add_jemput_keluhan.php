@@ -1,78 +1,29 @@
 <?php
-// Template untuk input keluhan service jemput
+// Template untuk input keluhan service jemput - disesuaikan dengan servis reguler
 ?>
 
 <table class="table table-bordered">
     <tr>
         <td width="60%">
             <label>Keluhan :</label>
-            <div class="row">
-                <div class="col-xs-8 col-sm-10">
-                    <input type="text" class="form-control input-sm" 
-                    id="txtkeluhan" name="txtkeluhan" 
-                    placeholder="Masukkan keluhan atau klik tombol cari untuk memilih dari master data" 
-                    autocomplete="off" />
-                </div>
-                <div class="col-xs-4 col-sm-2">
-                    <button type="button" class="btn btn-info btn-sm" onclick="showModalSearchKeluhan()">
-                        <i class="ace-icon fa fa-search"></i> Cari
-                    </button>
-                </div>
-            </div>
+            <input type="hidden" id="kode_keluhan" name="kode_keluhan" value="" />
+            <input type="text" class="form-control input-sm" 
+            id="txtkeluhan" name="txtkeluhan" 
+            placeholder="Pilih keluhan dari master" autocomplete="off" readonly />
         </td>
         <td width="20%">
             <label>&nbsp;</label><br>
-            <button class="btn btn-primary btn-sm btn-block" type="submit" 
-            id="btnaddkeluhan" name="btnaddkeluhan">
-                + Keluhan
+            <button type="button" class="btn btn-info btn-sm btn-block" onclick="showModalSearchKeluhan()">
+                <i class="ace-icon fa fa-search"></i> Pilih Keluhan
             </button>
         </td>
         <td width="20%">
-            <label>Pengerjaan :</label>
-            <div class="row">
-                <div class="col-xs-8 col-sm-8">
-                    <input type="text" class="form-control input-sm" 
-                    id="txtitempengerjaan" name="txtitempengerjaan" 
-                    placeholder="Item pengerjaan" autocomplete="off" />
-                </div>
-                <div class="col-xs-4 col-sm-4">
-                    <button class="btn btn-success btn-sm" type="submit" 
-                    id="btnaddpengerjaan" name="btnaddpengerjaan">
-                        + Kerja
-                    </button>
-                </div>
-            </div>
+            <label>&nbsp;</label><br>
+            <button class="btn btn-warning btn-sm btn-block" type="submit" 
+            id="btnaddkeluhan" name="btnaddkeluhan" onclick="return validateKeluhan()">
+                <i class="ace-icon fa fa-plus"></i> Tambah ke SPK
+            </button>
         </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <label>Pilih Mekanik :</label>
-            <select name="cbomekanik" id="cbomekanik" class="form-control input-sm">
-                <option value="">- Pilih Mekanik -</option>
-                <?php
-                    if(isset($koneksi)) {
-                        try {
-                            $sql="SELECT nomekanik, nama FROM tblmekanik 
-                                  WHERE nama<>'-' 
-                                  ORDER BY nama ASC";
-                            $sql_row=mysqli_query($koneksi,$sql);
-                            if($sql_row) {
-                                while($sql_res=mysqli_fetch_assoc($sql_row)) {
-                ?>
-                <option value="<?php echo htmlspecialchars($sql_res["nomekanik"]); ?>">
-                    <?php echo htmlspecialchars($sql_res["nama"]); ?>
-                </option>
-                <?php 
-                                }
-                            }
-                        } catch (Exception $e) {
-                            echo '<option value="">Error loading data</option>';
-                        }
-                    }
-                ?>
-            </select>
-        </td>
-        <td>&nbsp;</td>
     </tr>
 </table>
 
@@ -81,9 +32,10 @@
     <thead>
         <tr class="info">
             <th width="5%" class="center">No</th>
-            <th width="40%">Keluhan</th>
+            <th width="30%">Keluhan</th>
+            <th width="15%">Kategori</th>
             <th width="20%">Status</th>
-            <th width="30%">Keterangan</th>
+            <th width="25%">Keterangan</th>
             <th width="5%" class="center">Aksi</th>
         </tr>
     </thead>
@@ -91,7 +43,7 @@
         <?php 
             $no = 0;
             $sql = mysqli_query($koneksi,"SELECT 
-                                            id, keluhan, status_pengerjaan, 
+                                            id, keluhan, kode_keluhan, kategori, status_pengerjaan, 
                                             keterangan_tidak_selesai
                                             FROM tbservis_keluhan_status
                                             WHERE no_service='$no_service'
@@ -122,7 +74,19 @@
         ?>
         <tr>
             <td class="center"><?php echo $no; ?></td>
-            <td><?php echo htmlspecialchars($tampil['keluhan']); ?></td>
+            <td>
+                <?php echo htmlspecialchars($tampil['keluhan']); ?>
+                <?php if(!empty($tampil['kode_keluhan'])): ?>
+                    <br><small class="text-muted"><i class="fa fa-barcode"></i> <?php echo $tampil['kode_keluhan']; ?></small>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if(!empty($tampil['kategori'])): ?>
+                    <span class="label label-info"><?php echo htmlspecialchars($tampil['kategori']); ?></span>
+                <?php else: ?>
+                    <small class="text-muted">-</small>
+                <?php endif; ?>
+            </td>
             <td>
                 <span class="label <?php echo $status_color; ?>"><?php echo $status_text; ?></span>
                 <br><br>
@@ -164,7 +128,7 @@
                 <a class="red" data-rel="tooltip" title="Delete" 
                 href="keluhan-hapus.php?keluhan_id=<?php echo $tampil['id']; ?>&snoserv=<?php echo $no_service; ?>" 
                 onclick="return confirm('Keluhan akan dihapus. Lanjutkan?')">
-                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                \t<i class="ace-icon fa fa-trash-o bigger-130"></i>
                 </a>
             </td>
         </tr>
@@ -173,53 +137,7 @@
             if($no == 0) {
         ?>
         <tr>
-            <td colspan="5" class="center"><em>Belum ada keluhan yang ditambahkan</em></td>
-        </tr>
-        <?php } ?>
-    </tbody>
-</table>
-
-<!-- Daftar Pengerjaan -->
-<h5 class="header green smaller">Daftar Pengerjaan</h5>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr class="info">
-            <th width="5%" class="center">No</th>
-            <th width="50%">Item Pengerjaan</th>
-            <th width="35%">Mekanik</th>
-            <th width="10%" class="center">Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php 
-            $no = 0;
-            $sql = mysqli_query($koneksi,"SELECT 
-                                            p.id, p.item_pengerjaan, m.nama as nama_mekanik
-                                            FROM tbservis_pengerjaan p
-                                            LEFT JOIN tblmekanik m ON p.kd_mekanik = m.nomekanik
-                                            WHERE p.no_service='$no_service'
-                                            ORDER BY p.id ASC");
-            while ($tampil = mysqli_fetch_array($sql)) {
-                $no++;
-        ?>
-        <tr>
-            <td class="center"><?php echo $no; ?></td>
-            <td><?php echo htmlspecialchars($tampil['item_pengerjaan']); ?></td>
-            <td><?php echo htmlspecialchars($tampil['nama_mekanik']); ?></td>
-            <td class="center">
-                <a class="red" data-rel="tooltip" title="Delete" 
-                href="pengerjaan-hapus.php?pengerjaan_id=<?php echo $tampil['id']; ?>&snoserv=<?php echo $no_service; ?>" 
-                onclick="return confirm('Pengerjaan akan dihapus. Lanjutkan?')">
-                <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                </a>
-            </td>
-        </tr>
-        <?php
-            }
-            if($no == 0) {
-        ?>
-        <tr>
-            <td colspan="4" class="center"><em>Belum ada pengerjaan yang ditambahkan</em></td>
+            <td colspan="6" class="center"><em>Belum ada keluhan yang ditambahkan</em></td>
         </tr>
         <?php } ?>
     </tbody>
@@ -233,5 +151,14 @@ function showModalSearchKeluhan() {
     } else {
         alert('Modal search keluhan belum tersedia');
     }
+}
+
+function validateKeluhan() {
+    var kodeKeluhan = document.getElementById('kode_keluhan').value.trim();
+    if(kodeKeluhan === '') {
+        alert('Silakan pilih keluhan dari Master terlebih dahulu!');
+        return false;
+    }
+    return true;
 }
 </script>

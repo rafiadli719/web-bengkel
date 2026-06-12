@@ -1,0 +1,335 @@
+=====================================================
+QUICK START GUIDE - PROCUREMENT MODULE (PR-PO-DO-GR)
+=====================================================
+
+📋 RINGKASAN:
+- Modul untuk mengelola proses pembelian dari awal sampai akhir
+- Flow: PR → RFQ (optional) → PO → DO → GR → Payment
+- Approval workflow terintegrasi
+- Tracking real-time
+
+=====================================================
+1. INSTALASI DATABASE
+=====================================================
+
+Step 1: Backup database existing
+---------------------------------
+mysqldump -u root -p fitmotor_dbbengkel > backup_before_procurement.sql
+
+Step 2: Import database procurement
+------------------------------------
+mysql -u root -p fitmotor_dbbengkel < database_procurement_pr_po_do.sql
+
+Step 3: Verifikasi
+------------------
+mysql -u root -p fitmotor_dbbengkel
+
+SHOW TABLES LIKE '%purchase%';
+SHOW TABLES LIKE '%delivery%';
+SHOW TABLES LIKE '%rfq%';
+
+DESC tblpurchase_request_header;
+DESC tbldelivery_order_header;
+
+=====================================================
+2. TEST DATABASE
+=====================================================
+
+-- Test generate nomor PR
+CALL sp_generate_no_pr('001', @no_pr);
+SELECT @no_pr;
+-- Hasil: PR202511001000001
+
+-- Test generate nomor DO
+CALL sp_generate_no_do('001', @no_do);
+SELECT @no_do;
+-- Hasil: DO202511001000001
+
+-- Test insert PR
+INSERT INTO tblpurchase_request_header 
+(no_pr, tanggal_pr, tanggal_butuh, requester, departemen, alasan, kd_cabang, created_by)
+VALUES
+('PR202511001000001', '2025-11-03', '2025-11-10', 'admin', 'Gudang', 'Stok menipis', '001', 'admin');
+
+-- Cek hasil
+SELECT * FROM tblpurchase_request_header;
+
+=====================================================
+3. STRUKTUR FILE PHP YANG PERLU DIBUAT
+=====================================================
+
+Prioritas 1 (WAJIB):
+--------------------
+✅ purchase_request/pr_list.php
+✅ purchase_request/pr_add.php
+✅ purchase_request/pr_view.php
+✅ purchase_request/pr_approval.php
+
+✅ purchase_order/po_add_from_pr.php
+✅ purchase_order/po_approval.php
+
+✅ delivery_order/do_list.php
+✅ delivery_order/do_add.php
+✅ delivery_order/do_tracking.php
+
+✅ goods_receipt/gr_add_from_do.php
+
+Prioritas 2 (PENTING):
+----------------------
+⚠️ purchase_request/pr_edit.php
+⚠️ purchase_request/pr_report.php
+
+⚠️ delivery_order/do_receive.php
+⚠️ delivery_order/do_print.php
+
+⚠️ goods_receipt/gr_qc.php
+
+Prioritas 3 (OPTIONAL):
+-----------------------
+🔵 rfq/rfq_list.php
+🔵 rfq/rfq_add.php
+🔵 rfq/rfq_comparison.php
+
+🔵 reports/procurement_dashboard.php
+🔵 reports/pr_status_report.php
+
+=====================================================
+4. ALUR PENGGUNAAN
+=====================================================
+
+A. BUAT PURCHASE REQUEST (PR)
+------------------------------
+1. User login
+2. Menu: Procurement → Purchase Request → Add New
+3. Isi form:
+   - Tanggal PR: 03/11/2025
+   - Tanggal Butuh: 10/11/2025
+   - Departemen: Gudang
+   - Alasan: Stok menipis
+4. Tambah item:
+   - Item: Oli Mesin
+   - Qty: 10
+   - Satuan: Liter
+   - Harga Estimasi: 50000
+5. Submit PR
+6. Status: Submitted (menunggu approval)
+
+B. APPROVAL PR
+--------------
+1. Supervisor login
+2. Menu: Procurement → PR Approval
+3. Lihat list PR pending
+4. Klik "View" PR yang akan di-approve
+5. Cek detail item
+6. Klik "Approve" atau "Reject"
+7. Isi notes (optional)
+8. Submit
+9. Status PR berubah: Approved
+
+C. BUAT PURCHASE ORDER (PO) DARI PR
+------------------------------------
+1. Purchasing login
+2. Menu: Procurement → Purchase Order → Create from PR
+3. Pilih PR yang sudah approved
+4. Sistem auto-fill item dari PR
+5. Pilih supplier
+6. Isi:
+   - Payment Term: Net 30
+   - Delivery Address: Alamat gudang
+   - Contact Person: Nama & telp
+7. Submit PO
+8. Status: Pending Approval
+
+D. APPROVAL PO
+--------------
+1. Manager login
+2. Menu: Procurement → PO Approval
+3. Lihat list PO pending
+4. Cek:
+   - Budget available?
+   - Harga sesuai?
+   - Supplier reliable?
+5. Approve atau Reject
+6. Status PO: Approved
+7. Kirim PO ke supplier (email/print)
+
+E. BUAT DELIVERY ORDER (DO)
+----------------------------
+1. Supplier konfirmasi pengiriman
+2. Warehouse login
+3. Menu: Procurement → Delivery Order → Add New
+4. Pilih PO yang akan dikirim
+5. Isi:
+   - No Surat Jalan: dari supplier
+   - Tanggal Kirim: 05/11/2025
+   - Estimasi Tiba: 06/11/2025
+   - No Kendaraan: B 1234 XYZ
+   - Nama Pengirim: Budi
+   - Telp: 08123456789
+6. Isi qty kirim per item
+7. Submit DO
+8. Status: Confirmed
+
+F. TRACKING PENGIRIMAN
+----------------------
+1. Menu: Procurement → DO Tracking
+2. Pilih DO yang akan di-track
+3. Update status:
+   - In Transit (05/11 10:00)
+   - Arrived at Gate (06/11 08:00)
+   - Unloading (06/11 08:30)
+4. Isi lokasi & keterangan
+5. Status DO: Arrived
+
+G. GOODS RECEIPT (GR)
+---------------------
+1. Warehouse login
+2. Menu: Procurement → Goods Receipt → Create from DO
+3. Pilih DO yang sudah arrived
+4. QC Check:
+   - Cek fisik barang
+   - Cek qty
+   - Cek kualitas
+5. Isi qty terima & qty reject
+6. Jika ada reject, isi alasan
+7. Submit GR
+8. Status QC: Passed/Failed/Partial
+9. Stock otomatis update
+
+H. PEMBAYARAN (EXISTING)
+-------------------------
+1. Finance login
+2. Menu: Pembayaran Hutang (existing)
+3. Pilih pembelian yang akan dibayar
+4. Bayar sesuai term payment
+5. Status: Lunas
+
+=====================================================
+5. STATUS FLOW
+=====================================================
+
+PURCHASE REQUEST (PR):
+- Draft → Submitted → Approved/Rejected → Closed
+
+PURCHASE ORDER (PO):
+- Draft → Pending → Approved/Rejected → Sent → Confirmed
+
+DELIVERY ORDER (DO):
+- Draft → Confirmed → In Transit → Arrived → Received
+
+GOODS RECEIPT (GR):
+- Draft → QC Pending → QC Passed/Failed → Posted
+
+=====================================================
+6. APPROVAL MATRIX (CONTOH)
+=====================================================
+
+PURCHASE REQUEST:
+- < Rp 5 juta: Supervisor
+- Rp 5-20 juta: Manager
+- > Rp 20 juta: Director
+
+PURCHASE ORDER:
+- < Rp 10 juta: Manager
+- Rp 10-50 juta: Director
+- > Rp 50 juta: Owner
+
+=====================================================
+7. TIPS & BEST PRACTICES
+=====================================================
+
+✅ DO:
+1. Selalu buat PR sebelum PO
+2. Approval harus lengkap sebelum kirim PO
+3. Update tracking DO secara real-time
+4. QC check wajib sebelum terima barang
+5. Dokumentasi lengkap (foto, surat jalan)
+
+❌ DON'T:
+1. Jangan skip approval
+2. Jangan terima barang tanpa DO
+3. Jangan post GR tanpa QC
+4. Jangan bayar sebelum GR
+5. Jangan hapus data historical
+
+=====================================================
+8. TROUBLESHOOTING
+=====================================================
+
+Q: Nomor PR tidak auto-generate?
+A: Cek stored procedure sp_generate_no_pr sudah dibuat
+
+Q: Approval tidak muncul?
+A: Cek user_akses di tbuser, pastikan ada role approver
+
+Q: DO tidak bisa dibuat?
+A: Pastikan PO sudah approved dan sent to supplier
+
+Q: Stock tidak update setelah GR?
+A: Cek trigger di tblpembelian_header
+
+Q: Error foreign key?
+A: Pastikan urutan import SQL benar, tabel parent dulu
+
+=====================================================
+9. MONITORING & REPORTS
+=====================================================
+
+Dashboard yang perlu dibuat:
+1. PR Outstanding (pending approval)
+2. PO Outstanding (belum diterima)
+3. DO In Transit (sedang dikirim)
+4. GR Pending QC (belum di-QC)
+5. Supplier Performance (on-time delivery)
+
+KPI yang perlu dimonitor:
+1. PR Approval Time (target: < 1 hari)
+2. PO to GR Time (target: < 7 hari)
+3. GR QC Pass Rate (target: > 95%)
+4. Supplier On-Time Delivery (target: > 90%)
+
+=====================================================
+10. NEXT STEPS
+=====================================================
+
+Fase 1 (Minggu 1-2): PR Module
+- Buat halaman PR CRUD
+- Buat approval workflow
+- Testing
+
+Fase 2 (Minggu 3-4): PO Module
+- Update halaman PO existing
+- Link ke PR
+- Buat approval workflow
+- Testing
+
+Fase 3 (Minggu 5-6): DO Module
+- Buat halaman DO CRUD
+- Buat tracking system
+- Testing
+
+Fase 4 (Minggu 7-8): GR Module
+- Update halaman GR existing
+- Link ke DO
+- Buat QC process
+- Testing
+
+Fase 5 (Minggu 9-10): RFQ Module (Optional)
+- Buat halaman RFQ
+- Buat comparison tool
+- Testing
+
+Fase 6 (Minggu 11-12): Reports & Dashboard
+- Buat dashboard
+- Buat reports
+- Testing keseluruhan
+- Training user
+
+=====================================================
+SELESAI - SIAP IMPLEMENTASI!
+=====================================================
+
+Kontak Support:
+- Email: support@fitmotorbengkel.com
+- Phone: 08123456789
+- Dokumentasi: /web-bengkel/ANALISA_PROSES_PEMBELIAN.md

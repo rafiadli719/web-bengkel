@@ -40,11 +40,87 @@
         $txtflt="asc";
         $tipebtn1="btn-danger";
         $tipebtn2="btn-info";
-        $hasil_cari="Hasil Pencarian ditemukan 0 data";
+
+        $penjualan_error = '';
+        $view_cols = [];
+        $col_res = mysqli_query($koneksi, "SHOW COLUMNS FROM view_penjualan_header");
+        if ($col_res) {
+            while ($r = mysqli_fetch_assoc($col_res)) {
+                $view_cols[strtolower($r['Field'])] = true;
+            }
+        } else {
+            $penjualan_error = mysqli_error($koneksi);
+        }
+
+        $has_col = function($name) use ($view_cols) {
+            return isset($view_cols[strtolower($name)]);
+        };
+
+        $trx_field = $has_col('notransaksi') ? 'notransaksi' : ($has_col('no_penjualan') ? 'no_penjualan' : ($has_col('no_transaksi') ? 'no_transaksi' : ''));
+        $tgl_field = $has_col('tanggal') ? 'tanggal' : ($has_col('created_at') ? 'created_at' : '');
+
+        $col_trx = $trx_field !== '' ? $trx_field : "''";
+        $col_tanggal = $tgl_field !== '' ? $tgl_field : "CURDATE()";
+        $order_trx = $trx_field !== '' ? $trx_field : ($tgl_field !== '' ? $tgl_field : '1');
+        $order_tanggal = $tgl_field !== '' ? $tgl_field : '1';
+
+        $col_carabayar = $has_col('carabayar') ? 'carabayar' : ($has_col('cara_bayar') ? 'cara_bayar' : "''");
+        $col_no_order = $has_col('no_order') ? 'no_order' : "''";
+        $col_tanggal_order = $has_col('tanggal_order') ? 'tanggal_order' : "''";
+        $col_no_pelanggan = $has_col('no_pelanggan') ? 'no_pelanggan' : ($has_col('nopelanggan') ? 'nopelanggan' : "''");
+        $col_nama_pelanggan = $has_col('namapelanggan') ? 'namapelanggan' : ($has_col('nama_pelanggan') ? 'nama_pelanggan' : ($has_col('nama') ? 'nama' : "''"));
+        $col_total = $has_col('total_akhir') ? 'total_akhir' : ($has_col('grand_total') ? 'grand_total' : ($has_col('total_nilai') ? 'total_nilai' : '0'));
+        $col_note = $has_col('note') ? 'note' : ($has_col('keterangan') ? 'keterangan' : "''");
+        $col_kd_cabang = $has_col('kd_cabang') ? 'kd_cabang' : ($has_col('kode_cabang') ? 'kode_cabang' : '');
+        
+        // Pagination variables
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
+        if ($limit < 1) {
+            $limit = 5;
+        }
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($page < 1) {
+            $page = 1;
+        }
+        $offset = ($page - 1) * $limit;
+        
+        // Count total records
+        $where_cabang = $col_kd_cabang !== '' ? " WHERE $col_kd_cabang='$kd_cabang'" : '';
+        $count_query = "SELECT COUNT(*) as total FROM view_penjualan_header" . $where_cabang;
+        $count_result = mysqli_query($koneksi, $count_query);
+        if ($count_result) {
+            $tmp_count = mysqli_fetch_array($count_result);
+            $total_records = isset($tmp_count['total']) ? (int)$tmp_count['total'] : 0;
+        } else {
+            $total_records = 0;
+            if ($penjualan_error === '') {
+                $penjualan_error = mysqli_error($koneksi);
+            }
+        }
+        $total_pages = (int)ceil($total_records / $limit);
+        if ($total_pages < 1) {
+            $total_pages = 1;
+        }
+        if ($page > $total_pages) {
+            $page = $total_pages;
+        }
+        $offset = ($page - 1) * $limit;
+        
+        $hasil_cari = "Menampilkan data terbaru - Total: $total_records data (Halaman $page dari $total_pages)";
                 
-        $sql_query="SELECT * FROM view_penjualan_header 
-                            WHERE 
-                            notransaksi='0'";      
+        $sql_query = "SELECT 
+                        $col_trx AS notransaksi,
+                        $col_tanggal AS tanggal,
+                        $col_carabayar AS carabayar,
+                        $col_no_order AS no_order,
+                        $col_tanggal_order AS tanggal_order,
+                        $col_no_pelanggan AS no_pelanggan,
+                        $col_nama_pelanggan AS namapelanggan,
+                        $col_total AS total_akhir,
+                        $col_note AS note
+                     FROM view_penjualan_header" . $where_cabang .
+                     " ORDER BY $order_tanggal DESC, $order_trx DESC 
+                     LIMIT $limit OFFSET $offset";
         // == End Default ==========    
         
 		if(isset($_POST['btnasc'])) {				
@@ -210,7 +286,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_penjualan02.php"; ?>
+<?php include "menu_penjualan_unified.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -248,11 +324,24 @@
                         <div class="space space-8"></div> 
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
-
 													<a href="penjualan_add.php">
 													<button class="btn btn-success btn-block" type="button">Input Data</button>
 													</a>
-
+							</div>
+							<div class="col-xs-12 col-sm-9">
+								<div class="pull-right">
+									<form method="GET" style="display: inline-block; margin-right: 10px;">
+										<label>Tampilkan: </label>
+										<select name="limit" onchange="this.form.submit()" class="form-control" style="display: inline-block; width: auto;">
+											<option value="5" <?php echo $limit == 5 ? 'selected' : ''; ?>>5</option>
+											<option value="10" <?php echo $limit == 10 ? 'selected' : ''; ?>>10</option>
+											<option value="25" <?php echo $limit == 25 ? 'selected' : ''; ?>>25</option>
+											<option value="50" <?php echo $limit == 50 ? 'selected' : ''; ?>>50</option>
+											<option value="100" <?php echo $limit == 100 ? 'selected' : ''; ?>>100</option>
+										</select>
+										<label> data per halaman</label>
+									</form>
+								</div>
 							</div>
 						</div>
  <div class="space space-8"></div> 
@@ -260,11 +349,17 @@
 							<div class="col-xs-12 col-sm-12">
 								<div class="table-header">
                                     <?php echo $hasil_cari; ?>
-								</div>                            
+								</div> 　　　　　　　　　　　　
+								<?php if ($penjualan_error !== '') { ?>
+									<div class="alert alert-danger" style="margin:10px 0;">
+										<?php echo $penjualan_error; ?>
+									</div>
+								<?php } ?>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="center" width="5%"></th>
+
                                             <th class="center" width="9%">No. Transaksi</th>
                                             <th class="center" width="9%">Tanggal</th>
                                             <th class="center" width="9%">Cara Bayar</th>
@@ -279,7 +374,26 @@
                                     <tbody>
                                     <?php 
                                         $sql = mysqli_query($koneksi,$sql_query);
-                                        while ($tampil = mysqli_fetch_array($sql)) {
+                                        if (!$sql) {
+                                            $err = mysqli_error($koneksi);
+                                            if ($penjualan_error === '') {
+                                                $penjualan_error = $err;
+                                            }
+                                    ?>
+                                        <tr>
+                                            <td colspan="10">
+                                                <?php echo $err; ?>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                        } else if (mysqli_num_rows($sql) < 1) {
+                                    ?>
+                                        <tr>
+                                            <td colspan="10" class="center">Data tidak ditemukan</td>
+                                        </tr>
+                                    <?php
+                                        } else {
+                                            while ($tampil = mysqli_fetch_array($sql)) {
                                             //$status_order=$tampil['status'];
 					//				if($status_order=='0') {
 					//					$ket_status="Open";
@@ -315,12 +429,45 @@
 														<td><?php echo $tampil['note']?></td>														                                                                                                                
 													</tr>
 
-
 <?php
             				}
+          			}
+           			?>
           			?>
 												</tbody>
                                 </table>
+                                
+                                <!-- Pagination -->
+                                <?php if ($total_pages > 1): ?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="text-center">
+                                            <ul class="pagination">
+                                                <!-- Previous -->
+                                                <?php if ($page > 1): ?>
+                                                    <li><a href="?page=<?php echo $page-1; ?>&limit=<?php echo $limit; ?>">&laquo; Sebelumnya</a></li>
+                                                <?php endif; ?>
+                                                
+                                                <!-- Page numbers -->
+                                                <?php 
+                                                $start_page = max(1, $page - 2);
+                                                $end_page = min($total_pages, $page + 2);
+                                                for ($i = $start_page; $i <= $end_page; $i++): 
+                                                ?>
+                                                    <li class="<?php echo $i == $page ? 'active' : ''; ?>">
+                                                        <a href="?page=<?php echo $i; ?>&limit=<?php echo $limit; ?>"><?php echo $i; ?></a>
+                                                    </li>
+                                                <?php endfor; ?>
+                                                
+                                                <!-- Next -->
+                                                <?php if ($page < $total_pages): ?>
+                                                    <li><a href="?page=<?php echo $page+1; ?>&limit=<?php echo $limit; ?>">Berikutnya &raquo;</a></li>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                             

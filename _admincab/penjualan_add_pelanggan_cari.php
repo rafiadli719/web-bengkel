@@ -6,6 +6,7 @@
 		$id_user=$_SESSION['_iduser'];		
 		$kd_cabang=$_SESSION['_cabang'];		                        
 		include "../config/koneksi.php";
+		include_once "_include_statistik_pelanggan.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -97,7 +98,7 @@
 
         if($txtflt=='asc') {
             IF($sql_cari=="") {
-                $sql_query="SELECT * FROM view_cari_pelanggan 
+                $sql_query="SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                             WHERE 
                             (nopelanggan like '%".$txtkey."%') OR 
                             (namapelanggan like '%".$txtkey."%') OR 
@@ -119,7 +120,7 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
-                $sql_query=" SELECT * FROM view_cari_pelanggan 
+                $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                             WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_pelanggan 
@@ -129,7 +130,7 @@
             }
         } else {
             IF($sql_cari=="") {
-                $sql_query="SELECT * FROM view_cari_pelanggan 
+                $sql_query="SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                             WHERE 
                             (nopelanggan like '%".$txtkey."%') OR 
                             (namapelanggan like '%".$txtkey."%') OR 
@@ -151,7 +152,7 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
-                $sql_query=" SELECT * FROM view_cari_pelanggan 
+                $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                             WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_pelanggan 
@@ -444,7 +445,7 @@
                                                             <span class="text-info"><?php echo $tampil['namapelanggan']; ?></span>
                                                             <br>
                                                             <small class="text-muted">
-                                                                <span class="label label-sm label-info"><?php echo $tampil['grup']; ?></span>
+                                                                <span class="label label-sm label-info"><?php echo $tampil['grup']; ?></span> <?php echo displayStatusMemberBadge(isset($tampil['kategori_member']) ? $tampil['kategori_member'] : 'Bronze'); ?>
                                                             </small>
                                                         </td>														                                                        
                                                         <td>

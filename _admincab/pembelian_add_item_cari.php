@@ -386,6 +386,13 @@
                                         </div>
                                     </div>
                                     
+                                                                        <div class="widget-header widget-header-green widget-header-flat">
+                                        <h4 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-list"></i>
+                                            <?php echo $hasil_cari; ?>
+                                        </h4>
+                                    </div>
+                                    
                                     <div class="widget-body">
                                         <div class="widget-main no-padding">
                                             <table class="table table-striped table-bordered table-hover">
@@ -395,17 +402,36 @@
                                                         <th width="12%">Kode Item</th>
                                                         <th width="10%">Barcode</th>
                                                         <th width="25%">Nama Item</th>
-                                                        <th width="12%">Jenis</th>
-                                                        <th class="center" width="8%">Satuan</th>
-                                                        <th width="8%">Rak</th>
-                                                        <th class="center" width="17%">Harga Pokok</th>
+                                                        <th width="10%">Jenis</th>
+                                                        <th class="center" width="8%">Stok</th>
+                                                        <th class="center" width="8%">Min.</th>
+                                                        <th width="8%">Satuan</th>
+                                                        <th width="8%">Rak</th> 
+                                                        <th class="center" width="10%">Harga Pokok</th>
+                                                        <th class="center" width="10%">Harga Jual</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                <?php 
+                                                <tbody><?php 
                                                     $sql = mysqli_query($koneksi,$sql_query);
                                                     while ($tampil = mysqli_fetch_array($sql)) {
                                                             $noitem=$tampil['noitem'];
+                                                            $stokmin=$tampil['stokmin'];
+
+                                                            // Query stok logic
+                                                            $cari_kd=mysqli_query($koneksi,"SELECT saldo FROM view_stok_master WHERE kd_cabang='$kd_cabang' AND no_item='$noitem'");
+                                                            if($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+                                                                $tm_cari=mysqli_fetch_array($cari_kd);
+                                                                $saldo_akhir = $tm_cari['saldo'] ?? 0;
+                                                            } else {
+                                                                $cari_fallback = mysqli_query($koneksi,"SELECT SUM(masuk - keluar) as saldo FROM tbstok WHERE kd_cabang='$kd_cabang' AND no_item='$noitem'");
+                                                                if($cari_fallback && mysqli_num_rows($cari_fallback) > 0) {
+                                                                    $tm_fallback = mysqli_fetch_array($cari_fallback);
+                                                                    $saldo_akhir = $tm_fallback['saldo'] ?? 0;
+                                                                } else {
+                                                                    $saldo_akhir = 0;
+                                                                }
+                                                            }
+                                                            $saldo_akhir = is_numeric($saldo_akhir) ? $saldo_akhir : 0;
                                                 ?>
                                                     <tr>
                                                         <td class="center">
@@ -418,25 +444,32 @@
                                                             </div>                                                                                            
                                                         </td>														
                                                         <td>
-                                                            <strong class="text-primary"><?php echo $tampil['noitem']; ?></strong>
+                                                            <strong><?php echo $tampil['noitem']; ?></strong>
                                                         </td>														
                                                         <td>
                                                             <span class="text-muted"><?php echo $tampil['kodebarcode']; ?></span>
                                                         </td>	
                                                         <td>
-                                                            <span class="text-info"><?php echo $tampil['namaitem']; ?></span>
+                                                            <span class="text-primary"><?php echo $tampil['namaitem']; ?></span>
                                                         </td>
                                                         <td>
-                                                            <span class="label label-sm label-purple"><?php echo $tampil['namajenis']; ?></span>
+                                                            <span class="label label-sm label-info"><?php echo $tampil['namajenis']; ?></span>
                                                         </td>																											                                            
                                                         <td class="center">
-                                                            <span class="badge badge-info"><?php echo $tampil['satuan']; ?></span>
+                                                            <span class="badge badge-success"><?php echo $saldo_akhir; ?></span>
                                                         </td>
+                                                        <td class="center">
+                                                            <span class="text-muted"><?php echo $tampil['stokmin']; ?></span>
+                                                        </td>
+                                                        <td><?php echo $tampil['satuan']; ?></td>
                                                         <td>
                                                             <span class="label label-sm label-grey"><?php echo $tampil['rakbarang']; ?></span>
                                                         </td>
                                                         <td class="center">
-                                                            <strong class="text-danger">Rp <?php echo number_format($tampil['hargapokok'],0); ?></strong>
+                                                            <span class="text-danger">Rp <?php echo number_format($tampil['hargapokok'],0); ?></span>
+                                                        </td>
+                                                        <td class="center">
+                                                            <strong class="text-success">Rp <?php echo number_format($tampil['hargajual'],0); ?></strong>
                                                         </td>                                            
                                                     </tr>
 

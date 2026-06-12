@@ -32,7 +32,7 @@
 		$nopesanan=$_GET['nopesanan'];        
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
-                                        no_supplier, total_qty, total_order 
+                                        no_supplier, note, payment_term, total_qty, total_order 
                                         FROM tblorder_header 
                                         WHERE no_order='$nopesanan'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
@@ -40,6 +40,8 @@
 		$cbo_supplier=$tm_cari['no_supplier'];
 		$total_qty=$tm_cari['total_qty'];
         $tot=$tm_cari['total_order'];
+        $payment_term=$tm_cari['payment_term'];
+        $note=$tm_cari['note'];
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasupplier, alamat 
@@ -48,6 +50,51 @@
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$namasupplier=$tm_cari['namasupplier'];				        
         $alamat=$tm_cari['alamat'];
+
+        $carabayar = 'Tunai';
+        $syarat = '';
+        if (!empty($payment_term)) {
+            if (strpos($payment_term, 'Kredit:') === 0) {
+                $carabayar = 'Kredit';
+                $syarat = trim(substr($payment_term, 7));
+            } elseif (strpos($payment_term, 'Tunai:') === 0) {
+                $carabayar = 'Tunai';
+                $syarat = '';
+            }
+        }
+
+        $tgl_jt = '';
+        if ($carabayar === 'Kredit' && $syarat !== '') {
+            $dt = DateTime::createFromFormat('d/m/Y', $tgl_pilih);
+            if ($dt) {
+                $dt->modify('+' . ((int)$syarat) . ' day');
+                $tgl_jt = $dt->format('d/m/Y');
+            }
+        }
+
+        $total_beli = 0;
+        $qsum = mysqli_query($koneksi, "SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order='$nopesanan'");
+        while ($r = mysqli_fetch_array($qsum)) {
+            $harga = (float)$r['harga_pokok'];
+            if ($harga <= 0) {
+                $no_item_tmp = mysqli_real_escape_string($koneksi, $r['no_item']);
+                $qh = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE (noitem='$no_item_tmp' OR kodebarcode='$no_item_tmp') LIMIT 1");
+                if ($qh && mysqli_num_rows($qh) > 0) {
+                    $rh = mysqli_fetch_assoc($qh);
+                    $harga = (float)$rh['hargapokok'];
+                }
+            }
+            $qty = (int)$r['quantity'];
+            $total_beli += ($harga * $qty);
+        }
+
+        $diskon = 0;
+        $total_diskon = 0;
+        $pajak = 0;
+        $total_pajak = 0;
+        $netto = $total_beli;
+        $dp = 0;
+        $kekurangan = $netto;
 ?>
 
 <!DOCTYPE html>
@@ -287,37 +334,141 @@
                                             </div>
 										</div>
 									</div>
-								</div>	
-							</div>
-                            
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
 
-                                            <?php include "_template/_pesanan_pembelian_cetak.php"; ?>
-
+                                            </div>
+                                            <div class="col-xs-12 col-sm-5">
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="txtuser"> User :</label>									
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" 
+                                                        value="<?php echo $_nama; ?>" readonly="true" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label no-padding-right" for="txtuser"> Supplier :</label>									
+                                                    <div class="col-sm-8">
+                                                        <select class="col-xs-10 col-sm-12" name="cbosupplier" id="cbosupplier" disabled >
+                                                        <option value="">- Pilih -</option>
+                                                        <?php
+                                                            $q = mysqli_query($koneksi,"select nosupplier, namasupplier FROM tblsupplier order by namasupplier asc");
+                                                            while ($row1 = mysqli_fetch_array($q)){
+                                                                $k_id           = $row1['nosupplier'];
+                                                                $k_opis         = $row1['namasupplier'];
+                                                        ?>
+                                                        <option value='<?php echo $k_id; ?>' <?php if ($k_id == $cbo_supplier){ echo 'selected'; } ?>><?php echo $k_opis; ?></option>
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+									</div>
+								</div>
+							</div>	
+						</div>
+                        
+						<div class="col-xs-12 col-sm-12">
+							<div class="widget-box">
+								<div class="widget-body">
+									<div class="widget-main">
+
+                                        <?php $mode_view_only = true; include "_template/_pesanan_pembelian_cetak.php"; ?>
+
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-							<div class="col-xs-12 col-sm-3">
-                                <a href="pesanan_pembelian_add.php">
-                                    <button class="btn btn-primary btn-block" type="button" 
-                                    id="btnsimpan" name="btnsimpan">
-                                        Input
-                                    </button>
-                                </a>
-                            </div>
-                        </form> 
-                                                                                       
+						<div class="col-xs-12 col-sm-7">
+							<div class="widget-box">
+								<div class="widget-body">
+									<div class="widget-main">
+										<div class="row">
+											<div class="col-xs-6">
+												<div class="form-group">
+													<label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Cara Bayar </label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" value="<?php echo $carabayar; ?>" readonly="true" />
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
+												<div class="form-group">
+													<label class="col-sm-7 control-label no-padding-right" for="form-field-1"> Jml. Pesan </label>
+													<div class="col-sm-5">
+														<input type="text" class="form-control" value="<?php echo $total_qty; ?>" readonly="true" />
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
+												<div class="form-group">
+													<label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Syarat </label>
+													<div class="col-sm-4">
+														<input type="text" class="form-control" id="txtsyarat" name="txtsyarat" value="<?php echo $syarat; ?> Hari" disabled />
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
+												<div class="form-group">
+													<label class="col-sm-7 control-label no-padding-right" for="form-field-1"> Jml. Beli </label>
+													<div class="col-sm-5">
+														<input type="text" class="form-control" value="<?php echo $total_qty; ?>" readonly="true" />
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-6">
+												<div class="form-group">
+													<label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Jatuh Tempo </label>
+													<div class="col-sm-4">
+														<input type="text" class="form-control" value="<?php echo $tgl_jt; ?>" disabled />
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-12">
+												<div class="form-group">
+													<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Keterangan </label>
+													<div class="col-sm-10">
+														<textarea class="form-control" id="txtnote" name="txtnote" rows="4" disabled><?php echo $note; ?></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xs-12 col-sm-5">
+							<div class="widget-box">
+								<div class="widget-body">
+									<div class="widget-main">
+										<?php include "_template/_pembelian_total_cetak.php"; ?>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<?php if (empty($mode_view_only)) { ?>
+						<div class="col-xs-12 col-sm-3">
+                            <a href="pesanan_pembelian_add.php">
+                                <button class="btn btn-primary btn-block" type="button" 
+                                id="btnsimpan" name="btnsimpan">
+                                    Input
+                                </button>
+                            </a>
+                        </div>
+						<?php } ?>
+
+						<?php if (empty($mode_view_only)) { ?>
 							<div class="col-xs-12 col-sm-3">
                                 <button class="btn disabled btn-primary btn-block" type="button">
                                     Batal
                                 </button>
                             </div>
-                            
+							<?php } ?>
+
 							<div class="col-xs-12 col-sm-3">
                                 <a target="_blank"  href="pesanan_pembelian_struk.php?snopesanan=<?php echo $nopesanan; ?>">                            
                                     <button class="btn btn-primary btn-block" type="button" 
@@ -334,11 +485,10 @@
                                 </button>
                                 </a>
                             </div>                            
-                            
+
                         </div>
 
-                        
-                        </form>
+						</form>
 
 					</div><!-- /.page-content -->
 				</div>

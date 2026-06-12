@@ -40,16 +40,101 @@
         $txtnamaitem="";
         $tgl_pilih=date('d/m/Y');
         $cbo_supplier="";
-        $nopesanan="";        
+        $nopesanan="";
+        $no_do= isset($_GET['do']) ? $_GET['do'] : '';
+        $cbocarabyr_form = 'Tunai';
+        $txtsyarat_form = '';
         $tot="0";
         $total_qty_beli="0";
         $total_qty_order="0";
-        
+
+        if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+        if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+        if($cbocarabyr_form!=='Tunai' && $cbocarabyr_form!=='Kredit') { $cbocarabyr_form = 'Tunai'; }
+
+        // Handle auto-load from PO via GET parameter
+        if(isset($_GET['po']) && $_GET['po'] != '') {
+            $nopesanan = mysqli_real_escape_string($koneksi, $_GET['po']);
+
+            // Check if PO exists and is valid
+            $data = mysqli_query($koneksi,"SELECT no_order, no_supplier, payment_term
+                                            FROM tblorder_header
+                                            WHERE no_order='$nopesanan' AND status='0'");
+            $cek = mysqli_num_rows($data);
+            if($cek > 0){
+                $po_data = mysqli_fetch_array($data);
+                $cbo_supplier = $po_data['no_supplier'];
+
+                if(isset($po_data['payment_term']) && $po_data['payment_term'] != ''){
+                    $pt = $po_data['payment_term'];
+                    if(strpos($pt, 'Kredit:') === 0){
+                        $cbocarabyr_form = 'Kredit';
+                        $txtsyarat_form = substr($pt, 7);
+                    } elseif(strpos($pt, 'Tunai:') === 0){
+                        $cbocarabyr_form = 'Tunai';
+                        $txtsyarat_form = '';
+                    }
+                }
+
+                // Clear existing temp items for this user first
+                mysqli_query($koneksi,"DELETE FROM tblpembelian_detail
+                                        WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
+
+                // Copy PO items to pembelian_detail temp
+                $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail WHERE no_order='$nopesanan'");
+                while ($tampil = mysqli_fetch_array($sql)) {
+                    $no_item = $tampil['no_item'];
+                    $txthargabarang = $tampil['harga_pokok'];
+                    $txtqty = $tampil['quantity'];
+                    $subtotal = $tampil['total'];
+
+                    if ((float)$txthargabarang <= 0) {
+                        $qh = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE noitem='".mysqli_real_escape_string($koneksi,$no_item)."' OR kodebarcode='".mysqli_real_escape_string($koneksi,$no_item)."' LIMIT 1");
+                        if ($qh && mysqli_num_rows($qh) > 0) {
+                            $rh = mysqli_fetch_assoc($qh);
+                            $txthargabarang = (float)$rh['hargapokok'];
+                        }
+                    }
+                    if ((float)$subtotal <= 0) {
+                        $subtotal = ((float)$txthargabarang) * ((int)$txtqty);
+                    }
+
+                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                            (no_transaksi, no_item, harga_pokok,
+                                            quantity, qty_order, potongan, total,
+                                            user, kd_cabang)
+                                            VALUES
+                                            ('', '$no_item','$txthargabarang',
+                                            '$txtqty','$txtqty','0','$subtotal',
+                                            '$_nama','$kd_cabang')");
+                }
+
+                // Calculate totals
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                sum(total) as tot,
+                                                sum(qty_order) as tot_qty_order,
+                                                sum(quantity) as tot_qty_beli
+                                                FROM tblpembelian_detail
+                                                WHERE
+                                                user='$_nama' and
+                                                kd_cabang='$kd_cabang' and
+                                                status_trx='0'");
+                $tm_cari=mysqli_fetch_array($cari_kd);
+                $tot=$tm_cari['tot'];
+                $total_qty_order=$tm_cari['tot_qty_order'];
+                $total_qty_beli=$tm_cari['tot_qty_beli'];
+            } else {
+                echo"<script>window.alert('PO tidak ditemukan atau sudah diproses!');window.location=('pembelian_dari_po.php');</script>";
+            }
+        }
+
 		if(isset($_POST['btncari_pesanan'])) {
 			$txtcaribrg= $_POST['txtcaribrg'];	
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
 
             // == Cari Data Pesanan ==
             if($nopesanan<>'') {
@@ -83,6 +168,17 @@
                         $txtqty=$tampil['quantity']; 
                         //$txtpot=$tampil['potongan'];
                         $subtotal=$tampil['total'];                       
+
+                        if ((float)$txthargabarang <= 0) {
+                            $qh = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE noitem='".mysqli_real_escape_string($koneksi,$no_item)."' OR kodebarcode='".mysqli_real_escape_string($koneksi,$no_item)."' LIMIT 1");
+                            if ($qh && mysqli_num_rows($qh) > 0) {
+                                $rh = mysqli_fetch_assoc($qh);
+                                $txthargabarang = (float)$rh['hargapokok'];
+                            }
+                        }
+                        if ((float)$subtotal <= 0) {
+                            $subtotal = ((float)$txthargabarang) * ((int)$txtqty);
+                        }
 
                         mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
                                                 (no_transaksi, no_item, harga_pokok, 
@@ -124,6 +220,8 @@
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -173,6 +271,8 @@
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -231,25 +331,58 @@
         if(isset($_POST['btnsimpan'])) {
             $txttotal_harga= $_POST['txttotal_harga'];            
             if($txttotal_harga=='0') {
-                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
+                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pembelian_add.php');</script>";                            
             } else {
             // insert ke order header                
                 date_default_timezone_set('Asia/Jakarta');
                 $waktuaja_skr=date('h:i');
                 function ubahformatTgl($tanggal) {
-                    $pisah = explode('/',$tanggal);
-                    $urutan = array($pisah[2],$pisah[1],$pisah[0]);
-                    $satukan = implode('-',$urutan);
-                    return $satukan;
+                    $tanggal = trim((string)$tanggal);
+                    if($tanggal==='') { return ''; }
+                    if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) { return $tanggal; }
+                    if(strpos($tanggal, '/') !== false) {
+                        $pisah = explode('/',$tanggal);
+                        if(count($pisah)===3) {
+                            $urutan = array($pisah[2],$pisah[1],$pisah[0]);
+                            return implode('-', $urutan);
+                        }
+                    }
+                    if(strpos($tanggal, '-') !== false) {
+                        $pisah = explode('-',$tanggal);
+                        if(count($pisah)===3 && strlen($pisah[0])<=2 && strlen($pisah[2])===4) {
+                            $urutan = array($pisah[2],$pisah[1],$pisah[0]);
+                            return implode('-', $urutan);
+                        }
+                    }
+                    return $tanggal;
+                }
+                function toNumber($val) {
+                    if($val===null) { return 0; }
+                    $val = trim((string)$val);
+                    if($val==='') { return 0; }
+                    if(strpos($val, ',') !== false) {
+                        $val = str_replace('.', '', $val);
+                        $val = str_replace(' ', '', $val);
+                        $val = str_replace(',', '.', $val);
+                    } else {
+                        $val = str_replace(',', '', $val);
+                        $val = str_replace(' ', '', $val);
+                    }
+                    $val = preg_replace('/[^0-9\.-]/', '', $val);
+                    if($val==='' || $val==='-' || $val==='.') { return 0; }
+                    return (float)$val;
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
                 $nopesanan= $_POST['txtnopesanan'];
                 $cbosupplier= $_POST['cbosupplier'];
                 $txttotal_harga= $_POST['txttotal_harga'];
-                $cbocarabyr= $_POST['cbocarabyr'];                
-                $txtsyarat= $_POST['txtsyarat'];                                
-                $txtnote= $_POST['txtnote'];                                                
+                $cbocarabyr= isset($_POST['cbocarabyr']) ? $_POST['cbocarabyr'] : 'Tunai';
+                if($cbocarabyr!=='Tunai' && $cbocarabyr!=='Kredit') { $cbocarabyr = 'Tunai'; }
+                $txtsyarat= isset($_POST['txtsyarat']) ? $_POST['txtsyarat'] : '';                                
+                $txtnote= $_POST['txtnote'];
+                $txtno_faktur= $_POST['txtno_faktur'];
+                $txttgl_faktur= isset($_POST['id-date-picker-faktur']) ? ubahformatTgl($_POST['id-date-picker-faktur']) : '';                                                
                 $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
                 $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
                 $txtpajak_persen= $_POST['txtpajak_persen'];   
@@ -257,7 +390,14 @@
                 $txtnet= $_POST['txtnet'];   
                 $txtdp= $_POST['txtdp'];   
                 $txtkekurangan= $_POST['txtkekurangan'];
-            
+                $no_do = isset($_POST['no_do']) ? $_POST['no_do'] : '';
+
+                $syarat_hari = (int)toNumber($txtsyarat);
+                if($cbocarabyr=='Kredit' && $syarat_hari<=0) {
+                    echo"<script>window.alert('Syarat (hari) wajib diisi untuk cara bayar Kredit!');window.history.back();</script>";
+                    exit;
+                }
+
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot 
                                                 FROM tblpembelian_detail 
                                                 WHERE 
@@ -266,17 +406,84 @@
                                                 status_trx='0'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot_qty=$tm_cari['tot'];                 
-                             
 
-//                $data = mysqli_query($koneksi,"SELECT * FROM tblpembelian_header 
-//                                                WHERE 
-//                                                notransaksi='$LastID'");
-//                $cek = mysqli_num_rows($data);
-//                if($cek > 0){
-                    
-//                } else {
+                $cari_kd=mysqli_query($koneksi,"SELECT 
+                                                COALESCE(sum(total),0) as tot_total 
+                                                FROM tblpembelian_detail 
+                                                WHERE 
+                                                user='$_nama' and 
+                                                kd_cabang='$kd_cabang' and 
+                                                status_trx='0'");
+                $tm_cari=mysqli_fetch_array($cari_kd);
+                $subtotal = (float)$tm_cari['tot_total'];
+
+                $pot_persen = (float)toNumber($txtpotfaktur_persen);
+                $pot_nom = (float)toNumber($txtpotfaktur_nom);
+                if($pot_nom<=0 && $pot_persen>0) {
+                    $pot_nom = ($subtotal * $pot_persen) / 100;
+                } elseif($pot_persen<=0 && $pot_nom>0 && $subtotal>0) {
+                    $pot_persen = ($pot_nom / $subtotal) * 100;
+                }
+                if($pot_nom<0) { $pot_nom = 0; }
+
+                $pajak_persen = (float)toNumber($txtpajak_persen);
+                $dasar_pajak = $subtotal - $pot_nom;
+                if($dasar_pajak < 0) { $dasar_pajak = 0; }
+                $pajak_nom = ($dasar_pajak * $pajak_persen) / 100;
+                if($pajak_nom<0) { $pajak_nom = 0; }
+
+                $netto = $dasar_pajak + $pajak_nom;
+                $dp = (float)toNumber($txtdp);
+                if($dp < 0) { $dp = 0; }
+                if($dp > $netto) { $dp = $netto; }
+                $kekurangan = $netto - $dp;
+
+                $tanggal_order='';
+                $total_qty_order='';
+                if($nopesanan<>'') {
+                    $q_po=mysqli_query($koneksi,"SELECT tanggal, total_qty FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$nopesanan)."'");
+                    if($q_po) {
+                        $tm_po=mysqli_fetch_array($q_po);
+                        if($tm_po) {
+                            $tanggal_order=$tm_po['tanggal'];
+                            $total_qty_order=$tm_po['total_qty'];
+                        }
+                    }
+                }
+
+                $tanggal_jt='';
+                if($cbocarabyr=='Kredit' && $syarat_hari>0) {
+                    $base_ts = strtotime($txttglpesan);
+                    if($base_ts!==false) {
+                        $tanggal_jt = date('Y-m-d', strtotime('+'.$syarat_hari.' days', $base_ts));
+                    }
+                }
+                
+                // Jika invoice refer ke DO, validasi agar tidak melebihi qty_terima DO
+                if($no_do!=''){
+                    $violations = [];
+                    $qtemp = mysqli_query($koneksi, "SELECT no_item, SUM(quantity) AS qty FROM tblpembelian_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0' GROUP BY no_item");
+                    while($row = mysqli_fetch_assoc($qtemp)){
+                        $no_item_chk = $row['no_item'];
+                        $qty_new = (int)$row['qty'];
+                        // Qty diterima di DO untuk item ini
+                        $qallow = mysqli_query($koneksi, "SELECT COALESCE(SUM(qty_terima),0) AS allow_qty FROM tbldelivery_order_detail WHERE no_do='".mysqli_real_escape_string($koneksi,$no_do)."' AND no_item='".mysqli_real_escape_string($koneksi,$no_item_chk)."'");
+                        $allow_qty = (int)mysqli_fetch_assoc($qallow)['allow_qty'];
+                        // Qty yang sudah diinvoice sebelumnya untuk DO ini
+                        $qused = mysqli_query($koneksi, "SELECT COALESCE(SUM(d.quantity),0) AS used_qty FROM tblpembelian_detail d JOIN tblpembelian_header h ON h.notransaksi=d.no_transaksi WHERE h.no_do='".mysqli_real_escape_string($koneksi,$no_do)."' AND d.no_item='".mysqli_real_escape_string($koneksi,$no_item_chk)."'");
+                        $used_qty = (int)mysqli_fetch_assoc($qused)['used_qty'];
+                        if(($used_qty + $qty_new) > $allow_qty){
+                            $violations[] = $no_item_chk;
+                        }
+                    }
+                    if(!empty($violations)){
+                        echo "<script>window.alert('Qty Invoice melebihi Qty Terima DO untuk item: "+"".implode(', ', $violations).""+"'); window.history.back();</script>";
+                        exit;
+                    }
+                }
                 mysqli_query($koneksi,"INSERT INTO tblpembelian_header 
-                                        (notransaksi, status, carabayar, 
+                                        (notransaksi, no_faktur, tanggal_faktur,
+                                        status, carabayar, 
                                         tanggal, no_order, tanggal_order, 
                                         no_supplier, note, total_qty_order, 
                                         total_qty, total_beli, 
@@ -285,19 +492,24 @@
                                         total_akhir, total_retur, pembayaran, 
                                         tanggal_jt, tanggal_lunas, 
                                         jumlah_bayar, user, kd_cabang, 
-                                        lama_hari) 
+                                        lama_hari, tipe_transaksi) 
                                         VALUES 
-                                        ('$LastID','Pembelian','$cbocarabyr',
-                                        '$txttglpesan','$nopesanan','',
-                                        '$cbosupplier','$txtnote','',
-                                        '$tot_qty','$txttotal_harga',
-                                        '$txtpotfaktur_persen','$txtpotfaktur_nom',
-                                        '$txtpajak_persen','$txtpajak_nom',
-                                        '$txtnet','','$txtdp',
-                                        '','',
-                                        '$txtkekurangan',
+                                        ('$LastID','$txtno_faktur','$txttgl_faktur',
+                                        'Pembelian','$cbocarabyr',
+                                        '$txttglpesan','$nopesanan','$tanggal_order',
+                                        '$cbosupplier','$txtnote','$total_qty_order',
+                                        '$tot_qty','$subtotal',
+                                        '$pot_persen','$pot_nom',
+                                        '$pajak_persen','$pajak_nom',
+                                        '$netto','','$dp',
+                                        '$tanggal_jt','',
+                                        '$kekurangan',
                                         '$_nama','$kd_cabang', 
-                                        '$txtsyarat')");
+                                        '$syarat_hari','Normal')");
+
+                if($no_do!=''){
+                    mysqli_query($koneksi,"UPDATE tblpembelian_header SET no_do='".mysqli_real_escape_string($koneksi,$no_do)."' WHERE notransaksi='$LastID'");
+                }
 
                 mysqli_query($koneksi,"UPDATE tblpembelian_detail 
                                         SET 
@@ -312,31 +524,35 @@
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_item=$tampil['no_item'];
                     $qty=$tampil['quantity'];
-                    mysqli_query($koneksi,"INSERT INTO tbstok 
-                                        (tipe, no_transaksi, no_item, 
-                                        tanggal, masuk, keluar, keterangan, 
-                                        kd_cabang) 
-                                        VALUES 
-                                        ('2','$LastID','$no_item',
-                                        '$txttglpesan','$qty','0',
-                                        'Pembelian','$kd_cabang')"); 
+                    if($no_do==''){
+                        mysqli_query($koneksi,"INSERT INTO tbstok 
+                                            (tipe, no_transaksi, no_item, 
+                                            tanggal, masuk, keluar, keterangan, 
+                                            kd_cabang) 
+                                            VALUES 
+                                            ('2','$LastID','$no_item',
+                                            '$txttglpesan','$qty','0',
+                                            'Pembelian','$kd_cabang')"); 
 
-                    if($nopesanan<>'') {
-                        mysqli_query($koneksi,"UPDATE tblorder_detail 
-                                                SET 
-                                                qty_terima='$qty' 
-                                                WHERE 
-                                                no_order='$nopesanan' and 
-                                                no_item='$no_item'");                        
-                    }                                        
+                        if($nopesanan<>'') {
+                            mysqli_query($koneksi,"UPDATE tblorder_detail 
+                                                    SET 
+                                                    qty_terima = qty_terima + $qty 
+                                                    WHERE 
+                                                    no_order='$nopesanan' and 
+                                                    no_item='$no_item'");                        
+                        }
+                    }
                 }
 
                 if($nopesanan<>'') {
+                    if($no_do==''){
                         mysqli_query($koneksi,"UPDATE tblorder_header 
                                                 SET 
                                                 status='1' 
                                                 WHERE 
-                                                no_order='$nopesanan'");                                            
+                                                no_order='$nopesanan'");    
+                    }
                 }
                                 
                 echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";                            
@@ -522,6 +738,7 @@
                         <form class="form-horizontal" action="" method="post" role="form">
                         <input type="hidden" name="txttotal_harga"  class="form-control" value="<?php echo $tot; ?>"/>
                         <input type="hidden" name="active_tab" id="active_tab" value="purchase-details"/>
+                        <input type="hidden" name="no_do" value="<?php echo htmlspecialchars($no_do); ?>"/>
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="widget-box">
@@ -530,14 +747,16 @@
 											<i class="ace-icon fa fa-truck orange"></i>
 											Pembelian #<?php echo $LastID; ?>
 										</h4>
-                                        <div class="widget-toolbar">
-                                            <span class="label label-info arrowed-in arrowed-in-right">Purchase Details</span>
-                                        </div>
-									</div>
-
-									<div class="widget-body">
-										<div class="widget-main padding-12 no-padding-left no-padding-right">
-											<div class="tabbable">
+                                        <div class="widget-body">
+                                        <div class="widget-main padding-12 no-padding-left no-padding-right">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i>
+                                                Ini adalah Pembelian (Invoice/GR). Dokumen ini mempengaruhi stok dan hutang.
+                                                <?php if(isset($no_do) && $no_do!=''){ ?>
+                                                Transaksi ini terkait DO <strong><?php echo htmlspecialchars($no_do); ?></strong>, sehingga stok tidak diposting ulang.
+                                                <?php } ?>
+                                            </div>
+                                            <div class="tabbable">
 												<ul class="nav nav-tabs" id="myTab">
 													<li class="active">
 														<a data-toggle="tab" href="#purchase-details" aria-expanded="true">
@@ -629,6 +848,27 @@
 																					</select>
 																				</div>
 																			</div>
+																			<div class="form-group">
+																				<label class="col-sm-3 control-label no-padding-right"> No. Faktur :</label>									
+																				<div class="col-sm-9">
+																					<input type="text" class="form-control" id="txtno_faktur" name="txtno_faktur" 
+																					placeholder="Nomor Faktur Supplier" />
+																					<span class="help-block">Isi nomor faktur dari supplier</span>
+																				</div>
+																			</div>
+																			<div class="form-group">
+																				<label class="col-sm-3 control-label no-padding-right"> Tgl. Faktur :</label>									
+																				<div class="col-sm-9">
+																					<div class="input-group">
+																						<input class="form-control date-picker" id="id-date-picker-faktur" name="id-date-picker-faktur" type="text" autocomplete="off" 
+																						data-date-format="dd/mm/yyyy" placeholder="dd/mm/yyyy" />
+																						<span class="input-group-addon">
+																							<i class="fa fa-calendar bigger-110"></i>
+																						</span>
+																					</div>
+																					<span class="help-block">Tanggal faktur dari supplier</span>
+																				</div>
+																			</div>
 																		</div>
 																	</div>
 																	
@@ -640,8 +880,8 @@
 																				<label class="col-sm-4 control-label no-padding-right"> Cara Bayar </label>
 																				<div class="col-sm-8">
 																					<select class="form-control" id="cbocarabyr" name="cbocarabyr">
-																						<option value="Tunai">Tunai</option>
-																						<option value="Kredit">Kredit</option>
+																						<option value="Tunai" <?php echo ($cbocarabyr_form=='Tunai') ? 'selected' : ''; ?>>Tunai</option>
+																						<option value="Kredit" <?php echo ($cbocarabyr_form=='Kredit') ? 'selected' : ''; ?>>Kredit</option>
 																					</select>
 																				</div>
 																			</div>
@@ -658,7 +898,7 @@
 																			<div class="form-group">
 																				<label class="col-sm-4 control-label no-padding-right"> Syarat </label>
 																				<div class="col-sm-6">
-																					<input type="text" class="form-control" id="txtsyarat" name="txtsyarat" placeholder="Syarat pembayaran" />
+																					<input type="text" class="form-control" id="txtsyarat" name="txtsyarat" placeholder="Syarat pembayaran" value="<?php echo htmlspecialchars($txtsyarat_form); ?>" />
 																				</div>
 																				<label class="col-sm-2 control-label no-padding-right"> hari </label>                                                        
 																			</div>

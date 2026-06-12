@@ -1,0 +1,3436 @@
+{
+  "inferred_relationships": {
+    "backup_tblservice_orphan": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      }
+    ],
+    "log_perubahan_tarif": [
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "log_perubahan_tarif",
+        "confidence": "medium"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "master_tarif_jemput",
+        "confidence": "medium"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "master_tarif_jemput_backup",
+        "confidence": "medium"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "master_tarif_jemput_range",
+        "confidence": "medium"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "tbtarif_ptkp",
+        "confidence": "medium"
+      },
+      {
+        "column": "tarif_id",
+        "type": "inferred_fk",
+        "references_table": "tbtarif_ptkph",
+        "confidence": "medium"
+      }
+    ],
+    "master_bank": [
+      {
+        "column": "kode_bank",
+        "type": "inferred_fk",
+        "references_table": "master_bank",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_bank",
+        "type": "inferred_fk",
+        "references_table": "tb_bank",
+        "confidence": "medium"
+      }
+    ],
+    "master_kategori_member": [
+      {
+        "column": "id_kategori",
+        "type": "inferred_fk",
+        "references_table": "master_kategori_member",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_rak",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_fastmoves",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_item",
+        "confidence": "medium"
+      }
+    ],
+    "master_kedatangan_pelanggan": [
+      {
+        "column": "id_kedatangan",
+        "type": "inferred_fk",
+        "references_table": "master_kedatangan_pelanggan",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      },
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "master_perusahaan": [
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "statistik_pelanggan": [
+      {
+        "column": "id_statistik",
+        "type": "inferred_fk",
+        "references_table": "statistik_pelanggan",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      }
+    ],
+    "tbabsensi": [
+      {
+        "column": "kode_status_kehadiran",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_kehadiran",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_upload",
+        "type": "inferred_fk",
+        "references_table": "tbabsensi_upload",
+        "confidence": "medium"
+      }
+    ],
+    "tbabsensi_temp": [
+      {
+        "column": "no_urut",
+        "type": "inferred_fk",
+        "references_table": "tburut",
+        "confidence": "medium"
+      }
+    ],
+    "tbabsensi_upload": [
+      {
+        "column": "id_upload",
+        "type": "inferred_fk",
+        "references_table": "tbabsensi_upload",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tbakun": [
+      {
+        "column": "no_akun",
+        "type": "inferred_fk",
+        "references_table": "tbakun",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_akun",
+        "type": "inferred_fk",
+        "references_table": "tbakun_pos",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_akun",
+        "type": "inferred_fk",
+        "references_table": "tblakunkas",
+        "confidence": "medium"
+      }
+    ],
+    "tbbrg_keluar_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbbrg_keluar_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbbrg_masuk_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbbrg_masuk_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbcabang": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      },
+      {
+        "column": "perusahaan_id",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "perusahaan_id",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "tbdivisi": [
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbdivisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbhistory_divisi",
+        "confidence": "medium"
+      }
+    ],
+    "tbemp_family": [
+      {
+        "column": "id_jk",
+        "type": "inferred_fk",
+        "references_table": "tbjk",
+        "confidence": "medium"
+      }
+    ],
+    "tbhistory_divisi": [
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbdivisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbhistory_divisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jabatan",
+        "type": "inferred_fk",
+        "references_table": "tbjabatan",
+        "confidence": "medium"
+      }
+    ],
+    "tbitem_keluar_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbitem_keluar_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbitem_masuk_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbitem_masuk_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbjabatan": [
+      {
+        "column": "kode_jabatan",
+        "type": "inferred_fk",
+        "references_table": "tbjabatan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbdivisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbhistory_divisi",
+        "confidence": "medium"
+      }
+    ],
+    "tbjk": [
+      {
+        "column": "kode_jk",
+        "type": "inferred_fk",
+        "references_table": "tbjk",
+        "confidence": "medium"
+      }
+    ],
+    "tbkeluhan_proses": [
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbkoreksi_stok_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbkoreksi_stok_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbldelivery_order_detail": [
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbldo_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_hutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_piutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "v_do_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbldelivery_order_header": [
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbldo_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_hutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_piutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "v_do_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tbakun_pos",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "v_po_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_supplier",
+        "type": "inferred_fk",
+        "references_table": "tblsupplier",
+        "confidence": "high"
+      },
+      {
+        "column": "no_kendaraan",
+        "type": "inferred_fk",
+        "references_table": "tblkendaraan",
+        "confidence": "high"
+      }
+    ],
+    "tbldo_tracking": [
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbldo_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_hutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_piutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "v_do_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblhutang_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pembelian",
+        "type": "inferred_fk",
+        "references_table": "tblpembelian_header",
+        "confidence": "high"
+      }
+    ],
+    "tblhutang_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_supplier",
+        "type": "inferred_fk",
+        "references_table": "tblsupplier",
+        "confidence": "high"
+      }
+    ],
+    "tblitem_spart": [
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbcabang_tipe",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_pajak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      }
+    ],
+    "tblitem_stok": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tblkas_keluar_masuk": [
+      {
+        "column": "kode_akun",
+        "type": "inferred_fk",
+        "references_table": "tbakun",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_akun",
+        "type": "inferred_fk",
+        "references_table": "tbakun_pos",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_akun",
+        "type": "inferred_fk",
+        "references_table": "tblakunkas",
+        "confidence": "medium"
+      }
+    ],
+    "tblkeluhan": [
+      {
+        "column": "id_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "id_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      }
+    ],
+    "tblkendaraan": [
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbcabang_tipe",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_pajak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_bayar",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_penggantian_retur",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tblitemjenis",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tbljenis",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jenis",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_jenis_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_warna",
+        "type": "inferred_fk",
+        "references_table": "tbwarna",
+        "confidence": "medium"
+      }
+    ],
+    "tblorderjual_detail": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblorderjual_header": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_sales",
+        "type": "inferred_fk",
+        "references_table": "tblsales",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      }
+    ],
+    "tblorder_detail": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblorder_header": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_supplier",
+        "type": "inferred_fk",
+        "references_table": "tblsupplier",
+        "confidence": "high"
+      },
+      {
+        "column": "no_penjualan",
+        "type": "inferred_fk",
+        "references_table": "tblpenjualan_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      }
+    ],
+    "tblpelanggan": [
+      {
+        "column": "id_panggilan",
+        "type": "inferred_fk",
+        "references_table": "tbpanggilan",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbcabang_tipe",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_pajak",
+        "confidence": "medium"
+      },
+      {
+        "column": "tipe_id",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_bayar",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_penggantian_retur",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tblitemjenis",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tbljenis",
+        "confidence": "medium"
+      },
+      {
+        "column": "jenis_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_jenis_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "warna_id",
+        "type": "inferred_fk",
+        "references_table": "tbwarna",
+        "confidence": "medium"
+      }
+    ],
+    "tblpembelian_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblpembelian_header": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_supplier",
+        "type": "inferred_fk",
+        "references_table": "tblsupplier",
+        "confidence": "high"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbldo_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_hutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "tbsaldo_piutang",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_do",
+        "type": "inferred_fk",
+        "references_table": "v_do_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblpenjualan_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblpenjualan_header": [
+      {
+        "column": "no_order",
+        "type": "inferred_fk",
+        "references_table": "tblorder_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_sales",
+        "type": "inferred_fk",
+        "references_table": "tblsales",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      }
+    ],
+    "tblpiutang_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_penjualan",
+        "type": "inferred_fk",
+        "references_table": "tblpenjualan_header",
+        "confidence": "high"
+      }
+    ],
+    "tblpiutang_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      }
+    ],
+    "tblpo_approval_log": [
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tbakun_pos",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_po",
+        "type": "inferred_fk",
+        "references_table": "v_po_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblpr_approval_log": [
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblpr_tracking": [
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblpurchase_request_detail": [
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblpurchase_request_header": [
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblretur_pembelian_detail": [
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_penggantian_retur",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_pembelian_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_pembelian_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_penjualan_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_penjualan_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pembelian",
+        "type": "inferred_fk",
+        "references_table": "tblpembelian_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblretur_penjualan_detail": [
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_penggantian_retur",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_pembelian_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_pembelian_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_penjualan_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_retur",
+        "type": "inferred_fk",
+        "references_table": "tblretur_penjualan_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pembelian",
+        "type": "inferred_fk",
+        "references_table": "tblpembelian_header",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblrfq_detail": [
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblrfq_header": [
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tblpr_tracking",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_produk",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_mekanik_progress",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "tb_progress_mekanik",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_pr",
+        "type": "inferred_fk",
+        "references_table": "v_pr_status",
+        "confidence": "medium"
+      }
+    ],
+    "tblrfq_supplier_response": [
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rfq",
+        "type": "inferred_fk",
+        "references_table": "tblrfq_supplier_response",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_supplier",
+        "type": "inferred_fk",
+        "references_table": "tblsupplier",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblservice": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      },
+      {
+        "column": "id_user",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "id_user",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tblservice_advisor": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tblservice_backup": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_pelanggan",
+        "type": "inferred_fk",
+        "references_table": "tblpelanggan",
+        "confidence": "high"
+      },
+      {
+        "column": "id_user",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "id_user",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tblservis_barang": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblservis_jasa": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tblsupplier_spart": [
+      {
+        "column": "id_pabrik",
+        "type": "inferred_fk",
+        "references_table": "tbpabrik_barang",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_pabrik",
+        "type": "inferred_fk",
+        "references_table": "tbpabrik_motor",
+        "confidence": "medium"
+      }
+    ],
+    "tbl_kepala_mekanik_harian": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tbl_master_kepala_mekanik": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tbmaster_barang_custom": [
+      {
+        "column": "kode_barang",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbmaster_barang_fastmoves": [
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "master_kategori_member",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_rak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_fastmoves",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_barang",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbmaster_kategori_fastmoves": [
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "master_kategori_member",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_rak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_fastmoves",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_item",
+        "confidence": "medium"
+      }
+    ],
+    "tbmaster_keluhan": [
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      }
+    ],
+    "tbmaster_keluhan_temuan": [
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      }
+    ],
+    "tbmaster_keluhan_workorder": [
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_workorder",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_workorder",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_workorder",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_workorder",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      }
+    ],
+    "tbmaster_temuan": [
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      }
+    ],
+    "tbmaster_temuan_barang_mapping": [
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      }
+    ],
+    "tbmaster_tipe_detail": [
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbcabang_tipe",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_pajak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_tipe_header",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_jenis_motor",
+        "type": "inferred_fk",
+        "references_table": "tbjenis_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_kategori_motor",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_motor",
+        "confidence": "medium"
+      }
+    ],
+    "tbpegawai": [
+      {
+        "column": "kode_jabatan",
+        "type": "inferred_fk",
+        "references_table": "tbjabatan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_jk",
+        "type": "inferred_fk",
+        "references_table": "tbjk",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_pendidikan",
+        "type": "inferred_fk",
+        "references_table": "tbpendidikan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_ptkp",
+        "type": "inferred_fk",
+        "references_table": "tbtarif_ptkp",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_ptkp",
+        "type": "inferred_fk",
+        "references_table": "tbtarif_ptkph",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rek",
+        "type": "inferred_fk",
+        "references_table": "tbkoreksi_stok_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_rek",
+        "type": "inferred_fk",
+        "references_table": "tbkoreksi_stok_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_agama",
+        "type": "inferred_fk",
+        "references_table": "tbagama",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_darah",
+        "type": "inferred_fk",
+        "references_table": "tbdarah",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbdivisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_divisi",
+        "type": "inferred_fk",
+        "references_table": "tbhistory_divisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_status_emp",
+        "type": "inferred_fk",
+        "references_table": "tbstatus_emp",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_hari_kerja",
+        "type": "inferred_fk",
+        "references_table": "tbhari_kerja",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "tbpegawai_salary": [
+      {
+        "column": "id_salary",
+        "type": "inferred_fk",
+        "references_table": "tbpegawai_salary",
+        "confidence": "medium"
+      }
+    ],
+    "tbperusahaan": [
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "tbservis_keluhan": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_keluhan_status": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_keluhan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_keluhan_tracking": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "keluhan_id",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "keluhan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "proses_id",
+        "type": "inferred_fk",
+        "references_table": "tbkeluhan_proses",
+        "confidence": "medium"
+      },
+      {
+        "column": "mekanik_id",
+        "type": "inferred_fk",
+        "references_table": "tblmekanik",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_penawaran_log": [
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_part",
+        "confidence": "medium"
+      },
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_rejection_summary",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_penawaran_part": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_barang",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_penawaran_rejection_summary": [
+      {
+        "column": "kode_barang",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_pending_items": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "wo_id",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_pengerjaan": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_temuan": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "keluhan_id",
+        "type": "inferred_fk",
+        "references_table": "tblkeluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "keluhan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_keluhan",
+        "confidence": "high"
+      },
+      {
+        "column": "mekanik_id",
+        "type": "inferred_fk",
+        "references_table": "tblmekanik",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_temuan",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      }
+    ],
+    "tbservis_temuan_activity_log": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_temuan_barang_mapping",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan",
+        "confidence": "medium"
+      },
+      {
+        "column": "temuan_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_part",
+        "confidence": "medium"
+      },
+      {
+        "column": "penawaran_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_rejection_summary",
+        "confidence": "medium"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tbservis_workorder": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      }
+    ],
+    "tbso_detail": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbso_header": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      }
+    ],
+    "tbstok": [
+      {
+        "column": "no_transaksi",
+        "type": "inferred_fk",
+        "references_table": "bulan_transaksi",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_item",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbtipe_motor": [
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbcabang_tipe",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_detail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_tipe_header",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_item",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_pajak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_tipe",
+        "type": "inferred_fk",
+        "references_table": "tbtipe_potongan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_pabrik",
+        "type": "inferred_fk",
+        "references_table": "tbpabrik_barang",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_pabrik",
+        "type": "inferred_fk",
+        "references_table": "tbpabrik_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "master_kategori_member",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_motor",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbkategori_rak",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_fastmoves",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_kategori",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_kategori_item",
+        "confidence": "medium"
+      }
+    ],
+    "tbuser": [
+      {
+        "column": "kode_karyawan",
+        "type": "inferred_fk",
+        "references_table": "tbuser_karyawan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_posisi",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tblevel",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tbmekanik_level",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tb_master_level",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tbuser_karyawan": [
+      {
+        "column": "kode_karyawan",
+        "type": "inferred_fk",
+        "references_table": "tbuser_karyawan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_posisi",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tblevel",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tbmekanik_level",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tb_master_level",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tbworkorderdetail": [
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_barang",
+        "type": "inferred_fk",
+        "references_table": "tblitem",
+        "confidence": "high"
+      }
+    ],
+    "tbworkorderheader": [
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_wo",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      }
+    ],
+    "tbwork_loc": [
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "tbwork_schedule": [
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "master_perusahaan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_perusahaan",
+        "type": "inferred_fk",
+        "references_table": "tbperusahaan",
+        "confidence": "medium"
+      }
+    ],
+    "tbwork_schedule_dtl": [
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbmaster_keluhan_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbservis_workorder",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderdetail",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbworkorderheader",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_loc",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule",
+        "confidence": "medium"
+      },
+      {
+        "column": "id_work",
+        "type": "inferred_fk",
+        "references_table": "tbwork_schedule_dtl",
+        "confidence": "medium"
+      }
+    ],
+    "tb_antrian_servis": [
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_antrian_servis",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_log_antrian",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tb_bank": [
+      {
+        "column": "kode_bank",
+        "type": "inferred_fk",
+        "references_table": "master_bank",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_bank",
+        "type": "inferred_fk",
+        "references_table": "tb_bank",
+        "confidence": "medium"
+      }
+    ],
+    "tb_booking": [
+      {
+        "column": "no_booking",
+        "type": "inferred_fk",
+        "references_table": "tb_booking",
+        "confidence": "medium"
+      }
+    ],
+    "tb_kepala_mekanik_schedule": [
+      {
+        "column": "kode_karyawan",
+        "type": "inferred_fk",
+        "references_table": "tbuser_karyawan",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "tb_log_antrian": [
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_antrian_servis",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_log_antrian",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tb_log_cancel_servis": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      }
+    ],
+    "tb_master_level": [
+      {
+        "column": "kode_posisi",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tblevel",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tbmekanik_level",
+        "confidence": "medium"
+      },
+      {
+        "column": "kode_level",
+        "type": "inferred_fk",
+        "references_table": "tb_master_level",
+        "confidence": "medium"
+      }
+    ],
+    "tb_master_posisi": [
+      {
+        "column": "kode_posisi",
+        "type": "inferred_fk",
+        "references_table": "tb_master_posisi",
+        "confidence": "medium"
+      }
+    ],
+    "tb_mekanik_progress": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "kode_karyawan",
+        "type": "inferred_fk",
+        "references_table": "tbuser_karyawan",
+        "confidence": "medium"
+      }
+    ],
+    "tb_permissions": [
+      {
+        "column": "permission_id",
+        "type": "inferred_fk",
+        "references_table": "tb_permissions",
+        "confidence": "medium"
+      }
+    ],
+    "tb_progress_mekanik": [
+      {
+        "column": "no_service",
+        "type": "inferred_fk",
+        "references_table": "tblservice",
+        "confidence": "high"
+      },
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_antrian_servis",
+        "confidence": "medium"
+      },
+      {
+        "column": "no_antrian",
+        "type": "inferred_fk",
+        "references_table": "tb_log_antrian",
+        "confidence": "medium"
+      },
+      {
+        "column": "mekanik_id",
+        "type": "inferred_fk",
+        "references_table": "tblmekanik",
+        "confidence": "high"
+      }
+    ],
+    "tb_user_account": [
+      {
+        "column": "kode_karyawan",
+        "type": "inferred_fk",
+        "references_table": "tbuser_karyawan",
+        "confidence": "medium"
+      }
+    ],
+    "tb_user_activity_log": [
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "log_perubahan_tarif",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tbitem_validation_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tblpo_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tblpr_approval_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_penawaran_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tbservis_temuan_activity_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tb_log_antrian",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tb_log_cancel_servis",
+        "confidence": "medium"
+      },
+      {
+        "column": "log_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_activity_log",
+        "confidence": "medium"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tb_user_mekanik_mapping": [
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tbuser",
+        "confidence": "high"
+      },
+      {
+        "column": "user_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_account",
+        "confidence": "high"
+      }
+    ],
+    "tb_user_roles": [
+      {
+        "column": "role_id",
+        "type": "inferred_fk",
+        "references_table": "tb_user_roles",
+        "confidence": "medium"
+      }
+    ],
+    "_backup_tbl_kepala_mekanik_harian_20251115": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ],
+    "_backup_tbl_master_kepala_mekanik_20251115": [
+      {
+        "column": "kode_cabang",
+        "type": "inferred_fk",
+        "references_table": "tbcabang",
+        "confidence": "high"
+      }
+    ]
+  },
+  "header_detail_pairs": [
+    {
+      "header": "tbbrg_keluar_header",
+      "detail": "tbbrg_keluar_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbbrg_masuk_header",
+      "detail": "tbbrg_masuk_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbitem_keluar_header",
+      "detail": "tbitem_keluar_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbitem_masuk_header",
+      "detail": "tbitem_masuk_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbkas_kasir_header",
+      "detail": "tbkas_kasir_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbkoreksi_stok_header",
+      "detail": "tbkoreksi_stok_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbldelivery_order_header",
+      "detail": "tbldelivery_order_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblhutang_header",
+      "detail": "tblhutang_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblorderjual_header",
+      "detail": "tblorderjual_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblorder_header",
+      "detail": "tblorder_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblpembelian_header",
+      "detail": "tblpembelian_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblpenjualan_header",
+      "detail": "tblpenjualan_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblpiutang_header",
+      "detail": "tblpiutang_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblpurchase_request_header",
+      "detail": "tblpurchase_request_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblretur_pembelian_header",
+      "detail": "tblretur_pembelian_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblretur_penjualan_header",
+      "detail": "tblretur_penjualan_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tblrfq_header",
+      "detail": "tblrfq_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbmaster_tipe_header",
+      "detail": "tbmaster_tipe_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "tbso_header",
+      "detail": "tbso_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "view_pembelian_header",
+      "detail": "view_pembelian_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "view_penjualan_header",
+      "detail": "view_penjualan_detail",
+      "relationship": "one-to-many"
+    },
+    {
+      "header": "view_pesanan_pembelian_header",
+      "detail": "view_pesanan_pembelian_detail",
+      "relationship": "one-to-many"
+    }
+  ],
+  "core_entity_relationships": {
+    "tblpelanggan": {
+      "has_many": [
+        "tblkendaraan",
+        "tblservice",
+        "tblpenjualan_header"
+      ],
+      "description": "Customer master table"
+    },
+    "tblkendaraan": {
+      "belongs_to": [
+        "tblpelanggan"
+      ],
+      "has_many": [
+        "tblservice"
+      ],
+      "description": "Vehicle registration table"
+    },
+    "tblservice": {
+      "belongs_to": [
+        "tblpelanggan",
+        "tblkendaraan"
+      ],
+      "has_many": [
+        "tblservis_barang",
+        "tblservis_jasa",
+        "tbservis_keluhan",
+        "tbservis_temuan"
+      ],
+      "description": "Service transaction header"
+    },
+    "tblservis_barang": {
+      "belongs_to": [
+        "tblservice",
+        "tblitem"
+      ],
+      "description": "Service parts/items detail"
+    },
+    "tblservis_jasa": {
+      "belongs_to": [
+        "tblservice"
+      ],
+      "description": "Service labor detail"
+    },
+    "tblitem": {
+      "has_many": [
+        "tblitem_stok",
+        "tblservis_barang",
+        "tblpembelian_detail",
+        "tblpenjualan_detail"
+      ],
+      "description": "Item/product master"
+    },
+    "tblsupplier": {
+      "has_many": [
+        "tblpembelian_header"
+      ],
+      "description": "Supplier master"
+    },
+    "tblpembelian_header": {
+      "belongs_to": [
+        "tblsupplier"
+      ],
+      "has_many": [
+        "tblpembelian_detail"
+      ],
+      "description": "Purchase transaction header"
+    },
+    "tblpenjualan_header": {
+      "belongs_to": [
+        "tblpelanggan"
+      ],
+      "has_many": [
+        "tblpenjualan_detail"
+      ],
+      "description": "Sales transaction header"
+    }
+  }
+}

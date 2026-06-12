@@ -1,0 +1,1278 @@
+================================================================================
+DATABASE TABLE LIST - FITMOTOR BENGKEL SYSTEM
+================================================================================
+
+Total Tables: 242
+Generated: 2025-11-28
+
+================================================================================
+
+
+CATEGORY SUMMARY
+--------------------------------------------------------------------------------
+Master Data                              :  40 tables
+Transaksi                                :  58 tables
+System & Configuration                   :  31 tables
+Lookup/Reference                         :  21 tables
+Logging & Audit                          :   3 tables
+Views                                    :  47 tables
+Backup Tables                            :   7 tables
+User Management & RBAC                   :   8 tables
+Procurement                              :  11 tables
+HR & Payroll                             :  16 tables
+
+
+================================================================================
+MASTER DATA (40 tables)
+================================================================================
+
+master_bank
+  Columns: 7
+  Primary Key: id
+  Columns: id, kode_bank, nama_bank, keterangan, is_aktif, created_at, updated_at
+
+master_kategori_member
+  Columns: 13
+  Primary Key: id_kategori
+  Columns: id_kategori, nama_kategori, tipe_kategori, min_value, max_value, diskon_persen, benefit_text, icon, warna, urutan... (+3 more)
+
+master_kedatangan_pelanggan
+  Columns: 15
+  Primary Key: id_kedatangan
+  Columns: id_kedatangan, no_pelanggan, no_service, kedatangan_ke, tanggal_datang, tanggal_sebelumnya, jarak_hari, total_transaksi, jumlah_item, rata2_nilai_per_item... (+5 more)
+
+master_perusahaan
+  Columns: 15
+  Primary Key: id
+  Columns: id, kode_perusahaan, nama_perusahaan, nama_singkat, alamat, telepon, email, website, logo, npwp... (+5 more)
+
+master_tarif_jemput
+  Columns: 7
+  Primary Key: NO PRIMARY KEY
+  Columns: id, jenis_motor, jarak_km, tarif, keterangan, created_at, updated_at
+
+master_tarif_jemput_range
+  Columns: 10
+  Primary Key: id
+  Columns: id, jenis_motor, jarak_min, jarak_max, tarif_dasar, tarif_per_km, keterangan, aktif, created_at, updated_at
+
+tbl_adm
+  Columns: 3
+  Primary Key: id
+  Columns: kode, nama, id
+
+tbl_kepala_mekanik_harian
+  Columns: 10
+  Primary Key: id
+  Columns: id, kode_cabang, tanggal_kerja, kepala_mekanik_1, kepala_mekanik_2, shift_kerja, keterangan, created_by, created_at, updated_at
+
+tbl_master_kepala_mekanik
+  Columns: 11
+  Primary Key: NO PRIMARY KEY
+  Columns: id, kode_cabang, nama_kepala_mekanik, nip_karyawan, no_telepon, tanggal_mulai, tanggal_selesai, status_aktif, created_by, created_at... (+1 more)
+
+tblist_bpjs
+  Columns: 2
+  Primary Key: id
+  Columns: id, list_bpjs
+
+tblitem
+  Columns: 49
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, kodebarcode, namaitem, jenis, satuan, hargapokok, hargajual, hargajual2, hargajual3, hjqtyd2... (+39 more)
+
+tblitem_jasa
+  Columns: 4
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, namaitem, waktu, harga
+
+tblitem_spart
+  Columns: 3
+  Primary Key: id
+  Columns: noitem, kode_tipe, id
+
+tblitemjenis
+  Columns: 10
+  Primary Key: id
+  Columns: jenis, namajenis, _default, id, accurate_id, status, margin_khusus, ikut_margin_jenis, include_service, keterangan
+
+tblitemsatuan
+  Columns: 7
+  Primary Key: id
+  Columns: satuan, namasatuan, _default, id, accurate_id, keterangan, status
+
+tbljenis
+  Columns: 4
+  Primary Key: kodejenis
+  Columns: kodejenis, namajenis, keterangan, statusjenis
+
+tblkeluhan
+  Columns: 6
+  Primary Key: id_keluhan
+  Columns: id_keluhan, kode_keluhan, nama_keluhan, deskripsi, estimasi_waktu, status
+
+tblkendaraan
+  Columns: 16
+  Primary Key: NO PRIMARY KEY
+  Columns: nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis, tahun_buat, tahun_rakit... (+6 more)
+
+tblmekanik
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: nomekanik, nama, alamat, telp, keahlian, status, email, tanggal_masuk, gaji_pokok, spesialisasi... (+3 more)
+
+tblnamabarang
+  Columns: 9
+  Primary Key: id
+  Columns: id, nama_barang, sinonim_1, sinonim_2, sinonim_3, perlu_ukuran, keterangan, satuan, status
+
+tblpelanggan
+  Columns: 35
+  Primary Key: NO PRIMARY KEY
+  Columns: nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson... (+25 more)
+
+tblpelanggangrup
+  Columns: 3
+  Primary Key: NO PRIMARY KEY
+  Columns: kgrup, grup, diskon
+
+tblsales
+  Columns: 11
+  Primary Key: NO PRIMARY KEY
+  Columns: nosales, namasales, alamat, kota, telephone, komisijual, _default, komisi_nominal, op_pil_hitung, op_pil_sistem_komisi... (+1 more)
+
+tblsatuan
+  Columns: 4
+  Primary Key: kodesatuan
+  Columns: kodesatuan, satuan, keterangan, statussatuan
+
+tblsupplier
+  Columns: 25
+  Primary Key: NO PRIMARY KEY
+  Columns: nosupplier, namasupplier, tipe_pemasok, alamat, kota, propinsi, kodepost, negara, telephone, no_whatsapp... (+15 more)
+
+tblsupplier_spart
+  Columns: 3
+  Primary Key: id
+  Columns: nosupplier, id_pabrik, id
+
+tbmaster_barang_custom
+  Columns: 11
+  Primary Key: id
+  Columns: id, kode_barang, nama_barang, harga_jual, satuan, kategori, deskripsi, status_aktif, created_by, created_at... (+1 more)
+
+tbmaster_barang_fastmoves
+  Columns: 6
+  Primary Key: id
+  Columns: id, kode_kategori, kode_barang, is_featured, urutan, created_at
+
+tbmaster_barang_nonitem
+  Columns: 18
+  Primary Key: id
+  Columns: id, kode_barang_temp, nama_barang, kategori, satuan, harga_estimasi, supplier, keterangan, status_approval, perlu_approval... (+8 more)
+
+tbmaster_jenis_item
+  Columns: 7
+  Primary Key: id
+  Columns: id, kode, nama_jenis, margin, status, created_at, updated_at
+
+tbmaster_kategori_fastmoves
+  Columns: 7
+  Primary Key: id
+  Columns: id, kode_kategori, nama_kategori, icon, urutan, is_active, created_at
+
+tbmaster_kategori_item
+  Columns: 8
+  Primary Key: id
+  Columns: id, kategori_item, keterangan, margin_sesuai_jenis, margin_kategori, status, created_at, updated_at
+
+tbmaster_keluhan
+  Columns: 14
+  Primary Key: id
+  Columns: id, kode_keluhan, nama_keluhan, deskripsi, kategori, status_aktif, status_approval, requested_by, requested_from, approved_by... (+4 more)
+
+tbmaster_keluhan_temuan
+  Columns: 6
+  Primary Key: id
+  Columns: id, kode_keluhan, kode_temuan, prioritas, is_mandatory, created_at
+
+tbmaster_keluhan_workorder
+  Columns: 7
+  Primary Key: id
+  Columns: id, kode_keluhan, kode_workorder, prioritas, status_aktif, created_at, updated_at
+
+tbmaster_nama_barang
+  Columns: 13
+  Primary Key: id
+  Columns: id, nama_barang, sinonim_1, sinonim_2, sinonim_3, ukuran, nama_utama, nama_alternatif, spesifikasi_diperlukan, keterangan... (+3 more)
+
+tbmaster_temuan
+  Columns: 9
+  Primary Key: id
+  Columns: id, kode_temuan, nama_temuan, deskripsi, kategori, tingkat_urgensi, is_active, created_at, updated_at
+
+tbmaster_temuan_barang_mapping
+  Columns: 12
+  Primary Key: id
+  Columns: id, kode_temuan, noitem, is_primary, prioritas, qty_default, keterangan, status_aktif, created_by, created_at... (+2 more)
+
+tbmaster_tipe_detail
+  Columns: 16
+  Primary Key: id
+  Columns: id, kode_tipe, kode_brand, id_tipe_header, nama_detail, cc, id_jenis_motor, fitur_pembeda, ciri_fisik_pembeda, tahun_awal... (+6 more)
+
+tbmaster_tipe_header
+  Columns: 6
+  Primary Key: id
+  Columns: id, nama_model, id_brand, status, created_at, updated_at
+
+
+================================================================================
+TRANSAKSI (58 tables)
+================================================================================
+
+tb_antrian_servis
+  Columns: 16
+  Primary Key: id
+  Columns: id, no_antrian, no_service, tanggal, jam_ambil, jam_mulai, jam_selesai, status_antrian, prioritas, estimasi_waktu... (+6 more)
+
+tbakun
+  Columns: 8
+  Primary Key: NO PRIMARY KEY
+  Columns: no_akun, nama_akun, pos, debet, kredit, status_akun, akun_induk, no_akun_induk
+
+tbakun_pos
+  Columns: 1
+  Primary Key: NO PRIMARY KEY
+  Columns: pos
+
+tbbrg_keluar_detail
+  Columns: 12
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, harga, total, keterangan, user, id, kd_cabang, status_trx... (+2 more)
+
+tbbrg_keluar_header
+  Columns: 6
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang, kd_cabang_ke
+
+tbbrg_masuk_detail
+  Columns: 12
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, harga, total, keterangan, user, id, kd_cabang, status_trx... (+2 more)
+
+tbbrg_masuk_header
+  Columns: 6
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang, kd_cabang_dr
+
+tbitem_keluar_detail
+  Columns: 12
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, harga, total, keterangan, user, id, kd_cabang, status_trx... (+2 more)
+
+tbitem_keluar_header
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang
+
+tbitem_masuk_detail
+  Columns: 12
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, harga, total, keterangan, user, id, kd_cabang, status_trx... (+2 more)
+
+tbitem_masuk_header
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang
+
+tbjenis_penggantian_retur
+  Columns: 2
+  Primary Key: id
+  Columns: id, jenis_penggantian
+
+tbkas_kasir
+  Columns: 19
+  Primary Key: id
+  Columns: tanggal, jam, kd_cabang, user, tipe, keping_1, keping_2, keping_3, keping_4, keping_5... (+9 more)
+
+tbkas_kasir_detail
+  Columns: 4
+  Primary Key: NO PRIMARY KEY
+  Columns: no_bukti, nominal, jml_keping, nilai
+
+tbkas_kasir_header
+  Columns: 9
+  Primary Key: NO PRIMARY KEY
+  Columns: no_bukti, tanggal, jam, kd_cabang, user, tipe, total, total_awal, total_real
+
+tbkoreksi_stok_detail
+  Columns: 11
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, keterangan, user, id, kd_cabang, status_trx, stok_sistem, penyesuaian... (+1 more)
+
+tbkoreksi_stok_header
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang
+
+tblakunkas
+  Columns: 3
+  Primary Key: id
+  Columns: kodeakun, namaakun, id
+
+tblhutang_detail
+  Columns: 7
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, nobaris, no_pembelian, keterangan, jumlah_hutang, jumlah_bayar, status
+
+tblhutang_header
+  Columns: 8
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, no_supplier, note, total_bayar, user, id_tabel, kd_cabang
+
+tblitem_stok
+  Columns: 6
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, kode_cabang, stokmin, stok_maks, stok_awal, rakbarang
+
+tblkas_keluar_masuk
+  Columns: 12
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_km, no_bukti, kode_akun, tanggal, uraian, masuk, keluar, jenis, kd_cabang, user... (+2 more)
+
+tblorder_detail
+  Columns: 11
+  Primary Key: id
+  Columns: no_order, nobaris, no_item, quantity, qty_terima, harga_pokok, total, user, status_trx, kd_cabang... (+1 more)
+
+tblorder_header
+  Columns: 28
+  Primary Key: no_order
+  Columns: no_order, status, tanggal, tglkirim, no_supplier, note, total_qty, total_terima, total_order, user... (+18 more)
+
+tblorderjual_detail
+  Columns: 15
+  Primary Key: id
+  Columns: no_order, nobaris, no_item, quantity, qty_terima, harga_jual, potongan, harga_sp, harga_pokok, total... (+5 more)
+
+tblorderjual_header
+  Columns: 21
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, status, tanggal, no_sales, no_pelanggan, note, total_qty, total_terima, total_jual, diskon... (+11 more)
+
+tblpembelian_detail
+  Columns: 16
+  Primary Key: id
+  Columns: no_transaksi, nobaris, no_item, qty_order, quantity, qty_retur, harga_pokok, potongan, harga_sp, total... (+6 more)
+
+tblpembelian_header
+  Columns: 32
+  Primary Key: NO PRIMARY KEY
+  Columns: notransaksi, status, carabayar, tanggal, no_order, tanggal_order, no_supplier, note, total_qty_order, total_qty... (+22 more)
+
+tblpenjualan_detail
+  Columns: 16
+  Primary Key: id
+  Columns: no_transaksi, nobaris, no_item, qty_order, quantity, qty_retur, harga_jual, potongan, harga_sp, harga_pokok... (+6 more)
+
+tblpenjualan_header
+  Columns: 27
+  Primary Key: NO PRIMARY KEY
+  Columns: notransaksi, status, carabayar, tanggal, no_order, tanggal_order, no_sales, no_pelanggan, note, total_qty_order... (+17 more)
+
+tblpiutang_detail
+  Columns: 7
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, nobaris, no_penjualan, keterangan, jumlah_piutang, jumlah_bayar, status
+
+tblpiutang_header
+  Columns: 8
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, no_pelanggan, note, total_bayar, user, id_tabel, kd_cabang
+
+tblretur_pembelian_detail
+  Columns: 13
+  Primary Key: id
+  Columns: no_retur, no_pembelian, no_item, quantity, harga_pokok, potongan, total, user, kd_cabang, alasan_retur... (+3 more)
+
+tblretur_pembelian_header
+  Columns: 14
+  Primary Key: NO PRIMARY KEY
+  Columns: noretur, nopembelian, tanggal, note, total_qty_retur, total_retur, diskon, total_diskon, pajak, total_pajak... (+4 more)
+
+tblretur_penjualan_detail
+  Columns: 13
+  Primary Key: id
+  Columns: no_retur, no_pembelian, no_item, quantity, harga_pokok, potongan, total, user, kd_cabang, alasan_retur... (+3 more)
+
+tblretur_penjualan_header
+  Columns: 14
+  Primary Key: NO PRIMARY KEY
+  Columns: noretur, nopembelian, tanggal, note, total_qty_retur, total_retur, diskon, total_diskon, pajak, total_pajak... (+4 more)
+
+tblservice
+  Columns: 68
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, tanggal, jam, no_pelanggan, no_polisi, status, kd_cabang, id_user, total, diskon_persen... (+58 more)
+
+tblservice_advisor
+  Columns: 2
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, advisor
+
+tblservis_barang
+  Columns: 9
+  Primary Key: id
+  Columns: no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, id
+
+tblservis_jasa
+  Columns: 8
+  Primary Key: id
+  Columns: no_service, nobaris, no_item, waktu, harga, potongan, total, id
+
+tbsaldo_hutang
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: nosupplier, tanggal, saldo_awal, keterangan, saldo_bayar
+
+tbsaldo_piutang
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: nopelanggan, tanggal, saldo_awal, keterangan, saldo_bayar
+
+tbservis_keluhan
+  Columns: 3
+  Primary Key: id
+  Columns: no_service, keluhan, id
+
+tbservis_keluhan_status
+  Columns: 11
+  Primary Key: id
+  Columns: id, no_service, keluhan, kategori, kode_keluhan, status_pengerjaan, auto_workorder, workorder_applied, keterangan_tidak_selesai, created_at... (+1 more)
+
+tbservis_keluhan_tracking
+  Columns: 12
+  Primary Key: id
+  Columns: id, no_service, keluhan_id, proses_id, status_proses, mekanik_id, waktu_mulai, waktu_selesai, catatan, biaya_actual... (+2 more)
+
+tbservis_penawaran_log
+  Columns: 7
+  Primary Key: id
+  Columns: id, penawaran_id, no_service, action, alasan, user_action, created_at
+
+tbservis_penawaran_part
+  Columns: 25
+  Primary Key: id
+  Columns: id, no_service, temuan_id, is_from_suggestion, suggestion_priority, kode_barang, nama_barang, quantity, harga_satuan, total_harga... (+15 more)
+
+tbservis_penawaran_rejection_summary
+  Columns: 10
+  Primary Key: id
+  Columns: id, kode_barang, nama_barang, total_penawaran, total_diterima, total_ditolak, alasan_tolak_terbanyak, acceptance_rate, last_offered_date, updated_at
+
+tbservis_pending_items
+  Columns: 17
+  Primary Key: id
+  Columns: id, no_service, wo_id, kode_item, nama_item, tipe, quantity, harga_satuan, total, waktu... (+7 more)
+
+tbservis_pengerjaan
+  Columns: 5
+  Primary Key: id
+  Columns: no_service, item_pengerjaan, kd_mekanik, status_pengerjaan, id
+
+tbservis_temuan
+  Columns: 19
+  Primary Key: id
+  Columns: id, no_service, keluhan_id, mekanik_id, mekanik_name, kode_temuan, temuan_custom, deskripsi_temuan, jenis_perbaikan, status_temuan... (+9 more)
+
+tbservis_temuan_activity_log
+  Columns: 13
+  Primary Key: id
+  Columns: id, no_service, temuan_id, penawaran_id, activity_type, description, old_value, new_value, user_id, user_name... (+3 more)
+
+tbservis_workorder
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_service, kode_wo, status_pengerjaan, keterangan_tidak_selesai, created_at, updated_at
+
+tbso_detail
+  Columns: 10
+  Primary Key: id
+  Columns: no_transaksi, no_item, quantity, harga, total, keterangan, user, id, kd_cabang, status_trx
+
+tbso_header
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, note, user, kd_cabang
+
+tbstok
+  Columns: 9
+  Primary Key: id
+  Columns: tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang, id
+
+tbworkorderdetail
+  Columns: 10
+  Primary Key: id
+  Columns: kode_wo, kode_barang, jumlah, satuan, diskon, status_diskon, id, tipe, harga, total
+
+tbworkorderheader
+  Columns: 6
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_wo, nama_wo, keterangan, status, waktu, harga
+
+
+================================================================================
+SYSTEM & CONFIGURATION (31 tables)
+================================================================================
+
+bulan_transaksi
+  Columns: 3
+  Primary Key: id
+  Columns: bulan, nama, id
+
+setting_highlight_member
+  Columns: 11
+  Primary Key: id
+  Columns: id, kategori_member, background_color, text_color, border_color, border_width, is_bold, opacity, is_active, created_at... (+1 more)
+
+statistik_pelanggan
+  Columns: 26
+  Primary Key: id_statistik
+  Columns: id_statistik, no_pelanggan, total_transaksi, total_nominal, jumlah_kunjungan, kedatangan_terakhir, rata_jarak_kunjungan, rata_rata_transaksi, status_member, kategori_member_kunjungan... (+16 more)
+
+tb_bank
+  Columns: 5
+  Primary Key: kode_bank
+  Columns: kode_bank, bank, norek, namarek, akun_biaya
+
+tb_booking
+  Columns: 9
+  Primary Key: id
+  Columns: tanggal, jam, nama, no_telepon, no_polisi, status_pelanggan, id, no_booking, status_booking
+
+tb_kepala_mekanik_schedule
+  Columns: 7
+  Primary Key: id
+  Columns: id, kode_karyawan, kode_cabang, tanggal_kerja, shift, status_kehadiran, created_at
+
+tb_master_level
+  Columns: 9
+  Primary Key: id
+  Columns: id, kode_posisi, kode_level, nama_level, urutan, deskripsi, is_active, created_at, updated_at
+
+tb_master_posisi
+  Columns: 10
+  Primary Key: id
+  Columns: id, kode_posisi, nama_posisi, departemen, deskripsi, user_akses_level, permissions, is_active, created_at, updated_at
+
+tb_mekanik_progress
+  Columns: 8
+  Primary Key: id
+  Columns: id, no_service, kode_karyawan, status_progress, waktu_mulai, waktu_selesai, catatan, created_at
+
+tb_progress_mekanik
+  Columns: 13
+  Primary Key: id
+  Columns: id, no_service, no_antrian, mekanik_id, nama_mekanik, jenis_mekanik, persen_kerja, status_kerja, jam_mulai, jam_selesai... (+3 more)
+
+tbcabang
+  Columns: 8
+  Primary Key: kode_cabang
+  Columns: kode_cabang, perusahaan_id, nama_cabang, alamat_cabang, google_maps_cabang, lat_cabang, long_cabang, tipe_cabang
+
+tbcabang_tipe
+  Columns: 2
+  Primary Key: id
+  Columns: cabang_tipe, id
+
+tbcara_bayar
+  Columns: 2
+  Primary Key: id
+  Columns: id, cara_bayar
+
+tbcari
+  Columns: 3
+  Primary Key: id
+  Columns: cari, tipe, id
+
+tbdivisi
+  Columns: 2
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_divisi, nama_divisi
+
+tbhargajual
+  Columns: 5
+  Primary Key: id
+  Columns: jenis, margin, marginplus, bulat, id
+
+tbhjual_jasa
+  Columns: 3
+  Primary Key: id
+  Columns: jasa, nilai, id
+
+tbitem_validation_log
+  Columns: 7
+  Primary Key: id
+  Columns: id, noitem, status_lama, status_baru, keterangan, validated_by, created_at
+
+tbjabatan
+  Columns: 4
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_jabatan, nama_jabatan, kode_divisi, tjabatan
+
+tbkeluhan_proses
+  Columns: 12
+  Primary Key: id
+  Columns: id, kode_keluhan, kode_item, tipe_proses, nama_proses, deskripsi, estimasi_waktu, harga_estimasi, wajib, urutan... (+2 more)
+
+tbkeping
+  Columns: 2
+  Primary Key: id
+  Columns: keping, id
+
+tbkomisijl_sales1
+  Columns: 2
+  Primary Key: id
+  Columns: id, ket
+
+tbkomisijl_sales2
+  Columns: 2
+  Primary Key: id
+  Columns: id, ket
+
+tbmekanik_level
+  Columns: 2
+  Primary Key: id
+  Columns: id, mekanik_level
+
+tbpabrik_barang
+  Columns: 7
+  Primary Key: id
+  Columns: id, pabrik_barang, accurate_id, deskripsi, accurate_synced, accurate_notes, created_at
+
+tbpabrik_motor
+  Columns: 4
+  Primary Key: id
+  Columns: id, merek, kode_brand, status
+
+tbperusahaan
+  Columns: 26
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_perusahaan, nama_perusahaan, tlp_perusahaan, email_perusahaan, bisnis, npwp, leader, alamat, logo_perusahaan, file_org... (+16 more)
+
+tbrakbarang
+  Columns: 2
+  Primary Key: id
+  Columns: id, rak_barang
+
+tbsetting
+  Columns: 6
+  Primary Key: id
+  Columns: id, nama_perusahaan, alamat, notlp, fax, file_logo
+
+tburut
+  Columns: 3
+  Primary Key: id
+  Columns: id, urut, tipe
+
+tokens
+  Columns: 5
+  Primary Key: id
+  Columns: id, access_token, refresh_token, scope, created_at
+
+
+================================================================================
+LOOKUP/REFERENCE (21 tables)
+================================================================================
+
+tbagama
+  Columns: 2
+  Primary Key: kode
+  Columns: agama, kode
+
+tbdarah
+  Columns: 2
+  Primary Key: NO PRIMARY KEY
+  Columns: kode, darah
+
+tbhari_kerja
+  Columns: 2
+  Primary Key: id
+  Columns: id, hari_kerja
+
+tbjenis_bayar
+  Columns: 1
+  Primary Key: NO PRIMARY KEY
+  Columns: jenis_bayar
+
+tbjenis_motor
+  Columns: 4
+  Primary Key: kd
+  Columns: kd, jenis, keterangan, status
+
+tbjk
+  Columns: 2
+  Primary Key: kode_jk
+  Columns: kode_jk, jk
+
+tbkategori_motor
+  Columns: 4
+  Primary Key: id
+  Columns: id, kategori, keterangan, status
+
+tbkategori_rak
+  Columns: 4
+  Primary Key: kode
+  Columns: kode, nama_kategori, deskripsi, created_at
+
+tbpanggilan
+  Columns: 2
+  Primary Key: id
+  Columns: id, panggilan
+
+tbpendidikan
+  Columns: 2
+  Primary Key: kode
+  Columns: kode, pendidikan
+
+tbstatus_emp
+  Columns: 2
+  Primary Key: kode
+  Columns: kode, status
+
+tbstatus_harga
+  Columns: 2
+  Primary Key: id
+  Columns: id, status
+
+tbstatus_kehadiran
+  Columns: 2
+  Primary Key: id
+  Columns: id, status_kehadiran
+
+tbstatus_nikah
+  Columns: 2
+  Primary Key: kode
+  Columns: kode, status_nikah
+
+tbstatus_produk
+  Columns: 2
+  Primary Key: id
+  Columns: id, status
+
+tbtipe_item
+  Columns: 2
+  Primary Key: id
+  Columns: id, tipe
+
+tbtipe_motor
+  Columns: 5
+  Primary Key: kode_tipe
+  Columns: kode_tipe, tipe, kode_pabrik, kode_kategori, tahun
+
+tbtipe_pajak
+  Columns: 2
+  Primary Key: id
+  Columns: id, tipe_pajak
+
+tbtipe_potongan
+  Columns: 2
+  Primary Key: NO PRIMARY KEY
+  Columns: kdtipe, tipe_pot
+
+tbwarna
+  Columns: 2
+  Primary Key: id
+  Columns: warna, id
+
+tbwilayah
+  Columns: 5
+  Primary Key: id
+  Columns: id, provinsi, kota_kabupaten, kecamatan, kelurahan_desa
+
+
+================================================================================
+LOGGING & AUDIT (3 tables)
+================================================================================
+
+log_perubahan_tarif
+  Columns: 8
+  Primary Key: id
+  Columns: id, tanggal, user_id, aksi, tarif_id, data_lama, data_baru, keterangan
+
+tb_log_antrian
+  Columns: 8
+  Primary Key: id
+  Columns: id, no_antrian, no_service, aktivitas, keterangan, user_id, user_nama, created_at
+
+tb_log_cancel_servis
+  Columns: 13
+  Primary Key: id
+  Columns: id, no_service, tanggal_cancel, alasan_cancel, kategori_alasan, user_cancel, biaya_cancel, status_barang, status_pembayaran, nominal_dp... (+3 more)
+
+
+================================================================================
+VIEWS (47 tables)
+================================================================================
+
+v_do_status
+  Columns: 0
+  Primary Key: NO PRIMARY KEY
+
+v_po_status
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, no_pr, no_supplier, tanggal, kd_cabang, status, status_approval, approved_by, approved_date, total_items... (+3 more)
+
+v_pr_status
+  Columns: 0
+  Primary Key: NO PRIMARY KEY
+
+view_absensi
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: nip, tgl, tanggal, bulan, tahun, jam_masuk, jam_keluar, jam_absensi, kode_status_kehadiran, keterangan... (+3 more)
+
+view_cari_item
+  Columns: 18
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, namaitem, nama_part_resmi, kodebarcode, merek, tipe_item, status_validasi, kategori_rak, hargapokok, hargajual... (+8 more)
+
+view_cari_kendaraan
+  Columns: 17
+  Primary Key: NO PRIMARY KEY
+  Columns: nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis, tahun_buat, tahun_rakit... (+7 more)
+
+view_cari_pelanggan
+  Columns: 20
+  Primary Key: NO PRIMARY KEY
+  Columns: nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson... (+10 more)
+
+view_do_tracking_latest
+  Columns: 23
+  Primary Key: NO PRIMARY KEY
+  Columns: no_do, no_po, no_supplier, tanggal_do, tanggal_kirim, tanggal_estimasi_tiba, tanggal_tiba, no_surat_jalan, no_kendaraan, nama_pengirim... (+13 more)
+
+view_item_classified
+  Columns: 14
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, namaitem, nama_part_resmi, merek, tipe_item, status_validasi, kategori_rak, hargapokok, hargajual, statusitem... (+4 more)
+
+view_keluhan_workorder
+  Columns: 0
+  Primary Key: NO PRIMARY KEY
+
+view_laporan_cancel_servis
+  Columns: 20
+  Primary Key: NO PRIMARY KEY
+  Columns: id, no_service, tanggal_service, jam_service, tanggal_cancel, nopelanggan, namapelanggan, no_polisi, kategori_alasan, alasan_cancel... (+10 more)
+
+view_master_kategori_member
+  Columns: 16
+  Primary Key: NO PRIMARY KEY
+  Columns: id_kategori, nama_kategori, tipe_kategori, min_display, max_display, min_value, max_value, diskon_persen, benefit_text, icon... (+6 more)
+
+view_master_keluhan
+  Columns: 8
+  Primary Key: NO PRIMARY KEY
+  Columns: id, kode_keluhan, nama_keluhan, deskripsi, kategori, status_aktif, created_at, updated_at
+
+view_master_kepala_mekanik_aktif
+  Columns: 0
+  Primary Key: NO PRIMARY KEY
+
+view_mekanik_users
+  Columns: 12
+  Primary Key: NO PRIMARY KEY
+  Columns: nomekanik, nama, alamat, telp, keahlian, status, email, spesialisasi, nama_user, user_akses... (+2 more)
+
+view_pelanggan_follow_up
+  Columns: 11
+  Primary Key: NO PRIMARY KEY
+  Columns: nopelanggan, namapelanggan, telephone, notlp, tanggal_terakhir_transaksi, hari_tidak_datang, total_nominal, status_member, estimasi_datang_berikutnya, prioritas_follow_up... (+1 more)
+
+view_pelanggan_kendaraan
+  Columns: 18
+  Primary Key: NO PRIMARY KEY
+  Columns: nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis, tahun_buat, tahun_rakit... (+8 more)
+
+view_pembayaran_hutang
+  Columns: 9
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, no_supplier, note, total_bayar, user, id_tabel, kd_cabang, namasupplier
+
+view_pembayaran_piutang
+  Columns: 9
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, tanggal, no_pelanggan, note, total_bayar, user, id_tabel, kd_cabang, namapelanggan
+
+view_pembelian_detail
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, nobaris, no_item, qty_order, quantity, qty_retur, harga_pokok, potongan, harga_sp, total... (+3 more)
+
+view_pembelian_header
+  Columns: 25
+  Primary Key: NO PRIMARY KEY
+  Columns: notransaksi, status, carabayar, tanggal, no_order, tanggal_order, no_supplier, note, total_qty_order, total_qty... (+15 more)
+
+view_penawaran_part_lengkap
+  Columns: 20
+  Primary Key: NO PRIMARY KEY
+  Columns: id, no_service, temuan_id, kode_barang, nama_barang, quantity, harga_satuan, total_harga, status_penawaran, alasan_tolak... (+10 more)
+
+view_penjualan_detail
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: no_transaksi, nobaris, no_item, qty_order, quantity, qty_retur, harga_jual, potongan, harga_sp, harga_pokok... (+3 more)
+
+view_penjualan_header
+  Columns: 26
+  Primary Key: NO PRIMARY KEY
+  Columns: notransaksi, status, carabayar, tanggal, no_order, tanggal_order, no_sales, no_pelanggan, note, total_qty_order... (+16 more)
+
+view_pesanan_pembelian_detail
+  Columns: 8
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, nobaris, no_item, quantity, qty_terima, harga_pokok, total, namaitem
+
+view_pesanan_pembelian_header
+  Columns: 13
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, status, tanggal, tglkirim, no_supplier, note, total_qty, total_terima, total_order, user... (+3 more)
+
+view_pesanan_penjualan_h
+  Columns: 20
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, status, tanggal, no_sales, no_pelanggan, note, total_qty, total_terima, total_jual, diskon... (+10 more)
+
+view_po_with_pr
+  Columns: 31
+  Primary Key: NO PRIMARY KEY
+  Columns: no_order, status, tanggal, tglkirim, no_supplier, note, total_qty, total_terima, total_order, user... (+21 more)
+
+view_pr_complete
+  Columns: 19
+  Primary Key: NO PRIMARY KEY
+  Columns: no_pr, tanggal_pr, tanggal_butuh, requester, departemen, alasan, total_qty, total_estimasi, status_pr, approved_by... (+9 more)
+
+view_retur_pembelian
+  Columns: 14
+  Primary Key: NO PRIMARY KEY
+  Columns: noretur, nopembelian, tgl_retur, tanggal_retur, note, kd_cabang, status_retur, tgl_beli, tanggal_beli, no_order... (+4 more)
+
+view_ringkasan_kedatangan_pelanggan
+  Columns: 19
+  Primary Key: NO PRIMARY KEY
+  Columns: nopelanggan, namapelanggan, domisili, telephone, notlp, jumlah_kedatangan, jumlah_motor, total_nilai_transaksi, rata2_nilai_transaksi, tanggal_pertama_datang... (+9 more)
+
+view_riwayat_kedatangan_detail
+  Columns: 19
+  Primary Key: NO PRIMARY KEY
+  Columns: id_kedatangan, no_pelanggan, namapelanggan, no_service, kedatangan_ke, tanggal_datang, tanggal_sebelumnya, jarak_hari, jarak_kunjungan, total_transaksi... (+9 more)
+
+view_service
+  Columns: 10
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, tanggal, tanggal_trx, jam, no_pelanggan, no_polisi, total_grand, kd_cabang, namapelanggan, status
+
+view_servis_keluhan_lengkap
+  Columns: 25
+  Primary Key: NO PRIMARY KEY
+  Columns: id, no_service, keluhan, status_pengerjaan, keterangan_tidak_selesai, auto_workorder, workorder_applied, created_at, updated_at, tanggal_service... (+15 more)
+
+view_servis_status_summary
+  Columns: 24
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, tanggal, jam, no_pelanggan, no_polisi, status_servis, namapelanggan, hp_pelanggan, kode_merek, tipe_kendaraan... (+14 more)
+
+view_servis_temuan_lengkap
+  Columns: 32
+  Primary Key: NO PRIMARY KEY
+  Columns: id, no_service, keluhan_id, kode_temuan, temuan_custom, deskripsi_temuan, jenis_perbaikan, status_pengerjaan, keterangan_tidak_selesai, tingkat_urgensi... (+22 more)
+
+view_servis_workorder_lengkap
+  Columns: 30
+  Primary Key: NO PRIMARY KEY
+  Columns: id, no_service, kode_wo, status_pengerjaan, keterangan_tidak_selesai, created_at, updated_at, nama_wo, deskripsi_wo, harga_wo... (+20 more)
+
+view_statistik_pelanggan
+  Columns: 22
+  Primary Key: NO PRIMARY KEY
+  Columns: id_statistik, no_pelanggan, nama_pelanggan, alamat, telephone, notlp, total_transaksi, total_nominal, jumlah_kunjungan, kedatangan_terakhir... (+12 more)
+
+view_stok
+  Columns: 11
+  Primary Key: NO PRIMARY KEY
+  Columns: tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, id, tgl_trx, namaitem... (+1 more)
+
+view_stok_master
+  Columns: 3
+  Primary Key: NO PRIMARY KEY
+  Columns: kd_cabang, no_item, saldo
+
+view_suggested_parts
+  Columns: 12
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_temuan, nama_temuan, kode_barang, nama_barang, harga_jual, stok, kategori, is_primary, prioritas, qty_default... (+2 more)
+
+view_tarif_jemput
+  Columns: 9
+  Primary Key: NO PRIMARY KEY
+  Columns: id, jenis_motor, jarak_km, tarif, keterangan, created_at, updated_at, tarif_formatted, kategori_jarak
+
+view_temuan_penawaran_summary
+  Columns: 20
+  Primary Key: NO PRIMARY KEY
+  Columns: temuan_id, no_service, tanggal_service, no_polisi, keluhan, nama_temuan, deskripsi_temuan, jenis_perbaikan, status_temuan, tingkat_urgensi... (+10 more)
+
+view_top_pelanggan
+  Columns: 10
+  Primary Key: NO PRIMARY KEY
+  Columns: ranking, nopelanggan, namapelanggan, telephone, total_nominal, total_transaksi, rata_rata_transaksi, status_member, tanggal_terakhir_transaksi, lama_tidak_datang
+
+view_user_details
+  Columns: 10
+  Primary Key: NO PRIMARY KEY
+  Columns: id, nama_user, user_akses, role_name, department, is_active, last_login, role_description, permissions, role_category
+
+view_wo_harga
+  Columns: 6
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_wo, kode_barang, jumlah, hargajual, subtotal, tipe
+
+view_workorder_complete
+  Columns: 12
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_wo, nama_wo, keterangan, waktu, harga_wo, status, kode_barang, tipe, jumlah, harga_item... (+2 more)
+
+
+================================================================================
+BACKUP TABLES (7 tables)
+================================================================================
+
+_backup_tbl_kepala_mekanik_harian_20251115
+  Columns: 10
+  Primary Key: id
+  Columns: id, kode_cabang, tanggal_kerja, kepala_mekanik_1, kepala_mekanik_2, shift_kerja, keterangan, created_by, created_at, updated_at
+
+_backup_tbl_master_kepala_mekanik_20251115
+  Columns: 11
+  Primary Key: id
+  Columns: id, kode_cabang, nama_kepala_mekanik, nip_karyawan, no_telepon, tanggal_mulai, tanggal_selesai, status_aktif, created_by, created_at... (+1 more)
+
+_backup_tblmekanik_20251115
+  Columns: 13
+  Primary Key: nomekanik
+  Columns: nomekanik, nama, alamat, telp, keahlian, status, email, tanggal_masuk, gaji_pokok, spesialisasi... (+3 more)
+
+backup_tblservice_orphan
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, no_pelanggan, tanggal, total_akhir, backup_date
+
+master_tarif_jemput_backup
+  Columns: 7
+  Primary Key: NO PRIMARY KEY
+  Columns: id, jenis_motor, jarak_km, tarif, keterangan, created_at, updated_at
+
+tblitem_backup_categories
+  Columns: 4
+  Primary Key: NO PRIMARY KEY
+  Columns: noitem, namaitem, kategori_rak, tipe_item
+
+tblservice_backup
+  Columns: 39
+  Primary Key: NO PRIMARY KEY
+  Columns: no_service, tanggal, jam, no_pelanggan, no_polisi, status, kd_cabang, id_user, total, diskon_persen... (+29 more)
+
+
+================================================================================
+USER MANAGEMENT & RBAC (8 tables)
+================================================================================
+
+tb_permissions
+  Columns: 6
+  Primary Key: permission_id
+  Columns: permission_id, permission_code, permission_name, permission_description, module, is_active
+
+tb_user_account
+  Columns: 10
+  Primary Key: id
+  Columns: id, kode_karyawan, username, password_hash, user_akses_level, is_active, last_login, must_change_password, created_at, updated_at
+
+tb_user_activity_log
+  Columns: 8
+  Primary Key: log_id
+  Columns: log_id, user_id, action, module, description, ip_address, user_agent, created_at
+
+tb_user_mekanik_mapping
+  Columns: 5
+  Primary Key: id
+  Columns: id, user_id, mekanik_code, is_primary, created_at
+
+tb_user_roles
+  Columns: 9
+  Primary Key: role_id
+  Columns: role_id, role_code, role_name, role_description, department, permissions, is_active, created_at, updated_at
+
+tblevel
+  Columns: 2
+  Primary Key: id
+  Columns: id, level_name
+
+tbuser
+  Columns: 27
+  Primary Key: id
+  Columns: id, kode_karyawan, nik, nama_user, nama_lengkap, nama_panggilan, password, foto_user, foto, user_akses... (+17 more)
+
+tbuser_karyawan
+  Columns: 18
+  Primary Key: id
+  Columns: id, kode_karyawan, nik, nama_lengkap, nama_panggilan, kode_posisi, kode_level, kode_cabang, email, telp... (+8 more)
+
+
+================================================================================
+PROCUREMENT (11 tables)
+================================================================================
+
+tbldelivery_order_detail
+  Columns: 9
+  Primary Key: id
+  Columns: id, no_do, nobaris, no_item, qty_po, qty_kirim, qty_terima, qty_reject, keterangan
+
+tbldelivery_order_header
+  Columns: 19
+  Primary Key: no_do
+  Columns: no_do, no_po, no_supplier, tanggal_do, tanggal_kirim, tanggal_estimasi_tiba, tanggal_tiba, no_surat_jalan, no_kendaraan, nama_pengirim... (+9 more)
+
+tbldo_tracking
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_do, status, keterangan, lokasi, updated_by, updated_at
+
+tblpo_approval_log
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_po, level_approval, approver, action, notes, action_date
+
+tblpr_approval_log
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_pr, level_approval, approver, action, notes, action_date
+
+tblpr_tracking
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_pr, status_old, status_new, keterangan, updated_by, updated_at
+
+tblpurchase_request_detail
+  Columns: 13
+  Primary Key: id
+  Columns: id, no_pr, nobaris, no_item, nama_item, quantity, qty_approved, qty_po, satuan, harga_estimasi... (+3 more)
+
+tblpurchase_request_header
+  Columns: 18
+  Primary Key: no_pr
+  Columns: no_pr, tanggal_pr, tanggal_butuh, requester, departemen, alasan, total_qty, total_estimasi, status_pr, approved_by... (+8 more)
+
+tblrfq_detail
+  Columns: 7
+  Primary Key: id
+  Columns: id, no_rfq, nobaris, no_item, quantity, satuan, spesifikasi
+
+tblrfq_header
+  Columns: 10
+  Primary Key: no_rfq
+  Columns: no_rfq, no_pr, tanggal_rfq, tanggal_deadline, keterangan, status_rfq, winner_supplier, kd_cabang, created_by, created_at
+
+tblrfq_supplier_response
+  Columns: 9
+  Primary Key: id
+  Columns: id, no_rfq, no_supplier, no_item, harga_penawaran, lead_time_days, keterangan, status_response, submitted_date
+
+
+================================================================================
+HR & PAYROLL (16 tables)
+================================================================================
+
+tbabsensi
+  Columns: 17
+  Primary Key: id
+  Columns: nip, tgl, jam_masuk, jam_keluar, kode_status_kehadiran, keterangan, kode_perusahaan, kode_lokasi, lat_masuk, long_masuk... (+7 more)
+
+tbabsensi_temp
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: no_urut, id, waktu, tgl, jam
+
+tbabsensi_temp_rst
+  Columns: 4
+  Primary Key: NO PRIMARY KEY
+  Columns: id, tgl, jam_masuk, Jam_pulang
+
+tbabsensi_upload
+  Columns: 7
+  Primary Key: id
+  Columns: id_upload, tgl_upload, waktu_upload, tgl_absensi_awal, tgl_absensi_akhir, kode_cabang, id
+
+tbemp_education
+  Columns: 7
+  Primary Key: id
+  Columns: id, nip, fld1, fld2, fld3, fld4, fld5
+
+tbemp_family
+  Columns: 7
+  Primary Key: id
+  Columns: id, nip, nama, id_jk, alamat, notlp, hubungan
+
+tbemp_training
+  Columns: 5
+  Primary Key: id
+  Columns: id, nip, fld1, fld2, fld3
+
+tbemp_tunjangan
+  Columns: 4
+  Primary Key: id
+  Columns: id, nip, nama_tunjangan, nilai_tunjangan
+
+tbhistory_divisi
+  Columns: 6
+  Primary Key: id
+  Columns: nip, kode_divisi, kode_jabatan, tgl_start, tgl_end, id
+
+tbpegawai
+  Columns: 44
+  Primary Key: NO PRIMARY KEY
+  Columns: nip, nama, alamat, kode_jabatan, notlp, kode_jk, tempat_lahir, tgl_lahir, email, kode_pendidikan... (+34 more)
+
+tbpegawai_salary
+  Columns: 4
+  Primary Key: id
+  Columns: nip, id_salary, jumlah, id
+
+tbtarif_ptkp
+  Columns: 5
+  Primary Key: id
+  Columns: golongan, kode, tarif, id, id_parent
+
+tbtarif_ptkph
+  Columns: 4
+  Primary Key: id
+  Columns: id, nama, keterangan, berlaku_mulai
+
+tbwork_loc
+  Columns: 5
+  Primary Key: NO PRIMARY KEY
+  Columns: kode_perusahaan, kode_lokasi, nama_lokasi, lat_pos, lon_pos
+
+tbwork_schedule
+  Columns: 5
+  Primary Key: id_work
+  Columns: id_work, kode_perusahaan, schedule_type, deskripsi, jml_day
+
+tbwork_schedule_dtl
+  Columns: 5
+  Primary Key: id_seq
+  Columns: id_seq, id_work, jam_masuk, jam_keluar, sequence

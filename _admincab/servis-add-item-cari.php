@@ -19,22 +19,141 @@
 			$foto_user="file_upload/avatar.png";
 		}
 
-    // ------- Data Cabang ----------
+		// ------- Data Cabang ----------
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_cabang, tipe_cabang 
                                         FROM tbcabang 
                                         WHERE kode_cabang='$kd_cabang'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$nama_cabang=$tm_cari['nama_cabang'];				        
-        $tipe_cabang=$tm_cari['tipe_cabang'];	
-    // --------------------        
+		$tipe_cabang=$tm_cari['tipe_cabang'];	
+		// --------------------        
 
-        $no_service = $_GET['snoserv'];        
-        $txtkey= $_GET['_key'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
-        $kdjasa="";
+		$no_service = $_GET['snoserv'];        
+		$txtkey= $_GET['_key'];
+		$txtcari= $_GET['_cari'];
+		$txturut= $_GET['_urut'];
+		$txtflt= $_GET['_flt'];
+		$only_applicable = intval($_GET['only_applicable'] ?? 0);
+		$tab_param = $_GET['_tab'] ?? 'items'; // Get tab parameter, default to items
+		$from_page = $_GET['_from'] ?? 'reguler'; // Track which page user came from: reguler, rst, jemput, jemput-rst
+		$kdjasa="";
+
+		$kd_kategori_motor = 0;
+		$kd_jenis_motor = 0;
+		$kode_tipe_motor = 0;
+		$tipe_text = '';
+		if (!empty($no_service)) {
+			$no_service_safe = mysqli_real_escape_string($koneksi, $no_service);
+
+			$has_view_kat = false;
+			$chk_view_kat = mysqli_query($koneksi, "SHOW FULL TABLES LIKE 'view_service_kategori_motor'");
+			if ($chk_view_kat && mysqli_num_rows($chk_view_kat) > 0) {
+				$has_view_kat = true;
+			}
+			if ($has_view_kat) {
+				$q_kd = mysqli_query($koneksi, "SELECT kd_kategori_motor FROM view_service_kategori_motor WHERE no_service='{$no_service_safe}'");
+				if ($q_kd && mysqli_num_rows($q_kd) > 0) {
+					$r_kd = mysqli_fetch_assoc($q_kd);
+					$kd_kategori_motor = intval($r_kd['kd_kategori_motor'] ?? 0);
+				}
+			}
+
+			$has_view_jenis = false;
+			$chk_view_jenis = mysqli_query($koneksi, "SHOW FULL TABLES LIKE 'view_service_jenis_motor'");
+			if ($chk_view_jenis && mysqli_num_rows($chk_view_jenis) > 0) {
+				$has_view_jenis = true;
+			}
+			if ($has_view_jenis) {
+				$q_kdj = mysqli_query($koneksi, "SELECT kd_jenis_motor FROM view_service_jenis_motor WHERE no_service='{$no_service_safe}'");
+				if ($q_kdj && mysqli_num_rows($q_kdj) > 0) {
+					$r_kdj = mysqli_fetch_assoc($q_kdj);
+					$kd_jenis_motor = intval($r_kdj['kd_jenis_motor'] ?? 0);
+				}
+			}
+
+			$q_srv = mysqli_query($koneksi, "SELECT s.no_polisi, s.no_pelanggan,
+										k.kode_tipe, k.tipe, k.kode_jenis,
+										p.tipe_id as tipe_id_pelanggan, p.jenis_id as jenis_id_pelanggan
+										FROM tblservice s
+										LEFT JOIN tblkendaraan k ON k.nopolisi=s.no_polisi
+										LEFT JOIN tblpelanggan p ON p.nopelanggan=s.no_pelanggan
+										WHERE s.no_service='{$no_service_safe}'
+										LIMIT 1");
+			if ($q_srv && mysqli_num_rows($q_srv) > 0) {
+				$r_srv = mysqli_fetch_assoc($q_srv);
+				$kode_tipe_motor = intval($r_srv['tipe_id_pelanggan'] ?? 0);
+				if ($kode_tipe_motor <= 0) {
+					$kode_tipe_motor = intval($r_srv['kode_tipe'] ?? 0);
+				}
+				$tipe_text = trim((string)($r_srv['tipe'] ?? ''));
+				$jenis_from_pelanggan = intval($r_srv['jenis_id_pelanggan'] ?? 0);
+				if ($kd_jenis_motor <= 0 && $jenis_from_pelanggan > 0) {
+					$kd_jenis_motor = $jenis_from_pelanggan;
+				}
+				$kd_jenis_motor = $kd_jenis_motor > 0 ? $kd_jenis_motor : intval($r_srv['kode_jenis'] ?? 0);
+			}
+
+			if ($kode_tipe_motor <= 0 && $tipe_text !== '') {
+				$tipe_text_safe = mysqli_real_escape_string($koneksi, $tipe_text);
+				$tipe_norm = strtoupper(str_replace([' ', '-'], '', $tipe_text));
+				$tipe_norm_safe = mysqli_real_escape_string($koneksi, $tipe_norm);
+				$q_tm = mysqli_query($koneksi, "SELECT kode_tipe, kode_kategori
+										FROM tbtipe_motor
+										WHERE UPPER(REPLACE(REPLACE(tipe,' ',''),'-',''))='{$tipe_norm_safe}'
+										LIMIT 1");
+				if ($q_tm && mysqli_num_rows($q_tm) > 0) {
+					$r_tm = mysqli_fetch_assoc($q_tm);
+					$kode_tipe_motor = intval($r_tm['kode_tipe'] ?? 0);
+					if ($kd_kategori_motor <= 0) {
+						$kd_kategori_motor = intval($r_tm['kode_kategori'] ?? 0);
+					}
+				}
+			}
+			if ($kode_tipe_motor > 0 && $kd_kategori_motor <= 0) {
+                $q_kat_tm = mysqli_query($koneksi, "SELECT kode_kategori FROM tbtipe_motor WHERE kode_tipe={$kode_tipe_motor} LIMIT 1");
+                if ($q_kat_tm && mysqli_num_rows($q_kat_tm) > 0) {
+                    $r_kat_tm = mysqli_fetch_assoc($q_kat_tm);
+                    $kd_kategori_motor = intval($r_kat_tm['kode_kategori'] ?? 0);
+                }
+            }
+        }
+
+        // Detect mapping column name for items mapping table
+        $item_map_col = 'kd_kategori_motor';
+        $chk_item_map = mysqli_query($koneksi, "SHOW COLUMNS FROM tbitem_jenis_motor LIKE 'kd_kategori_motor'");
+        if (!$chk_item_map || mysqli_num_rows($chk_item_map) == 0) {
+            $item_map_col = 'kd_jenis_motor';
+        }
+
+        $km_sql = intval($kd_kategori_motor);
+        $kj_sql = intval($kd_jenis_motor);
+        $kt_sql = intval($kode_tipe_motor);
+        $map_val = ($item_map_col === 'kd_kategori_motor') ? $km_sql : $kj_sql;
+
+        $applicable_condition = "(
+            ({$kt_sql} <= 0 AND {$km_sql} <= 0 AND {$kj_sql} <= 0)
+            OR (NOT EXISTS (SELECT 1 FROM tbitem_jenis_motor jm0 WHERE jm0.noitem=v.noitem)
+                AND NOT EXISTS (SELECT 1 FROM tblitem_spart sp0 WHERE sp0.noitem=v.noitem))
+            OR ({$kt_sql} > 0 AND EXISTS (SELECT 1 FROM tblitem_spart sp WHERE sp.noitem=v.noitem AND sp.kode_tipe={$kt_sql}))
+            OR ({$map_val} > 0 AND EXISTS (SELECT 1 FROM tbitem_jenis_motor jm WHERE jm.noitem=v.noitem AND jm.".$item_map_col."={$map_val}))
+        )";
+
+        $applicable_select = "CASE
+                                WHEN {$kt_sql} <= 0 AND {$km_sql} <= 0 AND {$kj_sql} <= 0 THEN 1
+                                WHEN NOT EXISTS (SELECT 1 FROM tbitem_jenis_motor jm0 WHERE jm0.noitem=v.noitem)
+                                     AND NOT EXISTS (SELECT 1 FROM tblitem_spart sp0 WHERE sp0.noitem=v.noitem) THEN 1
+                                WHEN {$kt_sql} > 0 AND EXISTS (SELECT 1 FROM tblitem_spart sp WHERE sp.noitem=v.noitem AND sp.kode_tipe={$kt_sql}) THEN 1
+                                WHEN {$map_val} > 0 AND EXISTS (SELECT 1 FROM tbitem_jenis_motor jm WHERE jm.noitem=v.noitem AND jm.".$item_map_col."={$map_val}) THEN 1
+                                ELSE 0
+                             END AS applicable,
+                             CASE
+                                WHEN {$kt_sql} > 0 AND EXISTS (SELECT 1 FROM tblitem_spart sp WHERE sp.noitem=v.noitem AND sp.kode_tipe={$kt_sql}) THEN 3
+                                WHEN {$map_val} > 0 AND EXISTS (SELECT 1 FROM tbitem_jenis_motor jm WHERE jm.noitem=v.noitem AND jm.".$item_map_col."={$map_val}) THEN 2
+                                WHEN NOT EXISTS (SELECT 1 FROM tbitem_jenis_motor jm0 WHERE jm0.noitem=v.noitem)
+                                     AND NOT EXISTS (SELECT 1 FROM tblitem_spart sp0 WHERE sp0.noitem=v.noitem) THEN 1
+                                ELSE 0
+                             END AS app_score";
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -67,6 +186,9 @@
     
     
     // urut ================
+        // Default urut
+        $sql_urut = "noitem"; // default sort by noitem
+
         if($txturut=='34') {
             $sql_urut="noitem";
         }
@@ -74,22 +196,29 @@
             $sql_urut="namaitem";
         }
         if($txturut=='36') {
-            $sql_urut="";
+            $sql_urut="noitem"; // fallback to noitem
         }
         if($txturut=='37') {
             $sql_urut="namajenis";
+        }
+        if($txturut=='52') {
+            $sql_urut="noitem"; // default sort for service search
         }
 
     // end ===========
 
         if($txtflt=='asc') {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
+                $sql_query=" SELECT v.*, ".$applicable_select." FROM view_cari_item v 
                             WHERE 
-                            (noitem like '%".$txtkey."%') OR 
+                            ((noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
-                            (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                            (namajenis like '%".$txtkey."%'))";
+                if ($only_applicable === 1) {
+                    $sql_query .= " AND " . $applicable_condition;
+                }
+                $sql_query .= "
+                            order by app_score DESC, ".$sql_urut." asc"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -100,22 +229,30 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                $sql_query=" SELECT v.*, ".$applicable_select." FROM view_cari_item v 
+                            WHERE (".$sql_cari." like '%".$txtkey."%')";
+                if ($only_applicable === 1) {
+                    $sql_query .= " AND " . $applicable_condition;
+                }
+                $sql_query .= " order by app_score DESC, ".$sql_urut." asc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];				                        
+                $tot=$tm_cari['tot'];			                        
             }
         } else {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
+                $sql_query=" SELECT v.*, ".$applicable_select." FROM view_cari_item v 
                             WHERE 
-                            (noitem like '%".$txtkey."%') OR 
+                            ((noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
-                            (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                            (namajenis like '%".$txtkey."%'))";
+                if ($only_applicable === 1) {
+                    $sql_query .= " AND " . $applicable_condition;
+                }
+                $sql_query .= "
+                            order by app_score DESC, ".$sql_urut." desc"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -126,13 +263,17 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                $sql_query=" SELECT v.*, ".$applicable_select." FROM view_cari_item v 
+                            WHERE (".$sql_cari." like '%".$txtkey."%')";
+                if ($only_applicable === 1) {
+                    $sql_query .= " AND " . $applicable_condition;
+                }
+                $sql_query .= " order by app_score DESC, ".$sql_urut." desc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];				                                    
+                $tot=$tm_cari['tot'];			                                    
             }
         }
 
@@ -144,7 +285,8 @@
 			$txtkey= $_POST['txtkey'];	
 			$cbocari= $_POST['cbocari'];	
 			$cbourut= $_POST['cbourut'];
-            echo"<script>window.location=('servis-add-item-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
+            $only_applicable_js = isset($_GET['only_applicable']) ? $_GET['only_applicable'] : '0';
+            echo"<script>window.location=('servis-add-item-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&only_applicable=$only_applicable_js');</script>";
         }
 
 		if(isset($_POST['btndesc'])) {				
@@ -153,10 +295,10 @@
 			$txtkey= $_POST['txtkey'];	
 			$cbocari= $_POST['cbocari'];	
 			$cbourut= $_POST['cbourut'];
-            echo"<script>window.location=('servis-add-item-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";
+            $only_applicable_js = isset($_GET['only_applicable']) ? $_GET['only_applicable'] : '0';
+            echo"<script>window.location=('servis-add-item-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&only_applicable=$only_applicable_js');</script>";
         }
-
-
+	}
 ?>
 
 <!DOCTYPE html>
@@ -330,6 +472,40 @@
 					</div>
 
 					<div class="page-content">
+						<?php
+							$qs_common = 'snoserv=' . urlencode((string)$no_service)
+								. '&_key=' . urlencode((string)$txtkey)
+								. '&_cari=' . urlencode((string)$txtcari)
+								. '&_urut=' . urlencode((string)$txturut)
+								. '&_flt=' . urlencode((string)$txtflt)
+								. '&_tab=' . urlencode((string)$tab_param)
+								. '&_from=' . urlencode((string)$from_page);
+							$url_all = 'servis-add-item-cari.php?' . $qs_common . '&only_applicable=0';
+							$url_only = 'servis-add-item-cari.php?' . $qs_common . '&only_applicable=1';
+						?>
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="alert alert-info" style="margin-bottom:10px;">
+									<strong>Filter Motor:</strong>
+									<?php
+										$ctx = array();
+										if (!empty($tipe_text)) { $ctx[] = 'Tipe: ' . htmlspecialchars($tipe_text); }
+										if (!empty($kode_tipe_motor)) { $ctx[] = 'kode_tipe: ' . intval($kode_tipe_motor); }
+										if (!empty($kd_kategori_motor)) { $ctx[] = 'kategori: ' . intval($kd_kategori_motor); }
+										if (!empty($kd_jenis_motor)) { $ctx[] = 'jenis: ' . intval($kd_jenis_motor); }
+										echo !empty($ctx) ? implode(' | ', $ctx) : '<span class="text-danger">Tidak terdeteksi (semua item dianggap applicable)</span>';
+									?>
+									<div class="pull-right">
+										<?php if ($only_applicable === 1): ?>
+											<a class="btn btn-xs btn-default" href="<?php echo htmlspecialchars($url_all); ?>">Tampilkan Semua</a>
+										<?php else: ?>
+											<a class="btn btn-xs btn-primary" href="<?php echo htmlspecialchars($url_only); ?>">Hanya Applicable</a>
+										<?php endif; ?>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+						</div>
 
 						<br>
 						<div class="row">
@@ -349,86 +525,189 @@
                         <div class="space space-8"></div> 
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
-								<div class="table-header">
-                                    <?php echo $hasil_cari; ?>
-								</div>                            
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <td class="center" width="5%"></td>
-                                            <td width="10%">Kode Item</td>
-                                            <td width="8%">Kode Barcode</td>
-                                            <td width="19%">Nama Item</td>
-                                            <td width="9%">Jenis</td>
-                                            <td align="right" width="8%">Stok Akhir</td>
-                                            <td align="right" width="8%">Stok Min.</td>
-                                            <td width="8%">Satuan</td>
-                                            <td width="9%">Rak</td>
-                                            <td align="right" width="8%">Harga Pokok</td> 
-                                            <td align="right" width="8%">Harga Jual</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php 
+                                    <div class="widget-header widget-header-green widget-header-flat">
+                                        <h4 class="widget-title lighter">
+                                            <i class="ace-icon fa fa-list"></i>
+                                            <?php echo $hasil_cari; ?>
+                                        </h4>
+                                    </div>
+                                    
+                                    <div class="widget-body">
+                                        <div class="widget-main no-padding">
+                                            <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover" style="table-layout: fixed; width: 100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="center" style="width: 40px;">Aksi</th>
+                                                        <th style="width: 100px;">Kode Item</th>
+                                                        <th style="width: 80px;">Barcode</th>
+                                                        <th>Nama Item</th>
+                                                        <th style="width: 130px;">Jenis</th>
+                                                        <th class="center" style="width: 45px;">Stok</th>
+                                                        <th class="center" style="width: 40px;">Min.</th>
+                                                        <th style="width: 50px;">Satuan</th>
+                                                        <th style="width: 45px;">Rak</th> 
+                                                        <th class="center" style="width: 80px;">Harga Pokok</th>
+                                                        <th class="center" style="width: 80px;">Harga Jual</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                    <?php
+                                        // Debug: tampilkan query jika ada error
                                         $sql = mysqli_query($koneksi,$sql_query);
+
+                                        if(!$sql) {
+                                            echo "<tr><td colspan='11' class='center'>";
+                                            echo "<div class='alert alert-danger'>";
+                                            echo "<strong>Error Query:</strong><br>";
+                                            echo mysqli_error($koneksi);
+                                            echo "<br><br><strong>Query:</strong><br>";
+                                            echo htmlspecialchars($sql_query);
+                                            echo "</div>";
+                                            echo "</td></tr>";
+                                        } else if(mysqli_num_rows($sql) == 0) {
+                                            echo "<tr><td colspan='11' class='center'>";
+                                            echo "<div class='alert alert-warning'>";
+                                            echo "<i class='fa fa-info-circle'></i> ";
+                                            echo "Tidak ada data yang ditemukan. Silakan ubah kata kunci pencarian.";
+                                            echo "</div>";
+                                            echo "</td></tr>";
+                                        }
+
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             $noitem=$tampil['noitem'];
                                             $stokmin=$tampil['stokmin'];
-                                            $cari_kd=mysqli_query($koneksi,"SELECT saldo 
-                                                                            FROM view_stok_master 
-                                                                            WHERE 
-                                                                            kd_cabang='$kd_cabang' AND 
-                                                                            no_item='$noitem'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $saldo_akhir=$tm_cari['saldo'];	
 
-                                            if($saldo_akhir=='0') {
-                                                $bgcolor="red";
-                                                $fontcolor="white";
-                                                $disabled="disabled";
+                                            // Query stok dengan fallback jika VIEW tidak ada
+                                            $cari_kd=mysqli_query($koneksi,"SELECT saldo
+                                                                            FROM view_stok_master
+                                                                            WHERE
+                                                                            kd_cabang='$kd_cabang' AND
+                                                                            no_item='$noitem'");
+
+                                            if($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+                                                $tm_cari=mysqli_fetch_array($cari_kd);
+                                                $saldo_akhir = $tm_cari['saldo'] ?? 0;
                                             } else {
-                                                if($saldo_akhir<=$stokmin) {
-                                                    $bgcolor="yellow";
-                                                    $fontcolor="black";
-                                                    $disabled="";
+                                                // Fallback: hitung langsung dari tabel tbstok jika VIEW error
+                                                $cari_fallback = mysqli_query($koneksi,"SELECT SUM(masuk - keluar) as saldo
+                                                                                        FROM tbstok
+                                                                                        WHERE kd_cabang='$kd_cabang'
+                                                                                        AND no_item='$noitem'");
+                                                if($cari_fallback && mysqli_num_rows($cari_fallback) > 0) {
+                                                    $tm_fallback = mysqli_fetch_array($cari_fallback);
+                                                    $saldo_akhir = $tm_fallback['saldo'] ?? 0;
                                                 } else {
-                                                    $bgcolor="white";
-                                                    $fontcolor="black";
-                                                    $disabled="";
+                                                    $saldo_akhir = 0; // Default jika semua query gagal
                                                 }
+                                            }	
+
+                                            // Ensure saldo_akhir is numeric
+                                            $saldo_akhir = $saldo_akhir ?? 0;
+                                            $saldo_akhir = is_numeric($saldo_akhir) ? $saldo_akhir : 0;
+
+                                            $blocked_reason = "";
+                                            // Block by applicability (STRICT) if motor type context exists
+                                            $is_applicable = isset($tampil['applicable']) ? intval($tampil['applicable']) : 1;
+                                            if($saldo_akhir <= 0) {
+                                                // Stok habis - BLOCK
+                                                $row_class="danger";
+                                                $stock_badge="danger";
+                                                $disabled="disabled";
+                                                $blocked_reason = "STOK KOSONG";
+                                            } elseif($saldo_akhir <= $stokmin) {
+                                                 // Stok menipis - WARNING
+                                                $row_class="warning";
+                                                $stock_badge="warning";
+                                                $disabled="";
+                                                $blocked_reason = "";
+                                            } else {
+                                                // Normal
+                                                $row_class="";
+                                                $stock_badge="success";
+                                                $disabled="";
+                                                $blocked_reason = "";
+                                            }
+                                            if ($kd_kategori_motor > 0 && $is_applicable !== 1) {
+                                                $disabled = "disabled";
+                                                $blocked_reason = "TIDAK APPLICABLE";
                                             }
                                     ?>
-                                        <tr>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" class="center">
-                                                <div class="btn-group">
-                                                    <button data-toggle="dropdown" class="btn <?php echo $disabled; ?> dropdown-toggle btn-minier btn-yellow">
-                                                        Aksi
-                                                        <span class="ace-icon fa fa-caret-down icon-on-right"></span>
+                                        <tr class="<?php echo $row_class; ?>">
+                                            <td class="center">
+                                                <?php if($disabled == "disabled") { ?>
+                                                    <button class="btn btn-minier btn-danger" disabled title="<?php echo $blocked_reason ?: 'Tidak dapat dipilih'; ?>">
+                                                        <i class="ace-icon fa fa-ban"></i>
                                                     </button>
-                                                    <ul class="dropdown-menu dropdown-default">
-                                                        <li>
-                                                            <a href="servis-input-reguler-rst.php?snoserv=<?php echo $no_service; ?>&kd=<?php echo $tampil['noitem']; ?>&kdjasa=<?php echo $kdjasa; ?>">Pilih</a>
-                                                        </li>
-                                                    </ul>
-                                                </div><!-- /.btn-group -->                                                                                                    
+                                                <?php } else { ?>
+                                                    <?php
+                                                    // Determine target page based on _from parameter
+                                                    $target_page = 'servis-input-reguler.php'; // default
+                                                    switch($from_page) {
+                                                        case 'rst':
+                                                            $target_page = 'servis-input-reguler-rst.php';
+                                                            break;
+                                                        case 'jemput':
+                                                            $target_page = 'servis-input-reguler-jemput.php';
+                                                            break;
+                                                        case 'jemput-rst':
+                                                            $target_page = 'servis-input-reguler-jemput-rst.php';
+                                                            break;
+                                                        default:
+                                                            $target_page = 'servis-input-reguler.php';
+                                                    }
+                                                    ?>
+                                                    <a href="<?php echo $target_page; ?>?snoserv=<?php echo $no_service; ?>&kd=<?php echo $tampil['noitem']; ?>&tab=<?php echo $tab_param; ?>" 
+                                                       class="btn btn-minier btn-success" title="Pilih Item">
+                                                        <i class="ace-icon fa fa-check"></i>
+                                                    </a>
+                                                <?php } ?>                                                                                                   
                                             </td>														
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['noitem']?></font></td>														
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['kodebarcode']?></font></td>	
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['namaitem']?></font></td>                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['namajenis']?></font></td>																											                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo $saldo_akhir; ?></font></td>                                            
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['stokmin']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['satuan']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>"><font color="<?php echo $fontcolor; ?>"><?php echo $tampil['rakbarang']?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo number_format($tampil['hargapokok'],0)?></font></td>
-                                            <td bgcolor="<?php echo $bgcolor; ?>" align="right"><font color="<?php echo $fontcolor; ?>"><?php echo number_format($tampil['hargajual'],0)?></font></td>                                            
+
+                                            <td>
+                                                <strong><?php echo $tampil['noitem']; ?></strong>
+                                            </td>														
+
+                                            <td>
+                                                <span class="text-muted"><?php echo $tampil['kodebarcode']; ?></span>
+                                            </td>	
+
+                                            <td>
+                                                <span class="text-primary"><?php echo $tampil['namaitem']; ?></span>
+                                                <?php if ($kd_kategori_motor > 0 && $is_applicable !== 1) { ?>
+                                                    <br><span class="label label-danger" style="font-size:10px;">Not applicable</span>
+                                                <?php } ?>
+                                            </td>                                            
+                                            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <span class="label label-sm label-info" title="<?php echo $tampil['namajenis']; ?>"><?php echo $tampil['namajenis']; ?></span>
+                                            </td>																											                                            
+                                            <td class="center">
+                                                <span class="badge badge-<?php echo $stock_badge; ?>"><?php echo $saldo_akhir; ?></span>
+                                            </td>                                            
+                                            <td class="center">
+                                                <span class="text-muted"><?php echo $tampil['stokmin']; ?></span>
+                                            </td>
+                                            <td><?php echo $tampil['satuan']; ?></td>
+                                            <td>
+                                                <span class="label label-sm label-grey"><?php echo $tampil['rakbarang']; ?></span>
+                                            </td>
+                                            <td class="center">
+                                                <span class="text-danger">Rp <?php echo number_format($tampil['hargapokok'],0); ?></span>
+                                            </td>
+                                            <td class="center">
+                                                <strong class="text-success">Rp <?php echo number_format($tampil['hargajual'],0); ?></strong>
+                                            </td>                                            
                                         </tr>
 
                                     <?php
                                         }
                                     ?>
                                     </tbody>                                    
-                                </table>
+                                            </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                             
@@ -592,10 +871,6 @@
 					});
 				}, 500);
 				
-				
-				
-				
-				
 				myTable.on( 'select', function ( e, dt, type, index ) {
 					if ( type === 'row' ) {
 						$( myTable.row( index ).node() ).find('input:checkbox').prop('checked', true);
@@ -693,11 +968,6 @@
 					$(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
 				});
 				/***************/
-				
-				
-				
-				
-				
 				/**
 				//add horizontal scrollbars to a simple table
 				$('#simple-table').css({'width':'2000px', 'max-width': 'none'}).wrap('<div style="width: 1000px;" />').parent().ace_scroll(
@@ -717,5 +987,4 @@
 </html>
 
 <?php 
-	}
 ?>

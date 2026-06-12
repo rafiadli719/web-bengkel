@@ -20,13 +20,22 @@
 		}
 
     // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_cabang, tipe_cabang 
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_cabang,
+                                        tipe_cabang,
+                                        alamat_cabang,
+                                        google_maps_cabang,
+                                        lat_cabang,
+                                        long_cabang 
                                         FROM tbcabang 
                                         WHERE kode_cabang='$kd_cabang'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$nama_cabang=$tm_cari['nama_cabang'];				        
-        $tipe_cabang=$tm_cari['tipe_cabang'];	
+        $tipe_cabang=$tm_cari['tipe_cabang'];
+	$alamat_cabang=$tm_cari['alamat_cabang'] ?? '';
+	$google_maps_cabang=$tm_cari['google_maps_cabang'] ?? '';
+	$lat_cabang=$tm_cari['lat_cabang'] ?? '';
+	$long_cabang=$tm_cari['long_cabang'] ?? '';	
     // --------------------        
     
 		$tgl_skr=date('d');	
@@ -236,14 +245,14 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Nama Mekanik </label>
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Nama Cabang </label>
 										<div class="col-sm-9">
 											<input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-6" 
 											value="<?php echo $nama; ?>" autocomplete="off" />
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Keahlian </label>
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Tipe Cabang </label>
 										<div class="col-sm-9">
 											<select class="col-xs-10 col-sm-6" name="cbolevel" id="cbolevel" required >
 											<option value="">- Pilih -</option>
@@ -259,6 +268,40 @@
 											?>
 											</select>
 										</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right"> Alamat Cabang </label>
+								<div class="col-sm-9">
+									<textarea id="txtalamat" name="txtalamat" class="col-xs-10 col-sm-6" rows="3" placeholder="Alamat lengkap cabang..."><?php echo isset($alamat_cabang) ? htmlspecialchars($alamat_cabang) : ''; ?></textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right"> Google Maps Link </label>
+								<div class="col-sm-9">
+									<input type="url" id="txtgooglemaps" name="txtgooglemaps" class="col-xs-10 col-sm-6" value="<?php echo isset($google_maps_cabang) ? htmlspecialchars($google_maps_cabang) : ''; ?>" placeholder="https://www.google.com/maps/@-6.123456,106.123456..." autocomplete="off" />
+									<br><small class="text-muted"><i class="fa fa-info-circle"></i> Paste link Google Maps cabang, koordinat akan otomatis ter-extract</small>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right"> Latitude </label>
+								<div class="col-sm-9">
+									<input type="text" id="txtlat" name="txtlat" class="col-xs-10 col-sm-6" value="<?php echo isset($lat_cabang) ? htmlspecialchars($lat_cabang) : ''; ?>" placeholder="-6.123456" autocomplete="off" readonly style="background-color: #f5f5f5;" />
+									<br><small class="text-muted"><i class="fa fa-check"></i> Auto-filled dari Google Maps link</small>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right"> Longitude </label>
+								<div class="col-sm-9">
+									<input type="text" id="txtlong" name="txtlong" class="col-xs-10 col-sm-6" value="<?php echo isset($long_cabang) ? htmlspecialchars($long_cabang) : ''; ?>" placeholder="106.123456" autocomplete="off" readonly style="background-color: #f5f5f5;" />
+									<br><small class="text-muted"><i class="fa fa-check"></i> Auto-filled dari Google Maps link</small>
+								</div>
+							</div>
+
+							</div>
 									</div>
 									
 									<div class="clearfix form-actions">
@@ -764,6 +807,41 @@
 					$('.limiterBox,.autosizejs').remove();
 					$('.daterangepicker.dropdown-menu,.colorpicker.dropdown-menu,.bootstrap-datetimepicker-widget.dropdown-menu').remove();
 				});
+
+		// ========================================
+		// Auto-extract GPS coordinates from Google Maps URL
+		// ========================================
+		$('#txtgooglemaps').on('blur', function() {
+			var mapsUrl = $(this).val().trim();
+			if (mapsUrl) {
+				// Try pattern 1: @lat,lng (https://www.google.com/maps/@-6.123,106.123,17z)
+				var match = mapsUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+
+				if (!match) {
+					// Try pattern 2: q=lat,lng (https://www.google.com/maps?q=-6.123,106.123)
+					match = mapsUrl.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+				}
+
+				if (!match) {
+					// Try pattern 3: ll=lat,lng
+					match = mapsUrl.match(/ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+				}
+
+				if (match) {
+					$('#txtlat').val(match[1]);
+					$('#txtlong').val(match[2]);
+
+					// Show success message
+					alert('✅ Koordinat berhasil di-extract:\n\nLatitude: ' + match[1] + '\nLongitude: ' + match[2]);
+				} else {
+					// Show error if no match
+					if (mapsUrl.includes('google.com/maps')) {
+						alert('⚠️ Format Google Maps URL tidak dikenali.\n\nPastikan URL mengandung koordinat seperti:\n@-6.123456,106.123456');
+					}
+				}
+			}
+		});
+
 			
 			});
 		</script>

@@ -1,0 +1,229 @@
+================================================================================
+DATABASE ISSUES & RECOMMENDATIONS - FITMOTOR BENGKEL SYSTEM
+================================================================================
+Generated: 2025-11-28
+
+================================================================================
+
+
+ISSUE #1: TABLES WITHOUT PRIMARY KEYS (CRITICAL)
+--------------------------------------------------------------------------------
+Total: 50 tables
+
+Impact: Data integrity issues, slow queries, unable to create proper relationships
+
+Affected Tables:
+   1. backup_tblservice_orphan                 (5 columns)
+   2. master_tarif_jemput                      (7 columns)
+   3. master_tarif_jemput_backup               (7 columns)
+   4. tbabsensi_temp                           (5 columns)
+   5. tbabsensi_temp_rst                       (4 columns)
+   6. tbakun                                   (8 columns)
+   7. tbakun_pos                               (1 columns)
+   8. tbbrg_keluar_header                      (6 columns)
+   9. tbbrg_masuk_header                       (6 columns)
+  10. tbdarah                                  (2 columns)
+  11. tbdivisi                                 (2 columns)
+  12. tbitem_keluar_header                     (5 columns)
+  13. tbitem_masuk_header                      (5 columns)
+  14. tbjabatan                                (4 columns)
+  15. tbjenis_bayar                            (1 columns)
+  16. tbkas_kasir_detail                       (4 columns)
+  17. tbkas_kasir_header                       (9 columns)
+  18. tbkoreksi_stok_header                    (5 columns)
+  19. tbl_master_kepala_mekanik                (11 columns)
+  20. tblhutang_detail                         (7 columns)
+  21. tblhutang_header                         (8 columns)
+  22. tblitem                                  (49 columns)
+  23. tblitem_backup_categories                (4 columns)
+  24. tblitem_jasa                             (4 columns)
+  25. tblitem_stok                             (6 columns)
+  26. tblkas_keluar_masuk                      (12 columns)
+  27. tblkendaraan                             (16 columns)
+  28. tblmekanik                               (13 columns)
+  29. tblorderjual_header                      (21 columns)
+  30. tblpelanggan                             (35 columns)
+  ... and 20 more tables
+
+Recommendation:
+  - Add AUTO_INCREMENT primary key (id) to all tables
+  - For transaction tables, use composite keys if needed
+  - Ensure all master tables have unique identifiers
+
+
+ISSUE #2: MISSING TIMESTAMP COLUMNS
+--------------------------------------------------------------------------------
+Total: 110 tables
+
+Impact: Cannot track when records were created/modified
+
+Affected Tables (sample):
+   1. bulan_transaksi
+   2. tb_bank
+   3. tb_permissions
+   4. tbabsensi
+   5. tbabsensi_temp
+   6. tbabsensi_temp_rst
+   7. tbabsensi_upload
+   8. tbagama
+   9. tbakun
+  10. tbakun_pos
+  11. tbbrg_keluar_detail
+  12. tbbrg_masuk_detail
+  13. tbcabang
+  14. tbcabang_tipe
+  15. tbcara_bayar
+  16. tbcari
+  17. tbdarah
+  18. tbdivisi
+  19. tbemp_education
+  20. tbemp_family
+  ... and 90 more tables
+
+Recommendation:
+  - Add created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  - Add updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  - Consider adding created_by and updated_by for audit trail
+
+
+ISSUE #3: INCONSISTENT NAMING CONVENTIONS
+--------------------------------------------------------------------------------
+Table Prefix Inconsistency:
+
+  tbl_            :   3 tables
+  tbl             :  54 tables
+  tb              : 122 tables
+  master_         :   7 tables
+  view_           :  44 tables
+  v_              :   3 tables
+  _backup         :   4 tables
+  no_prefix       :   5 tables
+
+Recommendation:
+  - Standardize to one naming convention (suggested: tbl_ prefix)
+  - Use snake_case for all column names
+  - Avoid mixing camelCase and snake_case
+  - Use descriptive names, avoid abbreviations when possible
+
+
+ISSUE #4: POTENTIAL DUPLICATE OR SIMILAR TABLES
+--------------------------------------------------------------------------------
+
+Similar to 'bank':
+  - master_bank
+  - tb_bank
+
+Similar to 'perusahaan':
+  - master_perusahaan
+  - tbperusahaan
+
+Similar to 'keluhan':
+  - tblkeluhan
+  - tbmaster_keluhan
+
+Similar to 'namabarang':
+  - tblnamabarang
+  - tbmaster_nama_barang
+
+Recommendation:
+  - Review and consolidate duplicate tables
+  - Use views instead of creating multiple similar tables
+  - Document the purpose of each table if they serve different functions
+
+
+ISSUE #5: TABLES WITH TOO MANY COLUMNS
+--------------------------------------------------------------------------------
+  tblitem                                  : 49 columns
+  tblservice                               : 68 columns
+  tbpegawai                                : 44 columns
+
+Recommendation:
+  - Consider normalizing tables with >40 columns
+  - Split into multiple related tables
+  - Move rarely-used columns to separate tables
+
+
+ISSUE #6: MISSING FOREIGN KEY CONSTRAINTS
+--------------------------------------------------------------------------------
+Total: Most relationships are not enforced with FK constraints
+
+
+Impact:
+  - No referential integrity enforcement
+  - Orphaned records possible
+  - Data inconsistency risks
+
+Recommendation:
+  - Add FOREIGN KEY constraints for all relationships
+  - Use ON DELETE CASCADE/RESTRICT as appropriate
+  - Add indexes on foreign key columns
+
+
+ISSUE #7: POTENTIALLY MISSING INDEXES
+--------------------------------------------------------------------------------
+Many tables lack indexes on commonly queried columns
+
+
+Recommendation:
+  - Add indexes on foreign key columns
+  - Add indexes on date columns used in WHERE clauses
+  - Add indexes on status columns
+  - Create composite indexes for common query patterns
+
+
+ISSUE #8: COLUMN NAMING ISSUES
+--------------------------------------------------------------------------------
+Found 13 naming issues
+
+Examples:
+  tbjenis_motor.kd                   - Very short column name
+  tbjk.jk                   - Very short column name
+  tblservice.biayaM1              - camelCase instead of snake_case
+  tblservice.biayaM2              - camelCase instead of snake_case
+  tblservice.biayaM3              - camelCase instead of snake_case
+  tblservice.biayaM4              - camelCase instead of snake_case
+  tblservice_backup.biayaM1              - camelCase instead of snake_case
+  tblservice_backup.biayaM2              - camelCase instead of snake_case
+  tblservice_backup.biayaM3              - camelCase instead of snake_case
+  tblservice_backup.biayaM4              - camelCase instead of snake_case
+  tbmaster_tipe_detail.cc                   - Very short column name
+  tbperusahaan.rt                   - Very short column name
+  tbperusahaan.rw                   - Very short column name
+
+Recommendation:
+  - Use consistent snake_case naming
+  - Avoid very short column names
+  - Use descriptive names that explain the data
+
+
+ISSUE #9: BACKUP TABLES IN PRODUCTION DATABASE
+--------------------------------------------------------------------------------
+Backup/temporary tables found in production schema:
+
+  - _backup_tbl_kepala_mekanik_harian_20251115
+  - _backup_tbl_master_kepala_mekanik_20251115
+  - _backup_tblmekanik_20251115
+  - backup_tblservice_orphan
+  - master_tarif_jemput_backup
+  - tbabsensi_temp
+  - tbabsensi_temp_rst
+  - tblitem_backup_categories
+  - tblservice_backup
+
+Recommendation:
+  - Move backup tables to separate backup database
+  - Remove temporary tables from production
+  - Use proper backup/restore procedures
+
+
+================================================================================
+PRIORITY RECOMMENDATIONS
+================================================================================
+
+1. CRITICAL: Add primary keys to all tables without them
+2. HIGH: Add foreign key constraints for referential integrity
+3. HIGH: Add proper indexes on frequently queried columns
+4. MEDIUM: Standardize naming conventions
+5. MEDIUM: Add created_at/updated_at timestamps
+6. LOW: Normalize large tables
+7. LOW: Remove backup tables from production

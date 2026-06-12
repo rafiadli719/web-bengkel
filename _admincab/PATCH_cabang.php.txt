@@ -1,0 +1,144 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║  PATCH UNTUK: cabang.php                                                  ║
+║  FITUR: Tampilkan Alamat Cabang & Link Google Maps                       ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 1: UPDATE TABLE HEADER (Line ~221-227)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI:
+───────────────────────────────────────────────────────────────────────────
+<thead>
+    <tr>
+        <th class="center" width="5%">No</th>
+        <th width="10%">Kode Cabang</th>
+        <th width="55%">Nama Cabang</th>
+        <th width="20%">Tipe Cabang</th>
+        <th class="center" width="10%">Aksi</th>
+    </tr>
+</thead>
+───────────────────────────────────────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────────────────────────────────────
+<thead>
+    <tr>
+        <th class="center" width="4%">No</th>
+        <th width="8%">Kode Cabang</th>
+        <th width="20%">Nama Cabang</th>
+        <th width="30%">Alamat</th>
+        <th width="12%">Tipe Cabang</th>
+        <th width="8%">Google Maps</th>
+        <th width="8%">Koordinat</th>
+        <th class="center" width="10%">Aksi</th>
+    </tr>
+</thead>
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 2: UPDATE TABLE BODY (Line ~242-258)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI:
+───────────────────────────────────────────────────────────────────────────
+<tr>
+    <td class="center"><?php echo $no ?></td>
+    <td><?php echo $tampil['kode_cabang']?></td>
+    <td><?php echo $tampil['nama_cabang']?></td>
+    <td><?php echo $cabang_tipe; ?></td>
+    <td class="center">
+        <a class="green" data-rel="tooltip" title="Edit"
+            href="cabang_edit.php?kd=<?php echo $tampil['kode_cabang']?>">
+            <i class="ace-icon fa fa-pencil bigger-130"></i>
+        </a>&nbsp;
+        <a class="red" data-rel="tooltip" title="Delete"
+            href="cabang_del.php?kd=<?php echo $tampil['kode_cabang']?>"
+            onclick="return confirm('Data Cabang akan dihapus. Lanjutkan?')">
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+        </a>
+    </td>
+</tr>
+───────────────────────────────────────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────────────────────────────────────
+<tr>
+    <td class="center"><?php echo $no ?></td>
+    <td><?php echo $tampil['kode_cabang']?></td>
+    <td><?php echo $tampil['nama_cabang']?></td>
+    <td>
+        <?php
+        $alamat = $tampil['alamat_cabang'];
+        if (!empty($alamat)) {
+            // Batasi alamat max 50 karakter
+            echo strlen($alamat) > 50 ? substr($alamat, 0, 50) . '...' : $alamat;
+        } else {
+            echo '<span class="text-muted">-</span>';
+        }
+        ?>
+    </td>
+    <td><?php echo $cabang_tipe; ?></td>
+    <td class="center">
+        <?php
+        $google_maps = $tampil['google_maps_cabang'];
+        if (!empty($google_maps)) {
+            echo '<a href="' . htmlspecialchars($google_maps) . '" target="_blank"
+                     class="btn btn-xs btn-info" title="Buka Google Maps">
+                     <i class="fa fa-map-marker"></i> Maps
+                  </a>';
+        } else {
+            echo '<span class="text-muted">-</span>';
+        }
+        ?>
+    </td>
+    <td class="center">
+        <?php
+        $lat = $tampil['lat_cabang'];
+        $long = $tampil['long_cabang'];
+        if (!empty($lat) && !empty($long)) {
+            echo '<small title="Lat: ' . $lat . ', Long: ' . $long . '"
+                         style="cursor: help; color: #5cb85c;">
+                     <i class="fa fa-check-circle"></i> GPS
+                  </small>';
+        } else {
+            echo '<span class="text-muted" title="Koordinat belum diisi">
+                     <i class="fa fa-times-circle"></i>
+                  </span>';
+        }
+        ?>
+    </td>
+    <td class="center">
+        <a class="green" data-rel="tooltip" title="Edit"
+            href="cabang_edit.php?kd=<?php echo $tampil['kode_cabang']?>">
+            <i class="ace-icon fa fa-pencil bigger-130"></i>
+        </a>&nbsp;
+        <a class="red" data-rel="tooltip" title="Delete"
+            href="cabang_del.php?kd=<?php echo $tampil['kode_cabang']?>"
+            onclick="return confirm('Data Cabang akan dihapus. Lanjutkan?')">
+            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+        </a>
+    </td>
+</tr>
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+SELESAI! ✅
+═══════════════════════════════════════════════════════════════════════════
+
+FITUR YANG DITAMBAHKAN:
+✅ Kolom Alamat Cabang (max 50 char with ...)
+✅ Kolom Google Maps (tombol link biru)
+✅ Kolom Koordinat GPS (icon check/times)
+✅ Tooltip untuk koordinat lengkap (hover)
+
+CARA APPLY PATCH:
+1. Buka cabang.php dengan code editor
+2. Cari kode yang perlu diganti (gunakan Ctrl+F)
+3. Replace dengan kode baru
+4. Save file
+5. Refresh halaman di browser
+
+═══════════════════════════════════════════════════════════════════════════

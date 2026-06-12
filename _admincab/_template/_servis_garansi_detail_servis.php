@@ -52,7 +52,7 @@
                                                         
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
-                                <table class="table table-bordered">
+                                        <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <td class="center" width="5%"></td>
@@ -61,7 +61,7 @@
                                             <td width="32%">Nama Item</td>
                                             <td align="right" width="8%">Waktu</td>
                                             <td align="right" width="10%">Harga</td>
-                                            <td align="right" width="8%">Pot.</td>
+                                            <td align="center" width="8%">Diskon</td>
                                             <td align="right" width="15%">Total</td>
                                         </tr>
                                     </thead>
@@ -71,7 +71,9 @@
                                             $sql = mysqli_query($koneksi,"SELECT 
                                                                         id, no_item, waktu, 
                                                                         harga, total, 
-                                                                        potongan FROM tblservis_jasa 
+                                                                        potongan,
+                                                                        diskon_source, diskon_persen, diskon_nominal, id_promo
+                                                                        FROM tblservis_jasa 
                                                                         WHERE no_service='$no_service'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
@@ -104,7 +106,34 @@
                                             <td><?php echo $namaitem_tbl; ?></td>														                                                        
                                             <td class="center"><?php echo $tampil['waktu']?></td>														                                                                                                                                                            
                                             <td align="right"><?php echo number_format($tampil['harga'],0)?></td>	
-                                            <td align="right"><?php echo number_format($tampil['potongan'],0)?></td>														                                                        													                                                        
+                                            <td align="center">
+                                                <?php 
+                                                // Determine display based on source
+                                                $d_source = $tampil['diskon_source'] ?? 'none';
+                                                $d_persen = $tampil['diskon_persen'] ?? 0;
+                                                $d_nominal = $tampil['diskon_nominal'] ?? 0;
+                                                
+                                                // Fallback for legacy data (potongan column)
+                                                if ($d_source == 'none' && $tampil['potongan'] > 0) {
+                                                    $d_source = 'manual';
+                                                    $d_persen = $tampil['potongan'];
+                                                }
+                                                
+                                                if ($d_source == 'promo') {
+                                                    $tipe_disc = ($d_persen > 0) ? 'persen' : 'nominal';
+                                                    $val_disc = ($d_persen > 0) ? $d_persen : $d_nominal;
+                                                    echo '<span class="label label-success label-white middle" style="font-size: 10px;">PROMO</span><br>';
+                                                    echo ($tipe_disc == 'persen') ? $val_disc.'%' : 'Rp'.number_format($val_disc,0,',','.');
+                                                } elseif ($d_source == 'member') {
+                                                    echo '<span class="label label-info label-white middle" style="font-size: 10px;">MEMBER</span><br>';
+                                                    echo $d_persen.'%';
+                                                } elseif ($d_source == 'manual') {
+                                                    echo $d_persen.'%';
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>
+                                            </td>														                                                        													                                                        
                                             <td align="right"><?php echo number_format($tampil['total'],0)?></td>														                                                                                                                
                                         </tr>
                                     <?php

@@ -6,6 +6,9 @@
 		$id_user=$_SESSION['_iduser'];		
         $kd_cabang=$_SESSION['_cabang'];        
 		include "../config/koneksi.php";
+        include "_include_customer_vehicle_sync.php";
+        include_once "../lib/rbac.php";
+        rbac_require_any(array('service_update','input_servis_read','servis_reguler_read','servis_menu_read'));
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -54,25 +57,17 @@
 		$ppn_persen=$tm_cari['ppn_persen'];
         $status_servis=$tm_cari['status_servis'] ?? 'datang';        
                 
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        namapelanggan 
-                                        FROM tblpelanggan 
-                                        WHERE nopelanggan='$kode_pelanggan'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$namapelanggan=$tm_cari['namapelanggan'];
-
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        pemilik, jenis, merek, warna, 
-                                        no_rangka, no_mesin 
-                                        FROM view_cari_kendaraan 
-                                        WHERE nopolisi='$no_polisi'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$pemilik=$tm_cari['pemilik'];
-		$jenis=$tm_cari['jenis'];
-		$merek=$tm_cari['merek'];
-		$warna=$tm_cari['warna'];
-		$no_rangka=$tm_cari['no_rangka'];
-		$no_mesin=$tm_cari['no_mesin'];
+        $customerRow = fitmotorFindCustomerForService($koneksi, $kode_pelanggan, $no_polisi);
+        $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi, $kode_pelanggan);
+        $vehicleRow = $bundle['vehicle'] ?? [];
+        $bundleCustomer = $bundle['customer'] ?? [];
+		$namapelanggan=$customerRow['namapelanggan'] ?? ($bundleCustomer['namapelanggan'] ?? '');
+		$pemilik=$vehicleRow['pemilik'] ?? '';
+		$jenis=$vehicleRow['jenis'] ?? '';
+		$merek=$vehicleRow['merek'] ?? ($vehicleRow['tipe'] ?? '');
+		$warna=$vehicleRow['warna'] ?? '';
+		$no_rangka=$vehicleRow['no_rangka'] ?? '';
+		$no_mesin=$vehicleRow['no_mesin'] ?? '';
         
         $km_skr="";
         $km_berikut="";

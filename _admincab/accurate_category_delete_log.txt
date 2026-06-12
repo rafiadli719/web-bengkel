@@ -281,3 +281,22 @@
 [2025-06-13 10:53:02 WIB] 🎉 SUKSES TOTAL! Category deleted: ID 900
 [2025-06-13 10:53:02 WIB] 🏁 Script execution completed
 [2025-06-13 10:53:02 WIB] ================================================================================
+[2025-09-27 15:34:21 WIB] 📝 ACTION: deactivate - ID: 33, Kode: AKIGEN, Nama: AKIGEN, Status: 1
+[2025-09-27 15:34:21 WIB] 🔍 Usage check: Master Barang (41 item)
+[2025-09-27 15:34:21 WIB] 💾 DATABASE LOKAL: Kategori 'AKIGEN' (Kode: AKIGEN) dinonaktifkan - SUCCESS ✅
+[2025-09-27 15:34:21 WIB] 🏁 Script execution completed
+[2025-09-27 15:34:21 WIB] ================================================================================
+[2025-09-27 15:45:45 WIB] 📝 ACTION: deactivate - ID: 33, Kode: AKIGEN, Nama: AKIGEN, Status: 0
+[2025-09-27 15:45:45 WIB] 🔍 Usage check: Master Barang (41 item)
+[2025-09-27 15:45:45 WIB] 💾 DATABASE LOKAL: Kategori 'AKIGEN' (Kode: AKIGEN) diaktifkan - SUCCESS ✅
+[2025-09-27 15:45:45 WIB] 🏁 Script execution completed
+[2025-09-27 15:45:45 WIB] ================================================================================
+[2025-09-27 15:45:52 WIB] 📝 ACTION: deactivate - ID: 33, Kode: AKIGEN, Nama: AKIGEN, Status: 1
+[2025-09-27 15:45:52 WIB] 🔍 Usage check: Master Barang (41 item)
+[2025-09-27 15:45:52 WIB] 💾 DATABASE LOKAL: Kategori 'AKIGEN' (Kode: AKIGEN) dinonaktifkan - SUCCESS ✅
+[2025-09-27 15:45:52 WIB] 🏁 Script execution completed
+[2025-09-27 15:45:52 WIB] ================================================================================
+[2025-09-27 15:46:01 WIB] 📝 ACTION: delete - ID: 33, Kode: AKIGEN, Nama: AKIGEN, Status: 0
+[2025-09-27 15:46:01 WIB] 🔍 Usage check: Master Barang (41 item)
+[2025-09-27 15:57:54 WIB] 📝 ACTION: delete - ID: 33, Kode: AKIGEN, Nama: AKIGEN, Status: 0
+[2025-09-27 15:57:54 WIB] 🔍 Usage check: Master Barang (41 item)

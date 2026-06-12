@@ -24,7 +24,18 @@
                                     WHERE notransaksi='$no_order'");
     $tm_cari=mysqli_fetch_array($cari_kd);	
     $tanggal_jl=$tm_cari['tanggal'];
-        
+
+    $cari_kd=mysqli_query($koneksi,"SELECT 
+                                    kd_cabang 
+                                    FROM tblpenjualan_header 
+                                    WHERE notransaksi='$no_order'");
+    $tm_cari=mysqli_fetch_array($cari_kd);	
+    $kd_cabang=$tm_cari['kd_cabang'];
+
+    $has_kd_cabang_stok = false;
+    $qcol = mysqli_query($koneksi, "SHOW COLUMNS FROM tbstok LIKE 'kd_cabang'");
+    if($qcol && mysqli_num_rows($qcol)>0){ $has_kd_cabang_stok = true; }
+
     mysqli_query($koneksi,"UPDATE tblpenjualan_header 
                             SET 
                             total_qty='$totqty', 
@@ -47,13 +58,23 @@
         $no_item=$tampil['no_item'];
         $quantity=$tampil['quantity'];
 
-        mysqli_query($koneksi,"INSERT INTO tbstok 
-                        (tipe, no_transaksi, no_item, 
-                        tanggal, masuk, keluar, keterangan) 
-                        VALUES 
-                        ('2','$no_order','$no_item',
-                        '$tanggal_jl','0','$quantity',
-                        'Penjualan')");
+        if($has_kd_cabang_stok){
+            mysqli_query($koneksi,"INSERT INTO tbstok 
+                            (tipe, no_transaksi, no_item, 
+                            tanggal, masuk, keluar, keterangan, kd_cabang) 
+                            VALUES 
+                            ('2','$no_order','$no_item',
+                            '$tanggal_jl','0','$quantity',
+                            'Penjualan','$kd_cabang')");
+        } else {
+            mysqli_query($koneksi,"INSERT INTO tbstok 
+                            (tipe, no_transaksi, no_item, 
+                            tanggal, masuk, keluar, keterangan) 
+                            VALUES 
+                            ('2','$no_order','$no_item',
+                            '$tanggal_jl','0','$quantity',
+                            'Penjualan')");
+        }
     }
     
    echo"<script>window.alert('Data Penjualan berhasil disimpan!');

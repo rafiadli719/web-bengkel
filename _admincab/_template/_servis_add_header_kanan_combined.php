@@ -180,7 +180,7 @@ if(isset($no_service) && isset($koneksi)) {
                                                 </td>
                                                 <td width="30%">
                                                     <label>&nbsp;</label><br>
-                                                    <button class="btn btn-primary btn-sm btn-block" type="submit" 
+                                                    <button class="btn btn-primary btn-sm btn-block" type="submit"
                                                     id="btncariwo" name="btncariwo">
                                                         <i class="ace-icon fa fa-search"></i> Cari
                                                     </button>
@@ -263,32 +263,27 @@ if(isset($no_service) && isset($koneksi)) {
                                             $counter = 1;
                                             
                                             // Tampilkan keluhan
-                                            $sql_keluhan_list = mysqli_query($koneksi,"SELECT id, keluhan FROM tbservis_keluhan_status WHERE no_service='$no_service' ORDER BY id ASC");
-                                            if($sql_keluhan_list) {
+                                            $sql_keluhan_list = mysqli_query($koneksi, "SELECT id, keluhan FROM tbservis_keluhan_status WHERE no_service='$no_service' ORDER BY id ASC");
+                                            if ($sql_keluhan_list) {
                                                 while ($tampil = mysqli_fetch_array($sql_keluhan_list)) {
                                                     echo "<li style='margin-bottom: 10px; padding: 8px; border-left: 4px solid #f39c12; background-color: #fef9e7; font-size: 14px; position: relative;'>";
-                                                    echo "<div style='display: flex; justify-content: between; align-items: center;'>";
+                                                    echo "<div style='display: flex; justify-content: space-between; align-items: center;'>";
                                                     echo "<span style='flex: 1; font-weight: bold; color: #333;'>";
                                                     echo "<span style='display: inline-block; width: 30px; color: #f39c12; font-weight: bold;'>" . $counter . ".</span>";
-                                                    echo "<span class='keluhan-text-" . $tampil['id'] . "'>" . htmlspecialchars($tampil['keluhan']) . "</span>";
+                                                    echo htmlspecialchars($tampil['keluhan']);
                                                     echo "</span>";
                                                     echo "<div class='spk-actions' style='margin-left: 10px;'>";
-                                                    echo "<button type='button' class='btn btn-xs btn-warning' onclick='editKeluhan(" . $tampil['id'] . ", \"" . htmlspecialchars($tampil['keluhan'], ENT_QUOTES) . "\")' title='Edit Keluhan'>";
-                                                    echo "<i class='ace-icon fa fa-edit'></i>";
-                                                    echo "</button> ";
-                                                    echo "<button type='button' class='btn btn-xs btn-danger' onclick='hapusKeluhan(" . $tampil['id'] . ")' title='Hapus Keluhan'>";
-                                                    echo "<i class='ace-icon fa fa-trash'></i>";
-                                                    echo "</button>";
+                                                    echo "<button type='button' class='btn btn-xs btn-danger' onclick='hapusKeluhan(" . (int)$tampil['id'] . ")' title='Hapus Keluhan'><i class=\"ace-icon fa fa-trash\"></i></button>";
                                                     echo "</div>";
                                                     echo "</div>";
                                                     echo "</li>";
                                                     $counter++;
                                                 }
                                             }
-                                            
+
                                             // Tampilkan work order
-                                            $sql_wo_list = mysqli_query($koneksi,"SELECT sw.id, wh.nama_wo, sw.kode_wo FROM tbservis_workorder sw LEFT JOIN tbworkorderheader wh ON sw.kode_wo = wh.kode_wo WHERE sw.no_service='$no_service' ORDER BY sw.id ASC");
-                                            if($sql_wo_list) {
+                                            $sql_wo_list = mysqli_query($koneksi, "SELECT sw.id, wh.nama_wo, sw.kode_wo FROM tbservis_workorder sw LEFT JOIN tbworkorderheader wh ON sw.kode_wo = wh.kode_wo WHERE sw.no_service='$no_service' ORDER BY sw.id ASC");
+                                            if ($sql_wo_list) {
                                                 while ($tampil = mysqli_fetch_array($sql_wo_list)) {
                                                     echo "<li style='margin-bottom: 10px; padding: 8px; border-left: 4px solid #3498db; background-color: #ebf3fd; font-size: 14px; position: relative;'>";
                                                     echo "<div style='display: flex; justify-content: space-between; align-items: center;'>";
@@ -297,9 +292,7 @@ if(isset($no_service) && isset($koneksi)) {
                                                     echo htmlspecialchars($tampil['nama_wo']);
                                                     echo "</span>";
                                                     echo "<div class='spk-actions' style='margin-left: 10px;'>";
-                                                    echo "<button type='button' class='btn btn-xs btn-danger' onclick='hapusWorkOrder(" . $tampil['id'] . ")' title='Hapus Work Order'>";
-                                                    echo "<i class='ace-icon fa fa-trash'></i>";
-                                                    echo "</button>";
+                                                    echo "<button type='button' class='btn btn-xs btn-danger' onclick='hapusWorkOrder(" . (int)$tampil['id'] . ")' title='Hapus Work Order'><i class=\"ace-icon fa fa-trash\"></i></button>";
                                                     echo "</div>";
                                                     echo "</div>";
                                                     echo "</li>";
@@ -331,12 +324,17 @@ if(isset($no_service) && isset($koneksi)) {
                         <i class="ace-icon fa fa-user-md"></i>
                         Penanggung Jawab Servis
                     </h4>
+                    <div class="alert alert-info" style="margin-bottom: 15px; padding: 10px;">
+                        <i class="ace-icon fa fa-info-circle"></i>
+                        <strong>Info:</strong> Pengisian persentase <strong>OPSIONAL</strong> saat input SPK.
+                        Persentase dapat diisi sebelum pembayaran/penyelesaian service.
+                    </div>
                 </div>
-                
+
                 <!-- Kepala Mekanik 1 dengan Persentase -->
                 <div class="col-xs-8 col-sm-8">
-                    <label>Kepala Mekanik 1 <span style="color:red;">*</span>:</label>
-                    <select class="form-control" name="cbokepala1" id="cbokepala1" onchange="validateMekanikKepala(); autoFillKepalaPercentage()">
+                    <label>Kepala Mekanik 1 (Opsional):</label>
+                    <select class="form-control" name="cbokepala_mekanik1" id="cbokepala_mekanik1" onchange="autoFillKepalaPercentage()">
                         <option value="">- Pilih Kepala Mekanik -</option>
                         <?php
                             if(isset($koneksi)) {
@@ -375,7 +373,7 @@ if(isset($no_service) && isset($koneksi)) {
                 <!-- Kepala Mekanik 2 dengan Persentase -->  
                 <div class="col-xs-8 col-sm-8">
                     <label>Kepala Mekanik 2 (Opsional):</label>
-                    <select class="form-control" name="cbokepala2" id="cbokepala2" onchange="autoFillKepalaPercentage()">
+                    <select class="form-control" name="cbokepala_mekanik2" id="cbokepala_mekanik2" onchange="autoFillKepalaPercentage()">
                         <option value="">- Pilih Kepala Mekanik -</option>
                         <?php
                             if(isset($koneksi)) {
@@ -430,13 +428,13 @@ if(isset($no_service) && isset($koneksi)) {
                         <i class="ace-icon fa fa-user"></i>
                         Admin/Kasir
                     </h4>
-                    <p><small><em>Minimal 1 admin/kasir harus diisi. Total persentase harus 100%</em></small></p>
+                    <p><small><em>Pengisian admin/kasir dan persentase OPSIONAL. Dapat diisi sebelum pembayaran.</em></small></p>
                 </div>
-                
+
                 <!-- Admin/Kasir 1 with percentage -->
                 <div class="col-xs-8 col-sm-8">
-                    <label>Admin/Kasir 1 *:</label>
-                    <select name="cboadmin1" id="cboadmin1" class="form-control" required onchange="autoFillAdminPercentage()">
+                    <label>Admin/Kasir 1 (Opsional):</label>
+                    <select name="cboadmin1" id="cboadmin1" class="form-control" onchange="autoFillAdminPercentage()">
                         <option value="">- Pilih Admin/Kasir -</option>
                         <?php
                         if(isset($koneksi)) {
@@ -517,13 +515,13 @@ if(isset($no_service) && isset($koneksi)) {
                         <i class="ace-icon fa fa-wrench"></i>
                         Mekanik
                     </h4>
-                    <p><small><em>Minimal 1 mekanik harus diisi. Total persentase harus 100%</em></small></p>
+                    <p><small><em>Pengisian mekanik dan persentase OPSIONAL. Dapat diisi sebelum pembayaran.</em></small></p>
                 </div>
-                
+
                 <!-- Mekanik 1 with percentage -->
                 <div class="col-xs-8 col-sm-8">
-                    <label>Mekanik 1 *:</label>
-                    <select name="cbomekanik1" id="cbomekanik1" class="form-control" required onchange="autoFillMekanikPercentage()">
+                    <label>Mekanik 1 (Opsional):</label>
+                    <select name="cbomekanik1" id="cbomekanik1" class="form-control" onchange="autoFillMekanikPercentage()">
                         <option value="">- Pilih Mekanik -</option>
                         <?php
                         if(isset($koneksi)) {
@@ -655,10 +653,20 @@ if(isset($no_service) && isset($koneksi)) {
                 <!-- Total Percentage Display for Mekanik -->
                 <div class="col-xs-12 col-sm-12">
                     <div class="alert alert-info" id="persentaseStatusMekanik">
-                        <i class="fa fa-calculator"></i> 
+                        <i class="fa fa-calculator"></i>
                         <strong>Total % Pengerjaan Mekanik: <span id="totalPersenMekanik">0</span>%</strong>
                         <span id="persenMessageMekanik"> - Harus 100%</span>
                     </div>
+                </div>
+
+                <!-- Save Button for Mechanic Assignments -->
+                <div class="col-xs-12 col-sm-12">
+                    <div class="space-6"></div>
+                    <button type="button" class="btn btn-success btn-block" id="btnSaveMechanicData" onclick="forceSaveAllMechanicData()">
+                        <i class="ace-icon fa fa-save"></i>
+                        Simpan Data Mekanik & Persentase
+                    </button>
+                    <div class="space-6"></div>
                 </div>
             </div>
             <div class="space space-8"></div>
@@ -829,8 +837,8 @@ function calculatePercentageKepala() {
 }
 
 function autoFillKepalaPercentage() {
-    var kepala1 = document.getElementById('cbokepala1').value;
-    var kepala2 = document.getElementById('cbokepala2').value;
+    var kepala1 = document.getElementById('cbokepala_mekanik1').value;
+    var kepala2 = document.getElementById('cbokepala_mekanik2').value;
     
     // Clear all percentages first
     document.getElementById('txtpersen_kepala1').value = '';
@@ -856,14 +864,8 @@ function autoFillKepalaPercentage() {
 }
 
 function validateMekanikKepala() {
-    var kepala1 = $('#cbokepala1').val();
-    
-    // Kepala Mekanik 1 is required
-    if (!kepala1) {
-        alert('Kepala Mekanik 1 wajib dipilih!');
-        return false;
-    }
-    
+    // Validation is now optional - removed required validation
+    // Kepala mekanik can be filled before payment/completion
     return true;
 }
 
@@ -926,14 +928,8 @@ function autoFillAdminPercentage() {
 }
 
 function validateAdmin() {
-    var admin1 = $('#cboadmin1').val();
-    
-    // Admin 1 is required
-    if (!admin1) {
-        alert('Admin/Kasir 1 wajib dipilih!');
-        return false;
-    }
-    
+    // Validation is now optional - removed required validation
+    // Admin can be filled before payment/completion
     return true;
 }
 
@@ -1025,14 +1021,8 @@ function autoFillMekanikPercentage() {
 }
 
 function validateMekanik() {
-    var mekanik1 = $('#cbomekanik1').val();
-    
-    // Mekanik 1 is required
-    if (!mekanik1) {
-        alert('Mekanik 1 wajib dipilih!');
-        return false;
-    }
-    
+    // Validation is now optional - removed required validation
+    // Mekanik can be filled before payment/completion
     return true;
 }
 
@@ -1274,6 +1264,29 @@ function showSaveIndicator(fieldType, status) {
     }, 2000);
 }
 
+// === MANUAL SAVE FUNCTION ===
+function forceSaveAllMechanicData() {
+    var noService = $('input[name="txtnosrv"]').val();
+    if (!noService) {
+        alert('Nomor service tidak ditemukan!');
+        return;
+    }
+
+    var button = $('#btnSaveMechanicData');
+    button.prop('disabled', true);
+    button.html('<i class="ace-icon fa fa-spinner fa-spin"></i> Menyimpan...');
+
+    forceSaveAllData().then(function() {
+        alert('Semua data mekanik berhasil disimpan!');
+        button.prop('disabled', false);
+        button.html('<i class="ace-icon fa fa-save"></i> Simpan Data Mekanik & Persentase');
+    }).catch(function(error) {
+        alert('Terjadi kesalahan saat menyimpan data: ' + error);
+        button.prop('disabled', false);
+        button.html('<i class="ace-icon fa fa-save"></i> Simpan Data Mekanik & Persentase');
+    });
+}
+
 // === DEBUG FUNCTIONS ===
 function addDebugMessage(message, type) {
     var timestamp = new Date().toLocaleTimeString();
@@ -1306,8 +1319,8 @@ function forceSaveAllData() {
     
     // Collect all current form values
     var data = {
-        kepala1: $('#cbokepala1').val(),
-        kepala2: $('#cbokepala2').val(),
+        kepala1: $('#cbokepala_mekanik1').val(),
+        kepala2: $('#cbokepala_mekanik2').val(),
         persen_kepala1: $('#txtpersen_kepala1').val() || 0,
         persen_kepala2: $('#txtpersen_kepala2').val() || 0,
         admin1: $('#cboadmin1').val(),
@@ -1442,8 +1455,8 @@ function autoSaveAllData() {
     }
     
     // Auto-save kepala mekanik data
-    var kepala1 = $('#cbokepala1').val();
-    var kepala2 = $('#cbokepala2').val();
+    var kepala1 = $('#cbokepala_mekanik1').val();
+    var kepala2 = $('#cbokepala_mekanik2').val();
     var persen_kepala1 = $('#txtpersen_kepala1').val() || 0;
     var persen_kepala2 = $('#txtpersen_kepala2').val() || 0;
     
@@ -1542,21 +1555,46 @@ $(document).ready(function() {
         });
     });
     
-    // Force save saat klik tombol navigasi atau link
+    // Force save saat klik tombol navigasi atau link (KECUALI TAB NAVIGATION)
     $('a, button[type="submit"]').on('click', function(e) {
         var $this = $(this);
-        
-        // Skip if it's a non-navigation button
-        if ($this.hasClass('btn-xs') || $this.attr('onclick')) {
-            return; // Don't interfere with edit/delete SPK buttons
+
+        // Skip tab navigation links - JANGAN BLOKIR TAB!
+        if ($this.attr('data-toggle') === 'tab' ||
+            $this.parent().hasClass('nav-tabs') ||
+            $this.closest('.nav-tabs').length > 0 ||
+            $this.closest('ul.nav-tabs').length > 0) {
+            console.log('Tab navigation detected - allowing default behavior');
+            return true; // Allow tab navigation to work normally
         }
-        
-        e.preventDefault();
+
+        // Skip if href starts with # (internal links/tabs)
         var href = $this.attr('href');
+        if (href && href.indexOf('#') === 0) {
+            return true;
+        }
+
+        // Skip if it's a non-navigation button (edit/delete SPK, etc.)
+        if ($this.hasClass('btn-xs') || $this.attr('onclick')) {
+            return true; // Don't interfere with edit/delete SPK buttons
+        }
+
+        // Skip if button is inside SPK actions div
+        if ($this.closest('.spk-actions').length > 0) {
+            return true;
+        }
+
         var isSubmit = $this.attr('type') === 'submit';
-        
+
+        // Skip if href is empty, #, or javascript:void
+        if (!href || href === '#' || href === 'javascript:void(0)' || href === 'javascript:;') {
+            return true;
+        }
+
+        e.preventDefault();
+
         console.log('🔄 Navigation detected - force saving data...');
-        
+
         forceSaveAllData().then(function() {
             console.log('✅ Data saved, proceeding with navigation');
             if (href && href !== '#') {
@@ -1592,32 +1630,32 @@ $(document).ready(function() {
     // === AUTO SAVE EVENTS ===
     
     // Auto-save Kepala Mekanik
-    $('#cbokepala1').on('change', function() {
+    $('#cbokepala_mekanik1').on('change', function() {
         var fieldValue = $(this).val();
         var fieldPercentage = $('#txtpersen_kepala1').val() || 0;
         if (fieldValue) {
             autoSaveMekanikData('kepala_mekanik1', fieldValue, fieldPercentage);
         }
     });
-    
-    $('#cbokepala2').on('change', function() {
+
+    $('#cbokepala_mekanik2').on('change', function() {
         var fieldValue = $(this).val();
         var fieldPercentage = $('#txtpersen_kepala2').val() || 0;
         if (fieldValue) {
             autoSaveMekanikData('kepala_mekanik2', fieldValue, fieldPercentage);
         }
     });
-    
+
     $('#txtpersen_kepala1').on('change blur', function() {
-        var fieldValue = $('#cbokepala1').val();
+        var fieldValue = $('#cbokepala_mekanik1').val();
         var fieldPercentage = $(this).val() || 0;
         if (fieldValue) {
             autoSaveMekanikData('kepala_mekanik1', fieldValue, fieldPercentage);
         }
     });
-    
+
     $('#txtpersen_kepala2').on('change blur', function() {
-        var fieldValue = $('#cbokepala2').val();
+        var fieldValue = $('#cbokepala_mekanik2').val();
         var fieldPercentage = $(this).val() || 0;
         if (fieldValue) {
             autoSaveMekanikData('kepala_mekanik2', fieldValue, fieldPercentage);
@@ -1727,4 +1765,7 @@ $(document).ready(function() {
         autoSaveKMData();
     });
 });
+
 </script>
+
+<!-- Work Order Auto Input JavaScript is included in main file -->

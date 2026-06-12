@@ -1,6 +1,8 @@
 <?php
     include "../config/koneksi.php";
+    include "_include_customer_vehicle_sync.php";
 	$no_service = $_GET['snoserv'];
+	$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
     
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
@@ -37,25 +39,17 @@
         $bayar=$tm_cari['bayar'];
         $kembali=$tm_cari['kembali'];
                 
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        namapelanggan 
-                                        FROM tblpelanggan 
-                                        WHERE nopelanggan='$kode_pelanggan'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$namapelanggan=$tm_cari['namapelanggan'];
-
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        pemilik, jenis, merek, warna, 
-                                        no_rangka, no_mesin 
-                                        FROM view_cari_kendaraan 
-                                        WHERE nopolisi='$no_polisi'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$pemilik=$tm_cari['pemilik'];
-		$jenis=$tm_cari['jenis'];
-		$merek=$tm_cari['merek'];
-		$warna=$tm_cari['warna'];
-		$no_rangka=$tm_cari['no_rangka'];
-		$no_mesin=$tm_cari['no_mesin'];        
+        $customerRow = fitmotorFindCustomerForService($koneksi, $kode_pelanggan, $no_polisi);
+        $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi, $kode_pelanggan);
+        $vehicleRow = $bundle['vehicle'] ?? [];
+        $bundleCustomer = $bundle['customer'] ?? [];
+		$namapelanggan=$customerRow['namapelanggan'] ?? ($bundleCustomer['namapelanggan'] ?? '');
+		$pemilik=$vehicleRow['pemilik'] ?? '';
+		$jenis=$vehicleRow['jenis'] ?? '';
+		$merek=$vehicleRow['merek'] ?? ($vehicleRow['tipe'] ?? '');
+		$warna=$vehicleRow['warna'] ?? '';
+		$no_rangka=$vehicleRow['no_rangka'] ?? '';
+		$no_mesin=$vehicleRow['no_mesin'] ?? '';        
         $km_skr="";
         $km_berikut="";
 
@@ -380,11 +374,26 @@ div.page_break + div.page_break{
             </table>';
 							
 $html .= "</div></body></html>";
-$dompdf->loadHtml($html);
-// Setting ukuran dan orientasi kertas
-$dompdf->setPaper('A4', 'landscape');
-// Rendering dari HTML Ke PDF
-$dompdf->render();
-// Melakukan output file Pdf
-$dompdf->stream('surat-penawaran.pdf',array("Attachment"=>0));
+
+	if($mode === 'print') {
+		header('Content-Type: text/html; charset=UTF-8');
+		echo $html;
+		echo '<script>window.onload=function(){window.print();};</script>';
+		exit;
+	}
+
+	if($mode === 'view') {
+		header('Content-Type: text/html; charset=UTF-8');
+		echo $html;
+		exit;
+	}
+
+	$dompdf->loadHtml($html);
+	// Setting ukuran dan orientasi kertas
+	$dompdf->setPaper('A4', 'landscape');
+	// Rendering dari HTML Ke PDF
+	$dompdf->render();
+	// Melakukan output file Pdf - mode download = attachment 1, default = inline 0
+	$attachment = ($mode === 'download') ? 1 : 0;
+	$dompdf->stream('Nota-Servis-'.$no_service.'.pdf',array("Attachment"=>$attachment));
 ?>

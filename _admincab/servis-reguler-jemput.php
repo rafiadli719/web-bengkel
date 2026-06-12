@@ -13,6 +13,7 @@ $kd_cabang = $_SESSION['_cabang'];
 
 // Database connection
 require_once "../config/koneksi.php";
+require_once "_include_customer_vehicle_sync.php";
 
 // Fetch user data using prepared statement
 $stmt = mysqli_prepare($koneksi, "SELECT nama_user, password, user_akses, foto_user 
@@ -28,8 +29,8 @@ $pwd = $user_data['password'] ?? '';
 $lvl_akses = $user_data['user_akses'] ?? '';
 $foto_user = $user_data['foto_user'] ?: "file_upload/avatar.png";
 
-// Fetch branch data using prepared statement
-$stmt = mysqli_prepare($koneksi, "SELECT nama_cabang, tipe_cabang 
+// Fetch branch data using prepared statement (including GPS coordinates)
+$stmt = mysqli_prepare($koneksi, "SELECT nama_cabang, tipe_cabang, lat_cabang, long_cabang, alamat_cabang 
                                 FROM tbcabang WHERE kode_cabang = ?");
 mysqli_stmt_bind_param($stmt, "s", $kd_cabang);
 mysqli_stmt_execute($stmt);
@@ -39,7 +40,9 @@ mysqli_stmt_close($stmt);
 
 $nama_cabang = $branch_data['nama_cabang'] ?? '';
 $tipe_cabang = $branch_data['tipe_cabang'] ?? '';
-$alamat_cabang = "Alamat Cabang " . $nama_cabang;
+$lat_cabang = $branch_data['lat_cabang'] ?? '';
+$long_cabang = $branch_data['long_cabang'] ?? '';
+$alamat_cabang = $branch_data['alamat_cabang'] ?? "Alamat Cabang " . $nama_cabang;
 $telepon_cabang = "021-xxxx-xxxx";
 
 // Initialize service variables
@@ -59,37 +62,45 @@ if (empty($no_service)) {
     $no_service = "SV" . date('Y') . sprintf("%08d", rand(1, 99999999));
 }
 
+// Initialize additional variables
+$google_maps_link = '';
+$foto_rumah = '';
+
 // Auto-fill customer data if vehicle number is provided
 if (!empty($no_polisi)) {
-    $stmt = mysqli_prepare($koneksi, "SELECT vpk.pemilik, vpk.telephone, vpk.alamat, 
-                                    tbl.nopelanggan, tbl.namapelanggan, tbl.alamat as alamat_lengkap, 
-                                    tbl.telephone as tlp_pelanggan
-                                    FROM view_pelanggan_kendaraan vpk
-                                    LEFT JOIN tblpelanggan tbl ON vpk.pemilik = tbl.namapelanggan
-                                    WHERE vpk.nopolisi = ?");
-    mysqli_stmt_bind_param($stmt, "s", $no_polisi);
-    mysqli_stmt_execute($stmt);
-    $customer_result = mysqli_stmt_get_result($stmt);
-    
-    if ($customer_data = mysqli_fetch_assoc($customer_result)) {
-        $no_pelanggan = $customer_data['nopelanggan'] ?: $no_polisi; // Use nopol if no customer code
-        $nama_pelanggan = $customer_data['pemilik'];
-        $alamat_pelanggan = $customer_data['alamat_lengkap'] ?: $customer_data['alamat'];
-        $telepon_pelanggan = $customer_data['tlp_pelanggan'] ?: $customer_data['telephone'];
+    $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi);
+    $vehicleData = $bundle['vehicle'] ?? null;
+    $customerData = $bundle['customer'] ?? null;
+
+    if ($vehicleData) {
+        $no_pelanggan = $customerData['nopelanggan'] ?? '';
+        $nama_pelanggan = $customerData['namapelanggan'] ?? ($vehicleData['pemilik'] ?? '');
+        $alamat_pelanggan = $customerData['alamat'] ?? '';
+        $telepon_pelanggan = $customerData['telephone'] ?? '';
+
+        // Load existing foto_rumah from foto_tampak_rumah or patokan field
+        $foto_patokan = $customerData['foto_tampak_rumah'] ?? ($customerData['patokan'] ?? '');
+        $foto_rumah = $foto_patokan;
+
+        // Build Google Maps link from link_gmaps or coordinates
+        if (!empty($customerData['link_gmaps'])) {
+            $google_maps_link = $customerData['link_gmaps'];
+        } elseif (!empty($customerData['klat']) && !empty($customerData['klong'])) {
+            $google_maps_link = "https://www.google.com/maps?q=" . $customerData['klat'] . "," . $customerData['klong'];
+        }
     }
-    mysqli_stmt_close($stmt);
 }
 
 // Fetch existing service data if no_service is provided
 if (!empty($no_service)) {
-    $stmt = mysqli_prepare($koneksi, "SELECT no_pelanggan, no_polisi, 
+    $stmt = mysqli_prepare($koneksi, "SELECT no_pelanggan, no_polisi,
                                     DATE_FORMAT(tanggal, '%Y-%m-%d') AS tanggal_jemput,
                                     jam, keterangan, foto_motor, keterangan_jemput, foto_patokan
                                     FROM tblservice WHERE no_service = ?");
     mysqli_stmt_bind_param($stmt, "s", $no_service);
     mysqli_stmt_execute($stmt);
     $service_result = mysqli_stmt_get_result($stmt);
-    
+
     if (mysqli_num_rows($service_result) > 0) {
         $service_data = mysqli_fetch_assoc($service_result);
         $no_pelanggan = $service_data['no_pelanggan'];
@@ -98,25 +109,35 @@ if (!empty($no_service)) {
         $jam_jemput = $service_data['jam'];
         $keterangan_jemput = $service_data['keterangan_jemput'] ?: $service_data['keterangan'];
         $foto_patokan = $service_data['foto_patokan'] ?: $service_data['foto_motor'];
-        
+
         // Re-fetch customer data if vehicle exists
         if (!empty($no_polisi)) {
-            $stmt2 = mysqli_prepare($koneksi, "SELECT vpk.pemilik, vpk.telephone, vpk.alamat, 
-                                            tbl.nopelanggan, tbl.namapelanggan, tbl.alamat as alamat_lengkap, 
-                                            tbl.telephone as tlp_pelanggan
-                                            FROM view_pelanggan_kendaraan vpk
-                                            LEFT JOIN tblpelanggan tbl ON vpk.pemilik = tbl.namapelanggan
-                                            WHERE vpk.nopolisi = ?");
-            mysqli_stmt_bind_param($stmt2, "s", $no_polisi);
-            mysqli_stmt_execute($stmt2);
-            $customer_result2 = mysqli_stmt_get_result($stmt2);
-            
-            if ($customer_data2 = mysqli_fetch_assoc($customer_result2)) {
-                $nama_pelanggan = $customer_data2['pemilik'];
-                $alamat_pelanggan = $customer_data2['alamat_lengkap'] ?: $customer_data2['alamat'];
-                $telepon_pelanggan = $customer_data2['tlp_pelanggan'] ?: $customer_data2['telephone'];
+            $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi, $no_pelanggan);
+            $vehicleData = $bundle['vehicle'] ?? null;
+            $customerData = $bundle['customer'] ?? null;
+
+            if ($vehicleData) {
+                $nama_pelanggan = $customerData['namapelanggan'] ?? ($vehicleData['pemilik'] ?? '');
+                $alamat_pelanggan = $customerData['alamat'] ?? '';
+                $telepon_pelanggan = $customerData['telephone'] ?? '';
+                if (empty($no_pelanggan) && !empty($customerData['nopelanggan'])) {
+                    $no_pelanggan = $customerData['nopelanggan'];
+                }
+
+                // Load existing foto from database if available
+                $db_foto = $customerData['foto_tampak_rumah'] ?? ($customerData['patokan'] ?? '');
+                if (!empty($db_foto) && empty($foto_patokan)) {
+                    $foto_patokan = $db_foto;
+                    $foto_rumah = $foto_patokan;
+                }
+
+                // Build Google Maps link from link_gmaps or coordinates
+                if (!empty($customerData['link_gmaps'])) {
+                    $google_maps_link = $customerData['link_gmaps'];
+                } elseif (!empty($customerData['klat']) && !empty($customerData['klong'])) {
+                    $google_maps_link = "https://www.google.com/maps?q=" . $customerData['klat'] . "," . $customerData['klong'];
+                }
             }
-            mysqli_stmt_close($stmt2);
         }
     }
     mysqli_stmt_close($stmt);
@@ -129,11 +150,13 @@ if (isset($_POST['btnjadwalkan'])) {
     $tanggal_jemput = mysqli_real_escape_string($koneksi, $_POST['txttanggal']);
     $jam_jemput = mysqli_real_escape_string($koneksi, $_POST['txtjam']);
     $keterangan_jemput = mysqli_real_escape_string($koneksi, $_POST['txtketerangan']);
+    $google_maps_input = mysqli_real_escape_string($koneksi, $_POST['txtgooglemaps']);
 
     // Handle file upload
     $foto_patokan = '';
+    $should_update_customer = false;
     if (isset($_FILES['foto_patokan']) && $_FILES['foto_patokan']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = "../uploads/foto_patokan/";
+        $upload_dir = "../uploads/foto_rumah_pelanggan/";
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
@@ -142,13 +165,29 @@ if (isset($_POST['btnjadwalkan'])) {
         $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (in_array($file_ext, $allowed_ext)) {
-            $new_filename = "patokan_" . date('YmdHis') . "_" . rand(1000, 9999) . "." . $file_ext;
+            $new_filename = "rumah_" . date('YmdHis') . "_" . rand(1000, 9999) . "." . $file_ext;
             $upload_path = $upload_dir . $new_filename;
 
             if (move_uploaded_file($_FILES['foto_patokan']['tmp_name'], $upload_path)) {
-                $foto_patokan = "uploads/foto_patokan/" . $new_filename;
+                $foto_patokan = "uploads/foto_rumah_pelanggan/" . $new_filename;
+                $should_update_customer = true;
             }
         }
+    }
+
+    // Extract coordinates from Google Maps link if provided
+    $klat = '';
+    $klong = '';
+    if (!empty($google_maps_input)) {
+        // Parse Google Maps URL to extract coordinates
+        if (preg_match('/@(-?\d+\.\d+),(-?\d+\.\d+)/', $google_maps_input, $matches)) {
+            $klat = $matches[1];
+            $klong = $matches[2];
+        } elseif (preg_match('/q=(-?\d+\.\d+),(-?\d+\.\d+)/', $google_maps_input, $matches)) {
+            $klat = $matches[1];
+            $klong = $matches[2];
+        }
+        $should_update_customer = true;
     }
 
     // Check if service exists
@@ -186,11 +225,39 @@ if (isset($_POST['btnjadwalkan'])) {
 
     if (mysqli_stmt_execute($stmt)) {
         mysqli_stmt_close($stmt);
-        
+
+        // Update tblpelanggan if there's new data (foto or google maps)
+        if ($should_update_customer && !empty($no_pelanggan)) {
+            $update_fields = [];
+            $update_values = [];
+
+            if (!empty($foto_patokan)) {
+                $update_fields[] = "patokan = ?";
+                $update_values[] = $foto_patokan;
+            }
+            if (!empty($klat) && !empty($klong)) {
+                $update_fields[] = "klat = ?";
+                $update_fields[] = "klong = ?";
+                $update_values[] = $klat;
+                $update_values[] = $klong;
+            }
+
+            if (!empty($update_fields)) {
+                $update_sql = "UPDATE tblpelanggan SET " . implode(", ", $update_fields) . " WHERE nopelanggan = ?";
+                $update_values[] = $no_pelanggan;
+
+                $stmt_update = mysqli_prepare($koneksi, $update_sql);
+                $types = str_repeat('s', count($update_values));
+                mysqli_stmt_bind_param($stmt_update, $types, ...$update_values);
+                mysqli_stmt_execute($stmt_update);
+                mysqli_stmt_close($stmt_update);
+            }
+        }
+
         // Redirect with success message to the service input page
         echo "<script>
             alert('Jadwal penjemputan berhasil disimpan!');
-            window.location='servis-input-reguler-jemput-rst.php?snoserv=" . urlencode($no_service) . "';
+            window.location='servis-input-reguler-jemput.php?snoserv=" . urlencode($no_service) . "';
         </script>";
         exit;
     } else {
@@ -216,6 +283,9 @@ if (isset($_POST['btnjadwalkan'])) {
     <link rel="stylesheet" href="assets/css/ace.min.css" id="main-ace-style">
     <link rel="stylesheet" href="assets/css/ace-skins.min.css">
     <link rel="stylesheet" href="assets/css/ace-rtl.min.css">
+
+    <!-- Leaflet CSS for Map Preview -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
         .info-section {
@@ -342,11 +412,14 @@ if (isset($_POST['btnjadwalkan'])) {
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <strong>Nama:</strong> <?php echo htmlspecialchars($nama_pelanggan); ?><br>
-                                                    <strong>No. Polisi:</strong> <?php echo htmlspecialchars($no_polisi); ?>
+                                                    <strong>No. Polisi:</strong> <?php echo htmlspecialchars($no_polisi); ?><br>
+                                                    <strong>Telepon:</strong> <?php echo htmlspecialchars($telepon_pelanggan); ?>
                                                 </div>
                                                 <div class="col-sm-6">
-                                                    <strong>Telepon:</strong> <?php echo htmlspecialchars($telepon_pelanggan); ?><br>
-                                                    <strong>Alamat:</strong> <?php echo htmlspecialchars($alamat_pelanggan); ?>
+                                                    <strong>Alamat:</strong> <?php echo htmlspecialchars($alamat_pelanggan); ?><br>
+                                                    <?php if (!empty($google_maps_link)): ?>
+                                                    <strong>Lokasi:</strong> <a href="<?php echo htmlspecialchars($google_maps_link); ?>" target="_blank" class="btn btn-xs btn-info"><i class="fa fa-map-marker"></i> Lihat Maps</a>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -392,11 +465,76 @@ if (isset($_POST['btnjadwalkan'])) {
                                                 </div>
                                             </div>
 
+                                            <input type="hidden" id="txtpelanggan" name="txtpelanggan" value="<?php echo htmlspecialchars($no_pelanggan); ?>"><?php if (!empty($no_pelanggan)): ?>
                                             <div class="form-group">
                                                 <label class="col-sm-3 control-label no-padding-right">Kode Pelanggan:</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" id="txtpelanggan" name="txtpelanggan" value="<?php echo htmlspecialchars($no_pelanggan); ?>" placeholder="Kode pelanggan auto-fill..." readonly>
+                                                    <input type="text" class="form-control" value="<?php echo htmlspecialchars($no_pelanggan); ?>" placeholder="Kode pelanggan auto-fill..." readonly>
                                                     <small class="text-muted">Otomatis terisi berdasarkan nomor polisi yang dipilih</small>
+                                                </div>
+                                            </div>
+                                            <?php endif; ?>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">Link Google Maps Lokasi Penjemputan:</label>
+                                                <div class="col-sm-9">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                                                        <input type="url" class="form-control" id="txtgooglemaps" name="txtgooglemaps" value="<?php echo htmlspecialchars($google_maps_link); ?>" placeholder="https://www.google.com/maps/@-6.1234567,106.1234567...">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" id="btnHitungJarak" class="btn btn-success" title="Hitung Jarak Rute & Preview Peta">
+                                                                <i class="fa fa-road"></i> Hitung Jarak
+                                                            </button>
+                                                            <?php if (!empty($google_maps_link)): ?>
+                                                            <a href="<?php echo htmlspecialchars($google_maps_link); ?>" target="_blank" class="btn btn-info" title="Buka di Google Maps">
+                                                                <i class="fa fa-external-link"></i> Buka Maps
+                                                            </a>
+                                                            <?php endif; ?>
+                                                        </span>
+                                                    </div>
+                                                    <small class="text-muted">Paste link Google Maps, lalu klik "Hitung Jarak" untuk menghitung jarak dan melihat preview rute</small>
+                                                    
+                                                    <!-- Inline Route Preview (appears after Hitung Jarak) -->
+                                                    <div id="inlineRoutePreview" style="display: none; margin-top: 15px;">
+                                                        <div class="panel panel-info">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+                                                                    <i class="fa fa-map"></i> Preview Rute Penjemputan
+                                                                </h4>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <div id="routeInfoBox" class="alert alert-success" style="margin-bottom: 10px;">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-6">
+                                                                            <strong><i class="fa fa-road"></i> Jarak Rute:</strong>
+                                                                            <span id="routeDistance" style="font-size: 20px; font-weight: bold;">-</span>
+                                                                        </div>
+                                                                        <div class="col-xs-6">
+                                                                            <strong><i class="fa fa-clock-o"></i> Estimasi Waktu:</strong>
+                                                                            <span id="routeDuration" style="font-size: 20px; font-weight: bold;">-</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="routeLoadingBox" class="text-center" style="padding: 30px; display: none;">
+                                                                    <i class="fa fa-spinner fa-spin fa-2x"></i>
+                                                                    <p>Memuat peta dan menghitung rute...</p>
+                                                                </div>
+                                                                <div id="routeErrorBox" class="alert alert-danger" style="display: none;">
+                                                                    <i class="fa fa-exclamation-triangle"></i>
+                                                                    <span id="routeErrorMessage"></span>
+                                                                </div>
+                                                                <div id="routePreviewMap" style="height: 300px; border-radius: 5px;"></div>
+                                                                <div style="margin-top: 8px;">
+                                                                    <small class="text-muted">
+                                                                        <i class="fa fa-info-circle"></i> 
+                                                                        <span style="color: #dc3545;"><i class="fa fa-wrench"></i></span> = Bengkel &nbsp;|&nbsp;
+                                                                        <span style="color: #28a745;"><i class="fa fa-home"></i></span> = Pelanggan &nbsp;|&nbsp;
+                                                                        Rute via jalan raya (OSRM)
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -407,19 +545,85 @@ if (isset($_POST['btnjadwalkan'])) {
                                                 </div>
                                             </div>
 
+                                            <!-- KALKULATOR TARIF JEMPUT ANTAR -->
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">Upload Foto Patokan Rumah:</label>
+                                                <div class="col-sm-12">
+                                                    <div class="alert alert-info" style="background: #d9edf7; border: 1px solid #bce8f1;">
+                                                        <h4 style="margin-top: 0;"><i class="fa fa-calculator"></i> Kalkulator Tarif Jemput Antar</h4>
+
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <label>Kondisi Motor <span class="text-danger">*</span></label>
+                                                                <div class="radio">
+                                                                    <label>
+                                                                        <input type="radio" name="txtkondisi" id="kondisi_jalan" value="jalan" class="ace" <?php echo (!isset($kondisi_motor) || $kondisi_motor == 'jalan') ? 'checked' : ''; ?> />
+                                                                        <span class="lbl"> Motor Jalan (bisa dikendarai)</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="radio">
+                                                                    <label>
+                                                                        <input type="radio" name="txtkondisi" id="kondisi_mogok" value="mogok" class="ace" <?php echo (isset($kondisi_motor) && $kondisi_motor == 'mogok') ? 'checked' : ''; ?> />
+                                                                        <span class="lbl"> Motor Mogok (tidak bisa jalan)</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-6">
+                                                                <label>Jarak Penjemputan (KM) <span class="text-danger">*</span></label>
+                                                                <div class="input-group">
+                                                                    <input type="number" step="0.1" name="txtjarak" id="txtjarak" class="form-control" placeholder="Contoh: 3.5" value="<?php echo isset($jarak_jemput) ? $jarak_jemput : '0'; ?>" required />
+                                                                    <span class="input-group-addon">KM</span>
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" id="btnHitungTarif" class="btn btn-primary">
+                                                                            <i class="fa fa-calculator"></i> Hitung
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row" style="margin-top: 15px;">
+                                                            <div class="col-sm-12">
+                                                                <div id="hasilTarif" style="display: none; background: white; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            <strong>Tarif Motor Jalan:</strong><br>
+                                                                            <span id="tarifJalan" style="font-size: 20px; color: #5cb85c; font-weight: bold;">Rp 0</span>
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            <strong>Tarif Motor Mogok:</strong><br>
+                                                                            <span id="tarifMogok" style="font-size: 20px; color: #d9534f; font-weight: bold;">Rp 0</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd;">
+                                                                        <small class="text-muted">
+                                                                            <i class="fa fa-info-circle"></i> Jarak pertama 1 km gratis.<br>
+                                                                            <i class="fa fa-info-circle"></i> Perhitungan otomatis mengikuti tarif jemput antar motor.
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <input type="hidden" name="txttarif" id="txttarif" value="<?php echo isset($tarif_jemput) ? $tarif_jemput : '0'; ?>" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">Upload Foto Rumah Pelanggan:</label>
                                                 <div class="col-sm-9">
                                                     <div class="upload-area">
-                                                        <i class="ace-icon fa fa-camera fa-2x" style="color: #ccc;"></i>
-                                                        <p>Upload foto patokan/tampak rumah pelanggan</p>
+                                                        <i class="ace-icon fa fa-home fa-2x" style="color: #ccc;"></i>
+                                                        <p>Upload foto tampak rumah pelanggan</p>
                                                         <input type="file" name="foto_patokan" id="foto_patokan" accept="image/*" class="form-control">
-                                                        <small class="text-muted">Format: JPG, PNG, GIF (Max 2MB)</small>
+                                                        <small class="text-muted">Format: JPG, PNG, GIF (Max 2MB) - Foto akan disimpan ke data pelanggan</small>
                                                     </div>
-                                                    <?php if (!empty($foto_patokan)) : ?>
+                                                    <?php if (!empty($foto_patokan) || !empty($foto_rumah)) : ?>
                                                         <div style="margin-top: 10px;">
-                                                            <p><strong>Foto saat ini:</strong></p>
-                                                            <img src="../<?php echo htmlspecialchars($foto_patokan); ?>" class="foto-preview" alt="Foto Patokan">
+                                                            <p><strong>Foto saat ini (dari data pelanggan):</strong></p>
+                                                            <img src="../<?php echo htmlspecialchars($foto_patokan ?: $foto_rumah); ?>" class="foto-preview" alt="Foto Rumah Pelanggan">
+                                                            <p class="text-success"><i class="fa fa-check-circle"></i> Foto sudah ada di database, tidak perlu upload ulang kecuali ingin mengganti</p>
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
@@ -428,6 +632,9 @@ if (isset($_POST['btnjadwalkan'])) {
                                             <div class="form-actions">
                                                 <div class="row">
                                                     <div class="col-sm-offset-3 col-sm-9">
+                                                        <button type="button" class="btn btn-info" id="btnCetakSppm">
+                                                            <i class="ace-icon fa fa-print"></i> Cetak SPPM
+                                                        </button>
                                                         <button type="submit" name="btnjadwalkan" class="btn btn-success btn-lg">
                                                             <i class="ace-icon fa fa-calendar"></i> Jadwalkan Penjemputan & Lanjut ke Input Servis
                                                         </button>
@@ -435,7 +642,7 @@ if (isset($_POST['btnjadwalkan'])) {
                                                             <i class="ace-icon fa fa-arrow-left"></i> Kembali
                                                         </a>
                                                         <?php if (!empty($no_service)) : ?>
-                                                            <a href="servis-input-reguler-jemput-rst.php?snoserv=<?php echo urlencode($no_service); ?>" class="btn btn-primary">
+                                                            <a href="servis-input-reguler-jemput.php?snoserv=<?php echo urlencode($no_service); ?>" class="btn btn-primary">
                                                                 <i class="ace-icon fa fa-arrow-right"></i> Lanjut ke Input Servis
                                                             </a>
                                                         <?php endif; ?>
@@ -548,21 +755,27 @@ if (isset($_POST['btnjadwalkan'])) {
         // Update clock every second
         setInterval(updateClock, 1000);
 
-        // Set default date and time
-        document.addEventListener('DOMContentLoaded', function() {
+        // Set real-time date and time (auto-update every second)
+        function updateDateTime() {
             const now = new Date();
             const today = now.toISOString().split('T')[0];
             const currentTime = now.toTimeString().split(' ')[0].substring(0, 5);
 
-            if (!document.getElementById('txttanggal').value) {
-                document.getElementById('txttanggal').value = today;
-            }
-            if (!document.getElementById('txtjam').value) {
-                document.getElementById('txtjam').value = currentTime;
-            }
+            // Update date and time inputs with current real-time values
+            document.getElementById('txttanggal').value = today;
+            document.getElementById('txtjam').value = currentTime;
 
-            // Initialize clock
+            // Update time display
             updateClock();
+        }
+
+        // Set default date and time
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize with current date and time
+            updateDateTime();
+
+            // Update date and time every second for real-time sync
+            setInterval(updateDateTime, 1000);
         });
 
         // Popup functions - updated to handle customer auto-fill
@@ -586,10 +799,20 @@ if (isset($_POST['btnjadwalkan'])) {
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            document.getElementById('txtpelanggan').value = response.data.no_pelanggan || nopol;
-                            
+                            document.getElementById('txtpelanggan').value = response.data.no_pelanggan || '';
+
+                            // Update Google Maps link if available
+                            if (response.data.google_maps_link) {
+                                document.getElementById('txtgooglemaps').value = response.data.google_maps_link;
+                            }
+
                             // Update customer info display
                             updateCustomerInfoDisplay(response.data);
+
+                            // Update foto rumah display if available
+                            if (response.data.foto_rumah) {
+                                updateFotoRumahDisplay(response.data.foto_rumah);
+                            }
                         }
                     },
                     error: function() {
@@ -607,25 +830,267 @@ if (isset($_POST['btnjadwalkan'])) {
             }
 
             if (data.nama_pelanggan) {
+                const mapsButton = data.google_maps_link ?
+                    `<strong>Lokasi:</strong> <a href="${data.google_maps_link}" target="_blank" class="btn btn-xs btn-info"><i class="fa fa-map-marker"></i> Lihat Maps</a>` : '';
+
                 const infoHtml = `
                     <div class="customer-info">
                         <h5><i class="ace-icon fa fa-user"></i> Informasi Pelanggan</h5>
                         <div class="row">
                             <div class="col-sm-6">
                                 <strong>Nama:</strong> ${data.nama_pelanggan}<br>
-                                <strong>No. Polisi:</strong> ${data.no_polisi}
+                                <strong>No. Polisi:</strong> ${data.no_polisi}<br>
+                                <strong>Telepon:</strong> ${data.telepon}
                             </div>
                             <div class="col-sm-6">
-                                <strong>Telepon:</strong> ${data.telepon}<br>
-                                <strong>Alamat:</strong> ${data.alamat}
+                                <strong>Alamat:</strong> ${data.alamat}<br>
+                                ${mapsButton}
                             </div>
                         </div>
                     </div>
                 `;
-                
+
                 document.querySelector('.widget-main').insertAdjacentHTML('afterbegin', infoHtml);
             }
         }
+
+        // Function to update foto rumah display
+        function updateFotoRumahDisplay(fotoPath) {
+            const existingPreview = document.querySelector('.foto-preview-existing');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+
+            if (fotoPath) {
+                const previewHtml = `
+                    <div style="margin-top: 10px;" class="foto-preview-existing">
+                        <p><strong>Foto saat ini (dari data pelanggan):</strong></p>
+                        <img src="../${fotoPath}" class="foto-preview" alt="Foto Rumah Pelanggan">
+                        <p class="text-success"><i class="fa fa-check-circle"></i> Foto sudah ada di database, tidak perlu upload ulang kecuali ingin mengganti</p>
+                    </div>
+                `;
+                document.querySelector('.upload-area').insertAdjacentHTML('afterend', previewHtml);
+            }
+        }
+
+        // ===============================================
+        // KALKULATOR TARIF JEMPUT ANTAR
+        // ===============================================
+
+        function hitungTarif() {
+            const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+
+            let tarifJalan = 0;
+            let tarifMogok = 0;
+
+            if (jarak > 1.0) {
+                // Perhitungan Motor Jalan
+                if (jarak >= 1.5) {
+                    tarifJalan = 8000; // Base 1.5 km
+                    const jarakLebih = jarak - 1.5;
+                    if (jarakLebih > 0) {
+                        const kelipatan = Math.ceil(jarakLebih / 0.5);
+                        tarifJalan += (kelipatan * 2000);
+                    }
+                } else {
+                    // Antara 1.0 - 1.5 km, kasih tarif proporsional
+                    const selisih = jarak - 1.0;
+                    tarifJalan = Math.ceil((selisih / 0.5) * 8000);
+                }
+
+                // Perhitungan Motor Mogok
+                if (jarak >= 1.5) {
+                    tarifMogok = 11000; // Base 1.5 km
+                    const jarakLebih = jarak - 1.5;
+                    if (jarakLebih > 0) {
+                        const kelipatan = Math.ceil(jarakLebih / 0.5);
+                        tarifMogok += (kelipatan * 3000);
+                    }
+                } else {
+                    // Antara 1.0 - 1.5 km
+                    const selisih = jarak - 1.0;
+                    tarifMogok = Math.ceil((selisih / 0.5) * 11000);
+                }
+            }
+
+            // Update display
+            document.getElementById('tarifJalan').textContent = 'Rp ' + tarifJalan.toLocaleString('id-ID');
+            document.getElementById('tarifMogok').textContent = 'Rp ' + tarifMogok.toLocaleString('id-ID');
+            document.getElementById('hasilTarif').style.display = 'block';
+
+            // Set hidden field berdasarkan kondisi motor yang dipilih
+            const kondisi = document.querySelector('input[name="txtkondisi"]:checked').value;
+            const tarifTerpilih = kondisi === 'jalan' ? tarifJalan : tarifMogok;
+            document.getElementById('txttarif').value = tarifTerpilih;
+        }
+
+        // Event listener untuk tombol hitung
+        document.getElementById('btnHitungTarif').addEventListener('click', function() {
+            hitungTarif();
+        });
+
+        // Auto-hitung saat jarak berubah
+        document.getElementById('txtjarak').addEventListener('input', function() {
+            if (this.value > 0) {
+                hitungTarif();
+            }
+        });
+
+        // Auto-update tarif saat kondisi motor berubah
+        document.querySelectorAll('input[name="txtkondisi"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+                if (jarak > 0) {
+                    hitungTarif();
+                }
+            });
+        });
+
+        // Auto-hitung saat halaman load jika sudah ada jarak
+        document.addEventListener('DOMContentLoaded', function() {
+            const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+            if (jarak > 0) {
+                hitungTarif();
+            }
+        });
+
+        document.getElementById('btnCetakSppm').addEventListener('click', function() {
+            var snoserv = <?php echo json_encode($no_service); ?>;
+
+            var tanggal = document.getElementById('txttanggal') ? document.getElementById('txttanggal').value : '';
+            var jam = document.getElementById('txtjam') ? document.getElementById('txtjam').value : '';
+            var nopol = document.getElementById('txtnopol') ? document.getElementById('txtnopol').value : '';
+            var nopelanggan = document.getElementById('txtpelanggan') ? document.getElementById('txtpelanggan').value : '';
+            var gmaps = document.getElementById('txtgooglemaps') ? document.getElementById('txtgooglemaps').value : '';
+            var jarak = document.getElementById('txtjarak') ? document.getElementById('txtjarak').value : '';
+            var tarif = document.getElementById('txttarif') ? document.getElementById('txttarif').value : '';
+            var kondisiEl = document.querySelector('input[name="txtkondisi"]:checked');
+            var kondisi = kondisiEl ? kondisiEl.value : '';
+            var ket = document.getElementById('txtketerangan') ? document.getElementById('txtketerangan').value : '';
+
+            var url = '_print/print-pickup-schedule.php'
+                + '?snoserv=' + encodeURIComponent(snoserv)
+                + '&nopelanggan=' + encodeURIComponent(nopelanggan)
+                + '&nopol=' + encodeURIComponent(nopol)
+                + '&tanggal=' + encodeURIComponent(tanggal)
+                + '&jam=' + encodeURIComponent(jam)
+                + '&gmaps=' + encodeURIComponent(gmaps)
+                + '&jarak=' + encodeURIComponent(jarak)
+                + '&tarif=' + encodeURIComponent(tarif)
+                + '&kondisi=' + encodeURIComponent(kondisi)
+                + '&keterangan=' + encodeURIComponent(ket);
+
+            window.open(url, '_blank');
+        });
+    </script>
+
+
+    <!-- Leaflet JS for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- OSRM Route Calculator -->
+    <script src="assets/js/osrm-route-calculator.js"></script>
+
+    <!-- OSRM Distance and Route Preview Handler -->
+    <script>
+        // Koordinat Bengkel (dari PHP)
+        var branchLat = <?php echo !empty($lat_cabang) ? floatval($lat_cabang) : 'null'; ?>;
+        var branchLng = <?php echo !empty($long_cabang) ? floatval($long_cabang) : 'null'; ?>;
+        var branchName = "<?php echo addslashes($nama_cabang); ?>";
+
+        // Hitung Jarak Button Handler - now also shows inline map preview
+        document.getElementById('btnHitungJarak').addEventListener('click', async function() {
+            const gmapsUrl = document.getElementById('txtgooglemaps').value;
+            
+            // Get preview elements
+            const previewContainer = document.getElementById('inlineRoutePreview');
+            const loadingBox = document.getElementById('routeLoadingBox');
+            const infoBox = document.getElementById('routeInfoBox');
+            const errorBox = document.getElementById('routeErrorBox');
+            const mapContainer = document.getElementById('routePreviewMap');
+            
+            // Validate input
+            if (!gmapsUrl || gmapsUrl.trim() === '') {
+                alert('⚠️ Masukkan link Google Maps terlebih dahulu!');
+                return;
+            }
+
+            // Check branch coordinates
+            if (!branchLat || !branchLng) {
+                alert('⚠️ Koordinat bengkel belum di-setting!\n\nSilakan edit data cabang di Master Cabang dan input Link Google Maps cabang.');
+                return;
+            }
+
+            // Extract customer coordinates
+            const customerCoords = OSRMCalculator.extractCoordinatesFromGMaps(gmapsUrl);
+            if (!customerCoords) {
+                alert('⚠️ Format Google Maps URL tidak valid!\n\nPastikan URL mengandung koordinat seperti:\n@-6.123456,106.123456\n\natau gunakan format:\n-6.123456,106.123456');
+                return;
+            }
+
+            // Show loading state on button
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Menghitung...';
+            btn.disabled = true;
+
+            // Show preview container with loading state
+            previewContainer.style.display = 'block';
+            loadingBox.style.display = 'block';
+            infoBox.style.display = 'none';
+            errorBox.style.display = 'none';
+            mapContainer.style.display = 'none';
+
+            // Scroll to preview area
+            previewContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            try {
+                // IMPORTANT: Show map container BEFORE initializing the map
+                // Leaflet needs the container to be visible for proper rendering
+                mapContainer.style.display = 'block';
+                
+                // Wait for DOM to fully render the visible container
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // Display route on map (this also calculates distance)
+                const routeData = await OSRMCalculator.displayRouteOnMap(
+                    'routePreviewMap',
+                    branchLat, branchLng,
+                    customerCoords.lat, customerCoords.lng,
+                    branchName || 'Bengkel',
+                    'Lokasi Pelanggan'
+                );
+
+                // Update jarak field
+                const jarakKm = routeData.distance.toFixed(1);
+                document.getElementById('txtjarak').value = jarakKm;
+
+                // Auto-calculate tarif
+                hitungTarif();
+
+                // Update info box
+                document.getElementById('routeDistance').textContent = OSRMCalculator.formatDistance(routeData.distance);
+                document.getElementById('routeDuration').textContent = OSRMCalculator.formatDuration(routeData.duration);
+
+                // Show info box and hide loading
+                loadingBox.style.display = 'none';
+                infoBox.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error calculating distance:', error);
+                
+                // Show error in preview area
+                loadingBox.style.display = 'none';
+                errorBox.style.display = 'block';
+                mapContainer.style.display = 'none';
+                document.getElementById('routeErrorMessage').textContent = 
+                    'Gagal menghitung jarak: ' + error.message + '. Pastikan koneksi internet aktif.';
+            } finally {
+                // Restore button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>

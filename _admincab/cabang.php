@@ -219,10 +219,14 @@
 											<table id="dynamic-table" class="table table-striped table-bordered table-hover">
 												<thead>
 													<tr>
-														<th class="center" width="5%">No</th>
-														<th width="10%">Kode Cabang</th>
-														<th width="55%">Nama Cabang</th>
-														<th width="20%">Tipe Cabang</th>                                                        
+														<th class="center" width="3%">No</th>
+														<th width="8%">Kode Cabang</th>
+														<th width="10%">Kode Ref</th>
+														<th width="20%">Nama Cabang</th>
+														<th width="25%">Alamat</th>
+														<th width="12%">Tipe Cabang</th>
+														<th class="center" width="10%">Google Maps</th>
+														<th class="center" width="12%">Koordinat</th>
 														<th class="center" width="10%">Aksi</th>
 													</tr>
 												</thead>
@@ -241,19 +245,43 @@
 												?>
 													<tr>
 														<td class="center"><?php echo $no ?></td>
-														<td><?php echo $tampil['kode_cabang']?></td>														
-														<td><?php echo $tampil['nama_cabang']?></td>														
-														<td><?php echo $cabang_tipe; ?></td>														                                                        
-														<td class="center">													
-															<a class="green" data-rel="tooltip" title="Edit" 
+														<td><?php echo $tampil['kode_cabang']?></td>
+														<td><?php echo !empty($tampil['cabang_ref_kode']) ? $tampil['cabang_ref_kode'] : '<span style="color:#999;">-</span>'; ?></td>
+														<td><?php echo $tampil['nama_cabang']?></td>
+														<td><?php echo !empty($tampil['alamat_cabang']) ? $tampil['alamat_cabang'] : '<span style="color:#999;">-</span>'; ?></td>
+														<td><?php echo $cabang_tipe; ?></td>
+														<td class="center">
+															<?php if(!empty($tampil['google_maps_cabang'])): ?>
+																<a href="<?php echo $tampil['google_maps_cabang']; ?>" target="_blank" class="btn btn-xs btn-info" data-rel="tooltip" title="Buka Google Maps">
+																	<i class="ace-icon fa fa-map-marker"></i> Maps
+																</a>
+															<?php else: ?>
+																<span style="color:#999;">-</span>
+															<?php endif; ?>
+														</td>
+														<td class="center">
+															<?php
+																if(!empty($tampil['lat_cabang']) && !empty($tampil['long_cabang'])) {
+																	echo '<span class="badge badge-success" data-rel="tooltip" title="Lat: '.$tampil['lat_cabang'].' / Lng: '.$tampil['long_cabang'].'">';
+																	echo '<i class="ace-icon fa fa-check"></i> GPS OK';
+																	echo '</span>';
+																} else {
+																	echo '<span class="badge badge-warning" data-rel="tooltip" title="Koordinat belum diisi">';
+																	echo '<i class="ace-icon fa fa-warning"></i> No GPS';
+																	echo '</span>';
+																}
+															?>
+														</td>
+														<td class="center">
+															<a class="green" data-rel="tooltip" title="Edit"
 																href="cabang_edit.php?kd=<?php echo $tampil['kode_cabang']?>">
 																<i class="ace-icon fa fa-pencil bigger-130"></i>
 															</a>&nbsp;
-															<a class="red" data-rel="tooltip" title="Delete" 
-																href="cabang_del.php?kd=<?php echo $tampil['kode_cabang']?>" 
+															<a class="red" data-rel="tooltip" title="Delete"
+																href="cabang_del.php?kd=<?php echo $tampil['kode_cabang']?>"
 																onclick="return confirm('Data Cabang akan dihapus. Lanjutkan?')">
 																<i class="ace-icon fa fa-trash-o bigger-130"></i>
-															</a>							
+															</a>
 														</td>
 													</tr>
 
@@ -327,7 +355,7 @@
 					bAutoWidth: false,
 					"aoColumns": [
 					  { "bSortable": false },
-					  null, null,null, null, null,
+					  null, null, null, null, null, null, null,
 					  { "bSortable": false }
 					],
 					"aaSorting": [],

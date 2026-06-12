@@ -34,6 +34,7 @@
         $txtcari= $_GET['_cari'];
         $txturut= $_GET['_urut'];
         $txtflt= $_GET['_flt'];
+        $tab_param = $_GET['_tab'] ?? 'jasa'; // Get tab parameter, default to jasa
         $kd="";
 
         if($txtflt=='asc') {
@@ -358,7 +359,7 @@
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="servis-input-reguler-jemput-rst.php?snoserv=<?php echo $no_service; ?>&kdjasa=<?php echo $tampil['kode_wo']; ?>&kd=<?php echo $kd; ?>">Pilih</a>
+                                                            <a href="servis-input-reguler-jemput-rst.php?snoserv=<?php echo $no_service; ?>&kdjasa=<?php echo $tampil['kode_wo']; ?>&tab=<?php echo $tab_param; ?>">Pilih</a>
                                                         </li>
                                                     </ul>
                                                 </div><!-- /.btn-group -->                                                                                                    

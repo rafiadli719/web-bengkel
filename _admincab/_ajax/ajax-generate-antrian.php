@@ -9,11 +9,27 @@ if(empty($_SESSION['_iduser'])){
 $response = array('success' => false, 'message' => '', 'no_antrian' => '');
 
 try {
+    $jenis_servis = $_POST['jenis_servis'] ?? 'reguler';
     $tanggal = date('Y-m-d');
     
-    // Cek nomor antrian terakhir untuk hari ini
+    // Tentukan prefix berdasarkan jenis servis
+    $prefix = '';
+    switch($jenis_servis) {
+        case 'garansi':
+            $prefix = 'KOMP'; // Komplain DLL untuk servis garansi
+            break;
+        case 'jemput':
+            $prefix = 'JEM'; // Jemput
+            break;
+        case 'reguler':
+        default:
+            $prefix = 'REG'; // Reguler
+            break;
+    }
+    
+    // Cek nomor antrian terakhir untuk jenis servis ini pada hari ini
     $query = "SELECT no_antrian FROM tb_antrian_servis 
-              WHERE tanggal = '$tanggal' 
+              WHERE tanggal = '$tanggal' AND no_antrian LIKE '$prefix%'
               ORDER BY no_antrian DESC 
               LIMIT 1";
     
@@ -21,14 +37,14 @@ try {
     
     if($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_array($result);
-        $last_number = intval(substr($row['no_antrian'], 1)); // Ambil angka dari A001
+        $last_number = intval(substr($row['no_antrian'], strlen($prefix))); // Ambil angka dari prefix
         $next_number = $last_number + 1;
     } else {
         $next_number = 1;
     }
     
-    // Format nomor antrian: A001, A002, dst
-    $no_antrian = 'A' . str_pad($next_number, 3, '0', STR_PAD_LEFT);
+    // Format nomor antrian: REG001, JEM001, KOMP001, dst
+    $no_antrian = $prefix . str_pad($next_number, 3, '0', STR_PAD_LEFT);
     
     $response['success'] = true;
     $response['no_antrian'] = $no_antrian;

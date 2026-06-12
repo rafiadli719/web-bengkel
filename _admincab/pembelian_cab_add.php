@@ -2,10 +2,15 @@
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
+		exit;
 	} else {
-		$id_user=$_SESSION['_iduser'];
-        $kd_cabang=$_SESSION['_cabang'];
-		include "../config/koneksi.php";
+		header("Location: penerimaan_antarcab.php");
+		exit;
+	}
+	__halt_compiler();
+	$id_user=$_SESSION['_iduser'];
+	$kd_cabang=$_SESSION['_cabang'];
+	include "../config/koneksi.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 

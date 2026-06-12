@@ -1,37 +1,60 @@
 <?php
-	session_start();
-	if(empty($_SESSION['_iduser'])){
-		header("location:../index.php");
-	} else {
-		$id_user=$_SESSION['_iduser'];		
-		$kd_cabang=$_SESSION['_cabang'];		                		        
-		include "../config/koneksi.php";
-        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
-                                        FROM tbuser WHERE id='$id_user'");			
-		$tm_cari=mysqli_fetch_array($cari_kd);
-		$_nama=$tm_cari['nama_user'];				        
-		$pwd=$tm_cari['password'];				        
-		$lvl_akses=$tm_cari['user_akses'];				                
-		$foto_user=$tm_cari['foto_user'];				
-		if($foto_user=='') {
-			$foto_user="file_upload/avatar.png";
-		}
+session_start();
+if(empty($_SESSION['_iduser'])){
+	header("location:../index.php");
+} else {
+	$id_user=$_SESSION['_iduser'];
+	$kd_cabang=$_SESSION['_cabang'];
+	include "../config/koneksi.php";
+
+	$cari_kd=mysqli_query($koneksi,"SELECT
+                                    nama_user, password, user_akses, foto_user
+                                    FROM tbuser WHERE id='$id_user'");
+	$tm_cari=mysqli_fetch_array($cari_kd);
+	$_nama=$tm_cari['nama_user'];
+	$pwd=$tm_cari['password'];
+	$lvl_akses=$tm_cari['user_akses'];
+	$foto_user=$tm_cari['foto_user'];
+	if($foto_user=='') {
+		$foto_user="file_upload/avatar.png";
+	}
 
     // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_cabang, tipe_cabang 
-                                        FROM tbcabang 
-                                        WHERE kode_cabang='$kd_cabang'");			
-		$tm_cari=mysqli_fetch_array($cari_kd);
-		$nama_cabang=$tm_cari['nama_cabang'];				        
-        $tipe_cabang=$tm_cari['tipe_cabang'];	
-    // --------------------        
-    
-		$tgl_skr=date('d');	
-		$bulan_skr=date('m');
-		$thn_skr=date('Y');
+	$cari_kd=mysqli_query($koneksi,"SELECT
+                                    nama_cabang, tipe_cabang
+                                    FROM tbcabang
+                                    WHERE kode_cabang='$kd_cabang'");
+	$tm_cari=mysqli_fetch_array($cari_kd);
+	$nama_cabang=$tm_cari['nama_cabang'];
+    $tipe_cabang=$tm_cari['tipe_cabang'];
+    // --------------------
+
+	$tgl_skr=date('d');
+	$bulan_skr=date('m');
+	$thn_skr=date('Y');
+
+    // Hilangkan pembatasan hak akses - fokus pada CRUD functionality
+    // Semua user bisa akses CRUD operations
+    $is_admin_pengadaan = true;
+    $is_read_only = false;
+
+    // Handle search
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $search_condition = '';
+    if (!empty($search)) {
+        $search_condition = "WHERE (jenis LIKE '%$search%' OR namajenis LIKE '%$search%' OR keterangan LIKE '%$search%')";
+    }
+
+    // Handle success message from other pages
+    $success_msg = '';
+    if (isset($_SESSION['delete_success'])) {
+        $success_msg = $_SESSION['delete_success'];
+        unset($_SESSION['delete_success']);
+    }
+    if (isset($_SESSION['success'])) {
+        $success_msg = $_SESSION['success'];
+        unset($_SESSION['success']);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -89,7 +112,19 @@
 
         <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.css' rel='stylesheet' />
 		
-	</head>
+	
+<style>
+.btn-group .btn {
+    margin-right: 2px;
+}
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+td.center .btn {
+    vertical-align: middle;
+}
+</style>
+</head>
 
 	<body class="no-skin">
 		<div id="navbar" class="navbar navbar-default          ace-save-state">
@@ -203,7 +238,7 @@
 							<li>
 								<a href="#">Daftar Item</a>
 							</li>                                                        
-							<li class="active">Kategori Barang</li>
+							<li class="active">Master Kategori Item</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 
@@ -213,7 +248,7 @@
 							<div class="col-xs-12">
 
 								<div class="table-header">
-									<a href="barang_kategori_add.php"><font color="white">[ Tambah ]</font></a>
+									<a href="barang_kategori_add_new.php"><font color="white">[ INPUT KATEGORI ITEM BARU ]</font></a>
 								</div>
 										<div>
 											<table id="dynamic-table" class="table table-striped table-bordered table-hover">
@@ -221,7 +256,10 @@
 													<tr>
 														<th class="center" width="5%">No</th>
 														<th width="15%">Kode</th>
-														<th width="45%">Kategori Barang</th>
+														<th width="25%">Kategori Item</th>
+														<th width="25%">Keterangan</th>
+														<th class="center" width="10%">Margin Sesuai Jenis</th>
+														<th class="center" width="10%">Margin Kategori</th>
 														<th class="center" width="15%">Status</th>
 														<th class="center" width="20%">Aksi</th>
 													</tr>
@@ -244,28 +282,33 @@
 															<td class="center"><?php echo $no ?></td>
 															<td><?php echo $tampil['jenis']?></td>																								
 															<td><?php echo $tampil['namajenis']?></td>
+															<td><?php echo $tampil['keterangan'] ?? '-'?></td>
+															<td class="center">
+																<span class="label <?php echo ($tampil['ikut_margin_jenis'] == '1') ? 'label-success' : 'label-warning'; ?>"><?php echo ($tampil['ikut_margin_jenis'] == '1') ? 'YA' : 'TIDAK'; ?></span>
+															</td>
+															<td class="center"><?php echo ($tampil['margin_khusus'] != '') ? number_format($tampil['margin_khusus'], 0) . '%' : '-'; ?></td>
 															<td class="center">
 																<span class="label <?php echo $status_class; ?>"><?php echo $status_text; ?></span>
 															</td>																								
 															<td class="center">																							
-																<a class="green" data-rel="tooltip" title="Edit" 
+																<a class="btn btn-xs btn-success" data-rel="tooltip" title="Edit" 
 																	href="barang_kategori_edit.php?kd=<?php echo $tampil['id']?>">
 																	<i class="ace-icon fa fa-pencil bigger-130"></i>
-																</a>&nbsp;
+																</a>
 <?php if ($status == '1') { ?>
-																<a class="orange" data-rel="tooltip" title="Nonaktifkan" 
+																<a class="btn btn-xs btn-warning" data-rel="tooltip" title="Nonaktifkan" 
 																	href="barang_kategori_del_new.php?kd=<?php echo $tampil['id']?>&action=deactivate" 
 																	onclick="return confirm('Kategori akan dinonaktifkan. Lanjutkan?')">
 																	<i class="ace-icon fa fa-ban bigger-130"></i>
-																</a>&nbsp;
+																</a>
 <?php } else { ?>
-																<a class="blue" data-rel="tooltip" title="Aktifkan" 
+																<a class="btn btn-xs btn-info" data-rel="tooltip" title="Aktifkan" 
 																	href="barang_kategori_del_new.php?kd=<?php echo $tampil['id']?>&action=deactivate" 
 																	onclick="return confirm('Kategori akan diaktifkan. Lanjutkan?')">
 																	<i class="ace-icon fa fa-check bigger-130"></i>
-																</a>&nbsp;
+																</a>
 <?php } ?>
-																<a class="red" data-rel="tooltip" title="Hapus Permanen" 
+																<a class="btn btn-xs btn-danger" data-rel="tooltip" title="Hapus Permanen" 
 																	href="barang_kategori_del_new.php?kd=<?php echo $tampil['id']?>&action=delete" 
 																	onclick="return confirm('PERINGATAN: Data akan dihapus PERMANEN dari sistem!\n\nHanya kategori yang tidak digunakan yang dapat dihapus.\n\nLanjutkan?')">
 																	<i class="ace-icon fa fa-trash-o bigger-130"></i>

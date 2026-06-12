@@ -1,0 +1,52 @@
+
+============================================================
+DATABASE OPTIMIZATION LOG
+Timestamp: 2025-12-04 14:40:36
+============================================================
+Total Statements: 56
+Success: 16
+Skipped: 28
+Errors: 12
+Duration: 3.02s
+Backup: ../backups/backup_before_optimization_20251204_144032.sql
+
+ERRORS:
+  - Statement #28: Can't create table `fitmotor_dbbengkel`.`tbmaster_temuan_barang_mapping` (errno: 121 "Duplicate key on write or update")
+  - Statement #29: Can't create table `fitmotor_dbbengkel`.`tbmaster_temuan_barang_mapping` (errno: 150 "Foreign key constraint is incorrectly formed")
+  - Statement #30: Can't create table `fitmotor_dbbengkel`.`tbservis_temuan` (errno: 121 "Duplicate key on write or update")
+  - Statement #31: Can't create table `fitmotor_dbbengkel`.`tbservis_penawaran_part` (errno: 121 "Duplicate key on write or update")
+  - Statement #32: Can't create table `fitmotor_dbbengkel`.`tbservis_penawaran_part` (errno: 150 "Foreign key constraint is incorrectly formed")
+  - Statement #34: Duplicate CHECK constraint name 'chk_quantity_positive'
+  - Statement #35: Duplicate CHECK constraint name 'chk_harga_positive'
+  - Statement #47: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DELIMITER $$ DROP PROCEDURE IF EXISTS `sp_get_next_kode_temuan` $$ CREATE PRO...' at line 1
+  - Statement #48: Undeclared variable: last_number
+  - Statement #49: Unknown system variable 'next_kode'
+  - Statement #50: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'END $$ DROP PROCEDURE IF EXISTS `sp_get_recommended_parts` $$ CREATE PROCEDUR...' at line 1
+  - Statement #51: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'END $$ DELIMITER' at line 1
+============================================================
+
+============================================================
+DATABASE OPTIMIZATION LOG
+Timestamp: 2025-12-04 15:00:57
+============================================================
+Total Statements: 56
+Success: 16
+Skipped: 28
+Errors: 12
+Duration: 2.55s
+Backup: ../backups/backup_before_optimization_20251204_150054.sql
+
+ERRORS:
+  - Statement #28: Can't create table `fitmotor_dbbengkel`.`tbmaster_temuan_barang_mapping` (errno: 121 "Duplicate key on write or update")
+  - Statement #29: Can't create table `fitmotor_dbbengkel`.`tbmaster_temuan_barang_mapping` (errno: 150 "Foreign key constraint is incorrectly formed")
+  - Statement #30: Can't create table `fitmotor_dbbengkel`.`tbservis_temuan` (errno: 121 "Duplicate key on write or update")
+  - Statement #31: Can't create table `fitmotor_dbbengkel`.`tbservis_penawaran_part` (errno: 121 "Duplicate key on write or update")
+  - Statement #32: Can't create table `fitmotor_dbbengkel`.`tbservis_penawaran_part` (errno: 150 "Foreign key constraint is incorrectly formed")
+  - Statement #34: Duplicate CHECK constraint name 'chk_quantity_positive'
+  - Statement #35: Duplicate CHECK constraint name 'chk_harga_positive'
+  - Statement #47: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DELIMITER $$ DROP PROCEDURE IF EXISTS `sp_get_next_kode_temuan` $$ CREATE PRO...' at line 1
+  - Statement #48: Undeclared variable: last_number
+  - Statement #49: Unknown system variable 'next_kode'
+  - Statement #50: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'END $$ DROP PROCEDURE IF EXISTS `sp_get_recommended_parts` $$ CREATE PROCEDUR...' at line 1
+  - Statement #51: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'END $$ DELIMITER' at line 1
+============================================================

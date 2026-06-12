@@ -47,8 +47,18 @@
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$total_item=$tm_cari['tot'];				        
         
+        // Count ORI/NON-ORI items
+        $ori_count_query = mysqli_query($koneksi, "SELECT COUNT(*) as count FROM tblitem WHERE tipe_item='ORI' AND statusitem='1'");
+        $ori_count = mysqli_fetch_array($ori_count_query)['count'];
+        
+        $nonori_count_query = mysqli_query($koneksi, "SELECT COUNT(*) as count FROM tblitem WHERE tipe_item='NON_ORI' AND statusitem='1'");
+        $nonori_count = mysqli_fetch_array($nonori_count_query)['count'];
+        
+        $pending_count_query = mysqli_query($koneksi, "SELECT COUNT(*) as count FROM tblitem WHERE status_validasi='pending_validation' AND statusitem='1'");
+        $pending_count = mysqli_fetch_array($pending_count_query)['count'];
+        
         $total_item_brg=number_format($total_item,0);
-        $hasil_cari="Total Item Barang : ".$total_item_brg;
+        $hasil_cari="Total Item: ".$total_item_brg." | ORI: ".number_format($ori_count,0)." | NON-ORI: ".number_format($nonori_count,0)." | Pending: ".number_format($pending_count,0);
         
 		if(isset($_POST['btnasc'])) {				
 			$txtkey= $_POST['txtkey'];	
@@ -100,6 +110,14 @@
 		<![endif]-->
 
 		<!-- inline styles related to this page -->
+		<style>
+		.label-ori { background-color: #5cb85c; }
+		.label-nonori { background-color: #f0ad4e; }
+		.text-ori { color: #5cb85c; font-weight: bold; }
+		.text-nonori { color: #f0ad4e; font-weight: bold; }
+		.ori-row { border-left: 3px solid #5cb85c; }
+		.nonori-row { border-left: 3px solid #f0ad4e; }
+		</style>
 
 		<!-- ace settings handler -->
 		<script src="assets/js/ace-extra.min.js"></script>
@@ -254,15 +272,64 @@
 								</div>	
 							</div>
 						</div>
+                        <!-- ORI/NON-ORI Filter -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="alert alert-info">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <strong>Filter Tipe Item:</strong>
+                                            <div class="btn-group" data-toggle="buttons">
+                                                <label class="btn btn-sm btn-primary active">
+                                                    <input type="radio" name="filter_tipe" value="all" checked> Semua
+                                                </label>
+                                                <label class="btn btn-sm btn-success">
+                                                    <input type="radio" name="filter_tipe" value="ORI"> ORI
+                                                </label>
+                                                <label class="btn btn-sm btn-warning">
+                                                    <input type="radio" name="filter_tipe" value="NON_ORI"> NON-ORI
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Filter Status:</strong>
+                                            <div class="btn-group" data-toggle="buttons">
+                                                <label class="btn btn-sm btn-primary active">
+                                                    <input type="radio" name="filter_status" value="all" checked> Semua
+                                                </label>
+                                                <label class="btn btn-sm btn-success">
+                                                    <input type="radio" name="filter_status" value="validated"> Validated
+                                                </label>
+                                                <label class="btn btn-sm btn-warning">
+                                                    <input type="radio" name="filter_status" value="pending"> Pending
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="pull-right">
+                                                <strong>Legenda:</strong>
+                                                <span class="label label-success">ORI</span> = Genuine Part &nbsp;
+                                                <span class="label label-warning">NON-ORI</span> = Aftermarket/Imitasi
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="space space-8"></div>
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
 								<div class="table-header">
 									<?php echo $hasil_cari; ?>
 									<div class="pull-right">
-										<a href="barang_add.php" class="btn btn-success btn-sm">
+										<a href="barang_add_improved.php" class="btn btn-success btn-sm">
 											<i class="ace-icon fa fa-plus"></i>
-											Tambah Barang
+											Tambah Item (ORI/NON-ORI)
+										</a>
+										<a href="barang_list_improved.php" class="btn btn-info btn-sm">
+											<i class="ace-icon fa fa-list"></i>
+											View Card Mode
 										</a>
 									</div>
 									<div class="clearfix"></div>
@@ -270,59 +337,116 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <td class="center" width="5%"></td>
-                                            <td class="center" width="5%">No</td>
-                                            <td width="9%">Kode Item</td>
-                                            <td width="9%">Kode Barcode</td>
-                                            <td width="9%">Nama Item</td>
-                                            <td width="9%">Jenis</td>
-                                            <td width="9%">Satuan</td>
-                                            <td width="9%">Rak</td>
-                                            <td align="right" width="9%">Harga Pokok</td> 
-                                            <td width="9%">Stok Min.</td>
-                                            <td width="9%">Stok Max.</td>
-                                            <td width="9%">Stok Akhir</td>
+                                            <td class="center" width="4%"></td>
+                                            <td class="center" width="3%">No</td>
+                                            <td width="6%">Tipe</td>
+                                            <td width="8%">Kode Item</td>
+                                            <td width="8%">Kode Barcode</td>
+                                            <td width="12%">Nama Item</td>
+                                            <td width="7%">Jenis</td>
+                                            <td width="6%">Satuan</td>
+                                            <td width="6%">Rak</td>
+                                            <td width="6%">Harga Pokok</td> 
+                                            <td width="4%">Stok Min.</td>
+                                            <td width="4%">Stok Max.</td>
+                                            <td width="4%">Stok Akhir</td>
+                                            <td width="10%">Applicable Motors</td>
+                                            <td width="6%">Status</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                       <?php                                      
                                           $page = (isset($_GET['page']))? (int) $_GET['page'] : 1;
-                                          $limit = 100;
+                                          $limit = 50; // Reduced from 100 to 50 for better performance
                                           $limitStart = ($page - 1) * $limit;
-                                                    
-                                          $SqlQuery = mysqli_query($con, "SELECT * FROM view_cari_item LIMIT ".$limitStart.",".$limit);                                      
+                                          
+                                          // Optimized query with better indexing and reduced JOINs
+                                          $SqlQuery = mysqli_query($con, "SELECT 
+                                              vci.*, 
+                                              COALESCE(i.tipe_item, 'NON_ORI') as tipe_item,
+                                              COALESCE(i.merek, '') as merek,
+                                              COALESCE(i.kode_part_resmi, '') as kode_part_resmi,
+                                              COALESCE(i.penggunaan_motor, '') as penggunaan_motor,
+                                              COALESCE(i.kategori_rak, '') as kategori_rak,
+                                              COALESCE(i.status_validasi, 'pending_validation') as status_validasi,
+                                              (SELECT GROUP_CONCAT(tm.tipe ORDER BY tm.tipe SEPARATOR ', ') 
+                                               FROM tblitem_spart sp 
+                                               INNER JOIN tbtipe_motor tm ON sp.kode_tipe = tm.kode_tipe 
+                                               WHERE sp.noitem = vci.noitem 
+                                               LIMIT 5) as applicable_motors,
+                                              (SELECT COUNT(DISTINCT sp2.kode_tipe) 
+                                               FROM tblitem_spart sp2 
+                                               WHERE sp2.noitem = vci.noitem) as motor_count
+                                              FROM view_cari_item vci
+                                              LEFT JOIN tblitem i ON vci.noitem = i.noitem 
+                                              ORDER BY vci.noitem DESC 
+                                              LIMIT ".$limitStart.",".$limit);                                      
                                           $no = $limitStart + 1;
                                           
-                                          while($row = mysqli_fetch_array($SqlQuery)){
+                                          // Pre-fetch stock data for all items to reduce queries
+                                          $item_codes = [];
+                                          $temp_results = [];
+                                          while($row = mysqli_fetch_array($SqlQuery)) {
+                                              $item_codes[] = "'" . mysqli_real_escape_string($koneksi, $row['noitem']) . "'";
+                                              $temp_results[] = $row;
+                                          }
+                                          
+                                          // Bulk fetch stock data
+                                          $stock_data_cache = [];
+                                          if (!empty($item_codes)) {
+                                              $stock_query = "SELECT noitem, stokmin, stok_maks, stok_awal, rakbarang 
+                                                             FROM tblitem_stok 
+                                                             WHERE noitem IN (" . implode(',', $item_codes) . ") 
+                                                             AND kode_cabang='$kd_cabang'";
+                                              $stock_result = mysqli_query($koneksi, $stock_query);
+                                              while($stock_row = mysqli_fetch_assoc($stock_result)) {
+                                                  $stock_data_cache[$stock_row['noitem']] = $stock_row;
+                                              }
+                                              
+                                              // Bulk fetch rack names
+                                              $rack_ids = [];
+                                              foreach($stock_data_cache as $stock) {
+                                                  if (!empty($stock['rakbarang'])) {
+                                                      $rack_ids[] = $stock['rakbarang'];
+                                                  }
+                                              }
+                                              $rack_cache = [];
+                                              if (!empty($rack_ids)) {
+                                                  $rack_query = "SELECT id, rak_barang FROM tbrakbarang WHERE id IN (" . implode(',', array_unique($rack_ids)) . ")";
+                                                  $rack_result = mysqli_query($koneksi, $rack_query);
+                                                  while($rack_row = mysqli_fetch_assoc($rack_result)) {
+                                                      $rack_cache[$rack_row['id']] = $rack_row['rak_barang'];
+                                                  }
+                                              }
+                                              
+                                              // Bulk fetch final stock
+                                              $final_stock_query = "SELECT no_item, saldo 
+                                                                   FROM view_stok_master 
+                                                                   WHERE no_item IN (" . implode(',', $item_codes) . ") 
+                                                                   AND kd_cabang='$kd_cabang'";
+                                              $final_stock_result = mysqli_query($koneksi, $final_stock_query);
+                                              $final_stock_cache = [];
+                                              while($final_stock_row = mysqli_fetch_assoc($final_stock_result)) {
+                                                  $final_stock_cache[$final_stock_row['no_item']] = $final_stock_row['saldo'];
+                                              }
+                                          }
+                                          
+                                          // Now loop through cached results
+                                          foreach($temp_results as $row) {
                                             $noitem=$row['noitem'];
-                                            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                            stokmin, stok_maks, stok_awal, rakbarang 
-                                                                            FROM tblitem_stok 
-                                                                            WHERE 
-                                                                            noitem='$noitem' AND 
-                                                                            kode_cabang='$kd_cabang'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $stokmin=$tm_cari['stokmin'];
-                                            $stok_maks=$tm_cari['stok_maks'];
-                                            $stok_awal=$tm_cari['stok_awal'];
-                                            $rakbarang=$tm_cari['rakbarang'];
+                                            $tipe_item = $row['tipe_item'];
+                                            $status_validasi = $row['status_validasi'];
                                             
-                                            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                            rak_barang FROM tbrakbarang 
-                                                                            WHERE 
-                                                                            id='$rakbarang'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $rak_barang=$tm_cari['rak_barang'];
-                                            
-                                            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                            saldo FROM view_stok_master 
-                                                                            WHERE 
-                                                                            no_item='$noitem' AND 
-                                                                            kd_cabang='$kd_cabang'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $stok_akhir=$tm_cari['saldo'];
+                                            // Get from cache
+                                            $stock_info = $stock_data_cache[$noitem] ?? null;
+                                            $stokmin = $stock_info['stokmin'] ?? '';
+                                            $stok_maks = $stock_info['stok_maks'] ?? '';
+                                            $stok_awal = $stock_info['stok_awal'] ?? '';
+                                            $rakbarang = $stock_info['rakbarang'] ?? '';
+                                            $rak_barang = $rack_cache[$rakbarang] ?? '';
+                                            $stok_akhir = $final_stock_cache[$noitem] ?? '';
                                           ?>
-                                        <tr>
+                                        <tr class="<?php echo ($tipe_item == 'ORI') ? 'ori-row' : 'nonori-row'; ?>">
                                             <td>
                                                 <div class="btn-group">
                                                     <button data-toggle="dropdown" class="btn dropdown-toggle btn-minier btn-yellow">
@@ -331,12 +455,17 @@
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="barang_edit.php?kd=<?php echo $row['noitem']?>">Edit Item</a>
+                                                            <a href="barang_edit_improved.php?kd=<?php echo $row['noitem']?>">Edit Item</a>
                                                         </li>
                                                         <li>
                                                             <a href="barang_del.php?kd=<?php echo $row['noitem']?>" 
                                                             onclick="return confirm('Data Barang akan dihapus. Lanjutkan?')">Hapus</a>
                                                         </li>
+                                                        <?php if ($status_validasi == 'pending_validation'): ?>
+                                                        <li>
+                                                            <a href="barang_validate.php?kd=<?php echo $row['noitem']?>">Validasi Item</a>
+                                                        </li>
+                                                        <?php endif; ?>
                                                         <li class="divider"></li>
                                                         <li>
                                                             <a target="_blank" href="barang_stok_akhir.php?kd=<?php echo $row['noitem']?>">Stok Akhir</a>
@@ -352,9 +481,34 @@
                                                 </div><!-- /.btn-group -->                                            
                                             </td>
                                             <td align="center"><?php echo $no++; ?></td>
-                                            <td><?php echo $row['noitem']; ?></td>
+                                            <td>
+                                                <?php 
+                                                if ($tipe_item == 'ORI') {
+                                                    echo '<span class="label label-success">ORI</span>';
+                                                } else {
+                                                    echo '<span class="label label-warning">NON-ORI</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $row['noitem']; ?>
+                                                <?php if ($tipe_item == 'ORI' && !empty($row['kode_part_resmi'])): ?>
+                                                    <br><small class="text-muted">Part: <?php echo $row['kode_part_resmi']; ?></small>
+                                                <?php endif; ?>
+                                                <?php if ($tipe_item == 'NON_ORI' && !empty($row['kategori_rak'])): ?>
+                                                    <br><small class="text-muted">Cat: <?php echo $row['kategori_rak']; ?></small>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?php echo $row['kodebarcode']; ?></td>
-                                            <td><?php echo $row['namaitem']; ?></td>
+                                            <td>
+                                                <?php echo $row['namaitem']; ?>
+                                                <?php if ($tipe_item == 'ORI' && !empty($row['merek'])): ?>
+                                                    <br><small class="text-primary"><?php echo $row['merek']; ?></small>
+                                                <?php endif; ?>
+                                                <?php if ($tipe_item == 'NON_ORI' && !empty($row['penggunaan_motor'])): ?>
+                                                    <br><small class="text-info"><?php echo $row['penggunaan_motor']; ?></small>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?php echo $row['namajenis']; ?></td>
                                             <td><?php echo $row['satuan']; ?></td>
                                             <td><?php echo $rak_barang; ?></td>
@@ -362,6 +516,42 @@
                                             <td><?php echo $stokmin; ?></td>
                                             <td><?php echo $stok_maks; ?></td>
                                             <td><?php echo $stok_akhir; ?></td>
+                                            <td>
+                                                <?php 
+                                                $applicable_motors = $row['applicable_motors'];
+                                                $motor_count = intval($row['motor_count'] ?? 0);
+                                                
+                                                if (!empty($applicable_motors)) {
+                                                    if ($motor_count <= 3) {
+                                                        echo '<small>' . $applicable_motors . '</small>';
+                                                    } else {
+                                                        $motors_array = explode(', ', $applicable_motors);
+                                                        $first_three = array_slice($motors_array, 0, 3);
+                                                        echo '<small>' . implode(', ', $first_three) . '</small>';
+                                                        echo '<br><small class="text-muted">+' . ($motor_count - 3) . ' lainnya</small>';
+                                                    }
+                                                } else {
+                                                    echo '<small class="text-muted">Tidak ada data</small>';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                switch($status_validasi) {
+                                                    case 'validated':
+                                                        echo '<span class="label label-success">Validated</span>';
+                                                        break;
+                                                    case 'pending_validation':
+                                                        echo '<span class="label label-warning">Pending</span>';
+                                                        break;
+                                                    case 'rejected':
+                                                        echo '<span class="label label-danger">Rejected</span>';
+                                                        break;
+                                                    default:
+                                                        echo '<span class="label label-default">Unknown</span>';
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                     <?php           
                                           }
@@ -715,6 +905,45 @@
 			
 			
 			})
+			
+			// ORI/NON-ORI Filter functionality
+			$('input[name="filter_tipe"], input[name="filter_status"]').change(function() {
+				var filterTipe = $('input[name="filter_tipe"]:checked').val();
+				var filterStatus = $('input[name="filter_status"]:checked').val();
+				
+				$('table tbody tr').each(function() {
+					var row = $(this);
+					var showRow = true;
+					
+					// Filter by type
+					if (filterTipe !== 'all') {
+						var hasOri = row.hasClass('ori-row');
+						var hasNonOri = row.hasClass('nonori-row');
+						
+						if (filterTipe === 'ORI' && !hasOri) {
+							showRow = false;
+						} else if (filterTipe === 'NON_ORI' && !hasNonOri) {
+							showRow = false;
+						}
+					}
+					
+					// Filter by status (you can enhance this based on your needs)
+					if (filterStatus !== 'all' && showRow) {
+						var statusLabel = row.find('td:last .label').text().toLowerCase();
+						if (filterStatus === 'validated' && statusLabel !== 'validated') {
+							showRow = false;
+						} else if (filterStatus === 'pending' && statusLabel !== 'pending') {
+							showRow = false;
+						}
+					}
+					
+					if (showRow) {
+						row.show();
+					} else {
+						row.hide();
+					}
+				});
+			});
 		</script>
 	</body>
 </html>

@@ -12,6 +12,17 @@
         <label>Cari Data Pada :</label>
         <div class="row">
             <div class="col-xs-8 col-sm-12">    
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-calendar bigger-110"></i>
+                    </span>
+                    <input class="form-control" type="text" name="txttgl_periode" id="id-date-range-picker-1" placeholder="Periode Tanggal" value="<?php echo isset($txttgl_periode) ? $txttgl_periode : ''; ?>" />
+                </div>
+            </div>
+        </div>
+        <div class="space-4"></div>
+        <div class="row">
+            <div class="col-xs-8 col-sm-12">    
                 <select class="form-control" name="cbocari" id="cbocari" >
                 <option value="">- Seluruh Kolom Field -</option>
                 <?php

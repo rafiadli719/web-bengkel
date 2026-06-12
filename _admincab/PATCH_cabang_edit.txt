@@ -1,0 +1,153 @@
+===========================================
+PATCH UNTUK cabang_edit.php
+===========================================
+
+File: C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab\cabang_edit.php
+
+Ikuti 5 PATCH berikut dengan urutan:
+
+===========================================
+PATCH 1: Update SELECT Query (Line 37-41)
+===========================================
+
+CARI KODE INI:
+───────────────────────────────────────────
+$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_cabang,
+                                        tipe_cabang
+									FROM tbcabang
+									WHERE kode_cabang='$kdcabang'");
+───────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────
+$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_cabang,
+                                        tipe_cabang,
+                                        alamat_cabang,
+                                        google_maps_cabang,
+                                        lat_cabang,
+                                        long_cabang
+									FROM tbcabang
+									WHERE kode_cabang='$kdcabang'");
+───────────────────────────────────────────
+
+===========================================
+PATCH 2: Add Variable Assignments (After Line 44)
+===========================================
+
+CARI KODE INI:
+───────────────────────────────────────────
+$tm_cari=mysqli_fetch_array($cari_kd);
+$nama=$tm_cari['nama_cabang'];
+$tipe_cabang=$tm_cari['tipe_cabang'];
+?>
+───────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────
+$tm_cari=mysqli_fetch_array($cari_kd);
+$nama=$tm_cari['nama_cabang'];
+$tipe_cabang=$tm_cari['tipe_cabang'];
+$alamat_cabang=$tm_cari['alamat_cabang'];
+$google_maps_cabang=$tm_cari['google_maps_cabang'];
+$lat_cabang=$tm_cari['lat_cabang'];
+$long_cabang=$tm_cari['long_cabang'];
+?>
+───────────────────────────────────────────
+
+===========================================
+PATCH 3: Add Form Input - Alamat Cabang (After Line 262)
+===========================================
+
+CARI KODE INI (Setelah form group "Keahlian"):
+───────────────────────────────────────────
+									</select>
+								</div>
+							</div>
+
+							<div class="clearfix form-actions">
+───────────────────────────────────────────
+
+TAMBAHKAN KODE INI DI ANTARA (setelah </div> kedua, sebelum <div class="clearfix"):
+───────────────────────────────────────────
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Alamat Cabang </label>
+								<div class="col-sm-9">
+									<textarea id="txtalamat" name="txtalamat" class="col-xs-10 col-sm-6" rows="3" placeholder="Alamat lengkap cabang..."><?php echo $alamat_cabang; ?></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Google Maps Link </label>
+								<div class="col-sm-9">
+									<input type="url" id="txtgooglemaps" name="txtgooglemaps" class="col-xs-10 col-sm-6"
+									value="<?php echo $google_maps_cabang; ?>" placeholder="https://www.google.com/maps/@-6.123456,106.123456..." autocomplete="off" />
+									<br><small class="text-muted">Paste link Google Maps cabang, koordinat akan otomatis diextract</small>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Latitude </label>
+								<div class="col-sm-9">
+									<input type="text" id="txtlat" name="txtlat" class="col-xs-10 col-sm-6"
+									value="<?php echo $lat_cabang; ?>" placeholder="-6.123456" autocomplete="off" readonly />
+									<br><small class="text-muted">Auto-filled dari Google Maps link</small>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Longitude </label>
+								<div class="col-sm-9">
+									<input type="text" id="txtlong" name="txtlong" class="col-xs-10 col-sm-6"
+									value="<?php echo $long_cabang; ?>" placeholder="106.123456" autocomplete="off" readonly />
+									<br><small class="text-muted">Auto-filled dari Google Maps link</small>
+								</div>
+							</div>
+
+───────────────────────────────────────────
+
+===========================================
+PATCH 4: Add JavaScript - Auto Extract Coordinates (Before </body>)
+===========================================
+
+CARI KODE INI (sebelum tag </body>):
+───────────────────────────────────────────
+	});
+</script>
+
+
+
+
+</body>
+</html>
+───────────────────────────────────────────
+
+TAMBAHKAN KODE INI SEBELUM </script> (setelah });  ):
+───────────────────────────────────────────
+
+		// Auto-extract GPS coordinates from Google Maps URL
+		$('#txtgooglemaps').on('blur', function() {
+			var mapsUrl = $(this).val();
+			if (mapsUrl) {
+				// Try pattern 1: @lat,lng
+				var match = mapsUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+				if (!match) {
+					// Try pattern 2: q=lat,lng
+					match = mapsUrl.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+				}
+
+				if (match) {
+					$('#txtlat').val(match[1]);
+					$('#txtlong').val(match[2]);
+				}
+			}
+		});
+───────────────────────────────────────────
+
+===========================================
+✅ SELESAI - TOTAL 4 PATCHES
+===========================================
+
+Setelah menerapkan 4 patches di atas, lanjutkan ke file berikutnya:
+- cabang_edit_proses.php (untuk save data ke database)
+- cabang_add.php (untuk form tambah cabang baru)
+
+Lihat file: PATCH_cabang_edit_proses.txt

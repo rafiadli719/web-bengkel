@@ -68,16 +68,16 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         namapelanggan, alamat  
                                         FROM tblpelanggan 
                                         WHERE nopelanggan='$no_supplier'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$namapelanggan=$tm_cari['namapelanggan'];
-        $alamat=$tm_cari['alamat'];
+		$tm_cari = ($cari_kd) ? mysqli_fetch_array($cari_kd) : null;	
+		$namapelanggan = $tm_cari ? $tm_cari['namapelanggan'] : '';
+        $alamat = $tm_cari ? $tm_cari['alamat'] : '';
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasales  
                                         FROM tblsales 
                                         WHERE nosales='$no_sales'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
-		$namasales=$tm_cari['namasales'];
+		$tm_cari = ($cari_kd) ? mysqli_fetch_array($cari_kd) : null;	
+		$namasales = $tm_cari ? $tm_cari['namasales'] : '';
         
 		$cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot_beli 
                                         FROM 

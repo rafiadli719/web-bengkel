@@ -73,6 +73,36 @@ $tgl_pilih = date('d/m/Y');
       <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
     <![endif]-->
 
+    <style>
+        .service-btn {
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #step-save-data {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        #step-service-selection {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .alert {
+            border-radius: 6px;
+        }
+        .btn-lg {
+            font-size: 16px;
+            padding: 12px 24px;
+        }
+    </style>
+
     <!-- ace settings handler -->
     <script src="assets/js/ace-extra.min.js"></script>
 
@@ -105,7 +135,7 @@ $tgl_pilih = date('d/m/Y');
                         <td width="20%">
                             <a href="index.php" class="navbar-brand">
                                 <small>
-                                    <i class="fa fa-leaf"></i>
+                                    <?php include "../lib/logo.php"; ?>
                                     <?php include "../lib/subtitel.php"; ?>
                                 </small>
                             </a>
@@ -170,7 +200,7 @@ $tgl_pilih = date('d/m/Y');
                     <?php if (isset($_GET['error'])): ?>
                         <div class="alert alert-danger"><?php echo htmlspecialchars(urldecode($_GET['error'])); ?></div>
                     <?php endif; ?>
-                    <form class="form-horizontal" action="save_pelanggan_servis.php" method="post">
+                    <form class="form-horizontal" action="save_pelanggan_servis.php" method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="widget-box">
@@ -260,9 +290,38 @@ $tgl_pilih = date('d/m/Y');
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
+                                                        <label class="col-sm-3 control-label no-padding-right">Link Google Maps</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="url" id="txtgooglemaps" name="txtgooglemaps" class="col-xs-10 col-sm-12" placeholder="https://maps.google.com/..." autocomplete="off" />
+                                                            <small class="help-block">Paste link Google Maps lokasi rumah</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-3 control-label no-padding-right">Foto Tampak Rumah</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="file" id="fotorumah" name="fotorumah" accept="image/*" />
+                                                            <small class="help-block">Upload foto tampak depan rumah (JPG/PNG, max 2MB)</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label class="col-sm-3 control-label no-padding-right">No WA/HP</label>
                                                         <div class="col-sm-9">
                                                             <input type="text" id="txtnowa" name="txtnowa" class="col-xs-10 col-sm-12" autocomplete="off" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-3 control-label no-padding-right">Informasi Darimana Mau Servis di FitMotor?</label>
+                                                        <div class="col-sm-9">
+                                                            <select class="col-xs-10 col-sm-12" name="cboinformasisumber" id="cboinformasisumber" required>
+                                                                <option value="">- Pilih Sumber Informasi -</option>
+                                                                <option value="Teman/Keluarga">Teman/Keluarga</option>
+                                                                <option value="Facebook">Facebook</option>
+                                                                <option value="Instagram">Instagram</option>
+                                                                <option value="TikTok">TikTok</option>
+                                                                <option value="Google/Internet">Google/Internet</option>
+                                                                <option value="Lewat Jalan">Lewat Jalan</option>
+                                                                <option value="Lainnya">Lainnya</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -335,9 +394,44 @@ $tgl_pilih = date('d/m/Y');
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" id="step-save-data">
                                         <div class="col-xs-12">
-                                            <button type="submit" class="btn btn-primary btn-block">Lanjut ke Input Garapan</button>
+                                            <div class="alert alert-info">
+                                                <i class="ace-icon fa fa-info-circle"></i>
+                                                <strong>Langkah 1:</strong> Simpan data pelanggan dan kendaraan terlebih dahulu
+                                            </div>
+                                            <button type="button" id="btnSimpanData" class="btn btn-primary btn-block btn-lg">
+                                                <i class="ace-icon fa fa-save"></i> 
+                                                <span id="btnSimpanText">Simpan Data Pelanggan & Kendaraan</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="step-service-selection" style="display: none;">
+                                        <div class="col-xs-12">
+                                            <div class="alert alert-success">
+                                                <i class="ace-icon fa fa-check-circle"></i>
+                                                <strong>Data berhasil disimpan!</strong> Sekarang pilih jenis layanan servis:
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-12 control-label" style="text-align: center; margin-bottom: 15px;">
+                                                    <strong>Pilih Jenis Servis:</strong>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <button type="button" id="btnServisReguler" class="btn btn-success btn-block btn-lg service-btn">
+                                                <i class="ace-icon fa fa-wrench"></i><br>
+                                                <strong>Servis Reguler</strong><br>
+                                                <small>Pelanggan datang ke bengkel</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <button type="button" id="btnServisJemput" class="btn btn-warning btn-block btn-lg service-btn">
+                                                <i class="ace-icon fa fa-truck"></i><br>
+                                                <strong>Servis Jemput Antar</strong><br>
+                                                <small>Kami jemput motor pelanggan</small>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -394,10 +488,18 @@ $tgl_pilih = date('d/m/Y');
                 $('form').submit(function(e) {
                     var gender = $('#cbogender').val();
                     var thn_pajak = $('#txtthnpajak').val();
+                    var info_sumber = $('#cboinformasisumber').val();
+
                     if (!gender) {
                         e.preventDefault();
                         alert('Harap pilih gender!');
                         $('#cbogender').focus();
+                        return false;
+                    }
+                    if (!info_sumber) {
+                        e.preventDefault();
+                        alert('Harap pilih informasi sumber!');
+                        $('#cboinformasisumber').focus();
                         return false;
                     }
                     if (thn_pajak && !/^\d{4}$/.test(thn_pajak)) {
@@ -562,10 +664,9 @@ $tgl_pilih = date('d/m/Y');
                                             $('#cbokota').val(customer.data.kota);
                                         }, 500);
                                     }
-                                    
-                                    // Disable customer fields since this is existing customer
-                                    $('#txtnama, #cbogender, #id-date-picker-1, #cbovalid, #txtalamatdetail, #txtpatokan, #txtnowa, #cboprovinsi, #cbokota, #cbokecamatan').prop('readonly', true).prop('disabled', true);
-                                    
+
+                                    // All fields remain editable - user can update existing data
+
                                     // Focus on vehicle fields
                                     $('#txtnopol').focus();
                                 }
@@ -576,6 +677,143 @@ $tgl_pilih = date('d/m/Y');
                         });
                     }
                 }
+
+                // Handle Save Data Button
+                $('#btnSimpanData').click(function() {
+                    // Validate form first
+                    var isValid = true;
+                    var errorMsg = '';
+
+                    // Check required fields
+                    if (!$('#txtnama').val().trim()) {
+                        isValid = false;
+                        errorMsg = 'Nama pelanggan harus diisi!';
+                    } else if (!$('#cbogender').val()) {
+                        isValid = false;
+                        errorMsg = 'Gender harus dipilih!';
+                    } else if (!$('#txtnopol').val().trim()) {
+                        isValid = false;
+                        errorMsg = 'Nomor polisi harus diisi!';
+                    } else if (!$('#cbomerek').val()) {
+                        isValid = false;
+                        errorMsg = 'Merek motor harus dipilih!';
+                    } else if (!$('#cboinformasisumber').val()) {
+                        isValid = false;
+                        errorMsg = 'Informasi sumber harus dipilih!';
+                    }
+
+                    if (!isValid) {
+                        alert(errorMsg);
+                        return;
+                    }
+
+                    // Show loading state
+                    var $btn = $(this);
+                    var originalText = $('#btnSimpanText').text();
+                    $btn.prop('disabled', true);
+                    $('#btnSimpanText').html('<i class="ace-icon fa fa-spinner fa-spin"></i> Menyimpan...');
+
+                    // Prepare form data
+                    var formData = new FormData();
+                    
+                    // Customer data
+                    formData.append('txtnama', $('#txtnama').val());
+                    formData.append('cbogender', $('#cbogender').val());
+                    formData.append('id-date-picker-1', $('#id-date-picker-1').val());
+                    formData.append('cbovalid', $('#cbovalid').val());
+                    formData.append('cboprovinsi', $('#cboprovinsi').val());
+                    formData.append('cbokota', $('#cbokota').val());
+                    formData.append('cbokecamatan', $('#cbokecamatan').val());
+                    formData.append('txtalamat', $('#txtalamat').val());
+                    formData.append('txtpatokan', $('#txtpatokan').val());
+                    formData.append('txtgooglemaps', $('#txtgooglemaps').val());
+                    formData.append('txtnowa', $('#txtnowa').val());
+                    formData.append('cboinformasisumber', $('#cboinformasisumber').val());
+                    
+                    // Vehicle data
+                    formData.append('txtnopol', $('#txtnopol').val().toUpperCase());
+                    formData.append('cbobulanpajak', $('#cbobulanpajak').val());
+                    formData.append('txtthnpajak', $('#txtthnpajak').val());
+                    formData.append('cbomerek', $('#cbomerek').val());
+                    formData.append('cbotipe', $('#cbotipe').val());
+                    formData.append('cbojenis', $('#cbojenis').val());
+                    formData.append('cbowarna', $('#cbowarna').val());
+                    
+                    // File upload
+                    var fileInput = document.getElementById('fotorumah');
+                    if (fileInput.files.length > 0) {
+                        formData.append('fotorumah', fileInput.files[0]);
+                    }
+
+                    // AJAX save
+                    $.ajax({
+                        url: 'save_pelanggan_only.php',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                // Hide step 1, show step 2
+                                $('#step-save-data').fadeOut(300, function() {
+                                    $('#step-service-selection').fadeIn(300);
+                                });
+                                
+                                // Store nopol for service selection
+                                window.savedNopol = $('#txtnopol').val().toUpperCase();
+                                
+                                // Scroll to service selection
+                                $('html, body').animate({
+                                    scrollTop: $('#step-service-selection').offset().top - 100
+                                }, 500);
+                                
+                            } else {
+                                alert('Error: ' + (response.message || 'Gagal menyimpan data'));
+                                
+                                // Reset button
+                                $btn.prop('disabled', false);
+                                $('#btnSimpanText').text(originalText);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('AJAX Error:', xhr.responseText);
+                            alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
+                            
+                            // Reset button
+                            $btn.prop('disabled', false);
+                            $('#btnSimpanText').text(originalText);
+                        }
+                    });
+                });
+
+                // Handle Service Type Selection
+                $('#btnServisReguler').click(function() {
+                    if (window.savedNopol) {
+                        window.location.href = 'save-no-servis-reguler.php?snopol=' + encodeURIComponent(window.savedNopol);
+                    } else {
+                        alert('Data belum disimpan!');
+                    }
+                });
+
+                $('#btnServisJemput').click(function() {
+                    if (window.savedNopol) {
+                        window.location.href = 'save-no-servis-jemput.php?snopol=' + encodeURIComponent(window.savedNopol);
+                    } else {
+                        alert('Data belum disimpan!');
+                    }
+                });
+
+                // Auto uppercase for nopol
+                $('#txtnopol').on('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+
+                // Prevent form submission
+                $('form').on('submit', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
             });
         </script>
 </body>

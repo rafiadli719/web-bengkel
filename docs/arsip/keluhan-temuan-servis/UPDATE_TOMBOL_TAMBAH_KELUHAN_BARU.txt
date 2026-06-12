@@ -1,0 +1,204 @@
+================================================================================
+  UPDATE: TOMBOL TAMBAH KELUHAN BARU DI SERVIS INPUT
+================================================================================
+
+PERUBAHAN: Menambahkan tombol shortcut "Tambah Keluhan Baru (Perlu Approval Pusat)"
+           langsung di halaman servis input, tanpa perlu buka modal search dulu.
+
+================================================================================
+LOKASI PERUBAHAN:
+================================================================================
+
+File: _template/_servis_add_header_kanan_workorder_only.php
+
+SEBELUM:
+--------
+[Input Keluhan] [Cari Keluhan]
+                [Tambah Keluhan]
+
+SESUDAH:
+--------
+[Input Keluhan] [Cari Keluhan]
+[Tambah Keluhan Baru (Perlu Approval Pusat)] ← TOMBOL BARU (kuning)
+                [Tambah Keluhan]
+
+================================================================================
+KODE YANG DITAMBAHKAN:
+================================================================================
+
+1. HTML Button (setelah small text "Gunakan tombol..."):
+   
+   <div style="margin-top: 8px;">
+       <button type="button" class="btn btn-warning btn-sm" id="btn-tambah-keluhan-baru">
+           <i class="ace-icon fa fa-plus-circle"></i> Tambah Keluhan Baru (Perlu Approval Pusat)
+       </button>
+   </div>
+
+2. JavaScript Event Listener:
+   
+   $('#btn-tambah-keluhan-baru').on('click', function() {
+       console.log('Button Tambah Keluhan Baru clicked');
+       $('#modal-tambah-keluhan-baru').modal('show');
+   });
+
+================================================================================
+CARA MENGGUNAKAN:
+================================================================================
+
+CARA 1: Langsung dari Tombol Baru (SHORTCUT)
+---------------------------------------------
+1. Buka servis-input-reguler.php
+2. Tab "Work Order"
+3. Klik tombol kuning "Tambah Keluhan Baru (Perlu Approval Pusat)"
+4. Modal form langsung muncul
+5. Isi form dan submit
+
+CARA 2: Dari Modal Search (SEPERTI SEBELUMNYA)
+-----------------------------------------------
+1. Buka servis-input-reguler.php
+2. Tab "Work Order"
+3. Klik "Cari Keluhan"
+4. Di modal search, klik "Tambah Keluhan Baru (Perlu Approval)"
+5. Modal form muncul
+6. Isi form dan submit
+
+================================================================================
+KEUNTUNGAN:
+================================================================================
+
+✅ Akses Lebih Cepat
+   - Tidak perlu buka modal search dulu
+   - Langsung ke form tambah keluhan baru
+   - Hemat 1 klik
+
+✅ User Experience Lebih Baik
+   - Tombol terlihat jelas
+   - Warna kuning mencolok
+   - Label jelas "Perlu Approval Pusat"
+
+✅ Dua Cara Akses
+   - Via tombol shortcut (baru)
+   - Via modal search (lama)
+   - User bisa pilih yang lebih nyaman
+
+================================================================================
+TAMPILAN UI:
+================================================================================
+
+┌─────────────────────────────────────────────────────────────┐
+│ Input Keluhan                                               │
+│ ┌────────────────────────────────┬──────────────────────┐   │
+│ │ [Masukkan keluhan...]          │ [Cari Keluhan]       │   │
+│ └────────────────────────────────┴──────────────────────┘   │
+│ ℹ Gunakan tombol "Cari Keluhan" untuk memilih...            │
+│ [⊕ Tambah Keluhan Baru (Perlu Approval Pusat)]  ← BARU     │
+│                                                             │
+│                                  [+ Tambah Keluhan]         │
+└─────────────────────────────────────────────────────────────┘
+
+Warna tombol:
+- "Cari Keluhan" = Biru (btn-info)
+- "Tambah Keluhan Baru" = Kuning (btn-warning) ← BARU
+- "Tambah Keluhan" = Hijau (btn-primary)
+
+================================================================================
+TESTING:
+================================================================================
+
+TEST 1: Tombol Shortcut
+------------------------
+1. Buka: servis-input-reguler.php?snoserv=SV25000000158
+2. Tab: Work Order
+3. Klik: "Tambah Keluhan Baru (Perlu Approval Pusat)" (kuning)
+4. Expected: Modal form langsung muncul ✅
+
+TEST 2: Isi Form
+----------------
+1. Nama Keluhan: Test Shortcut Button
+2. Kategori: Mesin
+3. Deskripsi: (optional)
+4. Alasan: (optional)
+5. Submit
+6. Expected: Alert success, data masuk database ✅
+
+TEST 3: Cara Lama Masih Berfungsi
+----------------------------------
+1. Klik: "Cari Keluhan"
+2. Modal search muncul
+3. Klik: "Tambah Keluhan Baru (Perlu Approval)"
+4. Modal form muncul
+5. Expected: Kedua cara berfungsi ✅
+
+================================================================================
+PERBANDINGAN:
+================================================================================
+
+SEBELUM UPDATE:
+---------------
+Langkah untuk tambah keluhan baru:
+1. Klik "Cari Keluhan"
+2. Modal search muncul
+3. Klik "Tambah Keluhan Baru"
+4. Modal form muncul
+5. Isi form
+6. Submit
+Total: 6 langkah
+
+SESUDAH UPDATE:
+---------------
+Langkah untuk tambah keluhan baru (via shortcut):
+1. Klik "Tambah Keluhan Baru (Perlu Approval Pusat)"
+2. Modal form muncul
+3. Isi form
+4. Submit
+Total: 4 langkah
+
+HEMAT: 2 langkah (33% lebih cepat)
+
+================================================================================
+CATATAN PENTING:
+================================================================================
+
+1. Tombol baru ini adalah SHORTCUT
+   - Langsung buka modal form
+   - Tidak perlu buka modal search dulu
+
+2. Modal yang dibuka SAMA
+   - Modal form yang sama dengan cara lama
+   - Fungsi AJAX submit sama
+   - Approval workflow sama
+
+3. Tidak ada perubahan backend
+   - ajax-submit-keluhan-baru-debug.php tetap sama
+   - Database query tetap sama
+   - Approval process tetap sama
+
+4. Backward Compatible
+   - Cara lama (via modal search) masih berfungsi
+   - User bisa pilih cara yang lebih nyaman
+
+================================================================================
+FILE YANG DIMODIFIKASI:
+================================================================================
+
+1. _template/_servis_add_header_kanan_workorder_only.php
+   - Tambah button HTML
+   - Tambah event listener
+
+File lain TIDAK DIUBAH:
+- modal-search-keluhan.php (tetap sama)
+- ajax-submit-keluhan-baru-debug.php (tetap sama)
+- master-keluhan-crud.php (tetap sama)
+
+================================================================================
+SELESAI
+================================================================================
+
+Update tombol shortcut "Tambah Keluhan Baru" telah berhasil ditambahkan.
+User sekarang punya 2 cara untuk tambah keluhan baru:
+1. Via tombol shortcut (lebih cepat)
+2. Via modal search (cara lama)
+
+Last Updated: 2025-11-10
+Version: 1.1
+================================================================================

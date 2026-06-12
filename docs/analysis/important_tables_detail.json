@@ -1,0 +1,2695 @@
+{
+  "tblpelanggan": {
+    "columns": [
+      {
+        "name": "nopelanggan",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "namapelanggan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "alamat",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "kota",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "propinsi",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "kodepost",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "negara",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "telephone",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "fax",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "kontakperson",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "potongan",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "tipepot",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "lavelharga",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "kgrup",
+        "definition": "varchar(3) NOT NULL"
+      },
+      {
+        "name": "patokan",
+        "definition": "varchar(200) NOT NULL"
+      },
+      {
+        "name": "foto_tampak_rumah",
+        "definition": "varchar(255) DEFAULT NULL COMMENT 'Path foto tampak rumah/patokan pelanggan untuk penjemputan'"
+      },
+      {
+        "name": "link_gmaps",
+        "definition": "text DEFAULT NULL COMMENT 'Link Google Maps lokasi pelanggan'"
+      },
+      {
+        "name": "notlp",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "klat",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "klong",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "panggilan",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "saldoawal",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pertanggal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "tgllahir",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "id_panggilan",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "bl_pajak",
+        "definition": "varchar(2) DEFAULT NULL"
+      },
+      {
+        "name": "th_pajak",
+        "definition": "varchar(4) DEFAULT NULL"
+      },
+      {
+        "name": "merek_id",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "tipe_id",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "jenis_id",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "warna_id",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "gender",
+        "definition": "varchar(10) DEFAULT NULL"
+      },
+      {
+        "name": "valid_tgl_lahir",
+        "definition": "varchar(10) DEFAULT NULL"
+      },
+      {
+        "name": "informasi_sumber",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Sumber informasi pelanggan (teman"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `merek_id` (`merek_id`)",
+      "KEY `tipe_id` (`tipe_id`)",
+      "KEY `jenis_id` (`jenis_id`)",
+      "KEY `warna_id` (`warna_id`)",
+      "KEY `idx_tblpelanggan_nopelanggan` (`nopelanggan`)"
+    ],
+    "unique_keys": []
+  },
+  "tblkendaraan": {
+    "columns": [
+      {
+        "name": "nopolisi",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "pemilik",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "alamat",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_merek",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "tipe",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_tipe",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "jenis",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_jenis",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "tahun_buat",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "tahun_rakit",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "silinder",
+        "definition": "varchar(30) DEFAULT NULL"
+      },
+      {
+        "name": "warna",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_warna",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_rangka",
+        "definition": "varchar(30) DEFAULT NULL"
+      },
+      {
+        "name": "no_mesin",
+        "definition": "varchar(30) DEFAULT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(100) DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservice": {
+    "columns": [
+      {
+        "name": "no_service",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "jam",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "no_pelanggan",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "no_polisi",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(1) NOT NULL DEFAULT '1'"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "id_user",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "diskon_persen",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "diskon_nom",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "ppn_persen",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "ppn_nom",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_grand",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "bayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "kembali",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "jenis_bayar",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_waktu",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "status_jemput",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "kondisi_motor",
+        "definition": "enum('jalan'"
+      },
+      {
+        "name": "jarak_jemput",
+        "definition": "decimal(5"
+      },
+      {
+        "name": "tarif_jemput",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Tarif penjemputan dalam rupiah'"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "foto_motor",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "km_skr",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "mekanik1",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "mekanik2",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "mekanik3",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "mekanik4",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "biayaM1",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "biayaM2",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "biayaM3",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "biayaM4",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "km_berikut",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "subtotal_jasa",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "subtotal_item",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "subtotal",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "total_diskon",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "total_pajak",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "total_akhir",
+        "definition": "double DEFAULT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      },
+      {
+        "name": "status_servis",
+        "definition": "enum('datang'"
+      },
+      {
+        "name": "keterangan_jemput",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "foto_patokan",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "kepala_mekanik1",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Kepala Mekanik Utama'"
+      },
+      {
+        "name": "kepala_mekanik2",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Kepala Mekanik Kedua (Opsional)'"
+      },
+      {
+        "name": "admin1",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Admin 1 untuk service'"
+      },
+      {
+        "name": "admin2",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Admin 2 untuk service'"
+      },
+      {
+        "name": "persen_kepala_mekanik1",
+        "definition": "int(11) DEFAULT 0"
+      },
+      {
+        "name": "persen_kepala_mekanik2",
+        "definition": "int(11) DEFAULT 0"
+      },
+      {
+        "name": "persen_admin1",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja admin 1'"
+      },
+      {
+        "name": "persen_admin2",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja admin 2'"
+      },
+      {
+        "name": "persen_mekanik1",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja mekanik 1'"
+      },
+      {
+        "name": "persen_mekanik2",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja mekanik 2'"
+      },
+      {
+        "name": "persen_mekanik3",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja mekanik 3'"
+      },
+      {
+        "name": "persen_mekanik4",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Persentase kerja mekanik 4'"
+      },
+      {
+        "name": "metode_pembayaran",
+        "definition": "varchar(50) DEFAULT 'Tunai'"
+      },
+      {
+        "name": "bukti_pembayaran",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "tanggal_cancel",
+        "definition": "datetime DEFAULT NULL COMMENT 'Tanggal & waktu service dibatalkan'"
+      },
+      {
+        "name": "alasan_cancel",
+        "definition": "text DEFAULT NULL COMMENT 'Alasan pembatalan service'"
+      },
+      {
+        "name": "user_cancel",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'User yang membatalkan service'"
+      },
+      {
+        "name": "biaya_cancel",
+        "definition": "double DEFAULT 0 COMMENT 'Biaya pembatalan (barang/jasa terpakai)'"
+      },
+      {
+        "name": "cancel_note",
+        "definition": "text DEFAULT NULL COMMENT 'Catatan tambahan pembatalan'"
+      },
+      {
+        "name": "total_penawaran",
+        "definition": "double DEFAULT 0 COMMENT 'Total nilai penawaran part'"
+      },
+      {
+        "name": "total_penawaran_disetujui",
+        "definition": "double DEFAULT 0 COMMENT 'Total penawaran yang disetujui'"
+      },
+      {
+        "name": "jumlah_temuan",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Jumlah temuan'"
+      },
+      {
+        "name": "jumlah_penawaran",
+        "definition": "int(11) DEFAULT 0 COMMENT 'Jumlah penawaran part'"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tblservice_no_service` (`no_service`)",
+      "KEY `idx_tblservice_tanggal` (`tanggal`)",
+      "KEY `idx_tblservice_status_jemput` (`status_jemput`)",
+      "KEY `idx_kepala_mekanik1` (`kepala_mekanik1`)",
+      "KEY `idx_mekanik1` (`mekanik1`)",
+      "KEY `idx_status_servis` (`status_servis`)",
+      "KEY `idx_tanggal_cancel` (`tanggal_cancel`)",
+      "KEY `idx_kondisi_jarak` (`kondisi_motor`,`jarak_jemput`)",
+      "KEY `idx_pelanggan_status` (`no_pelanggan`,`status_servis`)",
+      "KEY `idx_tanggal_status` (`tanggal`,`status_servis`)"
+    ],
+    "unique_keys": []
+  },
+  "tblservis_barang": {
+    "columns": [
+      {
+        "name": "no_service",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_retur",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga_jual",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "potongan",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservis_jasa": {
+    "columns": [
+      {
+        "name": "no_service",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "waktu",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "potongan",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`)"
+    ],
+    "unique_keys": []
+  },
+  "tblitem": {
+    "columns": [
+      {
+        "name": "noitem",
+        "definition": "varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+      },
+      {
+        "name": "kodebarcode",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "namaitem",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "jenis",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "satuan",
+        "definition": "varchar(3) NOT NULL"
+      },
+      {
+        "name": "hargapokok",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hargajual",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hargajual2",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hargajual3",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hjqtyd2",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hjqtyd3",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hjqtys1",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "hjqtys2",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "totalpokok",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "stokmin",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "statusitem",
+        "definition": "varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+      },
+      {
+        "name": "supplier",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "supplier2",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "supplier3",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "statusproduk",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "gambar",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "rakbarang",
+        "definition": "varchar(3) NOT NULL"
+      },
+      {
+        "name": "jasawaktu",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "jasasatuanwaktu",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "jeniskomisi",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "komisiprosen",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "komisinominal",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "inv_idawal",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "inv_jmlawal",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "inv_hrgawal",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "inv_tglawal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "stok_maks",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "kd_pabrik",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "kd_etalase",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "jenis_jasa",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "tipe_item",
+        "definition": "enum('ORI'"
+      },
+      {
+        "name": "merek",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Merek untuk ORI (Honda"
+      },
+      {
+        "name": "kode_part_resmi",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Kode part number resmi untuk ORI'"
+      },
+      {
+        "name": "nama_part_resmi",
+        "definition": "varchar(100) DEFAULT NULL COMMENT 'Nama part resmi sesuai catalog'"
+      },
+      {
+        "name": "penggunaan_motor",
+        "definition": "varchar(100) DEFAULT NULL COMMENT 'Penggunaan motor untuk NON-ORI'"
+      },
+      {
+        "name": "merek_tipe",
+        "definition": "varchar(100) DEFAULT NULL COMMENT 'Merek/Tipe/Ukuran untuk NON-ORI'"
+      },
+      {
+        "name": "kategori_rak",
+        "definition": "varchar(10) DEFAULT NULL COMMENT 'Kategori rak untuk auto-generate code NON-ORI'"
+      },
+      {
+        "name": "status_validasi",
+        "definition": "enum('pending_validation'"
+      },
+      {
+        "name": "created_by",
+        "definition": "int(11) DEFAULT NULL COMMENT 'User ID yang membuat item'"
+      },
+      {
+        "name": "validated_by",
+        "definition": "int(11) DEFAULT NULL COMMENT 'User ID yang memvalidasi item'"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tipe_item` (`tipe_item`)",
+      "KEY `idx_merek` (`merek`)",
+      "KEY `idx_kategori_rak` (`kategori_rak`)",
+      "KEY `idx_status_validasi` (`status_validasi`)"
+    ],
+    "unique_keys": []
+  },
+  "tblitem_jasa": {
+    "columns": [
+      {
+        "name": "noitem",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "namaitem",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "waktu",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga",
+        "definition": "double NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_spart": {
+    "columns": [
+      {
+        "name": "noitem",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_tipe",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_stok": {
+    "columns": [
+      {
+        "name": "noitem",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "kode_cabang",
+        "definition": "varchar(3) NOT NULL"
+      },
+      {
+        "name": "stokmin",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "stok_maks",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "stok_awal",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "rakbarang",
+        "definition": "int(11) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblsupplier": {
+    "columns": [
+      {
+        "name": "nosupplier",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "namasupplier",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "tipe_pemasok",
+        "definition": "enum('perorangan'"
+      },
+      {
+        "name": "alamat",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "kota",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "propinsi",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "kodepost",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "negara",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "telephone",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "no_whatsapp",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "fax",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "namabank",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "noaccount",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "atasnama",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kontakperson",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "email",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "saldoawal",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pertanggal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "jmlbayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "sisa",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "lama_hari_kirim",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "jangka_waktu_kredit",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "accurate_id",
+        "definition": "bigint(20) DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblmekanik": {
+    "columns": [
+      {
+        "name": "nomekanik",
+        "definition": "varchar(20)"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "nama_barang",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "sinonim_1",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "sinonim_2",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "sinonim_3",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "perlu_ukuran",
+        "definition": "enum('YA'"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(255) NOT NULL DEFAULT 'TIDAK PERLU UKURAN'"
+      },
+      {
+        "name": "satuan",
+        "definition": "varchar(50) NOT NULL DEFAULT 'PCS'"
+      },
+      {
+        "name": "status",
+        "definition": "enum('0'"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `unique_nama_barang` (`nama_barang`)"
+    ]
+  },
+  "tblsales": {
+    "columns": [
+      {
+        "name": "nosales",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "namasales",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "alamat",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "kota",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "telephone",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "komisijual",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "_default",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "komisi_nominal",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "op_pil_hitung",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "op_pil_sistem_komisi",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "status_baris",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpembelian_header": {
+    "columns": [
+      {
+        "name": "notransaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "carabayar",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_supplier",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "total_qty_order",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_qty",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_beli",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "diskon",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "total_diskon",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pajak",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "total_pajak",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_akhir",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_retur",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pembayaran",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "tanggal_jt",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_lunas",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "jumlah_bayar",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "Id_tabel",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_lunas",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "lama_hari",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_do",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Link ke DO'"
+      },
+      {
+        "name": "no_pr",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Link ke PR'"
+      },
+      {
+        "name": "status_qc",
+        "definition": "enum('pending'"
+      },
+      {
+        "name": "qc_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "qc_date",
+        "definition": "datetime DEFAULT NULL"
+      },
+      {
+        "name": "qc_notes",
+        "definition": "text DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_do` (`no_do`)",
+      "KEY `idx_pr` (`no_pr`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpembelian_detail": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "qty_order",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_retur",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga_pokok",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "potongan",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "harga_sp",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "sts_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id_inv",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_trx",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpenjualan_header": {
+    "columns": [
+      {
+        "name": "notransaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "carabayar",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_sales",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_pelanggan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "total_qty_order",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_qty",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_jual",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "diskon",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "total_diskon",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pajak",
+        "definition": "decimal(10"
+      },
+      {
+        "name": "total_pajak",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_akhir",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_retur",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "pembayaran",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "tanggal_jt",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_lunas",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "jumlah_bayar",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id_tabel",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_lunas",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "lama_hari",
+        "definition": "int(11) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpenjualan_detail": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "qty_order",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_retur",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga_jual",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "potongan",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "harga_sp",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "harga_pokok",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "sts_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_trx",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblorder_header": {
+    "columns": [
+      {
+        "name": "no_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tglkirim",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_supplier",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "total_qty",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "total_terima",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total_order",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "Id_tabel",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_pesanan",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "tipe_trx",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "no_penjualan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_pr",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Link ke PR'"
+      },
+      {
+        "name": "no_rfq",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Link ke RFQ'"
+      },
+      {
+        "name": "status_approval",
+        "definition": "enum('draft'"
+      },
+      {
+        "name": "approved_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "approved_date",
+        "definition": "datetime DEFAULT NULL"
+      },
+      {
+        "name": "rejected_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "rejected_date",
+        "definition": "datetime DEFAULT NULL"
+      },
+      {
+        "name": "reject_reason",
+        "definition": "mediumtext DEFAULT NULL"
+      },
+      {
+        "name": "po_type",
+        "definition": "enum('regular'"
+      },
+      {
+        "name": "payment_term",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'Net 30"
+      },
+      {
+        "name": "delivery_address",
+        "definition": "mediumtext DEFAULT NULL"
+      },
+      {
+        "name": "contact_person",
+        "definition": "varchar(100) DEFAULT NULL"
+      },
+      {
+        "name": "contact_phone",
+        "definition": "varchar(20) DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [
+      "no_order"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_pr` (`no_pr`)",
+      "KEY `idx_status_approval` (`status_approval`)"
+    ],
+    "unique_keys": []
+  },
+  "tblorder_detail": {
+    "columns": [
+      {
+        "name": "no_order",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_terima",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga_pokok",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "status_trx",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstok": {
+    "columns": [
+      {
+        "name": "tipe",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "masuk",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "keluar",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbcabang": {
+    "columns": [
+      {
+        "name": "kode_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "perusahaan_id",
+        "definition": "int(11) DEFAULT 1 COMMENT 'ID Perusahaan'"
+      },
+      {
+        "name": "nama_cabang",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "alamat_cabang",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "google_maps_cabang",
+        "definition": "varchar(500) DEFAULT NULL COMMENT 'Link Google Maps cabang'"
+      },
+      {
+        "name": "lat_cabang",
+        "definition": "varchar(30) DEFAULT NULL COMMENT 'Latitude cabang'"
+      },
+      {
+        "name": "long_cabang",
+        "definition": "varchar(30) DEFAULT NULL COMMENT 'Longitude cabang'"
+      },
+      {
+        "name": "tipe_cabang",
+        "definition": "varchar(50) DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [
+      "kode_cabang"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `fk_cabang_perusahaan` (`perusahaan_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbuser": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "kode_karyawan",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "nik",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "nama_user",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "nama_lengkap",
+        "definition": "varchar(100) DEFAULT NULL"
+      },
+      {
+        "name": "nama_panggilan",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "password",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "foto_user",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "foto",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "user_akses",
+        "definition": "int(11) DEFAULT NULL"
+      },
+      {
+        "name": "status_row",
+        "definition": "varchar(1) DEFAULT '0'"
+      },
+      {
+        "name": "email",
+        "definition": "varchar(100) DEFAULT NULL"
+      },
+      {
+        "name": "telp",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "alamat",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "tanggal_masuk",
+        "definition": "date DEFAULT NULL"
+      },
+      {
+        "name": "tanggal_keluar",
+        "definition": "date DEFAULT NULL"
+      },
+      {
+        "name": "spesialisasi",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "sertifikat",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "kode_posisi",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "kode_level",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "kode_cabang",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "role_name",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "department",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "is_active",
+        "definition": "enum('active'"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      },
+      {
+        "name": "last_login",
+        "definition": "timestamp NULL DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblhutang_header": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_supplier",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "total_bayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id_tabel",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblhutang_detail": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_pembelian",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "jumlah_hutang",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "jumlah_bayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(20) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpiutang_header": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_pelanggan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "note",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "total_bayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "user",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "id_tabel",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpiutang_detail": {
+    "columns": [
+      {
+        "name": "no_transaksi",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_penjualan",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "jumlah_piutang",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "jumlah_bayar",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(20) NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbworkorderheader": {
+    "columns": [
+      {
+        "name": "kode_wo",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "nama_wo",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "keterangan",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "status",
+        "definition": "varchar(1) NOT NULL DEFAULT '0'"
+      },
+      {
+        "name": "waktu",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "harga",
+        "definition": "double NOT NULL"
+      }
+    ],
+    "primary_keys": [],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbworkorderdetail": {
+    "columns": [
+      {
+        "name": "kode_wo",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "kode_barang",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "jumlah",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "satuan",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "diskon",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "status_diskon",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "tipe",
+        "definition": "varchar(1) NOT NULL"
+      },
+      {
+        "name": "harga",
+        "definition": "double NOT NULL"
+      },
+      {
+        "name": "total",
+        "definition": "double NOT NULL"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblkeluhan": {
+    "columns": [
+      {
+        "name": "id_keluhan",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "kode_keluhan",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "nama_keluhan",
+        "definition": "varchar(255) NOT NULL"
+      },
+      {
+        "name": "deskripsi",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "estimasi_waktu",
+        "definition": "int(11) DEFAULT 0 COMMENT 'dalam menit'"
+      },
+      {
+        "name": "status",
+        "definition": "enum('aktif'"
+      }
+    ],
+    "primary_keys": [
+      "id_keluhan"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `kode_keluhan` (`kode_keluhan`)"
+    ]
+  },
+  "tbservis_keluhan": {
+    "columns": [
+      {
+        "name": "no_service",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "keluhan",
+        "definition": "varchar(200) NOT NULL"
+      },
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbservis_temuan": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "no_service",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "keluhan_id",
+        "definition": "int(11) DEFAULT NULL COMMENT 'Link ke tbservis_keluhan_status'"
+      },
+      {
+        "name": "mekanik_id",
+        "definition": "varchar(10) DEFAULT NULL COMMENT 'Mekanik yang menemukan'"
+      },
+      {
+        "name": "mekanik_name",
+        "definition": "varchar(100) DEFAULT NULL"
+      },
+      {
+        "name": "kode_temuan",
+        "definition": "varchar(10) DEFAULT NULL COMMENT 'Link ke tbmaster_temuan'"
+      },
+      {
+        "name": "temuan_custom",
+        "definition": "varchar(255) DEFAULT NULL COMMENT 'Temuan manual jika tidak ada di master'"
+      },
+      {
+        "name": "deskripsi_temuan",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "jenis_perbaikan",
+        "definition": "enum('setting'"
+      },
+      {
+        "name": "status_temuan",
+        "definition": "enum('ditemukan'"
+      },
+      {
+        "name": "keterangan_tidak_selesai",
+        "definition": "text DEFAULT NULL COMMENT 'Keterangan jika temuan tidak selesai dikerjakan'"
+      },
+      {
+        "name": "tingkat_urgensi",
+        "definition": "enum('rendah'"
+      },
+      {
+        "name": "estimasi_biaya",
+        "definition": "double DEFAULT 0"
+      },
+      {
+        "name": "biaya_actual",
+        "definition": "double DEFAULT 0"
+      },
+      {
+        "name": "foto_temuan",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "created_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`)",
+      "KEY `idx_keluhan_id` (`keluhan_id`)",
+      "KEY `idx_kode_temuan` (`kode_temuan`)",
+      "KEY `idx_status` (`status_temuan`)",
+      "KEY `idx_status_temuan` (`status_temuan`)",
+      "KEY `idx_service` (`no_service`)",
+      "KEY `idx_keluhan` (`keluhan_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_workorder": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "no_service",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "kode_wo",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "status_pengerjaan",
+        "definition": "enum('diproses'"
+      },
+      {
+        "name": "keterangan_tidak_selesai",
+        "definition": "varchar(255) DEFAULT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_workorder_service` (`no_service`,`kode_wo`)",
+      "KEY `idx_status_pengerjaan` (`status_pengerjaan`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_antrian_servis": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "no_antrian",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "no_service",
+        "definition": "varchar(30) NOT NULL"
+      },
+      {
+        "name": "tanggal",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "jam_ambil",
+        "definition": "time NOT NULL"
+      },
+      {
+        "name": "jam_mulai",
+        "definition": "time DEFAULT NULL"
+      },
+      {
+        "name": "jam_selesai",
+        "definition": "time DEFAULT NULL"
+      },
+      {
+        "name": "status_antrian",
+        "definition": "enum('menunggu'"
+      },
+      {
+        "name": "prioritas",
+        "definition": "enum('normal'"
+      },
+      {
+        "name": "estimasi_waktu",
+        "definition": "int(11) DEFAULT NULL COMMENT 'dalam menit'"
+      },
+      {
+        "name": "catatan",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      },
+      {
+        "name": "alasan_batal",
+        "definition": "text DEFAULT NULL COMMENT 'Alasan pembatalan antrian'"
+      },
+      {
+        "name": "user_batal",
+        "definition": "varchar(50) DEFAULT NULL COMMENT 'User yang membatalkan'"
+      },
+      {
+        "name": "waktu_batal",
+        "definition": "datetime DEFAULT NULL COMMENT 'Waktu pembatalan'"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_service` (`no_service`)",
+      "KEY `status_antrian` (`status_antrian`)",
+      "KEY `tanggal` (`tanggal`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `no_antrian` (`no_antrian`,`tanggal`)"
+    ]
+  },
+  "tblpurchase_request_header": {
+    "columns": [
+      {
+        "name": "no_pr",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_pr",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "tanggal_butuh",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "requester",
+        "definition": "varchar(50) NOT NULL COMMENT 'User yang request'"
+      },
+      {
+        "name": "departemen",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "alasan",
+        "definition": "text NOT NULL"
+      },
+      {
+        "name": "total_qty",
+        "definition": "int(11) NOT NULL DEFAULT 0"
+      },
+      {
+        "name": "total_estimasi",
+        "definition": "decimal(15"
+      },
+      {
+        "name": "status_pr",
+        "definition": "enum('draft'"
+      },
+      {
+        "name": "approved_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "approved_date",
+        "definition": "datetime DEFAULT NULL"
+      },
+      {
+        "name": "rejected_by",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "rejected_date",
+        "definition": "datetime DEFAULT NULL"
+      },
+      {
+        "name": "reject_reason",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "created_by",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      }
+    ],
+    "primary_keys": [
+      "no_pr"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status_pr`)",
+      "KEY `idx_tanggal` (`tanggal_pr`)",
+      "KEY `idx_cabang` (`kd_cabang`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpurchase_request_detail": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "no_pr",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nama_item",
+        "definition": "varchar(100) NOT NULL"
+      },
+      {
+        "name": "quantity",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_approved",
+        "definition": "int(11) NOT NULL DEFAULT 0"
+      },
+      {
+        "name": "qty_po",
+        "definition": "int(11) NOT NULL DEFAULT 0 COMMENT 'Qty yang sudah di-PO'"
+      },
+      {
+        "name": "satuan",
+        "definition": "varchar(20) NOT NULL"
+      },
+      {
+        "name": "harga_estimasi",
+        "definition": "decimal(15"
+      },
+      {
+        "name": "total_estimasi",
+        "definition": "decimal(15"
+      },
+      {
+        "name": "keterangan",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "status_item",
+        "definition": "enum('pending'"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_pr` (`no_pr`)",
+      "KEY `idx_item` (`no_item`)"
+    ],
+    "unique_keys": []
+  },
+  "tbldelivery_order_header": {
+    "columns": [
+      {
+        "name": "no_do",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_po",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "no_supplier",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "tanggal_do",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "tanggal_kirim",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "tanggal_estimasi_tiba",
+        "definition": "date NOT NULL"
+      },
+      {
+        "name": "tanggal_tiba",
+        "definition": "date DEFAULT NULL"
+      },
+      {
+        "name": "no_surat_jalan",
+        "definition": "varchar(50) DEFAULT NULL"
+      },
+      {
+        "name": "no_kendaraan",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "nama_pengirim",
+        "definition": "varchar(100) DEFAULT NULL"
+      },
+      {
+        "name": "telp_pengirim",
+        "definition": "varchar(20) DEFAULT NULL"
+      },
+      {
+        "name": "alamat_kirim",
+        "definition": "text NOT NULL"
+      },
+      {
+        "name": "total_qty",
+        "definition": "int(11) NOT NULL DEFAULT 0"
+      },
+      {
+        "name": "status_do",
+        "definition": "enum('draft'"
+      },
+      {
+        "name": "keterangan",
+        "definition": "text DEFAULT NULL"
+      },
+      {
+        "name": "kd_cabang",
+        "definition": "varchar(10) NOT NULL"
+      },
+      {
+        "name": "created_by",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "created_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp()"
+      },
+      {
+        "name": "updated_at",
+        "definition": "timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
+      }
+    ],
+    "primary_keys": [
+      "no_do"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status_do`)",
+      "KEY `idx_tanggal_kirim` (`tanggal_kirim`)",
+      "KEY `fk_do_po` (`no_po`)"
+    ],
+    "unique_keys": []
+  },
+  "tbldelivery_order_detail": {
+    "columns": [
+      {
+        "name": "id",
+        "definition": "int(11) NOT NULL AUTO_INCREMENT"
+      },
+      {
+        "name": "no_do",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "nobaris",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "no_item",
+        "definition": "varchar(50) NOT NULL"
+      },
+      {
+        "name": "qty_po",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_kirim",
+        "definition": "int(11) NOT NULL"
+      },
+      {
+        "name": "qty_terima",
+        "definition": "int(11) NOT NULL DEFAULT 0"
+      },
+      {
+        "name": "qty_reject",
+        "definition": "int(11) NOT NULL DEFAULT 0"
+      },
+      {
+        "name": "keterangan",
+        "definition": "text DEFAULT NULL"
+      }
+    ],
+    "primary_keys": [
+      "id"
+    ],
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_item` (`no_item`)",
+      "KEY `fk_dod_do` (`no_do`)"
+    ],
+    "unique_keys": []
+  }
+}

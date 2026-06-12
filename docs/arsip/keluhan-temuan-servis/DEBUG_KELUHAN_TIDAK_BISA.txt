@@ -1,0 +1,126 @@
+================================================================================
+  DEBUG: PENGAJUAN TAMBAH KELUHAN TIDAK BISA
+================================================================================
+
+LANGKAH DEBUG:
+
+STEP 1: Test Modal Isolated
+----------------------------
+Buka: http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/test-modal-keluhan.php
+
+Test 1: Klik "Buka Modal Tambah Keluhan"
+- Jika modal muncul: ✓ Function OK
+- Jika tidak muncul: ✗ Function error
+
+Test 2: Klik "Submit Direct"
+- Jika success: ✓ AJAX OK
+- Jika failed: ✗ AJAX error
+
+Lihat Console Log di halaman untuk detail error.
+
+================================================================================
+STEP 2: Identifikasi Masalah
+================================================================================
+
+KEMUNGKINAN 1: Modal tidak muncul
+----------------------------------
+Gejala: Klik tombol tidak ada reaksi
+
+Cek Console Log:
+- Apakah ada error "tambahKeluhanBaru is not defined"?
+- Apakah ada error jQuery?
+
+Solusi:
+- Refresh halaman (Ctrl+F5)
+- Clear browser cache
+- Cek apakah jQuery loaded
+
+KEMUNGKINAN 2: Modal muncul tapi submit tidak jalan
+----------------------------------------------------
+Gejala: Modal muncul, isi form, submit tidak ada reaksi
+
+Cek Console Log:
+- Apakah ada error saat submit?
+- Apakah AJAX request terkirim?
+
+Solusi:
+- Buka Network tab (F12 > Network)
+- Submit form
+- Lihat request ke ajax-submit-keluhan-baru-debug.php
+- Cek response
+
+KEMUNGKINAN 3: AJAX error
+--------------------------
+Gejala: Alert "Terjadi kesalahan saat mengajukan keluhan"
+
+Cek Console Log:
+- Lihat AJAX Error detail
+- Lihat response text
+
+Solusi:
+- Cek path file ajax-submit-keluhan-baru-debug.php
+- Cek session (login ulang)
+- Cek database connection
+
+KEMUNGKINAN 4: Validation error
+--------------------------------
+Gejala: Alert "Gagal mengajukan keluhan: ..."
+
+Cek message:
+- "Nama keluhan harus diisi" → Field kosong
+- "Kategori harus dipilih" → Kategori kosong
+- "Keluhan dengan nama yang sama sudah ada" → Duplicate
+
+Solusi:
+- Isi semua field required
+- Gunakan nama keluhan yang unik
+
+================================================================================
+STEP 3: Test dari Servis Input Reguler
+================================================================================
+
+Setelah test-modal-keluhan.php berhasil:
+
+1. Buka: servis-input-reguler.php?snoserv=SV25000000158
+2. Tab "Work Order"
+3. Klik "Cari Keluhan"
+4. Klik "Tambah Keluhan Baru (Perlu Approval)"
+5. Isi form dan submit
+
+Jika masih tidak bisa:
+- Screenshot console log
+- Screenshot network tab
+- Screenshot error message
+
+================================================================================
+INFORMASI YANG DIBUTUHKAN UNTUK DEBUG:
+================================================================================
+
+Jika masih tidak bisa, kirim informasi berikut:
+
+1. DARI test-modal-keluhan.php:
+   - Screenshot Console Log
+   - Test 1 result (modal muncul atau tidak?)
+   - Test 2 result (submit berhasil atau tidak?)
+
+2. DARI servis-input-reguler.php:
+   - Screenshot console (F12)
+   - Screenshot network tab saat submit
+   - Error message yang muncul
+
+3. BROWSER INFO:
+   - Browser apa yang digunakan? (Chrome/Firefox/Edge)
+   - Versi browser?
+
+================================================================================
+QUICK CHECK:
+================================================================================
+
+Buka test-modal-keluhan.php dan jawab:
+
+[ ] Test 1: Modal muncul? (Ya/Tidak)
+[ ] Test 2: Submit berhasil? (Ya/Tidak)
+[ ] Console Log: Ada error? (Ya/Tidak - Screenshot)
+[ ] Network Tab: Request terkirim? (Ya/Tidak - Screenshot)
+
+================================================================================

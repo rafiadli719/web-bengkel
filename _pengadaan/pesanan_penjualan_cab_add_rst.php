@@ -116,11 +116,32 @@
                                             WHERE 
                                             noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
-            if($tipe_cabang=='1') {
-                $txthargabarang=$tm_cari['hargapokok'];                        
+            $margin_persen="0";
+            $q_setting=mysqli_query($koneksi,"SELECT 
+                                                margin_persen 
+                                                FROM 
+                                                tbl_setting_antarcabang 
+                                                WHERE 
+                                                aktif='1' AND 
+                                                tipe_cabang_tujuan='$tipe_cabang' AND 
+                                                (kd_cabang='$kd_cabang' OR kd_cabang='') 
+                                                ORDER BY kd_cabang DESC 
+                                                LIMIT 1");
+            if($q_setting) {
+                $tm_setting=mysqli_fetch_array($q_setting);
+                if($tm_setting) {
+                    $margin_persen=$tm_setting['margin_persen'];
+                } else {
+                    if($tipe_cabang!='1') {
+                        $margin_persen="5";
+                    }
+                }
             } else {
-                $txthargabarang=$tm_cari['hargapokok']*(105/100);                        
+                if($tipe_cabang!='1') {
+                    $margin_persen="5";
+                }
             }
+            $txthargabarang=$tm_cari['hargapokok']*((100+$margin_persen)/100);
             $subtotal=($txthargabarang*$txtqty)-(($txthargabarang*$txtqty)*($txtpot/100));
             
             if($txtkdbarang<>'') {

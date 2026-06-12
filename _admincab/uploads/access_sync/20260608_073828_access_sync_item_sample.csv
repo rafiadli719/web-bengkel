@@ -1,0 +1,2 @@
+NoItem,KodeBarcode,NamaItem,Jenis,Satuan,HargaPokok,HargaJual,HargaJual2,HargaJual3,Quantity,StokMin,StatusItem,Supplier1,Supplier2,Supplier3,StatusProduk,RakBarang,JasaWaktu
+BRGTEST26060001,8990001112223,Oli Mesin Test,SPAREPART,PCS,45000,60000,62000,65000,12,3,AKTIF,SUP001,,,REGULER,RACK-A1,0

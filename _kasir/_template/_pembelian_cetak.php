@@ -1,5 +1,4 @@
-
-
+                                                        <?php if (empty($mode_view_only)) { ?>
                                                         <div class="row">
 															<div class="col-xs-8 col-sm-3">
                                                                 <label>Ketik Kode/Nama Item :</label>
@@ -56,6 +55,7 @@
                                                                 </div>
                                                             </div>                                                            
                                                         </div>
+                                                        <?php } ?>
 
                                                         <div class="space space-8"></div>                                                                                                                
                                                         
@@ -64,7 +64,9 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
+                                            <?php if (empty($mode_view_only)) { ?>
                                             <td class="center" width="5%"></td>
+                                            <?php } ?>
                                             <td class="center" width="5%">No</td>
                                             <td width="15%">Kode</td>
                                             <td width="30%">Nama Item</td>
@@ -94,6 +96,7 @@
                                                 $namaitem_tbl=$tm_cari['namaitem'];				 
                                         ?>
                                         <tr>
+                                            <?php if (empty($mode_view_only)) { ?>
                                             <td class="center">
                                                 <div class="btn-group">
                                                     <button data-toggle="dropdown" class="btn disabled dropdown-toggle btn-minier btn-yellow">
@@ -110,6 +113,7 @@
                                                     </ul>
                                                 </div><!-- /.btn-group -->                                                        
                                             </td>	
+                                            <?php } ?>
                                             <td class="center"><?php echo $no ?></td>
                                             <td><?php echo $tampil['no_item']?></td>														
                                             <td><?php echo $namaitem_tbl; ?></td>														                                                        

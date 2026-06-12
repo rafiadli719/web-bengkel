@@ -2,10 +2,16 @@
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
-	} else {
-		$id_user=$_SESSION['_iduser'];		
-		$kd_cabang=$_SESSION['_cabang'];		                
-		include "../config/koneksi.php";
+		exit;
+	}
+
+	header("Location: penjualan_antarcab_upload.php");
+	exit;
+
+	__halt_compiler();
+	$id_user=$_SESSION['_iduser'];		
+	$kd_cabang=$_SESSION['_cabang'];		                
+	include "../config/koneksi.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -100,11 +106,32 @@
                                             WHERE 
                                             noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
-            if($tipe_cabang=='1') {
-                $txthargabarang=$tm_cari['hargapokok'];                        
+            $margin_persen="0";
+            $q_setting=mysqli_query($koneksi,"SELECT 
+                                                margin_persen 
+                                                FROM 
+                                                tbl_setting_antarcabang 
+                                                WHERE 
+                                                aktif='1' AND 
+                                                tipe_cabang_tujuan='$tipe_cabang' AND 
+                                                (kd_cabang='$kd_cabang' OR kd_cabang='') 
+                                                ORDER BY kd_cabang DESC 
+                                                LIMIT 1");
+            if($q_setting) {
+                $tm_setting=mysqli_fetch_array($q_setting);
+                if($tm_setting) {
+                    $margin_persen=$tm_setting['margin_persen'];
+                } else {
+                    if($tipe_cabang!='1') {
+                        $margin_persen="5";
+                    }
+                }
             } else {
-                $txthargabarang=$tm_cari['hargapokok']*(105/100);                        
+                if($tipe_cabang!='1') {
+                    $margin_persen="5";
+                }
             }
+            $txthargabarang=$tm_cari['hargapokok']*((100+$margin_persen)/100);
 
             $subtotal=($txthargabarang*$txtqty)-(($txthargabarang*$txtqty)*($txtpot/100));
 
@@ -409,58 +436,50 @@
 
 					<div class="page-content">
 
-                        <form class="form-horizontal" action="" method="post" role="form">
+                        <form class="form-horizontal" action="" method="post" role="form" novalidate>
                         <input type="hidden" name="txttotal_harga"  class="form-control" value="<?php echo $tot; ?>"/>
-						<div class="row">
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">	
-                                            <br>
-                                            <?php include "_template/_pesanan_penjualan_cab_header.php"; ?>
-										</div>
-									</div>
-								</div>	
-							</div>
-                            
-							<div class="col-xs-12 col-sm-12">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
-
-                                            <?php include "_template/_pesanan_penjualan_cab_detail.php"; ?>
-
-                                        </div>
-                                    </div>
+                        <input type="hidden" name="active_tab" id="active_tab" value="ac-header"/>
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs" id="acTab">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#ac-header" aria-expanded="true">
+                                        <i class="green ace-icon fa fa-list-alt bigger-120"></i>
+                                        Header
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#ac-items" aria-expanded="false">
+                                        <i class="blue ace-icon fa fa-cubes bigger-120"></i>
+                                        Item Barang
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#ac-summary" aria-expanded="false">
+                                        <i class="purple ace-icon fa fa-calculator bigger-120"></i>
+                                        Ringkasan
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="ac-header" class="tab-pane fade active in">
+                                    <?php include "_template/_pesanan_penjualan_cab_header.php"; ?>
                                 </div>
-                            </div>
-
-							<div class="col-xs-12 col-sm-7">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
-
+                                <div id="ac-items" class="tab-pane fade">
+                                    <?php include "_template/_pesanan_penjualan_cab_detail.php"; ?>
+                                </div>
+                                <div id="ac-summary" class="tab-pane fade">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-7">
                                             <?php include "_template/_pesanan_penjualan_cab_lainnya.php"; ?>
-
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-							<div class="col-xs-12 col-sm-5">
-								<div class="widget-box">
-									<div class="widget-body">
-										<div class="widget-main">
-
+                                        <div class="col-xs-12 col-sm-5">
                                             <?php include "_template/_pesanan_penjualan_cab_total.php"; ?>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-
-                        </form> 
+                        </div>
+                        </form>
                         
                         </div>
 

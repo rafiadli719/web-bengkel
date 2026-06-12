@@ -320,25 +320,27 @@
 																	<th>No. Antrian</th>
 																	<th>No. Service</th>
 																	<th>Jam Ambil</th>
+																	<th>Tipe Servis</th>
+																	<th>Status Servis</th>
 																	<th>Prioritas</th>
-																	<th>Status</th>
+																	<th>Status Antrian</th>
 																	<th>Estimasi</th>
 																	<th>Aksi</th>
 																</tr>
 															</thead>
 															<tbody>
 																<?php
-																					$query_antrian_terbaru = mysqli_query($koneksi, "
-						SELECT a.*, p.namapelanggan, s.no_polisi 
-						FROM tb_antrian_servis a 
-						LEFT JOIN tblservice s ON a.no_service = s.no_service 
+																$query_antrian_terbaru = mysqli_query($koneksi, "
+						SELECT a.*, p.namapelanggan, s.no_polisi, s.tipe_service, s.status_servis, s.jam AS jam_service
+						FROM tb_antrian_servis a
+						LEFT JOIN tblservice s ON a.no_service = s.no_service
 						LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-						WHERE a.tanggal = '$tgl_hari_ini' 
-						ORDER BY a.created_at DESC 
+						WHERE a.tanggal = '$tgl_hari_ini'
+						ORDER BY a.created_at DESC
 						LIMIT 10
 					");
-																
-																if(mysqli_num_rows($query_antrian_terbaru) > 0) {
+
+																if($query_antrian_terbaru && mysqli_num_rows($query_antrian_terbaru) > 0) {
 																	while($row = mysqli_fetch_array($query_antrian_terbaru)) {
 																		$status_class = '';
 																		switch($row['status_antrian']) {
@@ -356,6 +358,42 @@
 																		}
 																		
 																		$estimasi = $row['estimasi_waktu'] ? $row['estimasi_waktu'] . ' menit' : '-';
+
+																		// Determine tipe service
+																		$tipe_service = strtolower($row['tipe_service'] ?? 'reguler');
+																		$tipe_class = '';
+																		$tipe_icon = '';
+																		switch($tipe_service) {
+																			case 'jemput':
+																				$tipe_class = 'label-warning';
+																				$tipe_icon = 'fa-truck';
+																				$tipe_label = 'Jemput';
+																				break;
+																			case 'garansi':
+																				$tipe_class = 'label-danger';
+																				$tipe_icon = 'fa-shield';
+																				$tipe_label = 'Garansi';
+																				break;
+																			default:
+																				$tipe_class = 'label-primary';
+																				$tipe_icon = 'fa-wrench';
+																				$tipe_label = 'Reguler';
+																		}
+
+																		// Determine status servis
+																		$status_servis = strtolower($row['status_servis'] ?? 'datang');
+																		$status_servis_class = '';
+																		switch($status_servis) {
+																			case 'datang': $status_servis_class = 'label-info'; break;
+																			case 'proses': $status_servis_class = 'label-primary'; break;
+																			case 'selesai': $status_servis_class = 'label-success'; break;
+																			case 'bayar': $status_servis_class = 'label-success'; break;
+																			case 'batal': $status_servis_class = 'label-danger'; break;
+																			default: $status_servis_class = 'label-default';
+																		}
+
+																		// Determine if service is finished (read-only mode)
+																		$is_finished = in_array($status_servis, ['selesai', 'bayar']);
 																		?>
 																		<tr>
 																			<td>
@@ -364,11 +402,21 @@
 																			<td>
 																				<?php echo $row['no_service']; ?><br>
 																				<small class="text-muted">
-																					<?php echo $row['namapelanggan'] ? $row['namapelanggan'] : 'N/A'; ?> - 
+																					<?php echo $row['namapelanggan'] ? $row['namapelanggan'] : 'N/A'; ?> -
 																					<?php echo $row['no_polisi'] ? $row['no_polisi'] : 'N/A'; ?>
 																				</small>
 																			</td>
-																			<td><?php echo date('H:i', strtotime($row['jam_ambil'])); ?></td>
+																			<td><?php echo !empty($row['jam_ambil']) ? date('H:i', strtotime($row['jam_ambil'])) : (!empty($row['jam_service']) ? date('H:i', strtotime($row['jam_service'])) : '-'); ?></td>
+																			<td>
+																				<span class="label <?php echo $tipe_class; ?>">
+																					<i class="fa <?php echo $tipe_icon; ?>"></i> <?php echo $tipe_label; ?>
+																				</span>
+																			</td>
+																			<td>
+																				<span class="label <?php echo $status_servis_class; ?>">
+																					<?php echo ucfirst($status_servis); ?>
+																				</span>
+																			</td>
 																			<td>
 																				<span class="label <?php echo $prioritas_class; ?>">
 																					<?php echo ucfirst($row['prioritas']); ?>
@@ -381,9 +429,11 @@
 																			</td>
 																			<td><?php echo $estimasi; ?></td>
 																			<td>
-																				<a href="servis-input-reguler.php?no_service=<?php echo $row['no_service']; ?>" 
-																				   class="btn btn-xs btn-info" title="Lihat Detail">
-																					<i class="fa fa-eye"></i>
+																				<a href="servis-input-router.php?snoserv=<?php echo $row['no_service']; ?>"
+																				   class="btn btn-xs <?php echo $is_finished ? 'btn-success' : 'btn-info'; ?>"
+																				   title="<?php echo $is_finished ? 'Preview (Read-Only)' : 'Edit Servis'; ?>">
+																					<i class="fa <?php echo $is_finished ? 'fa-eye' : 'fa-edit'; ?>"></i>
+																					<?php echo $is_finished ? 'Preview' : 'Edit'; ?>
 																				</a>
 																			</td>
 																		</tr>
@@ -392,7 +442,7 @@
 																} else {
 																	?>
 																	<tr>
-																		<td colspan="7" class="text-center text-muted">
+																		<td colspan="9" class="text-center text-muted">
 																			<i class="fa fa-info-circle"></i> Belum ada antrian servis hari ini
 																		</td>
 																	</tr>
@@ -631,3 +681,5 @@
 <?php 
 	}
 ?>
+
+

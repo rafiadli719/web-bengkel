@@ -9,7 +9,5 @@
                                     WHERE 
                                     id='$sid'");
 
-            $kdbrg="";
-            $kdjasa="";
-            echo"<script>window.location=('servis-input-reguler-jemput-rst.php?snoserv=$no_service&kd=$kdbrg&kdjasa=$kdjasa');</script>";        
+            echo"<script>window.history.back();</script>";        
 ?>

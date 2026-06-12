@@ -35,7 +35,17 @@
 
         $tgl_pilih=date('d/m/Y');
 		//include "funcion_dokter.php";
-		//$LastID=FormatNoTrans(OtomatisID());		                
+		//$LastID=FormatNoTrans(OtomatisID());
+		
+		// Prefill data dari halaman tambah cabang
+		$prefill_kd = '';
+		$prefill_nama = '';
+		$from_cabang = false;
+		if (isset($_GET['from_cabang']) && $_GET['from_cabang'] == '1') {
+			$from_cabang = true;
+			$prefill_kd = isset($_GET['kd']) ? htmlspecialchars($_GET['kd']) : '';
+			$prefill_nama = isset($_GET['nama']) ? htmlspecialchars($_GET['nama']) : '';
+		}		                
 ?>
 
 <!DOCTYPE html>
@@ -270,14 +280,16 @@
                                                                                 <label class="col-sm-4 control-label no-padding-right"> Kode Pelanggan </label>
                                                                                 <div class="col-sm-8">
                                                                                     <input type="text" id="txtkd" name="txtkd" class="form-control" 
-                                                                                    required autocomplete="off" placeholder="Kode unik pelanggan" />
+                                                                                    required autocomplete="off" placeholder="Kode unik pelanggan" 
+                                                                                    value="<?php echo $prefill_kd; ?>" <?php if ($from_cabang && $prefill_kd) echo 'readonly style="background-color: #f5f5f5;"'; ?> />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group">
                                                                                 <label class="col-sm-4 control-label no-padding-right"> Nama Lengkap </label>
                                                                                 <div class="col-sm-8">
                                                                                     <input type="text" id="txtnama" name="txtnama" class="form-control" 
-                                                                                    required autocomplete="off" placeholder="Nama lengkap pelanggan" />
+                                                                                    required autocomplete="off" placeholder="Nama lengkap pelanggan" 
+                                                                                    value="<?php echo $prefill_nama; ?>" <?php if ($from_cabang && $prefill_nama) echo 'readonly style="background-color: #f5f5f5;"'; ?> />
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group">
@@ -396,6 +408,13 @@
                                                                                 <div class="col-sm-8">
                                                                                     <input type="text" id="txtlong" name="txtlong" class="form-control" 
                                                                                     autocomplete="off" placeholder="107.67576715396766" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-4 control-label no-padding-right"> Link Google Maps </label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="text" id="txtgmaps" name="txtgmaps" class="form-control" autocomplete="off" placeholder="Paste link Google Maps di sini" />
+                                                                                    <span class="help-block" style="margin-bottom:0;">Jika link berisi koordinat, Latitude &amp; Longitude akan terisi otomatis.</span>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group">
@@ -597,6 +616,57 @@
 				
 				// Restore active tab on page load
 				restoreActiveTab();
+
+				function _parseLatLngPair(text) {
+					if (!text) return null;
+					var m = String(text).match(/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+					if (!m) return null;
+					var lat = parseFloat(m[1]);
+					var lng = parseFloat(m[2]);
+					if (!isFinite(lat) || !isFinite(lng)) return null;
+					if (lat < -90 || lat > 90) return null;
+					if (lng < -180 || lng > 180) return null;
+					return { lat: lat, lng: lng };
+				}
+
+				function parseGoogleMapsLink(url) {
+					if (!url) return null;
+					var s = String(url);
+					var at = s.match(/@(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+					if (at) {
+						return _parseLatLngPair(at[1] + ',' + at[2]);
+					}
+					var params = ['q=', 'query=', 'll=', 'destination=', 'daddr=', 'saddr=', 'center='];
+					for (var i = 0; i < params.length; i++) {
+						var idx = s.indexOf(params[i]);
+						if (idx !== -1) {
+							var part = s.substring(idx + params[i].length);
+							part = part.split('&')[0];
+							try { part = decodeURIComponent(part); } catch (e) {}
+							var r = _parseLatLngPair(part);
+							if (r) return r;
+						}
+					}
+					var data = s.match(/!3d(-?\d{1,3}\.\d+)!4d(-?\d{1,3}\.\d+)/);
+					if (data) {
+						return _parseLatLngPair(data[1] + ',' + data[2]);
+					}
+					return null;
+				}
+
+				function fillLatLngFromMaps() {
+					var link = $('#txtgmaps').val();
+					var res = parseGoogleMapsLink(link);
+					if (res) {
+						$('#txtlat').val(res.lat);
+						$('#txtlong').val(res.lng);
+					}
+				}
+
+				$('#txtgmaps').on('input paste change', function() {
+					fillLatLngFromMaps();
+				});
+				fillLatLngFromMaps();
 				$('#id-disable-check').on('click', function() {
 					var inp = $('#form-input-readonly').get(0);
 					if(inp.hasAttribute('disabled')) {

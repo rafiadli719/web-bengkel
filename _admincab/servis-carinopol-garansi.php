@@ -7,6 +7,8 @@ if(empty($_SESSION['_iduser'])){
     $id_user=$_SESSION['_iduser'];	
     $kd_cabang=$_SESSION['_cabang'];		                	
     include "../config/koneksi.php";
+    include_once "../lib/rbac.php";
+    rbac_require_any(array('input_servis_garansi_read','servis_garansi_read','servis_menu_read','service_create','service_update'));
     
     // User data
     $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -148,7 +150,7 @@ if(empty($_SESSION['_iduser'])){
 
             <div class="navbar-header pull-left">
                 <a href="index.php" class="navbar-brand">
-                    <small><i class="fa fa-leaf"></i> <?php include "../lib/subtitel.php"; ?></small>
+                    <small><?php include "../lib/logo.php"; ?> <?php include "../lib/subtitel.php"; ?></small>
                 </a>
             </div>
 
@@ -334,7 +336,7 @@ if(empty($_SESSION['_iduser'])){
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="servis-garansi.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>&kd=&kdjasa=">
+                                                            <a href="servis-garansi.php?ref_service=<?php echo urlencode($tampil['no_service']); ?>&kd=&kdjasa=">
                                                                 <i class="ace-icon fa fa-shield"></i> Buat Service Garansi
                                                             </a>
                                                         </li>

@@ -1,0 +1,5025 @@
+{
+  "backup_tblservice_orphan": {
+    "name": "backup_tblservice_orphan",
+    "columns": [
+      "no_service",
+      "no_pelanggan",
+      "tanggal",
+      "total_akhir",
+      "backup_date"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "bulan_transaksi": {
+    "name": "bulan_transaksi",
+    "columns": [
+      "bulan",
+      "nama",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "log_perubahan_tarif": {
+    "name": "log_perubahan_tarif",
+    "columns": [
+      "id",
+      "tanggal",
+      "user_id",
+      "aksi",
+      "tarif_id",
+      "data_lama",
+      "data_baru",
+      "keterangan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tanggal` (`tanggal`),",
+      "KEY `idx_tarif_id` (`tarif_id`)"
+    ],
+    "unique_keys": []
+  },
+  "master_bank": {
+    "name": "master_bank",
+    "columns": [
+      "id",
+      "kode_bank",
+      "nama_bank",
+      "keterangan",
+      "is_aktif",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `kode_bank` (`kode_bank`)"
+    ]
+  },
+  "master_kategori_member": {
+    "name": "master_kategori_member",
+    "columns": [
+      "id_kategori",
+      "nama_kategori",
+      "tipe_kategori",
+      "min_value",
+      "max_value",
+      "diskon_persen",
+      "benefit_text",
+      "icon",
+      "warna",
+      "urutan",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id_kategori",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tipe` (`tipe_kategori`),",
+      "KEY `idx_active` (`is_active`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_kategori_tipe` (`nama_kategori`,`tipe_kategori`),"
+    ]
+  },
+  "master_kedatangan_pelanggan": {
+    "name": "master_kedatangan_pelanggan",
+    "columns": [
+      "id_kedatangan",
+      "no_pelanggan",
+      "no_service",
+      "kedatangan_ke",
+      "tanggal_datang",
+      "tanggal_sebelumnya",
+      "jarak_hari",
+      "total_transaksi",
+      "jumlah_item",
+      "rata2_nilai_per_item",
+      "estimasi_datang_berikut",
+      "status_garansi",
+      "keterangan",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id_kedatangan",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_pelanggan` (`no_pelanggan`),",
+      "KEY `idx_tanggal_datang` (`tanggal_datang`),",
+      "KEY `idx_kedatangan_ke` (`kedatangan_ke`),",
+      "KEY `idx_estimasi` (`estimasi_datang_berikut`),",
+      "KEY `idx_no_service` (`no_service`)"
+    ],
+    "unique_keys": []
+  },
+  "master_perusahaan": {
+    "name": "master_perusahaan",
+    "columns": [
+      "id",
+      "kode_perusahaan",
+      "nama_perusahaan",
+      "nama_singkat",
+      "alamat",
+      "telepon",
+      "email",
+      "website",
+      "logo",
+      "npwp",
+      "direktur",
+      "keterangan",
+      "is_aktif",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_nama_perusahaan` (`nama_perusahaan`),",
+      "KEY `idx_is_aktif` (`is_aktif`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode_perusahaan` (`kode_perusahaan`),"
+    ]
+  },
+  "master_tarif_jemput": {
+    "name": "master_tarif_jemput",
+    "columns": [
+      "id",
+      "jenis_motor",
+      "jarak_km",
+      "tarif",
+      "keterangan",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "master_tarif_jemput_backup": {
+    "name": "master_tarif_jemput_backup",
+    "columns": [
+      "id",
+      "jenis_motor",
+      "jarak_km",
+      "tarif",
+      "keterangan",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "master_tarif_jemput_range": {
+    "name": "master_tarif_jemput_range",
+    "columns": [
+      "id",
+      "jenis_motor",
+      "jarak_min",
+      "jarak_max",
+      "tarif_dasar",
+      "tarif_per_km",
+      "keterangan",
+      "aktif",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_jenis_aktif` (`jenis_motor`,`aktif`)"
+    ],
+    "unique_keys": []
+  },
+  "setting_highlight_member": {
+    "name": "setting_highlight_member",
+    "columns": [
+      "id",
+      "kategori_member",
+      "background_color",
+      "text_color",
+      "border_color",
+      "border_width",
+      "is_bold",
+      "opacity",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `kategori_member` (`kategori_member`)"
+    ]
+  },
+  "statistik_pelanggan": {
+    "name": "statistik_pelanggan",
+    "columns": [
+      "id_statistik",
+      "no_pelanggan",
+      "total_transaksi",
+      "total_nominal",
+      "jumlah_kunjungan",
+      "kedatangan_terakhir",
+      "rata_jarak_kunjungan",
+      "rata_rata_transaksi",
+      "status_member",
+      "kategori_member_kunjungan",
+      "tanggal_pertama_transaksi",
+      "tanggal_terakhir_transaksi",
+      "lama_tidak_datang",
+      "lama_menjadi_pelanggan",
+      "estimasi_datang_berikutnya",
+      "total_motor",
+      "created_at",
+      "updated_at",
+      "jumlah_cancel",
+      "cancel_rate",
+      "tanggal_cancel_terakhir",
+      "cancel_customer_request",
+      "cancel_no_stock",
+      "cancel_no_mekanik",
+      "cancel_no_show",
+      "cancel_lainnya"
+    ],
+    "primary_key": "id_statistik",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status_member` (`status_member`),",
+      "KEY `idx_tanggal_terakhir` (`tanggal_terakhir_transaksi`),",
+      "KEY `idx_lama_tidak_datang` (`lama_tidak_datang`),",
+      "KEY `idx_kategori_member_kunjungan` (`kategori_member_kunjungan`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `uk_no_pelanggan` (`no_pelanggan`),"
+    ]
+  },
+  "tbabsensi": {
+    "name": "tbabsensi",
+    "columns": [
+      "nip",
+      "tgl",
+      "jam_masuk",
+      "jam_keluar",
+      "kode_status_kehadiran",
+      "keterangan",
+      "kode_perusahaan",
+      "kode_lokasi",
+      "lat_masuk",
+      "long_masuk",
+      "jarak_masuk",
+      "lat_pulang",
+      "long_pulang",
+      "jarak_pulang",
+      "nip_di_finger",
+      "id",
+      "id_upload"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbabsensi_temp": {
+    "name": "tbabsensi_temp",
+    "columns": [
+      "no_urut",
+      "id",
+      "waktu",
+      "tgl",
+      "jam"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbabsensi_temp_rst": {
+    "name": "tbabsensi_temp_rst",
+    "columns": [
+      "id",
+      "tgl",
+      "jam_masuk",
+      "Jam_pulang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbabsensi_upload": {
+    "name": "tbabsensi_upload",
+    "columns": [
+      "id_upload",
+      "tgl_upload",
+      "waktu_upload",
+      "tgl_absensi_awal",
+      "tgl_absensi_akhir",
+      "kode_cabang",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbagama": {
+    "name": "tbagama",
+    "columns": [
+      "agama",
+      "kode"
+    ],
+    "primary_key": "kode",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbakun": {
+    "name": "tbakun",
+    "columns": [
+      "no_akun",
+      "nama_akun",
+      "pos",
+      "debet",
+      "kredit",
+      "status_akun",
+      "akun_induk",
+      "no_akun_induk"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbakun_pos": {
+    "name": "tbakun_pos",
+    "columns": [
+      "pos"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbbrg_keluar_detail": {
+    "name": "tbbrg_keluar_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "harga",
+      "total",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx",
+      "stok_sistem",
+      "penyesuaian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbbrg_keluar_header": {
+    "name": "tbbrg_keluar_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang",
+      "kd_cabang_ke"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbbrg_masuk_detail": {
+    "name": "tbbrg_masuk_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "harga",
+      "total",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx",
+      "stok_sistem",
+      "penyesuaian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbbrg_masuk_header": {
+    "name": "tbbrg_masuk_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang",
+      "kd_cabang_dr"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbcabang": {
+    "name": "tbcabang",
+    "columns": [
+      "kode_cabang",
+      "perusahaan_id",
+      "nama_cabang",
+      "alamat_cabang",
+      "google_maps_cabang",
+      "lat_cabang",
+      "long_cabang",
+      "tipe_cabang"
+    ],
+    "primary_key": "kode_cabang",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `fk_cabang_perusahaan` (`perusahaan_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbcabang_tipe": {
+    "name": "tbcabang_tipe",
+    "columns": [
+      "cabang_tipe",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbcara_bayar": {
+    "name": "tbcara_bayar",
+    "columns": [
+      "id",
+      "cara_bayar"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbcari": {
+    "name": "tbcari",
+    "columns": [
+      "cari",
+      "tipe",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbdarah": {
+    "name": "tbdarah",
+    "columns": [
+      "kode",
+      "darah"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbdivisi": {
+    "name": "tbdivisi",
+    "columns": [
+      "kode_divisi",
+      "nama_divisi"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbemp_education": {
+    "name": "tbemp_education",
+    "columns": [
+      "id",
+      "nip",
+      "fld1",
+      "fld2",
+      "fld3",
+      "fld4",
+      "fld5"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbemp_family": {
+    "name": "tbemp_family",
+    "columns": [
+      "id",
+      "nip",
+      "nama",
+      "id_jk",
+      "alamat",
+      "notlp",
+      "hubungan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbemp_training": {
+    "name": "tbemp_training",
+    "columns": [
+      "id",
+      "nip",
+      "fld1",
+      "fld2",
+      "fld3"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbemp_tunjangan": {
+    "name": "tbemp_tunjangan",
+    "columns": [
+      "id",
+      "nip",
+      "nama_tunjangan",
+      "nilai_tunjangan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbhargajual": {
+    "name": "tbhargajual",
+    "columns": [
+      "jenis",
+      "margin",
+      "marginplus",
+      "bulat",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbhari_kerja": {
+    "name": "tbhari_kerja",
+    "columns": [
+      "id",
+      "hari_kerja"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbhistory_divisi": {
+    "name": "tbhistory_divisi",
+    "columns": [
+      "nip",
+      "kode_divisi",
+      "kode_jabatan",
+      "tgl_start",
+      "tgl_end",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbhjual_jasa": {
+    "name": "tbhjual_jasa",
+    "columns": [
+      "jasa",
+      "nilai",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbitem_keluar_detail": {
+    "name": "tbitem_keluar_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "harga",
+      "total",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx",
+      "stok_sistem",
+      "penyesuaian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbitem_keluar_header": {
+    "name": "tbitem_keluar_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbitem_masuk_detail": {
+    "name": "tbitem_masuk_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "harga",
+      "total",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx",
+      "stok_sistem",
+      "penyesuaian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbitem_masuk_header": {
+    "name": "tbitem_masuk_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbitem_validation_log": {
+    "name": "tbitem_validation_log",
+    "columns": [
+      "id",
+      "noitem",
+      "status_lama",
+      "status_baru",
+      "keterangan",
+      "validated_by",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbjabatan": {
+    "name": "tbjabatan",
+    "columns": [
+      "kode_jabatan",
+      "nama_jabatan",
+      "kode_divisi",
+      "tjabatan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbjenis_bayar": {
+    "name": "tbjenis_bayar",
+    "columns": [
+      "jenis_bayar"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbjenis_motor": {
+    "name": "tbjenis_motor",
+    "columns": [
+      "kd",
+      "jenis",
+      "keterangan",
+      "status"
+    ],
+    "primary_key": "kd",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbjenis_penggantian_retur": {
+    "name": "tbjenis_penggantian_retur",
+    "columns": [
+      "id",
+      "jenis_penggantian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbjk": {
+    "name": "tbjk",
+    "columns": [
+      "kode_jk",
+      "jk"
+    ],
+    "primary_key": "kode_jk",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkas_kasir": {
+    "name": "tbkas_kasir",
+    "columns": [
+      "tanggal",
+      "jam",
+      "kd_cabang",
+      "user",
+      "tipe",
+      "keping_1",
+      "keping_2",
+      "keping_3",
+      "keping_4",
+      "keping_5",
+      "keping_6",
+      "keping_7",
+      "keping_8",
+      "keping_9",
+      "keping_10",
+      "total",
+      "id",
+      "total_awal",
+      "total_real"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkas_kasir_detail": {
+    "name": "tbkas_kasir_detail",
+    "columns": [
+      "no_bukti",
+      "nominal",
+      "jml_keping",
+      "nilai"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkas_kasir_header": {
+    "name": "tbkas_kasir_header",
+    "columns": [
+      "no_bukti",
+      "tanggal",
+      "jam",
+      "kd_cabang",
+      "user",
+      "tipe",
+      "total",
+      "total_awal",
+      "total_real"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkategori_motor": {
+    "name": "tbkategori_motor",
+    "columns": [
+      "id",
+      "kategori",
+      "keterangan",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkategori_rak": {
+    "name": "tbkategori_rak",
+    "columns": [
+      "kode",
+      "nama_kategori",
+      "deskripsi",
+      "created_at"
+    ],
+    "primary_key": "kode",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkeluhan_proses": {
+    "name": "tbkeluhan_proses",
+    "columns": [
+      "id",
+      "kode_keluhan",
+      "kode_item",
+      "tipe_proses",
+      "nama_proses",
+      "deskripsi",
+      "estimasi_waktu",
+      "harga_estimasi",
+      "wajib",
+      "urutan",
+      "status_aktif",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `kode_keluhan` (`kode_keluhan`)"
+    ],
+    "unique_keys": []
+  },
+  "tbkeping": {
+    "name": "tbkeping",
+    "columns": [
+      "keping",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkomisijl_sales1": {
+    "name": "tbkomisijl_sales1",
+    "columns": [
+      "id",
+      "ket"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkomisijl_sales2": {
+    "name": "tbkomisijl_sales2",
+    "columns": [
+      "id",
+      "ket"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkoreksi_stok_detail": {
+    "name": "tbkoreksi_stok_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx",
+      "stok_sistem",
+      "penyesuaian",
+      "tipe_stok"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbkoreksi_stok_header": {
+    "name": "tbkoreksi_stok_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblakunkas": {
+    "name": "tblakunkas",
+    "columns": [
+      "kodeakun",
+      "namaakun",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbldelivery_order_detail": {
+    "name": "tbldelivery_order_detail",
+    "columns": [
+      "id",
+      "no_do",
+      "nobaris",
+      "no_item",
+      "qty_po",
+      "qty_kirim",
+      "qty_terima",
+      "qty_reject",
+      "keterangan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_item` (`no_item`),",
+      "KEY `fk_dod_do` (`no_do`)"
+    ],
+    "unique_keys": []
+  },
+  "tbldelivery_order_header": {
+    "name": "tbldelivery_order_header",
+    "columns": [
+      "no_do",
+      "no_po",
+      "no_supplier",
+      "tanggal_do",
+      "tanggal_kirim",
+      "tanggal_estimasi_tiba",
+      "tanggal_tiba",
+      "no_surat_jalan",
+      "no_kendaraan",
+      "nama_pengirim",
+      "telp_pengirim",
+      "alamat_kirim",
+      "total_qty",
+      "status_do",
+      "keterangan",
+      "kd_cabang",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "no_do",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status_do`),",
+      "KEY `idx_tanggal_kirim` (`tanggal_kirim`),",
+      "KEY `fk_do_po` (`no_po`)"
+    ],
+    "unique_keys": []
+  },
+  "tbldo_tracking": {
+    "name": "tbldo_tracking",
+    "columns": [
+      "id",
+      "no_do",
+      "status",
+      "keterangan",
+      "lokasi",
+      "updated_by",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `fk_dotrk_do` (`no_do`)"
+    ],
+    "unique_keys": []
+  },
+  "tblevel": {
+    "name": "tblevel",
+    "columns": [
+      "id",
+      "level_name"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblhutang_detail": {
+    "name": "tblhutang_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_pembelian",
+      "keterangan",
+      "jumlah_hutang",
+      "jumlah_bayar",
+      "status"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblhutang_header": {
+    "name": "tblhutang_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "no_supplier",
+      "note",
+      "total_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblist_bpjs": {
+    "name": "tblist_bpjs",
+    "columns": [
+      "id",
+      "list_bpjs"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem": {
+    "name": "tblitem",
+    "columns": [
+      "noitem",
+      "kodebarcode",
+      "namaitem",
+      "jenis",
+      "satuan",
+      "hargapokok",
+      "hargajual",
+      "hargajual2",
+      "hargajual3",
+      "hjqtyd2",
+      "hjqtyd3",
+      "hjqtys1",
+      "hjqtys2",
+      "totalpokok",
+      "quantity",
+      "stokmin",
+      "statusitem",
+      "supplier",
+      "supplier2",
+      "supplier3",
+      "statusproduk",
+      "gambar",
+      "note",
+      "rakbarang",
+      "jasawaktu",
+      "jasasatuanwaktu",
+      "jeniskomisi",
+      "komisiprosen",
+      "komisinominal",
+      "inv_idawal",
+      "inv_jmlawal",
+      "inv_hrgawal",
+      "inv_tglawal",
+      "stok_maks",
+      "kd_pabrik",
+      "kd_etalase",
+      "jenis_jasa",
+      "tipe_item",
+      "merek",
+      "kode_part_resmi",
+      "nama_part_resmi",
+      "penggunaan_motor",
+      "merek_tipe",
+      "kategori_rak",
+      "status_validasi",
+      "created_by",
+      "validated_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tipe_item` (`tipe_item`),",
+      "KEY `idx_merek` (`merek`),",
+      "KEY `idx_kategori_rak` (`kategori_rak`),",
+      "KEY `idx_status_validasi` (`status_validasi`)"
+    ],
+    "unique_keys": []
+  },
+  "tblitemjenis": {
+    "name": "tblitemjenis",
+    "columns": [
+      "jenis",
+      "namajenis",
+      "_default",
+      "id",
+      "accurate_id",
+      "status",
+      "margin_khusus",
+      "ikut_margin_jenis",
+      "include_service",
+      "keterangan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status`)"
+    ],
+    "unique_keys": []
+  },
+  "tblitemsatuan": {
+    "name": "tblitemsatuan",
+    "columns": [
+      "satuan",
+      "namasatuan",
+      "_default",
+      "id",
+      "accurate_id",
+      "keterangan",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_backup_categories": {
+    "name": "tblitem_backup_categories",
+    "columns": [
+      "noitem",
+      "namaitem",
+      "kategori_rak",
+      "tipe_item"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_jasa": {
+    "name": "tblitem_jasa",
+    "columns": [
+      "noitem",
+      "namaitem",
+      "waktu",
+      "harga"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_spart": {
+    "name": "tblitem_spart",
+    "columns": [
+      "noitem",
+      "kode_tipe",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblitem_stok": {
+    "name": "tblitem_stok",
+    "columns": [
+      "noitem",
+      "kode_cabang",
+      "stokmin",
+      "stok_maks",
+      "stok_awal",
+      "rakbarang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbljenis": {
+    "name": "tbljenis",
+    "columns": [
+      "kodejenis",
+      "namajenis",
+      "keterangan",
+      "statusjenis"
+    ],
+    "primary_key": "kodejenis",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblkas_keluar_masuk": {
+    "name": "tblkas_keluar_masuk",
+    "columns": [
+      "kode_km",
+      "no_bukti",
+      "kode_akun",
+      "tanggal",
+      "uraian",
+      "masuk",
+      "keluar",
+      "jenis",
+      "kd_cabang",
+      "user",
+      "kode_akun_biaya",
+      "tipe"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblkeluhan": {
+    "name": "tblkeluhan",
+    "columns": [
+      "id_keluhan",
+      "kode_keluhan",
+      "nama_keluhan",
+      "deskripsi",
+      "estimasi_waktu",
+      "status"
+    ],
+    "primary_key": "id_keluhan",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `kode_keluhan` (`kode_keluhan`)"
+    ]
+  },
+  "tblkendaraan": {
+    "name": "tblkendaraan",
+    "columns": [
+      "nopolisi",
+      "pemilik",
+      "alamat",
+      "kode_merek",
+      "tipe",
+      "kode_tipe",
+      "jenis",
+      "kode_jenis",
+      "tahun_buat",
+      "tahun_rakit",
+      "silinder",
+      "warna",
+      "kode_warna",
+      "no_rangka",
+      "no_mesin",
+      "note"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblmekanik": {
+    "name": "tblmekanik",
+    "columns": [
+      "nomekanik",
+      "nama",
+      "alamat",
+      "telp",
+      "keahlian",
+      "status",
+      "email",
+      "tanggal_masuk",
+      "gaji_pokok",
+      "spesialisasi",
+      "sertifikat",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblnamabarang": {
+    "name": "tblnamabarang",
+    "columns": [
+      "id",
+      "nama_barang",
+      "sinonim_1",
+      "sinonim_2",
+      "sinonim_3",
+      "perlu_ukuran",
+      "keterangan",
+      "satuan",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `unique_nama_barang` (`nama_barang`)"
+    ]
+  },
+  "tblorderjual_detail": {
+    "name": "tblorderjual_detail",
+    "columns": [
+      "no_order",
+      "nobaris",
+      "no_item",
+      "quantity",
+      "qty_terima",
+      "harga_jual",
+      "potongan",
+      "harga_sp",
+      "harga_pokok",
+      "total",
+      "user",
+      "kd_cabang",
+      "status_trx",
+      "margin_jual",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblorderjual_header": {
+    "name": "tblorderjual_header",
+    "columns": [
+      "no_order",
+      "status",
+      "tanggal",
+      "no_sales",
+      "no_pelanggan",
+      "note",
+      "total_qty",
+      "total_terima",
+      "total_jual",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "pembayaran",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "tipe_trx",
+      "order_ke",
+      "status_pesanan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblorder_detail": {
+    "name": "tblorder_detail",
+    "columns": [
+      "no_order",
+      "nobaris",
+      "no_item",
+      "quantity",
+      "qty_terima",
+      "harga_pokok",
+      "total",
+      "user",
+      "status_trx",
+      "kd_cabang",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblorder_header": {
+    "name": "tblorder_header",
+    "columns": [
+      "no_order",
+      "status",
+      "tanggal",
+      "tglkirim",
+      "no_supplier",
+      "note",
+      "total_qty",
+      "total_terima",
+      "total_order",
+      "user",
+      "Id_tabel",
+      "kd_cabang",
+      "status_pesanan",
+      "tipe_trx",
+      "no_penjualan",
+      "no_pr",
+      "no_rfq",
+      "status_approval",
+      "approved_by",
+      "approved_date",
+      "rejected_by",
+      "rejected_date",
+      "reject_reason",
+      "po_type",
+      "payment_term",
+      "delivery_address",
+      "contact_person",
+      "contact_phone"
+    ],
+    "primary_key": "no_order",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_pr` (`no_pr`),",
+      "KEY `idx_status_approval` (`status_approval`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpelanggan": {
+    "name": "tblpelanggan",
+    "columns": [
+      "nopelanggan",
+      "namapelanggan",
+      "alamat",
+      "kota",
+      "propinsi",
+      "kodepost",
+      "negara",
+      "telephone",
+      "fax",
+      "kontakperson",
+      "note",
+      "potongan",
+      "tipepot",
+      "lavelharga",
+      "kgrup",
+      "patokan",
+      "foto_tampak_rumah",
+      "link_gmaps",
+      "notlp",
+      "klat",
+      "klong",
+      "panggilan",
+      "saldoawal",
+      "pertanggal",
+      "tgllahir",
+      "id_panggilan",
+      "bl_pajak",
+      "th_pajak",
+      "merek_id",
+      "tipe_id",
+      "jenis_id",
+      "warna_id",
+      "gender",
+      "valid_tgl_lahir",
+      "informasi_sumber"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `merek_id` (`merek_id`),",
+      "KEY `tipe_id` (`tipe_id`),",
+      "KEY `jenis_id` (`jenis_id`),",
+      "KEY `warna_id` (`warna_id`),",
+      "KEY `idx_tblpelanggan_nopelanggan` (`nopelanggan`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpelanggangrup": {
+    "name": "tblpelanggangrup",
+    "columns": [
+      "kgrup",
+      "grup",
+      "diskon"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpembelian_detail": {
+    "name": "tblpembelian_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_item",
+      "qty_order",
+      "quantity",
+      "qty_retur",
+      "harga_pokok",
+      "potongan",
+      "harga_sp",
+      "total",
+      "sts_order",
+      "id_inv",
+      "id",
+      "user",
+      "kd_cabang",
+      "status_trx"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpembelian_header": {
+    "name": "tblpembelian_header",
+    "columns": [
+      "notransaksi",
+      "status",
+      "carabayar",
+      "tanggal",
+      "no_order",
+      "tanggal_order",
+      "no_supplier",
+      "note",
+      "total_qty_order",
+      "total_qty",
+      "total_beli",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "total_retur",
+      "pembayaran",
+      "tanggal_jt",
+      "tanggal_lunas",
+      "jumlah_bayar",
+      "user",
+      "Id_tabel",
+      "kd_cabang",
+      "status_lunas",
+      "lama_hari",
+      "no_do",
+      "no_pr",
+      "status_qc",
+      "qc_by",
+      "qc_date",
+      "qc_notes"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_do` (`no_do`),",
+      "KEY `idx_pr` (`no_pr`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpenjualan_detail": {
+    "name": "tblpenjualan_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_item",
+      "qty_order",
+      "quantity",
+      "qty_retur",
+      "harga_jual",
+      "potongan",
+      "harga_sp",
+      "harga_pokok",
+      "total",
+      "sts_order",
+      "id",
+      "user",
+      "kd_cabang",
+      "status_trx"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpenjualan_header": {
+    "name": "tblpenjualan_header",
+    "columns": [
+      "notransaksi",
+      "status",
+      "carabayar",
+      "tanggal",
+      "no_order",
+      "tanggal_order",
+      "no_sales",
+      "no_pelanggan",
+      "note",
+      "total_qty_order",
+      "total_qty",
+      "total_jual",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "total_retur",
+      "pembayaran",
+      "tanggal_jt",
+      "tanggal_lunas",
+      "jumlah_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "status_lunas",
+      "lama_hari"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpiutang_detail": {
+    "name": "tblpiutang_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_penjualan",
+      "keterangan",
+      "jumlah_piutang",
+      "jumlah_bayar",
+      "status"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpiutang_header": {
+    "name": "tblpiutang_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "no_pelanggan",
+      "note",
+      "total_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblpo_approval_log": {
+    "name": "tblpo_approval_log",
+    "columns": [
+      "id",
+      "no_po",
+      "level_approval",
+      "approver",
+      "action",
+      "notes",
+      "action_date"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_po` (`no_po`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpr_approval_log": {
+    "name": "tblpr_approval_log",
+    "columns": [
+      "id",
+      "no_pr",
+      "level_approval",
+      "approver",
+      "action",
+      "notes",
+      "action_date"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_pr` (`no_pr`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpr_tracking": {
+    "name": "tblpr_tracking",
+    "columns": [
+      "id",
+      "no_pr",
+      "status_old",
+      "status_new",
+      "keterangan",
+      "updated_by",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_pr` (`no_pr`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpurchase_request_detail": {
+    "name": "tblpurchase_request_detail",
+    "columns": [
+      "id",
+      "no_pr",
+      "nobaris",
+      "no_item",
+      "nama_item",
+      "quantity",
+      "qty_approved",
+      "qty_po",
+      "satuan",
+      "harga_estimasi",
+      "total_estimasi",
+      "keterangan",
+      "status_item"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_pr` (`no_pr`),",
+      "KEY `idx_item` (`no_item`)"
+    ],
+    "unique_keys": []
+  },
+  "tblpurchase_request_header": {
+    "name": "tblpurchase_request_header",
+    "columns": [
+      "no_pr",
+      "tanggal_pr",
+      "tanggal_butuh",
+      "requester",
+      "departemen",
+      "alasan",
+      "total_qty",
+      "total_estimasi",
+      "status_pr",
+      "approved_by",
+      "approved_date",
+      "rejected_by",
+      "rejected_date",
+      "reject_reason",
+      "kd_cabang",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "no_pr",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status_pr`),",
+      "KEY `idx_tanggal` (`tanggal_pr`),",
+      "KEY `idx_cabang` (`kd_cabang`)"
+    ],
+    "unique_keys": []
+  },
+  "tblretur_pembelian_detail": {
+    "name": "tblretur_pembelian_detail",
+    "columns": [
+      "no_retur",
+      "no_pembelian",
+      "no_item",
+      "quantity",
+      "harga_pokok",
+      "potongan",
+      "total",
+      "user",
+      "kd_cabang",
+      "alasan_retur",
+      "jenis_penggantian",
+      "id",
+      "status_penggantian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblretur_pembelian_header": {
+    "name": "tblretur_pembelian_header",
+    "columns": [
+      "noretur",
+      "nopembelian",
+      "tanggal",
+      "note",
+      "total_qty_retur",
+      "total_retur",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "user",
+      "kd_cabang",
+      "status_retur"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblretur_penjualan_detail": {
+    "name": "tblretur_penjualan_detail",
+    "columns": [
+      "no_retur",
+      "no_pembelian",
+      "no_item",
+      "quantity",
+      "harga_pokok",
+      "potongan",
+      "total",
+      "user",
+      "kd_cabang",
+      "alasan_retur",
+      "jenis_penggantian",
+      "id",
+      "status_penggantian"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblretur_penjualan_header": {
+    "name": "tblretur_penjualan_header",
+    "columns": [
+      "noretur",
+      "nopembelian",
+      "tanggal",
+      "note",
+      "total_qty_retur",
+      "total_retur",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "user",
+      "kd_cabang",
+      "status_retur"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblrfq_detail": {
+    "name": "tblrfq_detail",
+    "columns": [
+      "id",
+      "no_rfq",
+      "nobaris",
+      "no_item",
+      "quantity",
+      "satuan",
+      "spesifikasi"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_rfq` (`no_rfq`)"
+    ],
+    "unique_keys": []
+  },
+  "tblrfq_header": {
+    "name": "tblrfq_header",
+    "columns": [
+      "no_rfq",
+      "no_pr",
+      "tanggal_rfq",
+      "tanggal_deadline",
+      "keterangan",
+      "status_rfq",
+      "winner_supplier",
+      "kd_cabang",
+      "created_by",
+      "created_at"
+    ],
+    "primary_key": "no_rfq",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_pr` (`no_pr`)"
+    ],
+    "unique_keys": []
+  },
+  "tblrfq_supplier_response": {
+    "name": "tblrfq_supplier_response",
+    "columns": [
+      "id",
+      "no_rfq",
+      "no_supplier",
+      "no_item",
+      "harga_penawaran",
+      "lead_time_days",
+      "keterangan",
+      "status_response",
+      "submitted_date"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_rfq` (`no_rfq`),",
+      "KEY `idx_supplier` (`no_supplier`)"
+    ],
+    "unique_keys": []
+  },
+  "tblsales": {
+    "name": "tblsales",
+    "columns": [
+      "nosales",
+      "namasales",
+      "alamat",
+      "kota",
+      "telephone",
+      "komisijual",
+      "_default",
+      "komisi_nominal",
+      "op_pil_hitung",
+      "op_pil_sistem_komisi",
+      "status_baris"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblsatuan": {
+    "name": "tblsatuan",
+    "columns": [
+      "kodesatuan",
+      "satuan",
+      "keterangan",
+      "statussatuan"
+    ],
+    "primary_key": "kodesatuan",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservice": {
+    "name": "tblservice",
+    "columns": [
+      "no_service",
+      "tanggal",
+      "jam",
+      "no_pelanggan",
+      "no_polisi",
+      "status",
+      "kd_cabang",
+      "id_user",
+      "total",
+      "diskon_persen",
+      "diskon_nom",
+      "ppn_persen",
+      "ppn_nom",
+      "total_grand",
+      "bayar",
+      "kembali",
+      "jenis_bayar",
+      "total_waktu",
+      "status_jemput",
+      "kondisi_motor",
+      "jarak_jemput",
+      "tarif_jemput",
+      "keterangan",
+      "foto_motor",
+      "km_skr",
+      "mekanik1",
+      "mekanik2",
+      "mekanik3",
+      "mekanik4",
+      "biayaM1",
+      "biayaM2",
+      "biayaM3",
+      "biayaM4",
+      "km_berikut",
+      "subtotal_jasa",
+      "subtotal_item",
+      "subtotal",
+      "total_diskon",
+      "total_pajak",
+      "total_akhir",
+      "created_at",
+      "updated_at",
+      "status_servis",
+      "keterangan_jemput",
+      "foto_patokan",
+      "kepala_mekanik1",
+      "kepala_mekanik2",
+      "admin1",
+      "admin2",
+      "persen_kepala_mekanik1",
+      "persen_kepala_mekanik2",
+      "persen_admin1",
+      "persen_admin2",
+      "persen_mekanik1",
+      "persen_mekanik2",
+      "persen_mekanik3",
+      "persen_mekanik4",
+      "metode_pembayaran",
+      "bukti_pembayaran",
+      "tanggal_cancel",
+      "alasan_cancel",
+      "user_cancel",
+      "biaya_cancel",
+      "cancel_note",
+      "total_penawaran",
+      "total_penawaran_disetujui",
+      "jumlah_temuan",
+      "jumlah_penawaran"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tblservice_no_service` (`no_service`),",
+      "KEY `idx_tblservice_tanggal` (`tanggal`),",
+      "KEY `idx_tblservice_status_jemput` (`status_jemput`),",
+      "KEY `idx_kepala_mekanik1` (`kepala_mekanik1`),",
+      "KEY `idx_mekanik1` (`mekanik1`),",
+      "KEY `idx_status_servis` (`status_servis`),",
+      "KEY `idx_tanggal_cancel` (`tanggal_cancel`),",
+      "KEY `idx_kondisi_jarak` (`kondisi_motor`,`jarak_jemput`),",
+      "KEY `idx_pelanggan_status` (`no_pelanggan`,`status_servis`),",
+      "KEY `idx_tanggal_status` (`tanggal`,`status_servis`)"
+    ],
+    "unique_keys": []
+  },
+  "tblservice_advisor": {
+    "name": "tblservice_advisor",
+    "columns": [
+      "no_service",
+      "advisor"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservice_backup": {
+    "name": "tblservice_backup",
+    "columns": [
+      "no_service",
+      "tanggal",
+      "jam",
+      "no_pelanggan",
+      "no_polisi",
+      "status",
+      "kd_cabang",
+      "id_user",
+      "total",
+      "diskon_persen",
+      "diskon_nom",
+      "ppn_persen",
+      "ppn_nom",
+      "total_grand",
+      "bayar",
+      "kembali",
+      "jenis_bayar",
+      "total_waktu",
+      "status_jemput",
+      "keterangan",
+      "foto_motor",
+      "km_skr",
+      "mekanik1",
+      "mekanik2",
+      "mekanik3",
+      "mekanik4",
+      "biayaM1",
+      "biayaM2",
+      "biayaM3",
+      "biayaM4",
+      "km_berikut",
+      "subtotal_jasa",
+      "subtotal_item",
+      "subtotal",
+      "total_diskon",
+      "total_pajak",
+      "total_akhir",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservis_barang": {
+    "name": "tblservis_barang",
+    "columns": [
+      "no_service",
+      "nobaris",
+      "no_item",
+      "quantity",
+      "qty_retur",
+      "harga_jual",
+      "potongan",
+      "total",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblservis_jasa": {
+    "name": "tblservis_jasa",
+    "columns": [
+      "no_service",
+      "nobaris",
+      "no_item",
+      "waktu",
+      "harga",
+      "potongan",
+      "total",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`)"
+    ],
+    "unique_keys": []
+  },
+  "tblsupplier": {
+    "name": "tblsupplier",
+    "columns": [
+      "nosupplier",
+      "namasupplier",
+      "tipe_pemasok",
+      "alamat",
+      "kota",
+      "propinsi",
+      "kodepost",
+      "negara",
+      "telephone",
+      "no_whatsapp",
+      "fax",
+      "namabank",
+      "noaccount",
+      "atasnama",
+      "kontakperson",
+      "email",
+      "note",
+      "saldoawal",
+      "pertanggal",
+      "jmlbayar",
+      "sisa",
+      "kd_cabang",
+      "lama_hari_kirim",
+      "jangka_waktu_kredit",
+      "accurate_id"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tblsupplier_spart": {
+    "name": "tblsupplier_spart",
+    "columns": [
+      "nosupplier",
+      "id_pabrik",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbl_adm": {
+    "name": "tbl_adm",
+    "columns": [
+      "kode",
+      "nama",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbl_kepala_mekanik_harian": {
+    "name": "tbl_kepala_mekanik_harian",
+    "columns": [
+      "id",
+      "kode_cabang",
+      "tanggal_kerja",
+      "kepala_mekanik_1",
+      "kepala_mekanik_2",
+      "shift_kerja",
+      "keterangan",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tanggal` (`tanggal_kerja`),",
+      "KEY `idx_cabang` (`kode_cabang`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `idx_unique_cabang_tanggal` (`kode_cabang`,`tanggal_kerja`),"
+    ]
+  },
+  "tbl_master_kepala_mekanik": {
+    "name": "tbl_master_kepala_mekanik",
+    "columns": [
+      "id",
+      "kode_cabang",
+      "nama_kepala_mekanik",
+      "nip_karyawan",
+      "no_telepon",
+      "tanggal_mulai",
+      "tanggal_selesai",
+      "status_aktif",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbmaster_barang_custom": {
+    "name": "tbmaster_barang_custom",
+    "columns": [
+      "id",
+      "kode_barang",
+      "nama_barang",
+      "harga_jual",
+      "satuan",
+      "kategori",
+      "deskripsi",
+      "status_aktif",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `status_aktif` (`status_aktif`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode_barang` (`kode_barang`),"
+    ]
+  },
+  "tbmaster_barang_fastmoves": {
+    "name": "tbmaster_barang_fastmoves",
+    "columns": [
+      "id",
+      "kode_kategori",
+      "kode_barang",
+      "is_featured",
+      "urutan",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_kategori` (`kode_kategori`),",
+      "KEY `idx_barang` (`kode_barang`),",
+      "KEY `idx_featured` (`is_featured`)"
+    ],
+    "unique_keys": []
+  },
+  "tbmaster_barang_nonitem": {
+    "name": "tbmaster_barang_nonitem",
+    "columns": [
+      "id",
+      "kode_barang_temp",
+      "nama_barang",
+      "kategori",
+      "satuan",
+      "harga_estimasi",
+      "supplier",
+      "keterangan",
+      "status_approval",
+      "perlu_approval",
+      "kode_barang_final",
+      "user_request",
+      "user_approval",
+      "tanggal_request",
+      "tanggal_approval",
+      "alasan_reject",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status_approval`),",
+      "KEY `idx_perlu_approval` (`perlu_approval`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode_barang_temp` (`kode_barang_temp`),"
+    ]
+  },
+  "tbmaster_jenis_item": {
+    "name": "tbmaster_jenis_item",
+    "columns": [
+      "id",
+      "kode",
+      "nama_jenis",
+      "margin",
+      "status",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tbmaster_jenis_item_kode` (`kode`),",
+      "KEY `idx_tbmaster_jenis_item_status` (`status`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode` (`kode`),"
+    ]
+  },
+  "tbmaster_kategori_fastmoves": {
+    "name": "tbmaster_kategori_fastmoves",
+    "columns": [
+      "id",
+      "kode_kategori",
+      "nama_kategori",
+      "icon",
+      "urutan",
+      "is_active",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `kode_kategori` (`kode_kategori`)"
+    ]
+  },
+  "tbmaster_kategori_item": {
+    "name": "tbmaster_kategori_item",
+    "columns": [
+      "id",
+      "kategori_item",
+      "keterangan",
+      "margin_sesuai_jenis",
+      "margin_kategori",
+      "status",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status` (`status`),",
+      "KEY `idx_margin_sesuai_jenis` (`margin_sesuai_jenis`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_kategori_item` (`kategori_item`,`status`),"
+    ]
+  },
+  "tbmaster_keluhan": {
+    "name": "tbmaster_keluhan",
+    "columns": [
+      "id",
+      "kode_keluhan",
+      "nama_keluhan",
+      "deskripsi",
+      "kategori",
+      "status_aktif",
+      "status_approval",
+      "requested_by",
+      "requested_from",
+      "approved_by",
+      "approved_at",
+      "rejection_reason",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_status_approval` (`status_approval`),",
+      "KEY `idx_requested_from` (`requested_from`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode_keluhan` (`kode_keluhan`),"
+    ]
+  },
+  "tbmaster_keluhan_temuan": {
+    "name": "tbmaster_keluhan_temuan",
+    "columns": [
+      "id",
+      "kode_keluhan",
+      "kode_temuan",
+      "prioritas",
+      "is_mandatory",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_keluhan` (`kode_keluhan`),",
+      "KEY `idx_temuan` (`kode_temuan`)"
+    ],
+    "unique_keys": []
+  },
+  "tbmaster_keluhan_workorder": {
+    "name": "tbmaster_keluhan_workorder",
+    "columns": [
+      "id",
+      "kode_keluhan",
+      "kode_workorder",
+      "prioritas",
+      "status_aktif",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_kode_keluhan` (`kode_keluhan`),",
+      "KEY `idx_kode_workorder` (`kode_workorder`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_keluhan_workorder` (`kode_keluhan`,`kode_workorder`),"
+    ]
+  },
+  "tbmaster_nama_barang": {
+    "name": "tbmaster_nama_barang",
+    "columns": [
+      "id",
+      "nama_barang",
+      "sinonim_1",
+      "sinonim_2",
+      "sinonim_3",
+      "ukuran",
+      "nama_utama",
+      "nama_alternatif",
+      "spesifikasi_diperlukan",
+      "keterangan",
+      "status",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `nama_utama` (`nama_utama`),",
+      "KEY `idx_nama_barang` (`nama_barang`),",
+      "KEY `idx_status` (`status`)"
+    ],
+    "unique_keys": []
+  },
+  "tbmaster_temuan": {
+    "name": "tbmaster_temuan",
+    "columns": [
+      "id",
+      "kode_temuan",
+      "nama_temuan",
+      "deskripsi",
+      "kategori",
+      "tingkat_urgensi",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_kategori` (`kategori`),",
+      "KEY `idx_active` (`is_active`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `kode_temuan` (`kode_temuan`),"
+    ]
+  },
+  "tbmaster_temuan_barang_mapping": {
+    "name": "tbmaster_temuan_barang_mapping",
+    "columns": [
+      "id",
+      "kode_temuan",
+      "noitem",
+      "is_primary",
+      "prioritas",
+      "qty_default",
+      "keterangan",
+      "status_aktif",
+      "created_by",
+      "created_at",
+      "updated_by",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_temuan` (`kode_temuan`),",
+      "KEY `idx_status` (`status_aktif`),",
+      "KEY `idx_item` (`noitem`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_mapping` (`kode_temuan`,`noitem`),"
+    ]
+  },
+  "tbmaster_tipe_detail": {
+    "name": "tbmaster_tipe_detail",
+    "columns": [
+      "id",
+      "kode_tipe",
+      "kode_brand",
+      "id_tipe_header",
+      "nama_detail",
+      "cc",
+      "id_jenis_motor",
+      "fitur_pembeda",
+      "ciri_fisik_pembeda",
+      "tahun_awal",
+      "tahun_akhir",
+      "no_seri_mesin",
+      "id_kategori_motor",
+      "status",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_kode_brand` (`kode_brand`),",
+      "KEY `idx_id_tipe_header` (`id_tipe_header`),",
+      "KEY `idx_id_jenis_motor` (`id_jenis_motor`),",
+      "KEY `idx_id_kategori_motor` (`id_kategori_motor`),",
+      "KEY `idx_status` (`status`),",
+      "KEY `idx_cc` (`cc`),",
+      "KEY `idx_tahun_awal` (`tahun_awal`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_kode_tipe` (`kode_tipe`,`status`),"
+    ]
+  },
+  "tbmaster_tipe_header": {
+    "name": "tbmaster_tipe_header",
+    "columns": [
+      "id",
+      "nama_model",
+      "id_brand",
+      "status",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `id_brand` (`id_brand`),",
+      "KEY `idx_status` (`status`)"
+    ],
+    "unique_keys": []
+  },
+  "tbmekanik_level": {
+    "name": "tbmekanik_level",
+    "columns": [
+      "id",
+      "mekanik_level"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpabrik_barang": {
+    "name": "tbpabrik_barang",
+    "columns": [
+      "id",
+      "pabrik_barang",
+      "accurate_id",
+      "deskripsi",
+      "accurate_synced",
+      "accurate_notes",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpabrik_motor": {
+    "name": "tbpabrik_motor",
+    "columns": [
+      "id",
+      "merek",
+      "kode_brand",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpanggilan": {
+    "name": "tbpanggilan",
+    "columns": [
+      "id",
+      "panggilan"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpegawai": {
+    "name": "tbpegawai",
+    "columns": [
+      "nip",
+      "nama",
+      "alamat",
+      "kode_jabatan",
+      "notlp",
+      "kode_jk",
+      "tempat_lahir",
+      "tgl_lahir",
+      "email",
+      "kode_pendidikan",
+      "npwp",
+      "kode_status_kawin",
+      "jml_tanggungan",
+      "kode_ptkp",
+      "gaji_pokok",
+      "no_rek",
+      "nama_rek",
+      "bank",
+      "ktp",
+      "kode_agama",
+      "kode_darah",
+      "no_bpjs_tk",
+      "no_bpjs_kes",
+      "kode_divisi",
+      "kode_status_emp",
+      "tgl_masuk",
+      "foto_pegawai",
+      "kota",
+      "prop",
+      "district",
+      "districtsub",
+      "kodepos",
+      "id_hari_kerja",
+      "jumlah_cuti",
+      "user_name",
+      "password",
+      "tgl_input",
+      "status_aktif",
+      "tlp_rumah",
+      "wage_template",
+      "id_tipepajak",
+      "lokasi",
+      "kode_perusahaan",
+      "negara"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpegawai_salary": {
+    "name": "tbpegawai_salary",
+    "columns": [
+      "nip",
+      "id_salary",
+      "jumlah",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbpendidikan": {
+    "name": "tbpendidikan",
+    "columns": [
+      "kode",
+      "pendidikan"
+    ],
+    "primary_key": "kode",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbperusahaan": {
+    "name": "tbperusahaan",
+    "columns": [
+      "kode_perusahaan",
+      "nama_perusahaan",
+      "tlp_perusahaan",
+      "email_perusahaan",
+      "bisnis",
+      "npwp",
+      "leader",
+      "alamat",
+      "logo_perusahaan",
+      "file_org",
+      "_default",
+      "leader_id",
+      "reg",
+      "bpjs_kes",
+      "social",
+      "cur",
+      "kota",
+      "prop",
+      "district",
+      "districtsub",
+      "rt",
+      "rw",
+      "negara",
+      "kodepos",
+      "kontak",
+      "kontaktlp"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbrakbarang": {
+    "name": "tbrakbarang",
+    "columns": [
+      "id",
+      "rak_barang"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbsaldo_hutang": {
+    "name": "tbsaldo_hutang",
+    "columns": [
+      "nosupplier",
+      "tanggal",
+      "saldo_awal",
+      "keterangan",
+      "saldo_bayar"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbsaldo_piutang": {
+    "name": "tbsaldo_piutang",
+    "columns": [
+      "nopelanggan",
+      "tanggal",
+      "saldo_awal",
+      "keterangan",
+      "saldo_bayar"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbservis_keluhan": {
+    "name": "tbservis_keluhan",
+    "columns": [
+      "no_service",
+      "keluhan",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbservis_keluhan_status": {
+    "name": "tbservis_keluhan_status",
+    "columns": [
+      "id",
+      "no_service",
+      "keluhan",
+      "kategori",
+      "kode_keluhan",
+      "status_pengerjaan",
+      "auto_workorder",
+      "workorder_applied",
+      "keterangan_tidak_selesai",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_auto_workorder` (`auto_workorder`),",
+      "KEY `idx_keluhan_service` (`no_service`,`keluhan`),",
+      "KEY `idx_status_pengerjaan` (`status_pengerjaan`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_keluhan_tracking": {
+    "name": "tbservis_keluhan_tracking",
+    "columns": [
+      "id",
+      "no_service",
+      "keluhan_id",
+      "proses_id",
+      "status_proses",
+      "mekanik_id",
+      "waktu_mulai",
+      "waktu_selesai",
+      "catatan",
+      "biaya_actual",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_service` (`no_service`),",
+      "KEY `keluhan_id` (`keluhan_id`),",
+      "KEY `proses_id` (`proses_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_penawaran_log": {
+    "name": "tbservis_penawaran_log",
+    "columns": [
+      "id",
+      "penawaran_id",
+      "no_service",
+      "action",
+      "alasan",
+      "user_action",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_penawaran_id` (`penawaran_id`),",
+      "KEY `idx_no_service` (`no_service`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_penawaran_part": {
+    "name": "tbservis_penawaran_part",
+    "columns": [
+      "id",
+      "no_service",
+      "temuan_id",
+      "is_from_suggestion",
+      "suggestion_priority",
+      "kode_barang",
+      "nama_barang",
+      "quantity",
+      "harga_satuan",
+      "total_harga",
+      "stok_tersedia",
+      "estimasi_ketersediaan",
+      "status_penawaran",
+      "alasan_tolak",
+      "keterangan_tolak",
+      "catatan_penawaran",
+      "discount_persen",
+      "discount_nominal",
+      "harga_final",
+      "tanggal_penawaran",
+      "tanggal_respon",
+      "user_penawaran",
+      "user_respon",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`),",
+      "KEY `idx_temuan_id` (`temuan_id`),",
+      "KEY `idx_kode_barang` (`kode_barang`),",
+      "KEY `idx_status` (`status_penawaran`),",
+      "KEY `idx_service` (`no_service`),",
+      "KEY `idx_temuan` (`temuan_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_penawaran_rejection_summary": {
+    "name": "tbservis_penawaran_rejection_summary",
+    "columns": [
+      "id",
+      "kode_barang",
+      "nama_barang",
+      "total_penawaran",
+      "total_diterima",
+      "total_ditolak",
+      "alasan_tolak_terbanyak",
+      "acceptance_rate",
+      "last_offered_date",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_rate` (`acceptance_rate`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `unique_barang` (`kode_barang`),"
+    ]
+  },
+  "tbservis_pending_items": {
+    "name": "tbservis_pending_items",
+    "columns": [
+      "id",
+      "no_service",
+      "wo_id",
+      "kode_item",
+      "nama_item",
+      "tipe",
+      "quantity",
+      "harga_satuan",
+      "total",
+      "waktu",
+      "status_approval",
+      "alasan_tolak",
+      "keterangan_tolak",
+      "approved_by",
+      "approved_at",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`),",
+      "KEY `idx_status` (`status_approval`),",
+      "KEY `idx_wo_id` (`wo_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_pengerjaan": {
+    "name": "tbservis_pengerjaan",
+    "columns": [
+      "no_service",
+      "item_pengerjaan",
+      "kd_mekanik",
+      "status_pengerjaan",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbservis_temuan": {
+    "name": "tbservis_temuan",
+    "columns": [
+      "id",
+      "no_service",
+      "keluhan_id",
+      "mekanik_id",
+      "mekanik_name",
+      "kode_temuan",
+      "temuan_custom",
+      "deskripsi_temuan",
+      "jenis_perbaikan",
+      "status_temuan",
+      "keterangan_tidak_selesai",
+      "tingkat_urgensi",
+      "estimasi_biaya",
+      "biaya_actual",
+      "foto_temuan",
+      "created_by",
+      "created_at",
+      "updated_by",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`),",
+      "KEY `idx_keluhan_id` (`keluhan_id`),",
+      "KEY `idx_kode_temuan` (`kode_temuan`),",
+      "KEY `idx_status` (`status_temuan`),",
+      "KEY `idx_status_temuan` (`status_temuan`),",
+      "KEY `idx_service` (`no_service`),",
+      "KEY `idx_keluhan` (`keluhan_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_temuan_activity_log": {
+    "name": "tbservis_temuan_activity_log",
+    "columns": [
+      "id",
+      "no_service",
+      "temuan_id",
+      "penawaran_id",
+      "activity_type",
+      "description",
+      "old_value",
+      "new_value",
+      "user_id",
+      "user_name",
+      "ip_address",
+      "user_agent",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_service` (`no_service`),",
+      "KEY `idx_temuan` (`temuan_id`),",
+      "KEY `idx_penawaran` (`penawaran_id`),",
+      "KEY `idx_type` (`activity_type`),",
+      "KEY `idx_date` (`created_at`)"
+    ],
+    "unique_keys": []
+  },
+  "tbservis_workorder": {
+    "name": "tbservis_workorder",
+    "columns": [
+      "id",
+      "no_service",
+      "kode_wo",
+      "status_pengerjaan",
+      "keterangan_tidak_selesai",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_workorder_service` (`no_service`,`kode_wo`),",
+      "KEY `idx_status_pengerjaan` (`status_pengerjaan`)"
+    ],
+    "unique_keys": []
+  },
+  "tbsetting": {
+    "name": "tbsetting",
+    "columns": [
+      "id",
+      "nama_perusahaan",
+      "alamat",
+      "notlp",
+      "fax",
+      "file_logo"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbso_detail": {
+    "name": "tbso_detail",
+    "columns": [
+      "no_transaksi",
+      "no_item",
+      "quantity",
+      "harga",
+      "total",
+      "keterangan",
+      "user",
+      "id",
+      "kd_cabang",
+      "status_trx"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbso_header": {
+    "name": "tbso_header",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "note",
+      "user",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstatus_emp": {
+    "name": "tbstatus_emp",
+    "columns": [
+      "kode",
+      "status"
+    ],
+    "primary_key": "kode",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstatus_harga": {
+    "name": "tbstatus_harga",
+    "columns": [
+      "id",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstatus_kehadiran": {
+    "name": "tbstatus_kehadiran",
+    "columns": [
+      "id",
+      "status_kehadiran"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstatus_nikah": {
+    "name": "tbstatus_nikah",
+    "columns": [
+      "kode",
+      "status_nikah"
+    ],
+    "primary_key": "kode",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstatus_produk": {
+    "name": "tbstatus_produk",
+    "columns": [
+      "id",
+      "status"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbstok": {
+    "name": "tbstok",
+    "columns": [
+      "tipe",
+      "no_transaksi",
+      "no_item",
+      "tanggal",
+      "masuk",
+      "keluar",
+      "keterangan",
+      "kd_cabang",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtarif_ptkp": {
+    "name": "tbtarif_ptkp",
+    "columns": [
+      "golongan",
+      "kode",
+      "tarif",
+      "id",
+      "id_parent"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtarif_ptkph": {
+    "name": "tbtarif_ptkph",
+    "columns": [
+      "id",
+      "nama",
+      "keterangan",
+      "berlaku_mulai"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtipe_item": {
+    "name": "tbtipe_item",
+    "columns": [
+      "id",
+      "tipe"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtipe_motor": {
+    "name": "tbtipe_motor",
+    "columns": [
+      "kode_tipe",
+      "tipe",
+      "kode_pabrik",
+      "kode_kategori",
+      "tahun"
+    ],
+    "primary_key": "kode_tipe",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtipe_pajak": {
+    "name": "tbtipe_pajak",
+    "columns": [
+      "id",
+      "tipe_pajak"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbtipe_potongan": {
+    "name": "tbtipe_potongan",
+    "columns": [
+      "kdtipe",
+      "tipe_pot"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tburut": {
+    "name": "tburut",
+    "columns": [
+      "id",
+      "urut",
+      "tipe"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbuser": {
+    "name": "tbuser",
+    "columns": [
+      "id",
+      "kode_karyawan",
+      "nik",
+      "nama_user",
+      "nama_lengkap",
+      "nama_panggilan",
+      "password",
+      "foto_user",
+      "foto",
+      "user_akses",
+      "status_row",
+      "email",
+      "telp",
+      "alamat",
+      "tanggal_masuk",
+      "tanggal_keluar",
+      "spesialisasi",
+      "sertifikat",
+      "kode_posisi",
+      "kode_level",
+      "kode_cabang",
+      "role_name",
+      "department",
+      "is_active",
+      "created_at",
+      "updated_at",
+      "last_login"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbuser_karyawan": {
+    "name": "tbuser_karyawan",
+    "columns": [
+      "id",
+      "kode_karyawan",
+      "nik",
+      "nama_lengkap",
+      "nama_panggilan",
+      "kode_posisi",
+      "kode_level",
+      "kode_cabang",
+      "email",
+      "telp",
+      "alamat",
+      "tanggal_masuk",
+      "tanggal_keluar",
+      "spesialisasi",
+      "sertifikat",
+      "foto",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_nama` (`nama_lengkap`),",
+      "KEY `idx_posisi` (`kode_posisi`),",
+      "KEY `idx_level` (`kode_level`),",
+      "KEY `idx_kode_karyawan` (`kode_karyawan`),",
+      "KEY `idx_kode_cabang` (`kode_cabang`),",
+      "KEY `idx_tanggal_masuk` (`tanggal_masuk`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `uk_kode_karyawan` (`kode_karyawan`),"
+    ]
+  },
+  "tbwarna": {
+    "name": "tbwarna",
+    "columns": [
+      "warna",
+      "id"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbwilayah": {
+    "name": "tbwilayah",
+    "columns": [
+      "id",
+      "provinsi",
+      "kota_kabupaten",
+      "kecamatan",
+      "kelurahan_desa"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_provinsi` (`provinsi`),",
+      "KEY `idx_kota` (`kota_kabupaten`),",
+      "KEY `idx_kecamatan` (`kecamatan`)"
+    ],
+    "unique_keys": []
+  },
+  "tbworkorderdetail": {
+    "name": "tbworkorderdetail",
+    "columns": [
+      "kode_wo",
+      "kode_barang",
+      "jumlah",
+      "satuan",
+      "diskon",
+      "status_diskon",
+      "id",
+      "tipe",
+      "harga",
+      "total"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbworkorderheader": {
+    "name": "tbworkorderheader",
+    "columns": [
+      "kode_wo",
+      "nama_wo",
+      "keterangan",
+      "status",
+      "waktu",
+      "harga"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbwork_loc": {
+    "name": "tbwork_loc",
+    "columns": [
+      "kode_perusahaan",
+      "kode_lokasi",
+      "nama_lokasi",
+      "lat_pos",
+      "lon_pos"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbwork_schedule": {
+    "name": "tbwork_schedule",
+    "columns": [
+      "id_work",
+      "kode_perusahaan",
+      "schedule_type",
+      "deskripsi",
+      "jml_day"
+    ],
+    "primary_key": "id_work",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tbwork_schedule_dtl": {
+    "name": "tbwork_schedule_dtl",
+    "columns": [
+      "id_seq",
+      "id_work",
+      "jam_masuk",
+      "jam_keluar",
+      "sequence"
+    ],
+    "primary_key": "id_seq",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tb_antrian_servis": {
+    "name": "tb_antrian_servis",
+    "columns": [
+      "id",
+      "no_antrian",
+      "no_service",
+      "tanggal",
+      "jam_ambil",
+      "jam_mulai",
+      "jam_selesai",
+      "status_antrian",
+      "prioritas",
+      "estimasi_waktu",
+      "catatan",
+      "created_at",
+      "updated_at",
+      "alasan_batal",
+      "user_batal",
+      "waktu_batal"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_service` (`no_service`),",
+      "KEY `status_antrian` (`status_antrian`),",
+      "KEY `tanggal` (`tanggal`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `no_antrian` (`no_antrian`,`tanggal`),"
+    ]
+  },
+  "tb_bank": {
+    "name": "tb_bank",
+    "columns": [
+      "kode_bank",
+      "bank",
+      "norek",
+      "namarek",
+      "akun_biaya"
+    ],
+    "primary_key": "kode_bank",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tb_booking": {
+    "name": "tb_booking",
+    "columns": [
+      "tanggal",
+      "jam",
+      "nama",
+      "no_telepon",
+      "no_polisi",
+      "status_pelanggan",
+      "id",
+      "no_booking",
+      "status_booking"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "tb_kepala_mekanik_schedule": {
+    "name": "tb_kepala_mekanik_schedule",
+    "columns": [
+      "id",
+      "kode_karyawan",
+      "kode_cabang",
+      "tanggal_kerja",
+      "shift",
+      "status_kehadiran",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `uk_schedule` (`kode_karyawan`,`tanggal_kerja`,`shift`)"
+    ]
+  },
+  "tb_log_antrian": {
+    "name": "tb_log_antrian",
+    "columns": [
+      "id",
+      "no_antrian",
+      "no_service",
+      "aktivitas",
+      "keterangan",
+      "user_id",
+      "user_nama",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_antrian` (`no_antrian`),",
+      "KEY `no_service` (`no_service`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_log_cancel_servis": {
+    "name": "tb_log_cancel_servis",
+    "columns": [
+      "id",
+      "no_service",
+      "tanggal_cancel",
+      "alasan_cancel",
+      "kategori_alasan",
+      "user_cancel",
+      "biaya_cancel",
+      "status_barang",
+      "status_pembayaran",
+      "nominal_dp",
+      "nominal_refund",
+      "catatan",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`),",
+      "KEY `idx_tanggal_cancel` (`tanggal_cancel`),",
+      "KEY `idx_kategori` (`kategori_alasan`),",
+      "KEY `idx_user` (`user_cancel`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_master_level": {
+    "name": "tb_master_level",
+    "columns": [
+      "id",
+      "kode_posisi",
+      "kode_level",
+      "nama_level",
+      "urutan",
+      "deskripsi",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_kode_posisi` (`kode_posisi`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `uk_kode_level` (`kode_level`),"
+    ]
+  },
+  "tb_master_posisi": {
+    "name": "tb_master_posisi",
+    "columns": [
+      "id",
+      "kode_posisi",
+      "nama_posisi",
+      "departemen",
+      "deskripsi",
+      "user_akses_level",
+      "permissions",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_departemen` (`departemen`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `uk_kode_posisi` (`kode_posisi`),"
+    ]
+  },
+  "tb_mekanik_progress": {
+    "name": "tb_mekanik_progress",
+    "columns": [
+      "id",
+      "no_service",
+      "kode_karyawan",
+      "status_progress",
+      "waktu_mulai",
+      "waktu_selesai",
+      "catatan",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_no_service` (`no_service`),",
+      "KEY `idx_karyawan` (`kode_karyawan`),",
+      "KEY `idx_progress_status` (`status_progress`),",
+      "KEY `idx_progress_mulai` (`waktu_mulai`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_permissions": {
+    "name": "tb_permissions",
+    "columns": [
+      "permission_id",
+      "permission_code",
+      "permission_name",
+      "permission_description",
+      "module",
+      "is_active"
+    ],
+    "primary_key": "permission_id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": [
+      "UNIQUE KEY `permission_code` (`permission_code`)"
+    ]
+  },
+  "tb_progress_mekanik": {
+    "name": "tb_progress_mekanik",
+    "columns": [
+      "id",
+      "no_service",
+      "no_antrian",
+      "mekanik_id",
+      "nama_mekanik",
+      "jenis_mekanik",
+      "persen_kerja",
+      "status_kerja",
+      "jam_mulai",
+      "jam_selesai",
+      "catatan_kerja",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `no_service` (`no_service`),",
+      "KEY `no_antrian` (`no_antrian`),",
+      "KEY `mekanik_id` (`mekanik_id`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_user_account": {
+    "name": "tb_user_account",
+    "columns": [
+      "id",
+      "kode_karyawan",
+      "username",
+      "password_hash",
+      "user_akses_level",
+      "is_active",
+      "last_login",
+      "must_change_password",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_user_is_active` (`is_active`),",
+      "KEY `idx_user_last_login` (`last_login`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `uk_username` (`username`),",
+      "UNIQUE KEY `uk_kode_karyawan` (`kode_karyawan`),"
+    ]
+  },
+  "tb_user_activity_log": {
+    "name": "tb_user_activity_log",
+    "columns": [
+      "log_id",
+      "user_id",
+      "action",
+      "module",
+      "description",
+      "ip_address",
+      "user_agent",
+      "created_at"
+    ],
+    "primary_key": "log_id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_user_id` (`user_id`),",
+      "KEY `idx_action` (`action`),",
+      "KEY `idx_created_at` (`created_at`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_user_mekanik_mapping": {
+    "name": "tb_user_mekanik_mapping",
+    "columns": [
+      "id",
+      "user_id",
+      "mekanik_code",
+      "is_primary",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_user_id` (`user_id`),",
+      "KEY `idx_mekanik_code` (`mekanik_code`)"
+    ],
+    "unique_keys": []
+  },
+  "tb_user_roles": {
+    "name": "tb_user_roles",
+    "columns": [
+      "role_id",
+      "role_code",
+      "role_name",
+      "role_description",
+      "department",
+      "permissions",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "role_id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_role_code` (`role_code`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `role_code` (`role_code`),"
+    ]
+  },
+  "tokens": {
+    "name": "tokens",
+    "columns": [
+      "id",
+      "access_token",
+      "refresh_token",
+      "scope",
+      "created_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_absensi": {
+    "name": "view_absensi",
+    "columns": [
+      "nip",
+      "tgl",
+      "tanggal",
+      "bulan",
+      "tahun",
+      "jam_masuk",
+      "jam_keluar",
+      "jam_absensi",
+      "kode_status_kehadiran",
+      "keterangan",
+      "id",
+      "kode_perusahaan",
+      "kode_lokasi"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_cari_item": {
+    "name": "view_cari_item",
+    "columns": [
+      "noitem",
+      "namaitem",
+      "nama_part_resmi",
+      "kodebarcode",
+      "merek",
+      "tipe_item",
+      "status_validasi",
+      "kategori_rak",
+      "hargapokok",
+      "hargajual",
+      "statusitem",
+      "satuan",
+      "stokmin",
+      "rakbarang",
+      "namajenis",
+      "keterangan",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_cari_kendaraan": {
+    "name": "view_cari_kendaraan",
+    "columns": [
+      "nopolisi",
+      "pemilik",
+      "alamat",
+      "kode_merek",
+      "tipe",
+      "kode_tipe",
+      "jenis",
+      "kode_jenis",
+      "tahun_buat",
+      "tahun_rakit",
+      "silinder",
+      "warna",
+      "kode_warna",
+      "no_rangka",
+      "no_mesin",
+      "note",
+      "merek"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_cari_pelanggan": {
+    "name": "view_cari_pelanggan",
+    "columns": [
+      "nopelanggan",
+      "namapelanggan",
+      "alamat",
+      "kota",
+      "propinsi",
+      "kodepost",
+      "negara",
+      "telephone",
+      "fax",
+      "kontakperson",
+      "note",
+      "potongan",
+      "tipepot",
+      "lavelharga",
+      "kgrup",
+      "patokan",
+      "klat",
+      "klong",
+      "panggilan",
+      "grup"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_do_tracking_latest": {
+    "name": "view_do_tracking_latest",
+    "columns": [
+      "no_do",
+      "no_po",
+      "no_supplier",
+      "tanggal_do",
+      "tanggal_kirim",
+      "tanggal_estimasi_tiba",
+      "tanggal_tiba",
+      "no_surat_jalan",
+      "no_kendaraan",
+      "nama_pengirim",
+      "telp_pengirim",
+      "alamat_kirim",
+      "total_qty",
+      "status_do",
+      "keterangan",
+      "kd_cabang",
+      "created_by",
+      "created_at",
+      "updated_at",
+      "latest_status",
+      "latest_keterangan",
+      "latest_lokasi",
+      "latest_update"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_item_classified": {
+    "name": "view_item_classified",
+    "columns": [
+      "noitem",
+      "namaitem",
+      "nama_part_resmi",
+      "merek",
+      "tipe_item",
+      "status_validasi",
+      "kategori_rak",
+      "hargapokok",
+      "hargajual",
+      "statusitem",
+      "created_at",
+      "updated_at",
+      "tipe_display",
+      "status_display"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_keluhan_workorder": {
+    "name": "view_keluhan_workorder",
+    "columns": [],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_laporan_cancel_servis": {
+    "name": "view_laporan_cancel_servis",
+    "columns": [
+      "id",
+      "no_service",
+      "tanggal_service",
+      "jam_service",
+      "tanggal_cancel",
+      "nopelanggan",
+      "namapelanggan",
+      "no_polisi",
+      "kategori_alasan",
+      "alasan_cancel",
+      "biaya_cancel",
+      "nominal_dp",
+      "nominal_refund",
+      "status_barang",
+      "status_pembayaran",
+      "user_cancel",
+      "catatan",
+      "kd_cabang",
+      "hari_sejak_input",
+      "kategori_waktu_cancel"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_master_kategori_member": {
+    "name": "view_master_kategori_member",
+    "columns": [
+      "id_kategori",
+      "nama_kategori",
+      "tipe_kategori",
+      "min_display",
+      "max_display",
+      "min_value",
+      "max_value",
+      "diskon_persen",
+      "benefit_text",
+      "icon",
+      "warna",
+      "urutan",
+      "is_active",
+      "status_display",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_master_keluhan": {
+    "name": "view_master_keluhan",
+    "columns": [
+      "id",
+      "kode_keluhan",
+      "nama_keluhan",
+      "deskripsi",
+      "kategori",
+      "status_aktif",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_master_kepala_mekanik_aktif": {
+    "name": "view_master_kepala_mekanik_aktif",
+    "columns": [],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_mekanik_users": {
+    "name": "view_mekanik_users",
+    "columns": [
+      "nomekanik",
+      "nama",
+      "alamat",
+      "telp",
+      "keahlian",
+      "status",
+      "email",
+      "spesialisasi",
+      "nama_user",
+      "user_akses",
+      "user_active",
+      "keahlian_text"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pelanggan_follow_up": {
+    "name": "view_pelanggan_follow_up",
+    "columns": [
+      "nopelanggan",
+      "namapelanggan",
+      "telephone",
+      "notlp",
+      "tanggal_terakhir_transaksi",
+      "hari_tidak_datang",
+      "total_nominal",
+      "status_member",
+      "estimasi_datang_berikutnya",
+      "prioritas_follow_up",
+      "template_pesan_wa"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pelanggan_kendaraan": {
+    "name": "view_pelanggan_kendaraan",
+    "columns": [
+      "nopolisi",
+      "pemilik",
+      "alamat",
+      "kode_merek",
+      "tipe",
+      "kode_tipe",
+      "jenis",
+      "kode_jenis",
+      "tahun_buat",
+      "tahun_rakit",
+      "silinder",
+      "warna",
+      "kode_warna",
+      "no_rangka",
+      "no_mesin",
+      "note",
+      "merek",
+      "telephone"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pembayaran_hutang": {
+    "name": "view_pembayaran_hutang",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "no_supplier",
+      "note",
+      "total_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "namasupplier"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pembayaran_piutang": {
+    "name": "view_pembayaran_piutang",
+    "columns": [
+      "no_transaksi",
+      "tanggal",
+      "no_pelanggan",
+      "note",
+      "total_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "namapelanggan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pembelian_detail": {
+    "name": "view_pembelian_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_item",
+      "qty_order",
+      "quantity",
+      "qty_retur",
+      "harga_pokok",
+      "potongan",
+      "harga_sp",
+      "total",
+      "sts_order",
+      "id_inv",
+      "namaitem"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pembelian_header": {
+    "name": "view_pembelian_header",
+    "columns": [
+      "notransaksi",
+      "status",
+      "carabayar",
+      "tanggal",
+      "no_order",
+      "tanggal_order",
+      "no_supplier",
+      "note",
+      "total_qty_order",
+      "total_qty",
+      "total_beli",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "total_retur",
+      "pembayaran",
+      "tanggal_jt",
+      "tanggal_lunas",
+      "jumlah_bayar",
+      "user",
+      "Id_tabel",
+      "kd_cabang",
+      "namasupplier"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_penawaran_part_lengkap": {
+    "name": "view_penawaran_part_lengkap",
+    "columns": [
+      "id",
+      "no_service",
+      "temuan_id",
+      "kode_barang",
+      "nama_barang",
+      "quantity",
+      "harga_satuan",
+      "total_harga",
+      "status_penawaran",
+      "alasan_tolak",
+      "keterangan_tolak",
+      "tanggal_penawaran",
+      "tanggal_respon",
+      "user_penawaran",
+      "user_respon",
+      "nama_temuan",
+      "jenis_perbaikan",
+      "tanggal_service",
+      "no_pelanggan",
+      "namapelanggan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_penjualan_detail": {
+    "name": "view_penjualan_detail",
+    "columns": [
+      "no_transaksi",
+      "nobaris",
+      "no_item",
+      "qty_order",
+      "quantity",
+      "qty_retur",
+      "harga_jual",
+      "potongan",
+      "harga_sp",
+      "harga_pokok",
+      "total",
+      "sts_order",
+      "namaitem"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_penjualan_header": {
+    "name": "view_penjualan_header",
+    "columns": [
+      "notransaksi",
+      "status",
+      "carabayar",
+      "tanggal",
+      "no_order",
+      "tanggal_order",
+      "no_sales",
+      "no_pelanggan",
+      "note",
+      "total_qty_order",
+      "total_qty",
+      "total_jual",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "total_retur",
+      "pembayaran",
+      "tanggal_jt",
+      "tanggal_lunas",
+      "jumlah_bayar",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "namapelanggan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pesanan_pembelian_detail": {
+    "name": "view_pesanan_pembelian_detail",
+    "columns": [
+      "no_order",
+      "nobaris",
+      "no_item",
+      "quantity",
+      "qty_terima",
+      "harga_pokok",
+      "total",
+      "namaitem"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pesanan_pembelian_header": {
+    "name": "view_pesanan_pembelian_header",
+    "columns": [
+      "no_order",
+      "status",
+      "tanggal",
+      "tglkirim",
+      "no_supplier",
+      "note",
+      "total_qty",
+      "total_terima",
+      "total_order",
+      "user",
+      "Id_tabel",
+      "kd_cabang",
+      "namasupplier"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pesanan_penjualan_h": {
+    "name": "view_pesanan_penjualan_h",
+    "columns": [
+      "no_order",
+      "status",
+      "tanggal",
+      "no_sales",
+      "no_pelanggan",
+      "note",
+      "total_qty",
+      "total_terima",
+      "total_jual",
+      "diskon",
+      "total_diskon",
+      "pajak",
+      "total_pajak",
+      "total_akhir",
+      "pembayaran",
+      "user",
+      "id_tabel",
+      "kd_cabang",
+      "namapelanggan",
+      "namasales"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_po_with_pr": {
+    "name": "view_po_with_pr",
+    "columns": [
+      "no_order",
+      "status",
+      "tanggal",
+      "tglkirim",
+      "no_supplier",
+      "note",
+      "total_qty",
+      "total_terima",
+      "total_order",
+      "user",
+      "Id_tabel",
+      "kd_cabang",
+      "status_pesanan",
+      "tipe_trx",
+      "no_penjualan",
+      "no_pr",
+      "no_rfq",
+      "status_approval",
+      "approved_by",
+      "approved_date",
+      "rejected_by",
+      "rejected_date",
+      "reject_reason",
+      "po_type",
+      "payment_term",
+      "delivery_address",
+      "contact_person",
+      "contact_phone",
+      "pr_requester",
+      "pr_departemen",
+      "pr_alasan"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_pr_complete": {
+    "name": "view_pr_complete",
+    "columns": [
+      "no_pr",
+      "tanggal_pr",
+      "tanggal_butuh",
+      "requester",
+      "departemen",
+      "alasan",
+      "total_qty",
+      "total_estimasi",
+      "status_pr",
+      "approved_by",
+      "approved_date",
+      "kd_cabang",
+      "created_by",
+      "created_at",
+      "jumlah_item",
+      "total_qty_detail",
+      "total_estimasi_detail",
+      "total_qty_po",
+      "status_fulfillment"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_retur_pembelian": {
+    "name": "view_retur_pembelian",
+    "columns": [
+      "noretur",
+      "nopembelian",
+      "tgl_retur",
+      "tanggal_retur",
+      "note",
+      "kd_cabang",
+      "status_retur",
+      "tgl_beli",
+      "tanggal_beli",
+      "no_order",
+      "tgl_order",
+      "tanggal_pesan",
+      "no_supplier",
+      "namasupplier"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_ringkasan_kedatangan_pelanggan": {
+    "name": "view_ringkasan_kedatangan_pelanggan",
+    "columns": [
+      "nopelanggan",
+      "namapelanggan",
+      "domisili",
+      "telephone",
+      "notlp",
+      "jumlah_kedatangan",
+      "jumlah_motor",
+      "total_nilai_transaksi",
+      "rata2_nilai_transaksi",
+      "tanggal_pertama_datang",
+      "tanggal_terakhir_datang",
+      "estimasi_datang_berikutnya",
+      "lama_pelanggan_hari",
+      "lama_tidak_datang_hari",
+      "tiap_30_hari",
+      "total_kunjungan",
+      "rata2_jarak_kunjungan",
+      "status_pelanggan",
+      "kategori_member"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_riwayat_kedatangan_detail": {
+    "name": "view_riwayat_kedatangan_detail",
+    "columns": [
+      "id_kedatangan",
+      "no_pelanggan",
+      "namapelanggan",
+      "no_service",
+      "kedatangan_ke",
+      "tanggal_datang",
+      "tanggal_sebelumnya",
+      "jarak_hari",
+      "jarak_kunjungan",
+      "total_transaksi",
+      "jumlah_item",
+      "rata2_nilai_per_item",
+      "estimasi_datang_berikut",
+      "hari_sejak_servis",
+      "hari_sampai_estimasi",
+      "status_garansi",
+      "status_garansi_display",
+      "keterangan",
+      "created_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_service": {
+    "name": "view_service",
+    "columns": [
+      "no_service",
+      "tanggal",
+      "tanggal_trx",
+      "jam",
+      "no_pelanggan",
+      "no_polisi",
+      "total_grand",
+      "kd_cabang",
+      "namapelanggan",
+      "status"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_servis_keluhan_lengkap": {
+    "name": "view_servis_keluhan_lengkap",
+    "columns": [
+      "id",
+      "no_service",
+      "keluhan",
+      "status_pengerjaan",
+      "keterangan_tidak_selesai",
+      "auto_workorder",
+      "workorder_applied",
+      "created_at",
+      "updated_at",
+      "tanggal_service",
+      "jam_service",
+      "no_pelanggan",
+      "no_polisi",
+      "status_servis",
+      "namapelanggan",
+      "hp_pelanggan",
+      "hp_pelanggan2",
+      "alamat_pelanggan",
+      "kode_merek",
+      "tipe_kendaraan",
+      "jenis_kendaraan",
+      "tahun_buat",
+      "nama_workorder",
+      "jumlah_temuan",
+      "status_badge_color"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_servis_status_summary": {
+    "name": "view_servis_status_summary",
+    "columns": [
+      "no_service",
+      "tanggal",
+      "jam",
+      "no_pelanggan",
+      "no_polisi",
+      "status_servis",
+      "namapelanggan",
+      "hp_pelanggan",
+      "kode_merek",
+      "tipe_kendaraan",
+      "jenis_kendaraan",
+      "total_keluhan",
+      "keluhan_selesai",
+      "keluhan_diproses",
+      "keluhan_tidak_selesai",
+      "total_temuan",
+      "temuan_selesai",
+      "temuan_disetujui",
+      "temuan_ditolak",
+      "total_workorder",
+      "workorder_selesai",
+      "workorder_diproses",
+      "workorder_tidak_selesai",
+      "progress_percentage"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_servis_temuan_lengkap": {
+    "name": "view_servis_temuan_lengkap",
+    "columns": [
+      "id",
+      "no_service",
+      "keluhan_id",
+      "kode_temuan",
+      "temuan_custom",
+      "deskripsi_temuan",
+      "jenis_perbaikan",
+      "status_pengerjaan",
+      "keterangan_tidak_selesai",
+      "tingkat_urgensi",
+      "estimasi_biaya",
+      "created_at",
+      "updated_at",
+      "keluhan",
+      "status_keluhan",
+      "nama_temuan",
+      "kategori_temuan",
+      "tanggal_service",
+      "jam_service",
+      "no_pelanggan",
+      "no_polisi",
+      "namapelanggan",
+      "hp_pelanggan",
+      "hp_pelanggan2",
+      "kode_merek",
+      "tipe_kendaraan",
+      "jenis_kendaraan",
+      "jumlah_penawaran",
+      "penawaran_pending",
+      "nama_temuan_display",
+      "status_badge_color",
+      "urgency_badge_color"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_servis_workorder_lengkap": {
+    "name": "view_servis_workorder_lengkap",
+    "columns": [
+      "id",
+      "no_service",
+      "kode_wo",
+      "status_pengerjaan",
+      "keterangan_tidak_selesai",
+      "created_at",
+      "updated_at",
+      "nama_wo",
+      "deskripsi_wo",
+      "harga_wo",
+      "estimasi_waktu",
+      "status_wo",
+      "tanggal_service",
+      "jam_service",
+      "no_pelanggan",
+      "no_polisi",
+      "status_servis",
+      "namapelanggan",
+      "hp_pelanggan",
+      "hp_pelanggan2",
+      "alamat_pelanggan",
+      "kode_merek",
+      "tipe_kendaraan",
+      "jenis_kendaraan",
+      "tahun_buat",
+      "jumlah_item",
+      "jumlah_jasa",
+      "jumlah_barang",
+      "status_badge_color",
+      "progress_percentage"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_statistik_pelanggan": {
+    "name": "view_statistik_pelanggan",
+    "columns": [
+      "id_statistik",
+      "no_pelanggan",
+      "nama_pelanggan",
+      "alamat",
+      "telephone",
+      "notlp",
+      "total_transaksi",
+      "total_nominal",
+      "jumlah_kunjungan",
+      "kedatangan_terakhir",
+      "rata_rata_transaksi",
+      "rata_jarak_kunjungan",
+      "status_member",
+      "kategori_member_kunjungan",
+      "tanggal_pertama",
+      "tanggal_terakhir",
+      "lama_tidak_datang",
+      "lama_menjadi_pelanggan",
+      "estimasi_datang_berikutnya",
+      "total_motor",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_stok": {
+    "name": "view_stok",
+    "columns": [
+      "tipe",
+      "no_transaksi",
+      "no_item",
+      "tanggal",
+      "masuk",
+      "keluar",
+      "keterangan",
+      "id",
+      "tgl_trx",
+      "namaitem",
+      "kd_cabang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_stok_master": {
+    "name": "view_stok_master",
+    "columns": [
+      "kd_cabang",
+      "no_item",
+      "saldo"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_suggested_parts": {
+    "name": "view_suggested_parts",
+    "columns": [
+      "kode_temuan",
+      "nama_temuan",
+      "kode_barang",
+      "nama_barang",
+      "harga_jual",
+      "stok",
+      "kategori",
+      "is_primary",
+      "prioritas",
+      "qty_default",
+      "keterangan",
+      "status_stok"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_tarif_jemput": {
+    "name": "view_tarif_jemput",
+    "columns": [
+      "id",
+      "jenis_motor",
+      "jarak_km",
+      "tarif",
+      "keterangan",
+      "created_at",
+      "updated_at",
+      "tarif_formatted",
+      "kategori_jarak"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_temuan_penawaran_summary": {
+    "name": "view_temuan_penawaran_summary",
+    "columns": [
+      "temuan_id",
+      "no_service",
+      "tanggal_service",
+      "no_polisi",
+      "keluhan",
+      "nama_temuan",
+      "deskripsi_temuan",
+      "jenis_perbaikan",
+      "status_temuan",
+      "tingkat_urgensi",
+      "estimasi_biaya",
+      "biaya_actual",
+      "mekanik_name",
+      "total_part_ditawarkan",
+      "total_part_disetujui",
+      "total_part_ditolak",
+      "total_nilai_penawaran",
+      "total_nilai_disetujui",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_top_pelanggan": {
+    "name": "view_top_pelanggan",
+    "columns": [
+      "ranking",
+      "nopelanggan",
+      "namapelanggan",
+      "telephone",
+      "total_nominal",
+      "total_transaksi",
+      "rata_rata_transaksi",
+      "status_member",
+      "tanggal_terakhir_transaksi",
+      "lama_tidak_datang"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_user_details": {
+    "name": "view_user_details",
+    "columns": [
+      "id",
+      "nama_user",
+      "user_akses",
+      "role_name",
+      "department",
+      "is_active",
+      "last_login",
+      "role_description",
+      "permissions",
+      "role_category"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_workorder_complete": {
+    "name": "view_workorder_complete",
+    "columns": [
+      "kode_wo",
+      "nama_wo",
+      "keterangan",
+      "waktu",
+      "harga_wo",
+      "status",
+      "kode_barang",
+      "tipe",
+      "jumlah",
+      "harga_item",
+      "total",
+      "tipe_desc"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "view_wo_harga": {
+    "name": "view_wo_harga",
+    "columns": [
+      "kode_wo",
+      "kode_barang",
+      "jumlah",
+      "hargajual",
+      "subtotal",
+      "tipe"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "v_do_status": {
+    "name": "v_do_status",
+    "columns": [],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "v_po_status": {
+    "name": "v_po_status",
+    "columns": [
+      "no_order",
+      "no_pr",
+      "no_supplier",
+      "tanggal",
+      "kd_cabang",
+      "status",
+      "status_approval",
+      "approved_by",
+      "approved_date",
+      "total_items",
+      "total_qty_po",
+      "total_qty_terima",
+      "persen_terima"
+    ],
+    "primary_key": null,
+    "foreign_keys": [],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "v_pr_status": {
+    "name": "v_pr_status",
+    "columns": [],
+    "primary_key": null,
+    "foreign_keys": [
+      "ADD CONSTRAINT `fk_kedatangan_pelanggan` FOREIGN KEY (`no_pelanggan`) REFERENCES `tblpelanggan` (`nopelanggan`) ON DELETE CASCADE ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_statistik_pelanggan` FOREIGN KEY (`no_pelanggan`) REFERENCES `tblpelanggan` (`nopelanggan`) ON DELETE CASCADE ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_cabang_perusahaan` FOREIGN KEY (`perusahaan_id`) REFERENCES `master_perusahaan` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `tbkeluhan_proses_ibfk_1` FOREIGN KEY (`kode_keluhan`) REFERENCES `tbmaster_keluhan` (`kode_keluhan`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `fk_dod_do` FOREIGN KEY (`no_do`) REFERENCES `tbldelivery_order_header` (`no_do`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `fk_do_po` FOREIGN KEY (`no_po`) REFERENCES `tblorder_header` (`no_order`);",
+      "ADD CONSTRAINT `fk_dotrk_do` FOREIGN KEY (`no_do`) REFERENCES `tbldelivery_order_header` (`no_do`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tblpelanggan_ibfk_1` FOREIGN KEY (`merek_id`) REFERENCES `tbpabrik_motor` (`id`) ON DELETE SET NULL,",
+      "ADD CONSTRAINT `tblpelanggan_ibfk_2` FOREIGN KEY (`tipe_id`) REFERENCES `tbtipe_motor` (`kode_tipe`) ON DELETE SET NULL,",
+      "ADD CONSTRAINT `tblpelanggan_ibfk_3` FOREIGN KEY (`jenis_id`) REFERENCES `tbjenis_motor` (`kd`) ON DELETE SET NULL,",
+      "ADD CONSTRAINT `tblpelanggan_ibfk_4` FOREIGN KEY (`warna_id`) REFERENCES `tbwarna` (`id`) ON DELETE SET NULL;",
+      "ADD CONSTRAINT `tblpo_approval_log_ibfk_1` FOREIGN KEY (`no_po`) REFERENCES `tblorder_header` (`no_order`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tblpr_approval_log_ibfk_1` FOREIGN KEY (`no_pr`) REFERENCES `tblpurchase_request_header` (`no_pr`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tblpurchase_request_detail_ibfk_1` FOREIGN KEY (`no_pr`) REFERENCES `tblpurchase_request_header` (`no_pr`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tblrfq_detail_ibfk_1` FOREIGN KEY (`no_rfq`) REFERENCES `tblrfq_header` (`no_rfq`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tblrfq_header_ibfk_1` FOREIGN KEY (`no_pr`) REFERENCES `tblpurchase_request_header` (`no_pr`);",
+      "ADD CONSTRAINT `tblrfq_supplier_response_ibfk_1` FOREIGN KEY (`no_rfq`) REFERENCES `tblrfq_header` (`no_rfq`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tbmaster_barang_fastmoves_ibfk_1` FOREIGN KEY (`kode_kategori`) REFERENCES `tbmaster_kategori_fastmoves` (`kode_kategori`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tbmaster_tipe_header_ibfk_1` FOREIGN KEY (`id_brand`) REFERENCES `tbpabrik_motor` (`id`) ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `tbservis_keluhan_tracking_ibfk_1` FOREIGN KEY (`keluhan_id`) REFERENCES `tbservis_keluhan_status` (`id`) ON DELETE CASCADE,",
+      "ADD CONSTRAINT `tbservis_keluhan_tracking_ibfk_2` FOREIGN KEY (`proses_id`) REFERENCES `tbkeluhan_proses` (`id`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tbservis_penawaran_log_ibfk_1` FOREIGN KEY (`penawaran_id`) REFERENCES `tbservis_penawaran_part` (`id`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tbservis_penawaran_part_ibfk_1` FOREIGN KEY (`temuan_id`) REFERENCES `tbservis_temuan` (`id`) ON DELETE CASCADE;",
+      "ADD CONSTRAINT `tbservis_temuan_ibfk_1` FOREIGN KEY (`keluhan_id`) REFERENCES `tbservis_keluhan_status` (`id`) ON DELETE SET NULL;",
+      "ADD CONSTRAINT `fk_karyawan_level` FOREIGN KEY (`kode_level`) REFERENCES `tb_master_level` (`kode_level`) ON DELETE SET NULL ON UPDATE CASCADE,",
+      "ADD CONSTRAINT `fk_karyawan_posisi` FOREIGN KEY (`kode_posisi`) REFERENCES `tb_master_posisi` (`kode_posisi`) ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_schedule_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser_karyawan` (`kode_karyawan`) ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_level_posisi` FOREIGN KEY (`kode_posisi`) REFERENCES `tb_master_posisi` (`kode_posisi`) ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_progress_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser_karyawan` (`kode_karyawan`) ON UPDATE CASCADE;",
+      "ADD CONSTRAINT `fk_user_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser_karyawan` (`kode_karyawan`) ON DELETE CASCADE ON UPDATE CASCADE;"
+    ],
+    "indexes": [],
+    "unique_keys": []
+  },
+  "_backup_tblmekanik_20251115": {
+    "name": "_backup_tblmekanik_20251115",
+    "columns": [
+      "nomekanik",
+      "nama",
+      "alamat",
+      "telp",
+      "keahlian",
+      "status",
+      "email",
+      "tanggal_masuk",
+      "gaji_pokok",
+      "spesialisasi",
+      "sertifikat",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "nomekanik",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_keahlian` (`keahlian`),",
+      "KEY `idx_status` (`status`)"
+    ],
+    "unique_keys": []
+  },
+  "_backup_tbl_kepala_mekanik_harian_20251115": {
+    "name": "_backup_tbl_kepala_mekanik_harian_20251115",
+    "columns": [
+      "id",
+      "kode_cabang",
+      "tanggal_kerja",
+      "kepala_mekanik_1",
+      "kepala_mekanik_2",
+      "shift_kerja",
+      "keterangan",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_tanggal` (`tanggal_kerja`),",
+      "KEY `idx_cabang` (`kode_cabang`)"
+    ],
+    "unique_keys": [
+      "UNIQUE KEY `idx_unique_cabang_tanggal` (`kode_cabang`,`tanggal_kerja`),"
+    ]
+  },
+  "_backup_tbl_master_kepala_mekanik_20251115": {
+    "name": "_backup_tbl_master_kepala_mekanik_20251115",
+    "columns": [
+      "id",
+      "kode_cabang",
+      "nama_kepala_mekanik",
+      "nip_karyawan",
+      "no_telepon",
+      "tanggal_mulai",
+      "tanggal_selesai",
+      "status_aktif",
+      "created_by",
+      "created_at",
+      "updated_at"
+    ],
+    "primary_key": "id",
+    "foreign_keys": [],
+    "indexes": [
+      "KEY `idx_cabang` (`kode_cabang`),",
+      "KEY `idx_status` (`status_aktif`)"
+    ],
+    "unique_keys": []
+  }
+}

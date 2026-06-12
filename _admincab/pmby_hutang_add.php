@@ -48,7 +48,8 @@
                     WHERE 
                     no_supplier='$no_supplier' and 
                     carabayar='Kredit' AND 
-                    status_lunas='0'";            
+                    status_lunas='0' AND
+                    jumlah_bayar>0";            
         }
         if(isset($_POST['btnsimpan'])) {
             $tgl_pilih= $_POST['id-date-picker-1'];
@@ -57,10 +58,20 @@
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
                 $nip=$_POST["hapus"][$i];
+                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpembelian_header WHERE notransaksi='$nip'");
+                $tag = 0;
+                if ($qtag) {
+                    $rtag = mysqli_fetch_array($qtag);
+                    if ($rtag) {
+                        $tag = (float)$rtag['jumlah_bayar'];
+                    }
+                }
+
+                $nobaris = $i + 1;
                 mysqli_query($koneksi,"INSERT INTO tblhutang_detail 
-                                        (no_transaksi, no_pembelian) 
+                                        (no_transaksi, nobaris, no_pembelian, keterangan, jumlah_hutang, jumlah_bayar, status) 
                                         VALUES 
-                                        ('$LastID','$nip')");
+                                        ('$LastID','$nobaris','$nip','','0','$tag','0')");
             }
             echo"<script>window.location=('pmby_hutang_add_next.php?nobyr=$LastID&stgl=$tgl_pilih&ssup=$no_supplier');</script>";                    
         }

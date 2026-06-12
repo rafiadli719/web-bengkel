@@ -270,23 +270,6 @@ if(isset($no_service) && isset($koneksi)) {
                                             if($sql_keluhan_list) {
                                                 while ($tampil = mysqli_fetch_array($sql_keluhan_list)) {
                                                     echo "<li style='margin-bottom: 10px; padding: 8px; border-left: 4px solid #4caf50; background-color: #e8f5e8; font-size: 14px; position: relative;'>";
-                                                    echo "<div style='display: flex; justify-content: between; align-items: center;'>";
-                                                    echo "<span style='flex: 1; font-weight: bold; color: #333;'>";
-                                                    echo "<span style='display: inline-block; width: 30px; color: #4caf50; font-weight: bold;'>" . $counter . ".</span>";
-                                                    echo "<span class='keluhan-text-" . $tampil['id'] . "'>" . htmlspecialchars($tampil['keluhan']) . "</span>";
-                                                    echo "</span>";
-                                                    echo "<div class='spk-actions' style='margin-left: 10px;'>";
-                                                    echo "<button type='button' class='btn btn-xs btn-warning' onclick='editKeluhan(" . $tampil['id'] . ", \"" . htmlspecialchars($tampil['keluhan'], ENT_QUOTES) . "\")' title='Edit Keluhan'>";
-                                                    echo "<i class='ace-icon fa fa-edit'></i>";
-                                                    echo "</button> ";
-                                                    echo "<button type='button' class='btn btn-xs btn-danger' onclick='hapusKeluhan(" . $tampil['id'] . ")' title='Hapus Keluhan'>";
-                                                    echo "<i class='ace-icon fa fa-trash'></i>";
-                                                    echo "</button>";
-                                                    echo "</div>";
-                                                    echo "</div>";
-                                                    echo "</li>";
-                                                    $counter++;
-                                                }
                                             }
                                             
                                             // Tampilkan work order
@@ -1576,21 +1559,46 @@ $(document).ready(function() {
         });
     });
     
-    // Force save saat klik tombol navigasi atau link
+    // Force save saat klik tombol navigasi atau link (KECUALI TAB NAVIGATION)
     $('a, button[type="submit"]').on('click', function(e) {
         var $this = $(this);
-        
-        // Skip if it's a non-navigation button
-        if ($this.hasClass('btn-xs') || $this.attr('onclick')) {
-            return; // Don't interfere with edit/delete SPK buttons
+
+        // Skip tab navigation links - JANGAN BLOKIR TAB!
+        if ($this.attr('data-toggle') === 'tab' ||
+            $this.parent().hasClass('nav-tabs') ||
+            $this.closest('.nav-tabs').length > 0 ||
+            $this.closest('ul.nav-tabs').length > 0) {
+            console.log('Tab navigation detected - allowing default behavior');
+            return true; // Allow tab navigation to work normally
         }
-        
-        e.preventDefault();
+
+        // Skip if href starts with # (internal links/tabs)
         var href = $this.attr('href');
+        if (href && href.indexOf('#') === 0) {
+            return true;
+        }
+
+        // Skip if it's a non-navigation button (edit/delete SPK, etc.)
+        if ($this.hasClass('btn-xs') || $this.attr('onclick')) {
+            return true; // Don't interfere with edit/delete SPK buttons
+        }
+
+        // Skip if button is inside SPK actions div
+        if ($this.closest('.spk-actions').length > 0) {
+            return true;
+        }
+
         var isSubmit = $this.attr('type') === 'submit';
-        
+
+        // Skip if href is empty, #, or javascript:void
+        if (!href || href === '#' || href === 'javascript:void(0)' || href === 'javascript:;') {
+            return true;
+        }
+
+        e.preventDefault();
+
         console.log('🔄 Navigation detected - force saving data...');
-        
+
         forceSaveAllData().then(function() {
             console.log('✅ Data saved, proceeding with navigation');
             if (href && href !== '#') {

@@ -40,11 +40,29 @@
         $txtflt="asc";
         $tipebtn1="btn-danger";
         $tipebtn2="btn-info";
-        $hasil_cari="Hasil Pencarian ditemukan 0 data";
+        
+        // Pagination variables
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+        
+        // Count total records
+        $count_query = "SELECT COUNT(*) as total FROM tblorderjual_header oh WHERE oh.kd_cabang='$kd_cabang'";
+        $count_result = mysqli_query($koneksi, $count_query);
+        $total_records = mysqli_fetch_array($count_result)['total'];
+        $total_pages = ceil($total_records / $limit);
+        
+        $hasil_cari = "Menampilkan data terbaru - Total: $total_records data (Halaman $page dari $total_pages)";
                 
-        $sql_query="SELECT * FROM view_pesanan_penjualan_h 
-                            WHERE 
-                            no_order='0'";      
+        $sql_query = "SELECT oh.*, 
+                             COALESCE(p.namapelanggan, '') as namapelanggan,
+                             COALESCE(s.namasales, '') as namasales
+                      FROM tblorderjual_header oh
+                      LEFT JOIN tblpelanggan p ON oh.no_pelanggan = p.nopelanggan
+                      LEFT JOIN tblsales s ON oh.no_sales = s.nosales
+                      WHERE oh.kd_cabang='$kd_cabang'
+                      ORDER BY oh.tanggal DESC, oh.no_order DESC 
+                      LIMIT $limit OFFSET $offset";      
         // == End Default ==========    
 
 		if(isset($_POST['btnasc'])) {				
@@ -210,7 +228,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_penjualan01.php"; ?>
+<?php include "menu_penjualan_unified.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -248,11 +266,24 @@
  <div class="space space-8"></div> 
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
-
 													<a href="pesanan_penjualan_add.php">
 													<button class="btn btn-success btn-block" type="button">Input Data</button>
 													</a>
-
+							</div>
+							<div class="col-xs-12 col-sm-9">
+								<div class="pull-right">
+									<form method="GET" style="display: inline-block; margin-right: 10px;">
+										<label>Tampilkan: </label>
+										<select name="limit" onchange="this.form.submit()" class="form-control" style="display: inline-block; width: auto;">
+											<option value="5" <?php echo $limit == 5 ? 'selected' : ''; ?>>5</option>
+											<option value="10" <?php echo $limit == 10 ? 'selected' : ''; ?>>10</option>
+											<option value="25" <?php echo $limit == 25 ? 'selected' : ''; ?>>25</option>
+											<option value="50" <?php echo $limit == 50 ? 'selected' : ''; ?>>50</option>
+											<option value="100" <?php echo $limit == 100 ? 'selected' : ''; ?>>100</option>
+										</select>
+										<label> data per halaman</label>
+									</form>
+								</div>
 							</div>
 						</div>
  <div class="space space-8"></div> 
@@ -322,6 +353,38 @@
                                     ?>
                                     </tbody>                                    
                                 </table>
+                                
+                                <!-- Pagination -->
+                                <?php if ($total_pages > 1): ?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="text-center">
+                                            <ul class="pagination">
+                                                <!-- Previous -->
+                                                <?php if ($page > 1): ?>
+                                                    <li><a href="?page=<?php echo $page-1; ?>&limit=<?php echo $limit; ?>">&laquo; Sebelumnya</a></li>
+                                                <?php endif; ?>
+                                                
+                                                <!-- Page numbers -->
+                                                <?php 
+                                                $start_page = max(1, $page - 2);
+                                                $end_page = min($total_pages, $page + 2);
+                                                for ($i = $start_page; $i <= $end_page; $i++): 
+                                                ?>
+                                                    <li class="<?php echo $i == $page ? 'active' : ''; ?>">
+                                                        <a href="?page=<?php echo $i; ?>&limit=<?php echo $limit; ?>"><?php echo $i; ?></a>
+                                                    </li>
+                                                <?php endfor; ?>
+                                                
+                                                <!-- Next -->
+                                                <?php if ($page < $total_pages): ?>
+                                                    <li><a href="?page=<?php echo $page+1; ?>&limit=<?php echo $limit; ?>">Berikutnya &raquo;</a></li>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                             

@@ -88,7 +88,7 @@
 				<div class="navbar-header pull-left">
 					<a href="index.php" class="navbar-brand">
 						<small>
-							<i class="fa fa-leaf"></i>
+							<?php include "../lib/logo.php"; ?>
 							<?php include "../lib/subtitel.php"; ?>
 						</small>
 					</a>
@@ -190,7 +190,7 @@
 											</span>
                                             <input type="text" class="hide" id="_key" name="_key" value="<?php echo $_key; ?>" />
 											<input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                            <a href="servis-input-reguler-jemput-rst.php?snoserv=<?php echo $no_service; ?>" class="btn btn-warning btn-sm">Kembali</a>
+                                            <a href="servis-input-reguler-jemput.php?snoserv=<?php echo $no_service; ?>" class="btn btn-warning btn-sm">Kembali</a>
 										</form>
 									</div>
 								</div>
@@ -246,14 +246,14 @@
                                                         <td class="center">
                                                             <div class="btn-group">
                                                                 <a class="btn btn-success btn-xs" 
-                                                                   href="servis-input-reguler-jemput-rst.php?snoserv=<?php echo $no_service; ?>&kdwo=<?php echo $tampil['kode_wo']; ?>">
+                                                                   href="servis-input-reguler-jemput.php?snoserv=<?php echo $no_service; ?>&kdwo=<?php echo $tampil['kode_wo']; ?>&tab=workorder">
                                                                     <i class="ace-icon fa fa-check bigger-120"></i>
                                                                     Pilih
                                                                 </a>
                                                             </div>
                                                         </td>
                                                     </tr>
-													<?php
+                                                    <?php
                                                         }
                                                     ?>
 												</tbody>

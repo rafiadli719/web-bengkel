@@ -41,15 +41,23 @@
         $tgl_pilih=date('d/m/Y');
         $cbo_supplier="";
         $nopesanan="";        
+        $cbocarabyr_form = 'Tunai';
+        $txtsyarat_form = '';
         $tot="0";
         $total_qty_beli="0";
         $total_qty_order="0";
+
+        if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+        if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+        if($cbocarabyr_form!=='Tunai' && $cbocarabyr_form!=='Kredit') { $cbocarabyr_form = 'Tunai'; }
         
 		if(isset($_POST['btncari_pesanan'])) {
 			$txtcaribrg= $_POST['txtcaribrg'];	
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
 
             // == Cari Data Pesanan ==
             if($nopesanan<>'') {
@@ -124,6 +132,8 @@
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -170,6 +180,8 @@
             $tgl_pilih= $_POST['id-date-picker-1'];
             $cbo_supplier= $_POST['cbosupplier'];
             $nopesanan= $_POST['txtnopesanan'];
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -234,18 +246,49 @@
                 date_default_timezone_set('Asia/Jakarta');
                 $waktuaja_skr=date('h:i');
                 function ubahformatTgl($tanggal) {
-                    $pisah = explode('/',$tanggal);
-                    $urutan = array($pisah[2],$pisah[1],$pisah[0]);
-                    $satukan = implode('-',$urutan);
-                    return $satukan;
+                    $tanggal = trim((string)$tanggal);
+                    if($tanggal==='') { return ''; }
+                    if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) { return $tanggal; }
+                    if(strpos($tanggal, '/') !== false) {
+                        $pisah = explode('/',$tanggal);
+                        if(count($pisah)===3) {
+                            $urutan = array($pisah[2],$pisah[1],$pisah[0]);
+                            return implode('-', $urutan);
+                        }
+                    }
+                    if(strpos($tanggal, '-') !== false) {
+                        $pisah = explode('-',$tanggal);
+                        if(count($pisah)===3 && strlen($pisah[0])<=2 && strlen($pisah[2])===4) {
+                            $urutan = array($pisah[2],$pisah[1],$pisah[0]);
+                            return implode('-', $urutan);
+                        }
+                    }
+                    return $tanggal;
+                }
+                function toNumber($val) {
+                    if($val===null) { return 0; }
+                    $val = trim((string)$val);
+                    if($val==='') { return 0; }
+                    if(strpos($val, ',') !== false) {
+                        $val = str_replace('.', '', $val);
+                        $val = str_replace(' ', '', $val);
+                        $val = str_replace(',', '.', $val);
+                    } else {
+                        $val = str_replace(',', '', $val);
+                        $val = str_replace(' ', '', $val);
+                    }
+                    $val = preg_replace('/[^0-9\.-]/', '', $val);
+                    if($val==='' || $val==='-' || $val==='.') { return 0; }
+                    return (float)$val;
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
                 $nopesanan= $_POST['txtnopesanan'];
                 $cbosupplier= $_POST['cbosupplier'];
                 $txttotal_harga= $_POST['txttotal_harga'];
-                $cbocarabyr= $_POST['cbocarabyr'];                
-                $txtsyarat= $_POST['txtsyarat'];                                
+                $cbocarabyr= isset($_POST['cbocarabyr']) ? $_POST['cbocarabyr'] : 'Tunai';
+                if($cbocarabyr!=='Tunai' && $cbocarabyr!=='Kredit') { $cbocarabyr = 'Tunai'; }
+                $txtsyarat= isset($_POST['txtsyarat']) ? $_POST['txtsyarat'] : '';                                
                 $txtnote= $_POST['txtnote'];                                                
                 $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
                 $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
@@ -254,7 +297,13 @@
                 $txtnet= $_POST['txtnet'];   
                 $txtdp= $_POST['txtdp'];   
                 $txtkekurangan= $_POST['txtkekurangan'];
-            
+
+                $syarat_hari = (int)toNumber($txtsyarat);
+                if($cbocarabyr=='Kredit' && $syarat_hari<=0) {
+                    echo"<script>window.alert('Syarat (hari) wajib diisi untuk cara bayar Kredit!');window.history.back();</script>";
+                    exit;
+                }
+
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot 
                                                 FROM tblpembelian_detail 
                                                 WHERE 
@@ -263,6 +312,58 @@
                                                 status_trx='0'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot_qty=$tm_cari['tot'];                 
+
+                $cari_kd=mysqli_query($koneksi,"SELECT 
+                                                COALESCE(sum(total),0) as tot_total 
+                                                FROM tblpembelian_detail 
+                                                WHERE 
+                                                user='$_nama' and 
+                                                kd_cabang='$kd_cabang' and 
+                                                status_trx='0'");
+                $tm_cari=mysqli_fetch_array($cari_kd);
+                $subtotal = (float)$tm_cari['tot_total'];
+
+                $pot_persen = (float)toNumber($txtpotfaktur_persen);
+                $pot_nom = (float)toNumber($txtpotfaktur_nom);
+                if($pot_nom<=0 && $pot_persen>0) {
+                    $pot_nom = ($subtotal * $pot_persen) / 100;
+                } elseif($pot_persen<=0 && $pot_nom>0 && $subtotal>0) {
+                    $pot_persen = ($pot_nom / $subtotal) * 100;
+                }
+                if($pot_nom<0) { $pot_nom = 0; }
+
+                $pajak_persen = (float)toNumber($txtpajak_persen);
+                $dasar_pajak = $subtotal - $pot_nom;
+                if($dasar_pajak < 0) { $dasar_pajak = 0; }
+                $pajak_nom = ($dasar_pajak * $pajak_persen) / 100;
+                if($pajak_nom<0) { $pajak_nom = 0; }
+
+                $netto = $dasar_pajak + $pajak_nom;
+                $dp = (float)toNumber($txtdp);
+                if($dp < 0) { $dp = 0; }
+                if($dp > $netto) { $dp = $netto; }
+                $kekurangan = $netto - $dp;
+
+                $tanggal_order='';
+                $total_qty_order='';
+                if($nopesanan<>'') {
+                    $q_po=mysqli_query($koneksi,"SELECT tanggal, total_qty FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$nopesanan)."'");
+                    if($q_po) {
+                        $tm_po=mysqli_fetch_array($q_po);
+                        if($tm_po) {
+                            $tanggal_order=$tm_po['tanggal'];
+                            $total_qty_order=$tm_po['total_qty'];
+                        }
+                    }
+                }
+
+                $tanggal_jt='';
+                if($cbocarabyr=='Kredit' && $syarat_hari>0) {
+                    $base_ts = strtotime($txttglpesan);
+                    if($base_ts!==false) {
+                        $tanggal_jt = date('Y-m-d', strtotime('+'.$syarat_hari.' days', $base_ts));
+                    }
+                }
                              
 
 //                $data = mysqli_query($koneksi,"SELECT * FROM tblpembelian_header 
@@ -285,16 +386,16 @@
                                         lama_hari) 
                                         VALUES 
                                         ('$LastID','Pembelian','$cbocarabyr',
-                                        '$txttglpesan','$nopesanan','',
-                                        '$cbosupplier','$txtnote','',
-                                        '$tot_qty','$txttotal_harga',
-                                        '$txtpotfaktur_persen','$txtpotfaktur_nom',
-                                        '$txtpajak_persen','$txtpajak_nom',
-                                        '$txtnet','','$txtdp',
-                                        '','',
-                                        '$txtkekurangan',
+                                        '$txttglpesan','$nopesanan','$tanggal_order',
+                                        '$cbosupplier','$txtnote','$total_qty_order',
+                                        '$tot_qty','$subtotal',
+                                        '$pot_persen','$pot_nom',
+                                        '$pajak_persen','$pajak_nom',
+                                        '$netto','','$dp',
+                                        '$tanggal_jt','',
+                                        '$kekurangan',
                                         '$_nama','$kd_cabang', 
-                                        '$txtsyarat')");
+                                        '$syarat_hari')");
 
                 mysqli_query($koneksi,"UPDATE tblpembelian_detail 
                                         SET 
@@ -613,15 +714,14 @@
 								<div class="widget-box">
 									<div class="widget-body">
 										<div class="widget-main">
-
                                             <div class="row">
                                                 <div class="col-xs-6">
                                                     <div class="form-group">
                                                         <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Cara Bayar </label>
                                                         <div class="col-sm-8">
                                                             <select class="form-control" id="cbocarabyr" name="cbocarabyr">
-																<option value="Tunai">Tunai</option>
-																<option value="Kredit">Kredit</option>
+                                                                <option value="Tunai" <?php echo ($cbocarabyr_form=='Tunai') ? 'selected' : ''; ?>>Tunai</option>
+                                                                <option value="Kredit" <?php echo ($cbocarabyr_form=='Kredit') ? 'selected' : ''; ?>>Kredit</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -638,9 +738,9 @@
                                                     <div class="form-group">
                                                         <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> Syarat </label>
                                                         <div class="col-sm-4">
-                                                            <input type="text" class="form-control" id="txtsyarat" name="txtsyarat" />
+                                                            <input type="text" class="form-control" id="txtsyarat" name="txtsyarat" value="<?php echo htmlspecialchars($txtsyarat_form); ?>" />
                                                         </div>
-                                                        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> hari </label>                                                        
+                                                        <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> hari </label>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-6">
@@ -650,7 +750,7 @@
                                                             <input type="text" class="form-control" value="<?php echo $total_qty_beli; ?>" readonly="true" />
                                                         </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                                 <div class="col-xs-12">
                                                     <div class="form-group">
                                                         <label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Keterangan </label>
@@ -658,12 +758,12 @@
                                                             <textarea class="form-control" id="txtnote" name="txtnote" rows="4"></textarea>
                                                         </div>
                                                     </div>
-                                                </div>                                                                                                
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+										</div>
+									</div>
+								</div>
+							</div>
 
 							<div class="col-xs-12 col-sm-5">
 								<div class="widget-box">

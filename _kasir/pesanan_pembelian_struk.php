@@ -10,6 +10,7 @@
     $notlp=$tm_cari['notlp'];	
     $fax=$tm_cari['fax'];	
     $file_logo=$tm_cari['file_logo'];	    
+    $file_logo='uploads/motor_photos/SV25000000007_1748749597_DP LOGO FIT MOTOR.png';
 // ===================
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -133,40 +134,56 @@ div.page_break + div.page_break{
             </tr>';
 
             $no = 1;
-            while($row = mysqli_fetch_array($query))
-            {
-                $no_item=$row['no_item'];
-                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                FROM tblitem 
-                                                WHERE noitem='$no_item'");			
-                $tm_cari=mysqli_fetch_array($cari_kd);
-                $namaitem_tbl=$tm_cari['namaitem'];
-                                                
-        $html .= "<tr>
-                <td align=center><font size=2>".$no."</font></td>
-                <td><font size=2>".$row['no_item']."</font></td>
-                <td><font size=2>".$namaitem_tbl."</font></td>
-                <td align=right><font size=2>".$row['quantity']."</font></td>
-                <td align=right><font size=2>".number_format($row['harga_pokok'],0)."</font></td>		
-                <td align=right><font size=2>".number_format($row['total'],0)."</font></td>		                                
-                </tr>";
-            $no++;
-            }
+			$tot_calc = 0;
+			$tot_qty_calc = 0;
+			while($row = mysqli_fetch_array($query))
+			{
+				$no_item=$row['no_item'];
+				$cari_kd=mysqli_query($koneksi,"SELECT namaitem, hargapokok 
+																		FROM tblitem 
+																		WHERE (noitem='$no_item' OR kodebarcode='$no_item')");			
+				$tm_cari=mysqli_fetch_array($cari_kd);
+				$namaitem_tbl=$tm_cari['namaitem'];
+
+				$qty = (int)$row['quantity'];
+				$harga_pokok = (float)$row['harga_pokok'];
+				if ($harga_pokok <= 0) {
+					$harga_pokok = (float)$tm_cari['hargapokok'];
+				}
+				$total_row = $harga_pokok * $qty;
+				$tot_calc += $total_row;
+				$tot_qty_calc += $qty;
+
+		$html .= "<tr>
+				<td align=center><font size=2>".$no."</font></td>
+				<td><font size=2>".$row['no_item']."</font></td>
+				<td><font size=2>".$namaitem_tbl."</font></td>
+				<td align=right><font size=2>".$qty."</font></td>
+				<td align=right><font size=2>".number_format($harga_pokok,0)."</font></td>		
+				<td align=right><font size=2>".number_format($total_row,0)."</font></td>										
+
+				</tr>";
+			$no++;
+			}
 
         $html .= '</table>        
-            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-                        <tr>
-                <td colspan="4"><hr></td>
-            </tr>
-            <tr>																			
-                <td align="right" width="60%"><font size="2"><b>Sub Total :</b></font></td>
-                <td width="10%" align="right"><font size="2"><b>'.$tot_order.'</b></font></td>
-                <td width="30%" align="right"><font size="2"><b>'.number_format($tot,0).'</b></font></td>                
-            </tr>
-            </table>
+			<table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
+						<tr>
+				<td colspan="4"><hr></td>
+			</tr>
+			<tr>																															
+
+				<td align="right" width="60%"><font size="2"><b>Sub Total :</b></font></td>
+				<td width="10%" align="right"><font size="2"><b>'.$tot_qty_calc.'</b></font></td>
+				<td width="30%" align="right"><font size="2"><b>'.number_format($tot_calc,0).'</b></font></td>                
+
+			</tr>
+			</table>
             <br>&nbsp;
             <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-            <tr>																			
+
+            <tr>																															
+
                 <td width="50%" align="center">
                 <font size="2">Mengetahui</font>
                 <br>&nbsp;

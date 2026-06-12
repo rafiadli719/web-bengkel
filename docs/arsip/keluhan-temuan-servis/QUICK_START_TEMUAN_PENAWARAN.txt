@@ -1,0 +1,48 @@
+QUICK START - IMPLEMENTASI TEMUAN & PENAWARAN PART
+===================================================
+
+STEP 1: INSTALL DATABASE
+-------------------------
+mysql -u root -p fitmotor_dbbengkel < database_master_temuan_penawaran.sql
+
+STEP 2: UPDATE FILE SERVIS
+---------------------------
+Di SEMUA file servis (reguler, jemput, garansi), tambahkan:
+
+A. Di bagian atas (setelah include koneksi):
+   include "_handler_temuan_penawaran.php";
+
+B. Di nav tabs:
+   <li class="nav-item">
+       <a class="nav-link" data-toggle="tab" href="#temuan-penawaran">
+           Temuan & Penawaran
+       </a>
+   </li>
+
+C. Di tab content:
+   <div class="tab-pane fade" id="temuan-penawaran">
+       <?php include '_template/tab-temuan-penawaran-content.php'; ?>
+   </div>
+
+D. Di bagian bawah (sebelum </body>):
+   <?php include '_template/modal-search-temuan.php'; ?>
+   <?php include '_template/modal-fastmoves-v2.php'; ?>
+
+STEP 3: POPULATE DATA
+---------------------
+Jalankan SQL untuk insert kategori fast moves (lihat file SQL)
+
+STEP 4: MAPPING BARANG
+-----------------------
+Buka halaman: master-fastmoves.php
+Tambahkan mapping barang ke kategori
+
+STEP 5: TEST
+------------
+1. Buka servis input
+2. Klik tab "Temuan & Penawaran"
+3. Test tambah temuan
+4. Test fast moves
+5. Test penawaran part
+
+DONE!

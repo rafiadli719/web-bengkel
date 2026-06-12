@@ -33,15 +33,36 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nopesanan=$_GET['nopesanan'];        
+		$nopesanan = '';
+		if (isset($_GET['nopesanan'])) {
+			$nopesanan = $_GET['nopesanan'];
+		} elseif (isset($_GET['no'])) {
+			$nopesanan = $_GET['no'];
+		}
+		$nopesanan = mysqli_real_escape_string($koneksi, $nopesanan);
+		if (empty($nopesanan)) {
+			echo "<script>alert('No. pesanan tidak ditemukan');window.location='pesanan_pembelian.php';</script>";
+			exit;
+		}
 		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, no_supplier, user 
+                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, no_supplier, user,
+                                        status_approval, approved_by, approved_date, rejected_by, rejected_date, reject_reason
                                         FROM tblorder_header 
                                         WHERE no_order='$nopesanan'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
+		if (!$tm_cari) {
+			echo "<script>alert('Data pesanan tidak ditemukan');window.location='pesanan_pembelian.php';</script>";
+			exit;
+		}
 		$tanggal_order=$tm_cari['tanggal_trx'];
 		$no_supplier=$tm_cari['no_supplier'];
 		$user_order=$tm_cari['user'];
+        $status_approval = isset($tm_cari['status_approval']) ? $tm_cari['status_approval'] : 'draft';
+        $approved_by = isset($tm_cari['approved_by']) ? $tm_cari['approved_by'] : '';
+        $approved_date = isset($tm_cari['approved_date']) ? $tm_cari['approved_date'] : '';
+        $rejected_by = isset($tm_cari['rejected_by']) ? $tm_cari['rejected_by'] : '';
+        $rejected_date = isset($tm_cari['rejected_date']) ? $tm_cari['rejected_date'] : '';
+        $reject_reason = isset($tm_cari['reject_reason']) ? $tm_cari['reject_reason'] : '';
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasupplier, alamat 
@@ -263,6 +284,48 @@
 
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
+                                <div class="table-header">
+                                    Approval PO
+                                </div>
+                                <div class="well" style="padding:10px;">
+                                    <p>Status Approval: <strong><?php echo htmlspecialchars($status_approval); ?></strong></p>
+                                    <?php if($status_approval == 'approved'){ ?>
+                                        <p>Disetujui oleh: <?php echo htmlspecialchars($approved_by); ?> pada <?php echo htmlspecialchars($approved_date); ?></p>
+                                    <?php } elseif($status_approval == 'rejected'){ ?>
+                                        <p>Ditolak oleh: <?php echo htmlspecialchars($rejected_by); ?> pada <?php echo htmlspecialchars($rejected_date); ?></p>
+                                        <p>Alasan: <?php echo htmlspecialchars($reject_reason); ?></p>
+                                        <form method="post" action="po_approval_action.php" class="form-inline">
+                                            <input type="hidden" name="no_po" value="<?php echo $nopesanan; ?>" />
+                                            <input type="hidden" name="action_type" value="submit" />
+                                            <button type="submit" class="btn btn-warning">Submit Ulang untuk Approval</button>
+                                        </form>
+                                    <?php } elseif($status_approval == 'pending'){ ?>
+                                        <form method="post" action="po_approval_action.php" class="form-inline" style="display:inline-block;margin-right:10px;">
+                                            <input type="hidden" name="no_po" value="<?php echo $nopesanan; ?>" />
+                                            <input type="hidden" name="action_type" value="approve" />
+                                            <button type="submit" class="btn btn-success">Approve</button>
+                                        </form>
+                                        <form method="post" action="po_approval_action.php" class="form-inline" style="display:inline-block;">
+                                            <input type="hidden" name="no_po" value="<?php echo $nopesanan; ?>" />
+                                            <input type="hidden" name="action_type" value="reject" />
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="notes" placeholder="Alasan penolakan" style="width:300px;" />
+                                            </div>
+                        						<button type="submit" class="btn btn-danger">Reject</button>
+                                        </form>
+                                    <?php } else { /* draft or null */ ?>
+                                        <form method="post" action="po_approval_action.php" class="form-inline">
+                                            <input type="hidden" name="no_po" value="<?php echo $nopesanan; ?>" />
+                                            <input type="hidden" name="action_type" value="submit" />
+                                            <button type="submit" class="btn btn-warning">Submit untuk Approval</button>
+                                        </form>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+							<div class="col-xs-12 col-sm-12">
 								<div class="table-header">
                                     Item Pesanan Pembelian
 								</div>                                                        
@@ -317,11 +380,25 @@
 
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
-                                <a href="pesanan_pembelian.php">
-                                <button class="btn btn-primary btn-block" type="button">
-                                    Tutup
-                                </button>
-                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <?php if($status_approval == 'approved' || $status_approval == '' || $status_approval == 'draft' || is_null($status_approval)){ ?>
+                                    <div class="btn-group">
+                                        <a href="pembelian_add.php?po=<?php echo $nopesanan; ?>" class="btn btn-success">
+                                            <i class="fa fa-shopping-cart"></i> Proses ke Pembelian
+                                        </a>
+                                    </div>
+                                    <?php } ?>
+                                    <div class="btn-group">
+                                        <a href="pesanan_pembelian_cetak.php?nopesanan=<?php echo $nopesanan; ?>" target="_blank" class="btn btn-info">
+                                            <i class="fa fa-print"></i> Cetak PO
+                                        </a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="pesanan_pembelian.php" class="btn btn-primary">
+                                            <i class="fa fa-arrow-left"></i> Kembali
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         

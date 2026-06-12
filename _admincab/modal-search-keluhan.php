@@ -31,36 +31,29 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th width="10%">Kode</th>
-                                <th width="35%">Nama Keluhan</th>
+                                <th width="15%">Kode</th>
+                                <th width="50%">Nama Keluhan</th>
                                 <th width="20%">Kategori</th>
-                                <th width="15%">Prioritas</th>
-                                <th width="10%">Estimasi</th>
-                                <th width="10%">Aksi</th>
+                                <th width="15%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="keluhan-table-body">
                             <?php
-                            $sql_keluhan = mysqli_query($koneksi,"SELECT * FROM view_master_keluhan ORDER BY nama_keluhan");
+                            $sql_keluhan = mysqli_query($koneksi,"SELECT * FROM tbmaster_keluhan WHERE status_aktif='1' ORDER BY nama_keluhan");
                             while ($keluhan = mysqli_fetch_array($sql_keluhan)) {
-                                $priority_class = 'priority-' . $keluhan['tingkat_prioritas'];
                             ?>
                             <tr class="keluhan-row" data-nama="<?php echo strtolower($keluhan['nama_keluhan']); ?>" 
                                 data-kategori="<?php echo $keluhan['kategori']; ?>">
                                 <td><?php echo $keluhan['kode_keluhan']; ?></td>
                                 <td>
                                     <strong><?php echo $keluhan['nama_keluhan']; ?></strong>
-                                    <br><small class="text-muted"><?php echo substr($keluhan['deskripsi'], 0, 80) . '...'; ?></small>
+                                    <?php if($keluhan['deskripsi']): ?>
+                                    <br><small class="text-muted"><?php echo substr($keluhan['deskripsi'], 0, 100) . (strlen($keluhan['deskripsi']) > 100 ? '...' : ''); ?></small>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="label label-info"><?php echo $keluhan['kategori']; ?></span>
                                 </td>
-                                <td>
-                                    <span class="label <?php echo $priority_class; ?>">
-                                        <?php echo ucfirst($keluhan['tingkat_prioritas']); ?>
-                                    </span>
-                                </td>
-                                <td class="center"><?php echo $keluhan['estimasi_waktu']; ?> min</td>
                                 <td class="center">
                                     <button type="button" class="btn btn-xs btn-primary" 
                                             onclick="pilihKeluhan('<?php echo $keluhan['kode_keluhan']; ?>', '<?php echo addslashes($keluhan['nama_keluhan']); ?>')">
@@ -79,23 +72,6 @@
         </div>
     </div>
 </div>
-
-<style>
-.priority-badge {
-    font-size: 11px;
-    padding: 2px 6px;
-}
-.priority-rendah { background-color: #5cb85c; }
-.priority-sedang { background-color: #f0ad4e; }
-.priority-tinggi { background-color: #d9534f; }
-.priority-darurat { background-color: #d9534f; animation: blink 1s infinite; }
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-</style>
 
 <script>
 function searchKeluhan() {
@@ -188,3 +164,6 @@ function showModalSearchKeluhan() {
     $('#modal-search-keluhan').modal('show');
 }
 </script>
+
+<!-- Include Modal Tambah Keluhan Baru -->
+<?php include "modal-tambah-keluhan-baru.php"; ?>

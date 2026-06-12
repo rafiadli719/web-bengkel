@@ -43,6 +43,37 @@
         $note=$tm_cari['note']; 
         $diskon=$tm_cari['diskon'];
         $pajak=$tm_cari['pajak'];
+
+		$cari_kd=mysqli_query($koneksi,"SELECT 
+                                        tipe_cabang 
+                                        FROM tbcabang 
+                                        WHERE kode_cabang='$drcabang'");			
+		$tm_cari=mysqli_fetch_array($cari_kd);
+		$tipe_cabang_dr=$tm_cari['tipe_cabang'];					        
+
+        $carabayar="Kredit";
+        $diskon_persen_rule="0";
+        $tempo_hari_rule="10";
+        $q_setting=mysqli_query($koneksi,"SELECT 
+                                            diskon_persen, cara_bayar, tempo_hari 
+                                            FROM 
+                                            tbl_setting_antarcabang 
+                                            WHERE 
+                                            aktif='1' AND 
+                                            tipe_cabang_tujuan='$tipe_cabang_dr' AND 
+                                            (kd_cabang='$kd_cabang' OR kd_cabang='') 
+                                            ORDER BY kd_cabang DESC 
+                                            LIMIT 1");
+        if($q_setting) {
+            $tm_setting=mysqli_fetch_array($q_setting);
+            if($tm_setting) {
+                $diskon_persen_rule=$tm_setting['diskon_persen'];
+                $carabayar=$tm_setting['cara_bayar'];
+                $tempo_hari_rule=$tm_setting['tempo_hari'];
+            }
+        }
+
+        $diskon=$diskon_persen_rule;
         
     // =========
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -89,6 +120,14 @@
             $txtdp = $_POST['txtdp'];
             $sisa = $txtnet-$txtdp;
             $total_pajak=($txtpajak_persen/100)*$txtsubtotal;
+
+            $tanggal_jt='';
+            if($cbocarabyr=='Kredit') {
+                $tempo_int=(int)$txtsyarat;
+                if($tempo_int>0) {
+                    $tanggal_jt=date('Y-m-d', strtotime($txttgljl.' +'.$tempo_int.' days'));
+                }
+            }
             
             mysqli_query($koneksi,"INSERT INTO tblpenjualan_header 
                                     (notransaksi, status, carabayar, tanggal, 
@@ -107,7 +146,7 @@
                                     '$total_qty_order','$total_qty_order','$txtsubtotal',
                                     '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                     '$txtpajak_persen','$total_pajak',
-                                    '$txtnet','','$txtdp','','',
+                                    '$txtnet','','$txtdp','$tanggal_jt','',
                                     '$sisa','$_nama','$kd_cabang')");
 
             // Pindahkan Data Pesanan ke Penjualan

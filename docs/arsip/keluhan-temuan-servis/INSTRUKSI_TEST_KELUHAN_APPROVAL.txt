@@ -1,0 +1,154 @@
+================================================================================
+  INSTRUKSI TEST KELUHAN APPROVAL - DARI SERVIS INPUT REGULER
+================================================================================
+
+HASIL TEST AJAX PATH: ✅ BERHASIL!
+- File exists: ✓
+- Database connected: ✓
+- Session valid: ✓ (User: admin, Cabang: PESALAKAN)
+- INSERT SUCCESS: ✓
+- Data KEL017 berhasil masuk database
+
+================================================================================
+LANGKAH TEST DARI SERVIS INPUT REGULER:
+================================================================================
+
+STEP 1: Buka Servis Input Reguler
+----------------------------------
+URL: http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/servis-input-reguler.php
+
+STEP 2: Pilih Tab "Work Order"
+-------------------------------
+- Klik tab "Work Order" di bagian atas halaman
+
+STEP 3: Klik "Cari Keluhan"
+----------------------------
+- Di bagian "Input Keluhan", ada tombol "Cari Keluhan" (icon search)
+- Klik tombol tersebut
+- Modal akan muncul
+
+STEP 4: Klik "Tambah Keluhan Baru"
+-----------------------------------
+- Di modal, klik tombol kuning "Tambah Keluhan Baru (Perlu Approval)"
+- Modal form akan muncul
+
+STEP 5: Isi Form
+----------------
+Nama Keluhan: Kampas Rem Aus
+Kategori: Rem
+Deskripsi: (boleh kosong)
+Alasan Pengajuan: (boleh kosong)
+
+STEP 6: Submit
+--------------
+- Klik tombol "Ajukan Keluhan Baru"
+- Tunggu response
+
+STEP 7: Buka Console (F12)
+---------------------------
+- Tekan F12 di keyboard
+- Klik tab "Console"
+- Lihat debug log:
+
+Yang harus muncul:
+  Form Data: nama_keluhan=Kampas+Rem+Aus&kategori=Rem&...
+  Response: {success: true, message: "...", debug: [...]}
+  === DEBUG LOG ===
+  ...
+  INSERT: SUCCESS
+  Verification: Data found in database
+
+STEP 8: Cek di Master Keluhan
+------------------------------
+URL: http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/master-keluhan-crud.php
+
+Yang harus ada:
+- Badge: "1 Pending Approval" (atau lebih)
+- Alert box kuning
+- Keluhan baru di tabel dengan status PENDING
+
+STEP 9: Approve Keluhan
+------------------------
+- Klik tombol ✓ Approve
+- Modal konfirmasi muncul
+- Klik "Approve Keluhan"
+- Status berubah jadi "Approved"
+
+STEP 10: Verifikasi
+--------------------
+- Kembali ke servis-input-reguler.php
+- Klik "Cari Keluhan"
+- Keluhan baru harus muncul di daftar
+
+================================================================================
+JIKA MASIH TIDAK BISA:
+================================================================================
+
+1. BUKA CONSOLE (F12)
+   - Tekan F12 saat di halaman servis-input-reguler.php
+   - Klik tab "Console"
+   - Lihat error apa yang muncul
+
+2. CEK ERROR YANG MUNGKIN MUNCUL:
+
+   Error: "ajax-submit-keluhan-baru-debug.php not found"
+   Solusi: File tidak ditemukan, cek path
+
+   Error: "Session expired"
+   Solusi: Login ulang
+
+   Error: "Invalid request method"
+   Solusi: Form tidak submit dengan POST
+
+   Error: "Nama keluhan harus diisi"
+   Solusi: Field kosong, isi form dengan benar
+
+3. TEST MANUAL INSERT:
+   Buka: test-insert-keluhan-pending.php?submit=1
+   Jika berhasil, berarti masalah di form/AJAX
+
+4. CEK DATABASE:
+   Buka phpMyAdmin
+   Query: SELECT * FROM tbmaster_keluhan WHERE status_approval='pending'
+   Lihat apakah data masuk
+
+================================================================================
+FILE YANG SUDAH DIPERBAIKI:
+================================================================================
+
+1. ajax-submit-keluhan-baru-debug.php
+   - Versi debug dengan logging lengkap
+   - Menampilkan semua step proses
+
+2. modal-search-keluhan.php
+   - AJAX URL: ajax-submit-keluhan-baru-debug.php
+   - Console log enabled
+   - Error handling improved
+
+3. _servis_add_header_kanan_workorder_only.php
+   - Include modal-search-keluhan.php
+   - Fungsi showModalSearchKeluhan()
+   - Duplikat include dihapus
+
+4. test-ajax-path.php
+   - Test page untuk debugging
+   - Sudah berhasil: ✓ SUCCESS
+
+================================================================================
+KESIMPULAN:
+================================================================================
+
+✅ Test AJAX path: BERHASIL
+✅ Database connection: OK
+✅ Session: Valid
+✅ Insert data: SUCCESS
+✅ Verification: Data found
+
+NEXT: Test dari servis-input-reguler.php dengan langkah di atas
+
+Jika masih ada masalah, screenshot:
+1. Console log (F12)
+2. Error message
+3. Network tab (untuk lihat AJAX request)
+
+================================================================================

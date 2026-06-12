@@ -294,9 +294,8 @@
                             <div class="space space-8"></div>
 							<div class="col-xs-12 col-sm-3">
                                 <a href="stok_masuk_add.php">
-                                    <button class="btn btn-primary btn-block" type="button" 
-                                    id="btnsimpan" name="btnsimpan">
-                                        Input
+                                    <button class="btn btn-success btn-block" type="button">
+                                        <i class="fa fa-plus"></i> Input Baru
                                     </button>
                                 </a>
                             </div>

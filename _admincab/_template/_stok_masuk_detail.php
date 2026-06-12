@@ -78,10 +78,14 @@
                                                 $no++;
                                                 $no_item=$tampil['no_item'];
                                                 $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                                                FROM tblitem 
+                                                                                FROM view_cari_item 
                                                                                 WHERE noitem='$no_item'");			
-                                                $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $namaitem_tbl=$tm_cari['namaitem'];				 
+                                                if ($cari_kd && mysqli_num_rows($cari_kd) > 0) {
+                                                    $tm_cari=mysqli_fetch_array($cari_kd);
+                                                    $namaitem_tbl=$tm_cari['namaitem'];
+                                                } else {
+                                                    $namaitem_tbl="Item tidak ditemukan";
+                                                }				 
                                         ?>
                                         <tr>
                                             <td class="center">

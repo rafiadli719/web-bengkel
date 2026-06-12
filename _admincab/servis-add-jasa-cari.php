@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
@@ -347,7 +347,48 @@
                                     <tbody>
                                     <?php 
                                         $sql = mysqli_query($koneksi,$sql_query);
+                                        // Derive motor category context once for applicability checks (prefer kd_kategori_motor)
+                                        $kd_kategori_motor = 0;
+                                        if (!empty($no_service)) {
+                                            $no_service_safe = mysqli_real_escape_string($koneksi, $no_service);
+                                            $q_kd = mysqli_query($koneksi, "SELECT kd_kategori_motor FROM view_service_kategori_motor WHERE no_service='{$no_service_safe}'");
+                                            if ($q_kd && mysqli_num_rows($q_kd) > 0) {
+                                                $r_kd = mysqli_fetch_assoc($q_kd);
+                                                $kd_kategori_motor = intval($r_kd['kd_kategori_motor'] ?? 0);
+                                            }
+                                            if ($kd_kategori_motor <= 0) {
+                                                $q_kdj = mysqli_query($koneksi, "SELECT kd_jenis_motor FROM view_service_jenis_motor WHERE no_service='{$no_service_safe}'");
+                                                if ($q_kdj && mysqli_num_rows($q_kdj) > 0) {
+                                                    $r_kdj = mysqli_fetch_assoc($q_kdj);
+                                                    $kd_kategori_motor = intval($r_kdj['kd_jenis_motor'] ?? 0);
+                                                }
+                                            }
+                                        }
+
+                                        // Detect mapping column name for workorder mapping table
+                                        $wo_map_col = 'kd_kategori_motor';
+                                        $chk_wo_map = mysqli_query($koneksi, "SHOW COLUMNS FROM tbworkorder_jenis_motor LIKE 'kd_kategori_motor'");
+                                        if (!$chk_wo_map || mysqli_num_rows($chk_wo_map) == 0) {
+                                            $wo_map_col = 'kd_jenis_motor';
+                                        }
                                         while ($tampil = mysqli_fetch_array($sql)) {
+                                            // Compute applicability per WO when motor type context exists
+                                            $disabled = "";
+                                            $blocked_reason = "";
+                                            if ($kd_kategori_motor > 0) {
+                                                $kode_wo_safe = mysqli_real_escape_string($koneksi, $tampil['kode_wo']);
+
+                                                $exists_any = mysqli_query($koneksi, "SELECT 1 FROM tbworkorder_jenis_motor WHERE kode_wo='{$kode_wo_safe}' LIMIT 1");
+                                                $has_any_map = ($exists_any && mysqli_num_rows($exists_any) > 0);
+
+                                                if ($has_any_map) {
+                                                    $q_app = mysqli_query($koneksi, "SELECT 1 FROM tbworkorder_jenis_motor WHERE kode_wo='{$kode_wo_safe}' AND {$wo_map_col}={$kd_kategori_motor} LIMIT 1");
+                                                    if (!$q_app || mysqli_num_rows($q_app) === 0) {
+                                                        $disabled = "disabled";
+                                                        $blocked_reason = "TIDAK APPLICABLE";
+                                                    }
+                                                }
+                                            }
                                     ?>
                                         <tr>
                                             <td class="center">
@@ -358,13 +399,21 @@
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="servis-input-reguler-rst.php?snoserv=<?php echo $no_service; ?>&kdjasa=<?php echo $tampil['kode_wo']; ?>&kd=<?php echo $kd; ?>">Pilih</a>
+                                                            <?php if($disabled=="disabled"){ ?>
+    <a href="#" class="text-muted" onclick="return false;" title="<?php echo $blocked_reason; ?>">Tidak Applicable</a>
+<?php } else { ?>
+    <a href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>&kdjasa=<?php echo $tampil['kode_wo']; ?>&kd=<?php echo $kd; ?>&tab=jasa">Pilih</a>
+<?php } ?>
                                                         </li>
                                                     </ul>
                                                 </div><!-- /.btn-group -->                                                                                                    
                                             </td>														
                                             <td><?php echo $tampil['kode_wo']?></td>														
-                                            <td><?php echo $tampil['nama_wo']?></td>	
+                                            <td><?php echo $tampil['nama_wo']?>
+    <?php if($disabled=="disabled"){ ?>
+        <br><span class="label label-danger" style="font-size:10px;">Not applicable</span>
+    <?php } ?>
+</td>	
                                         </tr>
 
                                     <?php
@@ -662,3 +711,4 @@
 <?php 
 	}
 ?>
+

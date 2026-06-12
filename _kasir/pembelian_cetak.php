@@ -71,6 +71,7 @@
                 //$tot=$tm_cari['tot'];                 
                 $total_qty_order=$tm_cari['tot_qty_order'];                 
                 $total_qty_beli=$tm_cari['tot_qty_beli'];                                   
+                $mode_view_only = true;
 ?>
 
 <!DOCTYPE html>
@@ -422,6 +423,7 @@
 										<div class="widget-main">
 
                                             <div class="row">
+                                                <?php if (empty($mode_view_only)) { ?>
                                                 <div class="col-xs-8 col-sm-3">
                                                     <a href="pembelian_add.php">
                                                     <button class="btn btn-primary btn-block" type="button">
@@ -435,6 +437,7 @@
                                                         </button>
                                                                                                     
                                                 </div>
+                                                <?php } ?>
                                                 <div class="col-xs-8 col-sm-3">
                                                     <a target="_blank"  href="pembelian_struk.php?snobl=<?php echo $nobl; ?>">                            
                                                         <button class="btn btn-primary btn-block" type="button" 

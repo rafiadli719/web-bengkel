@@ -1,0 +1,246 @@
+================================================================================
+BACKUP LOG - SISTEM STATUS PENGERJAAN SERVIS
+================================================================================
+Tanggal Backup: 27 Desember 2025
+Tujuan: Implementasi Guard & Security Fixes untuk Status Management
+================================================================================
+
+FILE-FILE YANG DI-BACKUP:
+--------------------------------------------------------------------------------
+
+1. servis-input-reguler.php
+   Backup: servis-input-reguler.php.backup_20251227_status_guard
+   Alasan: Tambah guard untuk redirect ke RST jika status selesai/bayar
+   Lokasi: C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab\
+
+2. servis-reguler-byr.php
+   Backup: servis-reguler-byr.php.backup_20251227_sql_injection_fix
+   Alasan: Fix SQL injection vulnerability di handler update status
+   Lokasi: C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab\
+
+================================================================================
+PERUBAHAN YANG AKAN DILAKUKAN:
+================================================================================
+
+FILE 1: servis-input-reguler.php
+--------------------------------
+CHANGE TYPE: ADD
+LOCATION: Setelah baris 50 (setelah variabel no_service didefinisikan)
+DESCRIPTION: Tambah guard mechanism untuk auto-redirect ke readonly page
+
+KODE YANG DITAMBAHKAN:
+```php
+// ============================================================
+// GUARD: Redirect to RST page if service already finished/paid
+// ============================================================
+if (!empty($no_service)) {
+    $__ns = mysqli_real_escape_string($koneksi, $no_service);
+    $__q = mysqli_query($koneksi, "SELECT status_servis FROM tblservice
+                                    WHERE no_service='".$__ns."' LIMIT 1");
+    if ($__q && ($__r = mysqli_fetch_assoc($__q))) {
+        $__st = strtolower($__r['status_servis'] ?? '');
+        if ($__st === 'selesai' || $__st === 'bayar') {
+            $__redir = 'servis-input-reguler-rst.php?snoserv=' . urlencode($no_service);
+            if (isset($_GET['tab']) && $_GET['tab'] !== '') {
+                $__redir .= '&tab=' . urlencode($_GET['tab']);
+            }
+            header('Location: ' . $__redir);
+            exit;
+        }
+    }
+}
+// ============================================================
+```
+
+IMPACT:
+- User tidak bisa akses edit page jika status sudah selesai/bayar
+- Auto redirect ke read-only page (servis-input-reguler-rst.php)
+- Tab state tetap terjaga saat redirect
+
+TESTING:
+1. Buat service baru dengan status 'datang'
+2. Update status ke 'bayar'
+3. Coba akses URL edit page langsung
+4. Expected: Auto redirect ke RST page
+
+================================================================================
+
+FILE 2: servis-reguler-byr.php
+-------------------------------
+CHANGE TYPE: MODIFY + ADD
+LOCATION: Baris 141-150 (handler btnupdatestatus)
+DESCRIPTION: Fix SQL injection + tambah validation + audit trail
+
+KODE LAMA (VULNERABLE):
+```php
+if(isset($_POST['btnupdatestatus'])) {
+    $no_service = $_POST['txtnosrv'];
+    $status_servis_baru = $_POST['cbostatus'];  // ❌ NO SANITIZATION
+
+    mysqli_query($koneksi,"UPDATE tblservice
+                           SET status_servis='$status_servis_baru'
+                           WHERE no_service='$no_service'");
+
+    echo"<script>window.location=('servis-reguler-byr.php?snoserv=$no_service...');</script>";
+}
+```
+
+KODE BARU (SECURE):
+```php
+if(isset($_POST['btnupdatestatus'])) {
+    // Sanitize input
+    $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+    $status_servis_input = $_POST['cbostatus'] ?? '';
+
+    // Validate status enum
+    $allowed_status = ['datang', 'diproses', 'selesai', 'bayar', 'cancel'];
+    if (!in_array($status_servis_input, $allowed_status)) {
+        echo "<script>alert('ERROR: Status tidak valid!'); window.history.back();</script>";
+        exit;
+    }
+
+    // Get current status for validation & logging
+    $query_current = mysqli_query($koneksi, "SELECT status_servis FROM tblservice
+                                              WHERE no_service='$no_service' LIMIT 1");
+    $current_data = mysqli_fetch_assoc($query_current);
+    $status_lama = $current_data['status_servis'] ?? '';
+
+    // Validate transition (optional - Phase 2)
+    // if (!validateStatusTransition($status_lama, $status_servis_input)) { ... }
+
+    // Update dengan prepared statement
+    $stmt = mysqli_prepare($koneksi, "UPDATE tblservice SET status_servis=?
+                                       WHERE no_service=?");
+    mysqli_stmt_bind_param($stmt, "ss", $status_servis_input, $no_service);
+
+    if (mysqli_stmt_execute($stmt)) {
+        // Log status change (Phase 2 - audit trail)
+        // logStatusChange($koneksi, $no_service, $status_lama, $status_servis_input, $_nama);
+
+        echo"<script>
+            alert('Status berhasil diupdate: $status_lama → $status_servis_input');
+            window.location=('servis-reguler-byr.php?snoserv=$no_service...');
+        </script>";
+    } else {
+        echo "<script>alert('ERROR: Gagal update status'); window.history.back();</script>";
+    }
+
+    mysqli_stmt_close($stmt);
+}
+```
+
+IMPACT:
+- ✅ SQL injection prevented dengan prepared statement
+- ✅ Input validation untuk enum status
+- ✅ Error handling yang lebih baik
+- ⏭️ Ready untuk audit trail (Phase 2)
+
+TESTING:
+1. Normal update: datang → diproses (should success)
+2. Invalid status: submit dengan value 'hacked' (should reject)
+3. SQL injection test: value = "'; DROP TABLE tblservice; --" (should escape)
+
+================================================================================
+
+ROLLBACK PROCEDURE:
+================================================================================
+
+Jika terjadi masalah setelah implementasi, lakukan rollback:
+
+STEP 1: Restore File Original
+------------------------------
+cd C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab
+
+copy /Y servis-input-reguler.php.backup_20251227_status_guard servis-input-reguler.php
+copy /Y servis-reguler-byr.php.backup_20251227_sql_injection_fix servis-reguler-byr.php
+
+STEP 2: Clear Browser Cache
+----------------------------
+Ctrl + Shift + Delete
+Clear cache & reload
+
+STEP 3: Verify Rollback
+------------------------
+- Cek apakah halaman bisa diakses normal
+- Test flow input servis dari awal
+- Check error log di server
+
+================================================================================
+
+VERIFICATION CHECKLIST:
+================================================================================
+
+Setelah implementasi, verifikasi hal berikut:
+
+FILE 1: servis-input-reguler.php
+---------------------------------
+[ ] File backup berhasil dibuat
+[ ] Guard code ditambahkan di posisi yang benar
+[ ] Tidak ada syntax error (check PHP error log)
+[ ] Test redirect: service dengan status 'bayar' → auto ke RST
+[ ] Test normal access: service dengan status 'diproses' → tetap di edit mode
+[ ] Tab parameter tetap terjaga saat redirect
+
+FILE 2: servis-reguler-byr.php
+-------------------------------
+[ ] File backup berhasil dibuat
+[ ] Prepared statement implemented
+[ ] Input validation berfungsi
+[ ] Error handling proper
+[ ] Test normal update status (success)
+[ ] Test invalid status value (rejected)
+[ ] Test SQL injection payload (escaped)
+
+GENERAL:
+--------
+[ ] Tidak ada PHP error/warning di error log
+[ ] Tidak ada broken functionality di halaman lain
+[ ] Performance tidak menurun signifikan
+[ ] Database tidak ada corrupt data
+
+================================================================================
+
+NEXT STEPS AFTER VERIFICATION:
+================================================================================
+
+PHASE 2: Audit Trail
+--------------------
+1. Create table status_change_log (SQL migration ready di analisa doc)
+2. Implement logStatusChange() function
+3. Integrate logging ke handler update status
+4. Test: Verify log entries after status change
+
+PHASE 3: Workflow Validation
+-----------------------------
+1. Create config_status_workflow.php
+2. Define allowed_transitions array
+3. Implement validateStatusTransition()
+4. Integrate validation ke handler
+5. Test: Try invalid transitions
+
+PHASE 4: Permission-Based Access
+---------------------------------
+1. Add permission 'service_edit_finished' di RBAC
+2. Update guard dengan permission check
+3. Test dengan different user roles
+
+================================================================================
+
+CONTACT & SUPPORT:
+================================================================================
+
+Documentation: ANALISA_SISTEM_STATUS_PENGERJAAN_SERVIS.md
+Backup Location: C:\xampp\htdocs\web-bengkel\aplikasi\aplikasi\_admincab\
+Backup Files:
+  - servis-input-reguler.php.backup_20251227_status_guard
+  - servis-reguler-byr.php.backup_20251227_sql_injection_fix
+
+Developer Notes:
+- Backup dibuat SEBELUM implementasi
+- Original file tetap ada sebagai .backup_*
+- Gunakan rollback procedure jika ada masalah
+- Test semua flow sebelum deploy ke production
+
+================================================================================
+END OF BACKUP LOG
+================================================================================

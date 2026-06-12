@@ -1,0 +1,188 @@
+═══════════════════════════════════════════════════════════════
+  QUICK START GUIDE - SISTEM STATISTIK PELANGGAN OTOMATIS
+═══════════════════════════════════════════════════════════════
+
+📋 LANGKAH INSTALASI CEPAT
+═══════════════════════════════════════════════════════════════
+
+1. IMPORT DATABASE
+   ─────────────────────────────────────────────────────────────
+   • Buka phpMyAdmin atau MySQL Command Line
+   • Pilih database: fitmotor_dbbengkel
+   • Import file: database_statistik_pelanggan_otomatis.sql
+   
+   Via Command Line:
+   mysql -u root -p fitmotor_dbbengkel < database_statistik_pelanggan_otomatis.sql
+
+2. AKTIFKAN EVENT SCHEDULER
+   ─────────────────────────────────────────────────────────────
+   • Jalankan query:
+   SET GLOBAL event_scheduler = ON;
+   
+   • Untuk permanen, edit my.ini atau my.cnf:
+   [mysqld]
+   event_scheduler = ON
+
+3. GENERATE STATISTIK AWAL
+   ─────────────────────────────────────────────────────────────
+   • Jalankan stored procedure:
+   CALL sp_refresh_statistik_pelanggan();
+   
+   • Verifikasi:
+   SELECT COUNT(*) FROM statistik_pelanggan;
+   SELECT * FROM view_statistik_pelanggan LIMIT 10;
+
+4. AKSES DASHBOARD
+   ─────────────────────────────────────────────────────────────
+   • Buka browser:
+   http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/statistik_pelanggan_dashboard.php
+   
+   • Login dengan akun admin/kasir
+   • Dashboard akan menampilkan statistik real-time
+
+═══════════════════════════════════════════════════════════════
+📊 FITUR UTAMA
+═══════════════════════════════════════════════════════════════
+
+✅ UPDATE OTOMATIS
+   • Statistik update otomatis saat status_servis = 'bayar'
+   • Tidak perlu input manual
+   • Real-time tracking
+
+✅ KLASIFIKASI MEMBER
+   • Bronze: < Rp 2.000.000
+   • Silver: Rp 2.000.000 - Rp 4.999.999
+   • Gold: Rp 5.000.000 - Rp 9.999.999
+   • Platinum: ≥ Rp 10.000.000
+
+✅ FOLLOW UP OTOMATIS
+   • Deteksi pelanggan > 30 hari tidak datang
+   • Template pesan WhatsApp siap pakai
+   • Prioritas berdasarkan status member
+
+✅ TOP PELANGGAN
+   • Ranking 100 pelanggan terbaik
+   • Berdasarkan total nominal transaksi
+   • Update real-time
+
+═══════════════════════════════════════════════════════════════
+🔍 QUERY BERGUNA
+═══════════════════════════════════════════════════════════════
+
+-- Lihat semua statistik pelanggan
+SELECT * FROM view_statistik_pelanggan;
+
+-- Pelanggan yang perlu follow up
+SELECT * FROM view_pelanggan_follow_up;
+
+-- Top 10 pelanggan
+SELECT * FROM view_top_pelanggan LIMIT 10;
+
+-- Pelanggan Gold yang lama tidak datang
+SELECT * FROM view_statistik_pelanggan 
+WHERE status_member = 'Gold' 
+AND lama_tidak_datang_hari > 60;
+
+-- Summary per status member
+SELECT 
+    status_member,
+    COUNT(*) as jumlah,
+    SUM(total_nominal) as total_pendapatan
+FROM statistik_pelanggan
+GROUP BY status_member;
+
+═══════════════════════════════════════════════════════════════
+📱 SETUP WHATSAPP (OPSIONAL)
+═══════════════════════════════════════════════════════════════
+
+1. Daftar di WhatsApp Gateway:
+   • Fonnte: https://fonnte.com (Recommended)
+   • Wablas: https://wablas.com
+   • WooWA: https://woowa.id
+
+2. Dapatkan API Key
+
+3. Edit file: _admincab/config_whatsapp.php
+   define('WA_API_KEY', 'your_api_key_here');
+   define('WA_API_URL', 'https://api.fonnte.com/send');
+
+4. Test kirim pesan:
+   php test_whatsapp.php
+
+═══════════════════════════════════════════════════════════════
+🧪 TESTING
+═══════════════════════════════════════════════════════════════
+
+1. Test Trigger:
+   • Buat transaksi baru
+   • Update status menjadi 'bayar'
+   • Cek statistik_pelanggan otomatis update
+
+2. Test View:
+   • SELECT * FROM view_statistik_pelanggan;
+   • Pastikan data muncul
+
+3. Test Dashboard:
+   • Akses via browser
+   • Cek semua tab berfungsi
+   • Test tombol refresh
+
+═══════════════════════════════════════════════════════════════
+⚠️ TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+PROBLEM: Trigger tidak jalan
+SOLUSI: 
+- SHOW TRIGGERS LIKE 'tblservice';
+- DROP dan CREATE ulang trigger
+
+PROBLEM: Event scheduler tidak aktif
+SOLUSI:
+- SET GLOBAL event_scheduler = ON;
+- Restart MySQL service
+
+PROBLEM: View kosong
+SOLUSI:
+- CALL sp_refresh_statistik_pelanggan();
+- Cek data di tblservice ada yang status = 'bayar'
+
+PROBLEM: WhatsApp tidak terkirim
+SOLUSI:
+- Cek API Key valid
+- Cek format nomor (628xxx)
+- Gunakan mode manual (WhatsApp Web link)
+
+═══════════════════════════════════════════════════════════════
+📚 DOKUMENTASI LENGKAP
+═══════════════════════════════════════════════════════════════
+
+Baca file: DOKUMENTASI_SISTEM_STATISTIK_PELANGGAN.md
+
+Untuk penjelasan detail tentang:
+• Arsitektur sistem
+• Cara kerja trigger
+• Integrasi PHP
+• Otomasi WhatsApp
+• Dan lainnya
+
+═══════════════════════════════════════════════════════════════
+✅ CHECKLIST INSTALASI
+═══════════════════════════════════════════════════════════════
+
+[ ] Import database_statistik_pelanggan_otomatis.sql
+[ ] Aktifkan event scheduler
+[ ] Jalankan sp_refresh_statistik_pelanggan()
+[ ] Verifikasi data di statistik_pelanggan
+[ ] Test view_statistik_pelanggan
+[ ] Akses dashboard via browser
+[ ] Setup WhatsApp API (opsional)
+[ ] Test kirim pesan WhatsApp
+[ ] Backup database
+
+═══════════════════════════════════════════════════════════════
+
+Selamat! Sistem Statistik Pelanggan Otomatis siap digunakan! 🎉
+
+Untuk support: Hubungi developer atau cek dokumentasi lengkap.
+
+═══════════════════════════════════════════════════════════════

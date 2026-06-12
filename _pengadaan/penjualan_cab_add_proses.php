@@ -57,16 +57,36 @@
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$tipe_cabang_dr=$tm_cari['tipe_cabang'];				        
         
+        $carabayar="Tunai";
+        $diskon_persen_rule="0";
+        $tempo_hari_rule="0";
         if($tipe_cabang_dr=='1') {
-            $diskon="100"; 
-            $total_diskon=$total_jual*($diskon/100);
-            $netto=$total_jual-$total_diskon+$total_pajak;
-            $dp=$total_jual-$total_diskon;
-            $kekurangan=$total_pajak;
-            $carabayar="Tunai";
-        } else {
-            
+            $diskon_persen_rule="100";
         }
+        $q_setting=mysqli_query($koneksi,"SELECT 
+                                            diskon_persen, cara_bayar, tempo_hari 
+                                            FROM 
+                                            tbl_setting_antarcabang 
+                                            WHERE 
+                                            aktif='1' AND 
+                                            tipe_cabang_tujuan='$tipe_cabang_dr' AND 
+                                            (kd_cabang='$kd_cabang' OR kd_cabang='') 
+                                            ORDER BY kd_cabang DESC 
+                                            LIMIT 1");
+        if($q_setting) {
+            $tm_setting=mysqli_fetch_array($q_setting);
+            if($tm_setting) {
+                $diskon_persen_rule=$tm_setting['diskon_persen'];
+                $carabayar=$tm_setting['cara_bayar'];
+                $tempo_hari_rule=$tm_setting['tempo_hari'];
+            }
+        }
+
+        $diskon=$diskon_persen_rule;
+        $total_diskon=$total_jual*($diskon/100);
+        $netto=$total_jual-$total_diskon+$total_pajak;
+        $dp=$total_jual-$total_diskon;
+        $kekurangan=$total_pajak;
         
     // =========
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -92,6 +112,13 @@
                     return $satukan;
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
+            $tanggal_jt='';
+            if($carabayar=='Kredit') {
+                $tempo_int=(int)$tempo_hari_rule;
+                if($tempo_int>0) {
+                    $tanggal_jt=date('Y-m-d', strtotime($txttgljl.' +'.$tempo_int.' days'));
+                }
+            }
             
             mysqli_query($koneksi,"INSERT INTO tblpenjualan_header 
                                     (notransaksi, status, carabayar, tanggal, 
@@ -110,7 +137,7 @@
                                     '$total_qty_order','$total_qty_order','$total_jual',
                                     '$diskon','$total_diskon',
                                     '$pajak','$total_pajak',
-                                    '$netto','','$dp','','',
+                                    '$netto','','$dp','$tanggal_jt','',
                                     '$kekurangan','$_nama','$kd_cabang')");
 
             // Pindahkan Data Pesanan ke Penjualan

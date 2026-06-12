@@ -1,0 +1,316 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║  PATCH UNTUK: servis-reguler-jemput.php                                  ║
+║  FITUR: Perhitungan Jarak Otomatis Cabang ke Pelanggan                   ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+FILE BACKUP SUDAH DIBUAT: servis-reguler-jemput.php.backup
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 1: UPDATE QUERY CABANG (Line ~31-43)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI:
+───────────────────────────────────────────────────────────────────────────
+// Fetch branch data using prepared statement
+$stmt = mysqli_prepare($koneksi, "SELECT nama_cabang, tipe_cabang
+                                FROM tbcabang WHERE kode_cabang = ?");
+mysqli_stmt_bind_param($stmt, "s", $kd_cabang);
+mysqli_stmt_execute($stmt);
+$branch_result = mysqli_stmt_get_result($stmt);
+$branch_data = mysqli_fetch_assoc($branch_result);
+mysqli_stmt_close($stmt);
+
+$nama_cabang = $branch_data['nama_cabang'] ?? '';
+$tipe_cabang = $branch_data['tipe_cabang'] ?? '';
+$alamat_cabang = "Alamat Cabang " . $nama_cabang;
+$telepon_cabang = "021-xxxx-xxxx";
+───────────────────────────────────────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────────────────────────────────────
+// Fetch branch data using prepared statement
+$stmt = mysqli_prepare($koneksi, "SELECT nama_cabang, tipe_cabang, alamat_cabang,
+                                google_maps_cabang, lat_cabang, long_cabang
+                                FROM tbcabang WHERE kode_cabang = ?");
+mysqli_stmt_bind_param($stmt, "s", $kd_cabang);
+mysqli_stmt_execute($stmt);
+$branch_result = mysqli_stmt_get_result($stmt);
+$branch_data = mysqli_fetch_assoc($branch_result);
+mysqli_stmt_close($stmt);
+
+$nama_cabang = $branch_data['nama_cabang'] ?? '';
+$tipe_cabang = $branch_data['tipe_cabang'] ?? '';
+$alamat_cabang = $branch_data['alamat_cabang'] ?? '';
+$lat_cabang = $branch_data['lat_cabang'] ?? '';
+$long_cabang = $branch_data['long_cabang'] ?? '';
+$google_maps_cabang = $branch_data['google_maps_cabang'] ?? '';
+$telepon_cabang = "021-xxxx-xxxx";
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 2: UPDATE INSERT QUERY (Line ~204-213)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI:
+───────────────────────────────────────────────────────────────────────────
+if ($check_data['count'] == 0) {
+    // Insert new service with all required fields
+    $stmt = mysqli_prepare($koneksi, "INSERT INTO tblservice
+                                    (no_service, tanggal, jam, no_pelanggan, no_polisi,
+                                     keterangan, keterangan_jemput, foto_patokan, kd_cabang,
+                                     id_user, status, status_jemput, status_servis)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', '1', 'datang')");
+    mysqli_stmt_bind_param($stmt, "ssssssssis", $no_service, $tanggal_jemput, $jam_jemput,
+                          $no_pelanggan, $no_polisi, $keterangan_jemput, $keterangan_jemput,
+                          $foto_patokan, $kd_cabang, $id_user);
+───────────────────────────────────────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────────────────────────────────────
+if ($check_data['count'] == 0) {
+    // Ambil data kondisi motor, jarak, dan tarif dari form
+    $kondisi_motor = mysqli_real_escape_string($koneksi, $_POST['txtkondisi'] ?? 'jalan');
+    $jarak_jemput = mysqli_real_escape_string($koneksi, $_POST['txtjarak'] ?? '0');
+    $tarif_jemput = mysqli_real_escape_string($koneksi, $_POST['txttarif'] ?? '0');
+
+    // Insert new service with all required fields
+    $stmt = mysqli_prepare($koneksi, "INSERT INTO tblservice
+                                    (no_service, tanggal, jam, no_pelanggan, no_polisi,
+                                     keterangan, keterangan_jemput, foto_patokan, kd_cabang,
+                                     id_user, status, status_jemput, status_servis,
+                                     kondisi_motor, jarak_jemput, tarif_jemput)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', '1', 'datang', ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "sssssssssissdi", $no_service, $tanggal_jemput, $jam_jemput,
+                          $no_pelanggan, $no_polisi, $keterangan_jemput, $keterangan_jemput,
+                          $foto_patokan, $kd_cabang, $id_user, $kondisi_motor, $jarak_jemput, $tarif_jemput);
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 3: UPDATE UPDATE QUERY (Line ~214-227)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI (di blok else setelah INSERT):
+───────────────────────────────────────────────────────────────────────────
+} else {
+    // Update existing service
+    $update_foto = "";
+    if (!empty($foto_patokan)) {
+        $update_foto = ", foto_patokan = '$foto_patokan'";
+    }
+
+    $stmt = mysqli_prepare($koneksi, "UPDATE tblservice
+                                    SET tanggal = ?, jam = ?, no_pelanggan = ?, no_polisi = ?,
+                                        keterangan_jemput = ?, keterangan = ?$update_foto
+                                    WHERE no_service = ?");
+    mysqli_stmt_bind_param($stmt, "sssssss", $tanggal_jemput, $jam_jemput, $no_pelanggan,
+                          $no_polisi, $keterangan_jemput, $keterangan_jemput, $no_service);
+}
+───────────────────────────────────────────────────────────────────────────
+
+GANTI DENGAN:
+───────────────────────────────────────────────────────────────────────────
+} else {
+    // Ambil data kondisi motor, jarak, dan tarif dari form
+    $kondisi_motor = mysqli_real_escape_string($koneksi, $_POST['txtkondisi'] ?? 'jalan');
+    $jarak_jemput = mysqli_real_escape_string($koneksi, $_POST['txtjarak'] ?? '0');
+    $tarif_jemput = mysqli_real_escape_string($koneksi, $_POST['txttarif'] ?? '0');
+
+    // Update existing service
+    $update_foto = "";
+    if (!empty($foto_patokan)) {
+        $update_foto = ", foto_patokan = '$foto_patokan'";
+    }
+
+    $stmt = mysqli_prepare($koneksi, "UPDATE tblservice
+                                    SET tanggal = ?, jam = ?, no_pelanggan = ?, no_polisi = ?,
+                                        keterangan_jemput = ?, keterangan = ?,
+                                        kondisi_motor = ?, jarak_jemput = ?, tarif_jemput = ?$update_foto
+                                    WHERE no_service = ?");
+    mysqli_stmt_bind_param($stmt, "sssssssds", $tanggal_jemput, $jam_jemput, $no_pelanggan,
+                          $no_polisi, $keterangan_jemput, $keterangan_jemput,
+                          $kondisi_motor, $jarak_jemput, $tarif_jemput, $no_service);
+}
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 4: TAMBAHKAN SCRIPT SEBELUM </head> (Line ~289)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI TAG:
+───────────────────────────────────────────────────────────────────────────
+</head>
+───────────────────────────────────────────────────────────────────────────
+
+TAMBAHKAN SEBELUM TAG TERSEBUT:
+───────────────────────────────────────────────────────────────────────────
+    <!-- Include Haversine Distance Calculator -->
+    <script src="assets/js/haversine-distance.js"></script>
+</head>
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+PATCH 5: UPDATE JAVASCRIPT SECTION (Line ~828-907)
+═══════════════════════════════════════════════════════════════════════════
+
+CARI KODE INI:
+───────────────────────────────────────────────────────────────────────────
+// ===============================================
+// KALKULATOR TARIF JEMPUT ANTAR
+// ===============================================
+
+function hitungTarif() {
+    const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+───────────────────────────────────────────────────────────────────────────
+
+GANTI SELURUH FUNCTION hitungTarif() DAN TAMBAHKAN FUNCTION BARU:
+───────────────────────────────────────────────────────────────────────────
+// ===============================================
+// KALKULATOR TARIF JEMPUT ANTAR DENGAN AUTO DISTANCE
+// ===============================================
+
+// Koordinat Cabang (dari PHP)
+const latCabang = <?php echo !empty($lat_cabang) ? $lat_cabang : 'null'; ?>;
+const longCabang = <?php echo !empty($long_cabang) ? $long_cabang : 'null'; ?>;
+
+// Koordinat Pelanggan (akan diupdate saat pilih kendaraan)
+let latPelanggan = null;
+let longPelanggan = null;
+
+// Auto-calculate jarak saat halaman load jika koordinat sudah ada
+document.addEventListener('DOMContentLoaded', function() {
+    // Ambil koordinat pelanggan dari data yang sudah ada (jika ada)
+    <?php if (!empty($customer_data['klat']) && !empty($customer_data['klong'])): ?>
+    latPelanggan = <?php echo $customer_data['klat']; ?>;
+    longPelanggan = <?php echo $customer_data['klong']; ?>;
+
+    if (latCabang && longCabang && latPelanggan && longPelanggan) {
+        autoCalculateDistance();
+    }
+    <?php endif; ?>
+});
+
+// Function auto hitung jarak
+function autoCalculateDistance() {
+    if (!latCabang || !longCabang) {
+        console.log('⚠️ Koordinat cabang belum tersedia! Update data cabang terlebih dahulu.');
+        return;
+    }
+
+    if (!latPelanggan || !longPelanggan) {
+        console.log('⚠️ Koordinat pelanggan belum tersedia!');
+        return;
+    }
+
+    // Hitung jarak menggunakan Haversine formula
+    const jarak = calculateDistance(latCabang, longCabang, latPelanggan, longPelanggan);
+
+    // Set nilai jarak ke input field (round to 1 decimal)
+    document.getElementById('txtjarak').value = jarak.toFixed(1);
+
+    // Auto hitung tarif
+    hitungTarif();
+
+    // Tampilkan notifikasi
+    const jarakText = jarak.toFixed(1);
+    console.log(`✅ Jarak otomatis dihitung: ${jarakText} KM (dari <?php echo $nama_cabang; ?> ke lokasi pelanggan)`);
+
+    // Tampilkan info di form
+    const infoDiv = document.getElementById('hasilTarif');
+    if (infoDiv) {
+        const existingInfo = infoDiv.querySelector('.info-jarak-otomatis');
+        if (existingInfo) existingInfo.remove();
+
+        const info = document.createElement('div');
+        info.className = 'info-jarak-otomatis';
+        info.style.cssText = 'background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 10px; border: 1px solid #c3e6cb;';
+        info.innerHTML = `<i class="fa fa-check-circle" style="color: #28a745;"></i> <strong>Jarak otomatis dihitung:</strong> ${jarakText} KM<br>
+                         <small>Dari ${latCabang},${longCabang} (<?php echo $nama_cabang; ?>) ke ${latPelanggan},${longPelanggan} (Pelanggan)</small>`;
+        infoDiv.appendChild(info);
+    }
+}
+
+function hitungTarif() {
+    const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+
+    let tarifJalan = 0;
+    let tarifMogok = 0;
+
+    if (jarak > 1.0) {
+        // Perhitungan Motor Jalan
+        tarifJalan = hitungTarifJemput(jarak, 'jalan');
+
+        // Perhitungan Motor Mogok
+        tarifMogok = hitungTarifJemput(jarak, 'mogok');
+    }
+
+    // Update display
+    document.getElementById('tarifJalan').textContent = formatRupiah(tarifJalan);
+    document.getElementById('tarifMogok').textContent = formatRupiah(tarifMogok);
+    document.getElementById('hasilTarif').style.display = 'block';
+
+    // Set hidden field berdasarkan kondisi motor yang dipilih
+    const kondisi = document.querySelector('input[name="txtkondisi"]:checked').value;
+    const tarifTerpilih = kondisi === 'jalan' ? tarifJalan : tarifMogok;
+    document.getElementById('txttarif').value = tarifTerpilih;
+}
+
+// Event listener untuk tombol hitung
+document.getElementById('btnHitungTarif').addEventListener('click', function() {
+    // Jika jarak masih 0, coba hitung otomatis
+    const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+    if (jarak === 0 && latCabang && longCabang && latPelanggan && longPelanggan) {
+        autoCalculateDistance();
+    } else {
+        hitungTarif();
+    }
+});
+
+// Auto-hitung saat jarak berubah manual
+document.getElementById('txtjarak').addEventListener('input', function() {
+    if (this.value > 0) {
+        hitungTarif();
+    }
+});
+
+// Auto-update tarif saat kondisi motor berubah
+document.querySelectorAll('input[name="txtkondisi"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        const jarak = parseFloat(document.getElementById('txtjarak').value) || 0;
+        if (jarak > 0) {
+            hitungTarif();
+        }
+    });
+});
+
+// Update koordinat pelanggan saat Google Maps link diupdate
+document.getElementById('txtgooglemaps').addEventListener('input', function() {
+    const coords = extractCoordinatesFromURL(this.value);
+    if (coords.lat && coords.long) {
+        latPelanggan = coords.lat;
+        longPelanggan = coords.long;
+
+        // Auto hitung jarak jika koordinat cabang sudah ada
+        if (latCabang && longCabang) {
+            autoCalculateDistance();
+        }
+    }
+});
+───────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════
+SELESAI! ✅
+═══════════════════════════════════════════════════════════════════════════
+
+CARA APPLY PATCH:
+1. Buka servis-reguler-jemput.php dengan code editor
+2. Gunakan Ctrl+F (Find) untuk cari kode yang perlu diganti
+3. Replace dengan kode yang baru
+4. Save file
+5. Test di browser
+
+ATAU gunakan file backup jika ada masalah:
+→ Restore: servis-reguler-jemput.php.backup
+
+═══════════════════════════════════════════════════════════════════════════

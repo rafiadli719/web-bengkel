@@ -289,15 +289,22 @@
                                                         $sudah_bayar=$tampil['jumlah_bayar'];
                                                         
                                                         $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, total_akhir, pembayaran 
+                                                                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
+                                                                                        total_beli, total_diskon, total_pajak,
+                                                                                        pembayaran, jumlah_bayar 
                                                                                         FROM tblpembelian_header 
                                                                                         WHERE notransaksi='$no_pembelian'");			
                                                         $tm_cari=mysqli_fetch_array($cari_kd);
                                                         $tanggal=$tm_cari['tanggal_trx'];
-                                                        $total_akhir=$tm_cari['total_akhir'];
-                                                        $pembayaran=$tm_cari['pembayaran'];
-                                                                                                                
-                                                        $kekurangan=$total_akhir-$pembayaran-$sudah_bayar;
+                                                        $total_beli = (float)$tm_cari['total_beli'];
+                                                        $total_diskon = (float)$tm_cari['total_diskon'];
+                                                        $total_pajak = (float)$tm_cari['total_pajak'];
+                                                        $total_akhir = $total_beli - $total_diskon + $total_pajak;
+                                                        $pembayaran = (float)$tm_cari['pembayaran'];
+                                                        $kekurangan = (float)$tm_cari['jumlah_bayar'];
+                                                        if ($kekurangan < 0) {
+                                                            $kekurangan = 0;
+                                                        }
 												?>
 													<tr>
 														<td><?php echo $tampil['no_pembelian']?></td>														

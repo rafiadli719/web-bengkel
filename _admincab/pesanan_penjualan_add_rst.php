@@ -57,7 +57,7 @@
                                             WHERE 
                                             nopelanggan='$nopelanggan'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
-        $nmpelanggan=$tm_cari['namapelanggan'];
+        $nmpelanggan = ($tm_cari && isset($tm_cari['namapelanggan'])) ? $tm_cari['namapelanggan'] : 'Pelanggan Tidak Ditemukan';
                 
     // Total Transaksi ======
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -435,30 +435,30 @@
 										<div class="widget-main padding-12 no-padding-left no-padding-right">
 											<div class="tabbable">
 												<ul class="nav nav-tabs" id="myTab">
-													<li class="active">
-														<a data-toggle="tab" href="#order-details" aria-expanded="true">
+													<li class="">
+														<a data-toggle="tab" href="#order-details" aria-expanded="false">
 															<i class="green ace-icon fa fa-list-alt bigger-120"></i>
 															Order Details
 														</a>
 													</li>
 
-													<li class="">
-														<a data-toggle="tab" href="#order-items" aria-expanded="false">
+													<li class="active">
+														<a data-toggle="tab" href="#order-items" aria-expanded="true">
 															<i class="blue ace-icon fa fa-shopping-cart bigger-120"></i>
 															Item Barang
 														</a>
 													</li>
 
 													<li class="">
-														<a data-toggle="tab" href="#payment-info" aria-expanded="false">
-															<i class="orange ace-icon fa fa-credit-card bigger-120"></i>
-															Payment Information
+														<a data-toggle="tab" href="#order-actions" aria-expanded="false">
+															<i class="orange ace-icon fa fa-cogs bigger-120"></i>
+															Actions
 														</a>
 													</li>
 												</ul>
 
 												<div class="tab-content">
-													<div id="order-details" class="tab-pane fade active in">
+													<div id="order-details" class="tab-pane fade">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">
@@ -487,7 +487,7 @@
 														</div>
 													</div>
 
-													<div id="order-items" class="tab-pane fade">
+													<div id="order-items" class="tab-pane fade active in">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">
@@ -497,7 +497,7 @@
 														</div>
 													</div>
 
-													<div id="payment-info" class="tab-pane fade">
+													<div id="order-actions" class="tab-pane fade">
 														<div class="row">
 															<div class="col-xs-12">
 																<div class="padding-18">

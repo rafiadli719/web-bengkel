@@ -42,7 +42,13 @@
 		$tot_bayar=$tm_cari['tot']; 
 
         if(isset($_POST['btnsimpan'])) {
-            $txttot= $_POST['txttot'];            
+            $cari_kd=mysqli_query($koneksi,"SELECT 
+                                        sum(jumlah_bayar) as tot 
+                                        FROM tblhutang_detail 
+                                        WHERE 
+                                        no_transaksi='$nobyr'");
+			$tm_cari=mysqli_fetch_array($cari_kd);	
+			$txttot = $tm_cari ? $tm_cari['tot'] : 0;
             if($txttot=='0') {
                 echo"<script>window.alert('Silahkan Edit nominal yang harus dibayar terlebih dahulu!');</script>";			                            
             } else {
@@ -80,20 +86,38 @@
                     $jumlah_bayar=$tampil['jumlah_bayar'];
 
                     $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                    jumlah_bayar 
+                                                    jumlah_bayar, pembayaran 
                                                     FROM tblpembelian_header 
                                                     WHERE notransaksi='$no_pembelian'");
                     $tm_cari=mysqli_fetch_array($cari_kd);	
-                    $tagihan=$tm_cari['jumlah_bayar']; 
-                    
-                    if($jumlah_bayar==$tagihan) {
-                        mysqli_query($koneksi,"UPDATE tblpembelian_header 
-                                                SET 
-                                                status_lunas='1', 
-                                                tanggal_lunas='$txttglpesan' 
-                                                WHERE 
-                                                notransaksi='$no_pembelian'");                                                
+                    $tagihan = $tm_cari ? (float)$tm_cari['jumlah_bayar'] : 0;
+                    $pembayaran_awal = $tm_cari ? (float)$tm_cari['pembayaran'] : 0;
+
+                    $bayar_apply = (float)$jumlah_bayar;
+                    if ($bayar_apply > $tagihan) {
+                        $bayar_apply = $tagihan;
                     }
+                    if ($bayar_apply < 0) {
+                        $bayar_apply = 0;
+                    }
+
+                    $sisa = $tagihan - $bayar_apply;
+                    if ($sisa < 0) {
+                        $sisa = 0;
+                    }
+
+                    $pembayaran_baru = $pembayaran_awal + $bayar_apply;
+                    $status_lunas = ($sisa <= 0) ? '1' : '0';
+                    $tanggal_lunas_val = ($status_lunas === '1') ? $txttglpesan : '';
+
+                    mysqli_query($koneksi,"UPDATE tblpembelian_header 
+                                            SET 
+                                            pembayaran='$pembayaran_baru',
+                                            jumlah_bayar='$sisa',
+                                            status_lunas='$status_lunas',
+                                            tanggal_lunas='$tanggal_lunas_val'
+                                            WHERE 
+                                            notransaksi='$no_pembelian'");
                 }
                 
                 echo"<script>window.location=('pmby_hutang_add_cetak.php?nobyr=$nobyr');</script>";        

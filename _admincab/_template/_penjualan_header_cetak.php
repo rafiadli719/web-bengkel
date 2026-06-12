@@ -25,7 +25,7 @@
             <div class="col-sm-4">
                 <div class="input-group">
                     <input type="text" class="form-control" id="txtnopesanan" name="txtnopesanan" 
-                    value="<?php echo $nopesanan; ?>" />
+                    value="<?php echo $nopesanan; ?>" readonly="true" disabled />
                     <div class="input-group-btn">
                         <button type="button" class="btn disabled btn-default no-border btn-sm" 
                         id="btncari_pesanan" name="btncari_pesanan">

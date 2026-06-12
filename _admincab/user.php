@@ -6,6 +6,9 @@
 		$id_user=$_SESSION['_iduser'];		
 		$kd_cabang=$_SESSION['_cabang'];		                        
 		include "../config/koneksi.php";
+        // Gunakan modul user management yang aktif saat ini.
+        header("Location: user_management.php");
+        exit;
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 

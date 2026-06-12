@@ -6,7 +6,7 @@
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
-    $alamat=$tm_cari['alamat'];	
+    $alamat_perusahaan=$tm_cari['alamat'];	
     $notlp=$tm_cari['notlp'];	
     $fax=$tm_cari['fax'];	
     $file_logo=$tm_cari['file_logo'];	    
@@ -26,7 +26,7 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         no_order='$nobl'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal_trx'];
-		$no_supplier=$tm_cari['no_pelanggan'];
+		$no_pelanggan=$tm_cari['no_pelanggan'];
 		$user_order=$tm_cari['user'];
         $total_qty=$tm_cari['total_qty']; 
         $total_beli=$tm_cari['total_jual'];
@@ -43,15 +43,15 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namapelanggan, alamat  
                                         FROM tblpelanggan 
-                                        WHERE nopelanggan='$no_supplier'");
+																	WHERE nopelanggan='$no_pelanggan'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$namapelanggan=$tm_cari['namapelanggan'];
-        $alamat=$tm_cari['alamat'];
+        $alamat_pelanggan=$tm_cari['alamat'];
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasales  
                                         FROM tblsales 
-                                        WHERE nosales='$no_supplier'");
+																	WHERE nosales='$no_sales'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$namasales=$tm_cari['namasales'];
 
@@ -108,7 +108,7 @@ div.page_break + div.page_break{
                     <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
                         <b>'.$nama_perusahaan.'</b><br>
                         <font size="2">
-                            '.$alamat.'<br>
+                            '.$alamat_perusahaan.'<br>
                             Telp. '.$notlp.'<br>
                             Fax. '.$fax.'
                         </font>
@@ -129,12 +129,12 @@ div.page_break + div.page_break{
                             <tr>
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Supplier</font></td> 			
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$no_supplier.'&nbsp;'.$namapelanggan.'</font></td>                    
+                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$no_pelanggan.'&nbsp;'.$namapelanggan.'</font></td>                    
                             </tr>                           
                             <tr>
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Alamat</font></td> 			
                                 <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat.'</font></td>                    
+                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat_pelanggan.'</font></td>                    
                             </tr>                                                 
                         </table>
                     </td> 			

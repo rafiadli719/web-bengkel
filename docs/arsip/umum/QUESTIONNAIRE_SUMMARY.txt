@@ -1,0 +1,172 @@
+=====================================================
+RINGKASAN QUESTIONNAIRE - MODUL PROCUREMENT
+=====================================================
+
+📋 TOTAL PERTANYAAN: 88 pertanyaan + checklist dokumen
+
+=====================================================
+KATEGORI PERTANYAAN:
+=====================================================
+
+A. INFORMASI UMUM PERUSAHAAN (6 pertanyaan)
+   - Struktur organisasi
+   - Volume transaksi
+   - Jumlah user & supplier
+
+B. PURCHASE REQUEST - PR (11 pertanyaan)
+   - Proses PR
+   - Approval workflow
+   - Notifikasi
+
+C. REQUEST FOR QUOTATION - RFQ (4 pertanyaan)
+   - Kebutuhan RFQ
+   - Proses vendor comparison
+
+D. PURCHASE ORDER - PO (13 pertanyaan)
+   - Proses PO
+   - Approval workflow
+   - Supplier & payment
+   - Format PO
+
+E. DELIVERY ORDER - DO (10 pertanyaan)
+   - Proses DO
+   - Tracking pengiriman
+   - Informasi DO
+
+F. GOODS RECEIPT - GR (10 pertanyaan)
+   - Proses GR
+   - Quality Control
+   - Dokumentasi
+   - Update stock
+
+G. PAYMENT & INVOICE (6 pertanyaan)
+   - Invoice matching
+   - Payment process
+
+H. REPORTING & MONITORING (5 pertanyaan)
+   - Dashboard
+   - Reports
+   - KPI
+
+I. SECURITY & ACCESS CONTROL (5 pertanyaan)
+   - User access
+   - Audit trail
+
+J. INTEGRASI (4 pertanyaan)
+   - Integrasi internal & external
+
+K. TEKNOLOGI & INFRASTRUKTUR (4 pertanyaan)
+   - Platform
+   - Notifikasi
+
+L. PRIORITAS & TIMELINE (4 pertanyaan)
+   - Prioritas modul
+   - Timeline implementasi
+   - Budget
+
+M. CATATAN TAMBAHAN (6 pertanyaan)
+   - Pain point
+   - Fitur yang diharapkan
+   - PIC & key user
+
+=====================================================
+PERTANYAAN KUNCI YANG HARUS DIJAWAB:
+=====================================================
+
+🔴 CRITICAL (WAJIB):
+1. Berapa level approval untuk PR? (Q11)
+2. Berapa level approval untuk PO? (Q26)
+3. Apakah perlu modul RFQ? (Q18)
+4. Apakah ada proses QC? (Q47)
+5. Kapan target modul live? (Q80)
+
+🟡 IMPORTANT (PENTING):
+1. Siapa yang berhak buat PR? (Q7)
+2. Apakah PO harus dari PR? (Q22)
+3. Apakah perlu tracking DO real-time? (Q39)
+4. Kapan stock di-update? (Q53)
+5. Dashboard apa yang dibutuhkan? (Q61)
+
+🟢 NICE TO HAVE (OPSIONAL):
+1. Apakah perlu notifikasi? (Q16)
+2. Apakah perlu foto bukti? (Q44)
+3. Apakah perlu audit trail? (Q69)
+4. Apakah perlu integrasi supplier? (Q73)
+5. Apakah perlu mobile app? (Q75)
+
+=====================================================
+APPROVAL MATRIX TEMPLATE:
+=====================================================
+
+PURCHASE REQUEST (PR):
+< Rp 5 juta       → Supervisor
+Rp 5-20 juta      → Manager
+> Rp 20 juta      → Director
+
+PURCHASE ORDER (PO):
+< Rp 10 juta      → Manager
+Rp 10-50 juta     → Director
+> Rp 50 juta      → Owner
+
+(Sesuaikan dengan kebutuhan perusahaan)
+
+=====================================================
+DOKUMEN PENDUKUNG YANG PERLU DISIAPKAN:
+=====================================================
+
+✅ WAJIB:
+1. Struktur organisasi
+2. Daftar supplier aktif
+3. Approval matrix yang berlaku
+4. SOP pembelian saat ini
+
+✅ PENTING:
+5. Contoh form PR
+6. Contoh PO
+7. Contoh surat jalan
+8. Contoh invoice
+
+✅ OPSIONAL:
+9. Budget tahunan
+10. Laporan pembelian 3 bulan terakhir
+
+=====================================================
+CARA PENGISIAN:
+=====================================================
+
+1. Buka file: QUESTIONNAIRE_PROCUREMENT_MODULE.md
+2. Isi semua pertanyaan dengan lengkap
+3. Centang (✓) pilihan yang sesuai
+4. Isi kolom kosong dengan detail
+5. Lampirkan dokumen pendukung
+6. Kirim kembali ke tim development
+
+=====================================================
+TIMELINE PENGISIAN:
+=====================================================
+
+Target pengisian: 3-5 hari kerja
+Jika ada pertanyaan: hubungi tim development
+
+=====================================================
+KONTAK:
+=====================================================
+
+Email: procurement.dev@fitmotorbengkel.com
+Phone: 08123456789
+WhatsApp: 08123456789
+
+=====================================================
+NEXT STEPS SETELAH QUESTIONNAIRE:
+=====================================================
+
+1. Review jawaban questionnaire
+2. Meeting dengan stakeholder
+3. Finalisasi requirement
+4. Buat technical specification
+5. Mulai development
+6. Testing & UAT
+7. Training user
+8. Go Live
+
+=====================================================

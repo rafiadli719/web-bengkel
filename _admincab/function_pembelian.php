@@ -3,9 +3,12 @@ function OtomatisID()
 {
     include "../config/koneksi.php";
 	$querycount="SELECT count(notransaksi) as LastID FROM tblpembelian_header";
-	$result=mysqli_query($koneksi,$querycount) or die(mysql_error());
+	$result=mysqli_query($koneksi,$querycount);
+	if(!$result){
+		return 0;
+	}
 	$row=mysqli_fetch_array($result);
-	return $row['LastID'];
+	return isset($row['LastID']) ? (int)$row['LastID'] : 0;
 }
 
 function FormatNoTrans($num) {

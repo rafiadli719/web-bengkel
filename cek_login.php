@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'config/koneksi.php';
+include_once 'config/auth_session.php';
 
 // FIXED: Load accurate config dengan path yang benar dan proper error checking
 $config_loaded = false;
@@ -144,25 +145,42 @@ function getAccurateHostForLogin() {
 
 // Proses login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $txtnama = mysqli_real_escape_string($koneksi, $_POST['txtnama']);
-    $txtpass = mysqli_real_escape_string($koneksi, $_POST['txtpass']);
-    $cbocabang = mysqli_real_escape_string($koneksi, $_POST['cbocabang']);
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    // Query untuk cek login
-    $data = mysqli_query($koneksi, "SELECT * FROM tbuser 
-                                    WHERE nama_user='$txtnama' AND password='$txtpass' AND status_row='0'");
-    $cek = mysqli_num_rows($data);
+    $txtnama = isset($_POST['txtnama']) ? trim($_POST['txtnama']) : '';
+    $txtpass = isset($_POST['txtpass']) ? trim($_POST['txtpass']) : '';
+    $cbocabang = isset($_POST['cbocabang']) ? trim($_POST['cbocabang']) : '';
 
-    if ($cek > 0) {
-        $cari_kd = mysqli_query($koneksi, "SELECT id, user_akses FROM tbuser WHERE nama_user='$txtnama'");
-        $tm_cari = mysqli_fetch_array($cari_kd);
-        $id_user = $tm_cari['id'];
+    if ($txtnama === '' || $txtpass === '') {
+        $_SESSION['login_error'] = "Username dan password wajib diisi.";
+        header("Location: index.php");
+        exit;
+    }
+
+    $stmt = mysqli_prepare($koneksi, "SELECT id, user_akses FROM tbuser WHERE nama_user = ? AND password = ? AND status_row = '0' LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "ss", $txtnama, $txtpass);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $tm_cari = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+
+    if ($tm_cari) {
+        $id_user = (int) $tm_cari['id'];
         $lvl_akses = $tm_cari['user_akses'];
-        
-        // Set session variables
-        $_SESSION['_iduser'] = $id_user;
-        $_SESSION['_cabang'] = $cbocabang;
-        $_SESSION['user_akses'] = $lvl_akses;
+
+        $userContext = auth_get_user_context($koneksi, $id_user);
+        if (!$userContext) {
+            $_SESSION['login_error'] = "Gagal memuat konteks user.";
+            header("Location: index.php");
+            exit;
+        }
+
+        session_regenerate_id(true);
+        if ($cbocabang !== '') {
+            $userContext['kode_cabang'] = $cbocabang;
+        }
+
+        auth_store_user_context($userContext);
         
         // Cek apakah cabang dipilih jika diperlukan
         if (($lvl_akses == '2' || $lvl_akses == '3' || $lvl_akses == '4' || $lvl_akses == '5') && $cbocabang == '') {
@@ -197,42 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Login successful but Accurate config not loaded: " . ($config_error ?? 'Unknown error'));
         }
 
-        // Arahkan ke halaman sesuai user_akses
-        $base_url = "https://fitmotor.web.id/beta/aplikasi/";
-        switch ($lvl_akses) {
-            case '1':
-                $location = $cbocabang == '' ? '_admin/index.php' : '_admincab/index.php';
-                break;
-            case '2':
-                $location = '_cs/index.php';
-                break;
-            case '3':
-                $location = '_kasir/index.php';
-                break;
-            case '4':
-                $location = '_mekanik/index.php';
-                break;
-            case '5':
-                $location = '_pengadaan/index.php';
-                break;
-            case '6':
-                $location = '_crm/index.php';
-                break;
-            case '7':
-                $location = '_managemen/index.php';
-                break;
-            case '8':
-                $location = '_keuangan/index.php';
-                break;
-            case '9':
-                $location = '_hrd/index.php';
-                break;
-            default:
-                $location = 'index.php';
-        }
-        
-        error_log("Redirecting user $txtnama (access level $lvl_akses) to: $base_url$location");
-        header("Location: $base_url$location");
+        // RBAC MENU SYSTEM: Redirect ALL users to _admincab
+        // Menu sidebar will auto-filter based on permissions from tb_master_posisi
+        $location = 'panel/';
+
+        error_log("Successful login for user: $txtnama (ID: $id_user, Access Level: $lvl_akses) - Redirecting to: $location");
+        header("Location: $location");
         exit;
     } else {
         $_SESSION['login_error'] = "Username atau Password salah!";

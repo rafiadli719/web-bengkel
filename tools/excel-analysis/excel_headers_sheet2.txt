@@ -1,0 +1,2 @@
+ALL HEADERS IN SHEET2:
+A1: NoItemCOPY | B1: RakBarang | C1: NoItem | D1: NamaItem | E1: Quantity | F1: NOTE | G1: STS | H1: SO+BR DTG | I1: CATATAN
