@@ -598,7 +598,15 @@
                                                     $tm_fallback = mysqli_fetch_array($cari_fallback);
                                                     $saldo_akhir = $tm_fallback['saldo'] ?? 0;
                                                 } else {
-                                                    $saldo_akhir = 0; // Default jika semua query gagal
+                                                    // Fallback ke tblitem.quantity untuk item yang baru di-sync dari MS Access
+                                                    // (belum punya entri di tbstok karena belum pernah ada mutasi lokal)
+                                                    $cari_qty = mysqli_query($koneksi,"SELECT quantity FROM tblitem WHERE noitem='$noitem' LIMIT 1");
+                                                    if($cari_qty && mysqli_num_rows($cari_qty) > 0) {
+                                                        $tm_qty = mysqli_fetch_array($cari_qty);
+                                                        $saldo_akhir = is_numeric($tm_qty['quantity']) ? floatval($tm_qty['quantity']) : 0;
+                                                    } else {
+                                                        $saldo_akhir = 0;
+                                                    }
                                                 }
                                             }	
 

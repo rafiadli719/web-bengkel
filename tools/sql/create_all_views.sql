@@ -167,7 +167,14 @@ SELECT
     k.no_rangka,
     k.no_mesin,
     k.note,
-    COALESCE(pm.merek, '') as merek
+    COALESCE(
+        NULLIF(pm.merek, ''),
+        CASE
+            WHEN (k.kode_merek = '0' OR k.kode_merek IS NULL OR k.kode_merek = '')
+            THEN TRIM(SUBSTRING_INDEX(k.tipe, ' ', 1))
+            ELSE ''
+        END
+    ) as merek
 FROM tblkendaraan k
 LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
 ORDER BY k.nopolisi;

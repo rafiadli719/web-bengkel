@@ -1074,23 +1074,38 @@ function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
     $found = mysqli_fetch_assoc($exists);
     mysqli_stmt_close($existsStmt);
 
+    // Coba match kode_merek dari nama merek di tbpabrik_motor berdasarkan kata pertama tipe
+    $resolvedMerek = '0';
+    $tipeText = trim((string)($row['tipe'] ?? ''));
+    if ($tipeText !== '') {
+        $merekWord = strtoupper(explode(' ', $tipeText)[0]);
+        $merekStmt = mysqli_prepare($koneksi, "SELECT id FROM tbpabrik_motor WHERE UPPER(merek) LIKE ? LIMIT 1");
+        $merekLike = $merekWord . '%';
+        mysqli_stmt_bind_param($merekStmt, 's', $merekLike);
+        mysqli_stmt_execute($merekStmt);
+        $merekResult = mysqli_stmt_get_result($merekStmt);
+        if ($merekResult && ($merekRow = mysqli_fetch_assoc($merekResult))) {
+            $resolvedMerek = (string)$merekRow['id'];
+        }
+        mysqli_stmt_close($merekStmt);
+    }
+
     if ($found) {
-        $sql = "UPDATE tblkendaraan SET pemilik=?, alamat=?, tipe=?, jenis=?, tahun_buat=?, warna=?, note=? WHERE nopolisi=?";
+        $sql = "UPDATE tblkendaraan SET pemilik=?, alamat=?, kode_merek=?, tipe=?, jenis=?, tahun_buat=?, warna=?, note=? WHERE nopolisi=?";
         $stmt = mysqli_prepare($koneksi, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssssssss', $row['nama_pelanggan'], $row['alamat'], $row['tipe'], $row['jenis'], $row['tahun_buat'], $row['warna'], $row['note'], $row['no_polisi']);
+        mysqli_stmt_bind_param($stmt, 'sssssssss', $row['nama_pelanggan'], $row['alamat'], $resolvedMerek, $row['tipe'], $row['jenis'], $row['tahun_buat'], $row['warna'], $row['note'], $row['no_polisi']);
         accessSyncExecuteStatementOrThrow($stmt);
         mysqli_stmt_close($stmt);
         return 'updated';
     }
 
-    $defaultMerek = '0';
     $defaultKodeTipe = '0';
     $defaultKodeJenis = '0';
     $defaultTahunRakit = '';
     $defaultKodeWarna = '0';
     $sql = "INSERT INTO tblkendaraan (nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis, tahun_buat, tahun_rakit, warna, kode_warna, note) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssssssssssss', $row['no_polisi'], $row['nama_pelanggan'], $row['alamat'], $defaultMerek, $row['tipe'], $defaultKodeTipe, $row['jenis'], $defaultKodeJenis, $row['tahun_buat'], $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']);
+    mysqli_stmt_bind_param($stmt, 'sssssssssssss', $row['no_polisi'], $row['nama_pelanggan'], $row['alamat'], $resolvedMerek, $row['tipe'], $defaultKodeTipe, $row['jenis'], $defaultKodeJenis, $row['tahun_buat'], $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']);
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
     return 'inserted';
