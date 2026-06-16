@@ -108,6 +108,66 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 -- -----------------------------------------------------------------------------
+-- 7. Harga per cabang: stored functions + update view_cari_item
+--    Dijalankan: 2026-06-16 (sesi kedua)
+--    tblitem_harga_cabang dikonversi ke latin1 agar cocok dengan tblitem
+-- -----------------------------------------------------------------------------
+
+-- Konversi collation tblitem_harga_cabang ke latin1 (konsisten dengan tblitem)
+ALTER TABLE `tblitem_harga_cabang`
+    CONVERT TO CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+
+-- Fungsi lookup harga jual per cabang (baca @kd_cabang_filter dari sesi PHP)
+DROP FUNCTION IF EXISTS `fn_hargajual_cabang`;
+DROP FUNCTION IF EXISTS `fn_hargapokok_cabang`;
+
+-- Note: DELIMITER tidak didukung di multi-statement PHP mysqli.
+-- Jalankan dua block CREATE FUNCTION berikut via MySQL CLI atau phpMyAdmin.
+
+-- Jalankan via MySQL CLI:
+-- DELIMITER //
+-- CREATE FUNCTION fn_hargajual_cabang(p_noitem VARCHAR(20))
+-- RETURNS DOUBLE READS SQL DATA
+-- BEGIN
+--     DECLARE v_harga DOUBLE DEFAULT NULL;
+--     IF @kd_cabang_filter IS NOT NULL AND @kd_cabang_filter != '' THEN
+--         SELECT hargajual INTO v_harga FROM tblitem_harga_cabang
+--         WHERE noitem = p_noitem AND kd_cabang = @kd_cabang_filter LIMIT 1;
+--     END IF;
+--     RETURN v_harga;
+-- END//
+-- (dan fn_hargapokok_cabang serupa)
+-- DELIMITER ;
+
+-- Update view_cari_item: COALESCE harga cabang > harga global
+CREATE OR REPLACE VIEW `view_cari_item` AS
+SELECT
+    `i`.`noitem`           AS `noitem`,
+    `i`.`namaitem`         AS `namaitem`,
+    `i`.`nama_part_resmi`  AS `nama_part_resmi`,
+    COALESCE(`i`.`kodebarcode`, '')  AS `kodebarcode`,
+    `i`.`merek`            AS `merek`,
+    `i`.`tipe_item`        AS `tipe_item`,
+    `i`.`status_validasi`  AS `status_validasi`,
+    `i`.`kategori_rak`     AS `kategori_rak`,
+    COALESCE(`fn_hargapokok_cabang`(`i`.`noitem`), `i`.`hargapokok`) AS `hargapokok`,
+    COALESCE(`fn_hargajual_cabang`(`i`.`noitem`),  `i`.`hargajual`)  AS `hargajual`,
+    `i`.`hargajual2`       AS `hargajual2`,
+    `i`.`hargajual3`       AS `hargajual3`,
+    `i`.`statusitem`       AS `statusitem`,
+    `i`.`satuan`           AS `satuan`,
+    COALESCE(`i`.`stokmin`, 0)       AS `stokmin`,
+    COALESCE(`i`.`rakbarang`, '')    AS `rakbarang`,
+    COALESCE(`j`.`namajenis`, 'Tidak Ada') AS `namajenis`,
+    `i`.`note`             AS `keterangan`,
+    `i`.`created_at`       AS `created_at`,
+    `i`.`updated_at`       AS `updated_at`,
+    IF(`fn_hargajual_cabang`(`i`.`noitem`) IS NOT NULL, 1, 0) AS `harga_dari_cabang`
+FROM `tblitem` `i`
+LEFT JOIN `tbljenis` `j` ON `i`.`jenis` = `j`.`kodejenis`
+WHERE `i`.`statusitem` = '1';
+
+-- -----------------------------------------------------------------------------
 -- SELESAI
 -- -----------------------------------------------------------------------------
 SELECT 'Migration schema_fixes_2026 selesai dijalankan.' AS status;
