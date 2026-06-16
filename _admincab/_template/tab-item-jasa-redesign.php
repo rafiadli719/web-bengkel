@@ -116,10 +116,6 @@ if($sql_jasa) {
                     <input type="number" id="add_harga_jasa_v2" name="harga_jasa" class="rd-input sm" placeholder="0" min="0">
                 </div>
                 <div class="rd-form-group" style="flex: 0 0 100px;">
-                    <label class="rd-label rd-required">Qty</label>
-                    <input type="number" id="add_qty_jasa_v2" name="qty_jasa" class="rd-input sm" value="1" min="1">
-                </div>
-                <div class="rd-form-group" style="flex: 0 0 100px;">
                     <label class="rd-label">Waktu (mnt)</label>
                     <input type="number" id="add_waktu_jasa_v2" name="waktu_jasa" class="rd-input sm" value="0" min="0">
                 </div>
@@ -166,19 +162,13 @@ if($sql_jasa) {
                         <input type="text" id="edit_harga_jasa" name="hrg_srv" class="form-control currency-format">
                     </div>
                     <div class="row">
-                         <div class="col-xs-4">
-                            <div class="form-group">
-                                <label>Qty</label>
-                                <input type="number" id="edit_qty_jasa" name="qty_srv" class="form-control" min="1">
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-6">
                             <div class="form-group">
                                 <label>Waktu</label>
                                 <input type="number" id="edit_waktu_jasa" name="waktu_srv" class="form-control" min="0">
                             </div>
                         </div>
-                         <div class="col-xs-4">
+                         <div class="col-xs-6">
                              <div class="form-group">
                                 <label>Disc %</label>
                                 <input type="number" id="edit_disc_jasa" name="disc_srv" class="form-control" min="0" max="100">
@@ -279,7 +269,7 @@ if($sql_jasa) {
                         <td class="text-center">
                             <div class="rd-btn-group">
                                 <button type="button" class="rd-btn xs outline-primary icon-only" 
-                                    onclick="editItemJasa(<?= $item['id'] ?>, '<?= addslashes($item['nama_display']) ?>', '<?= $item['harga'] ?>', '<?= $item['quantity'] ?? 1 ?>', '<?= $item['waktu'] ?? 0 ?>', '<?= $item['diskon_persen'] ?? 0 ?>')"
+                                    onclick="editItemJasa(<?= $item['id'] ?>, '<?= addslashes($item['nama_display']) ?>', '<?= $item['harga'] ?>', '<?= $item['waktu'] ?? 0 ?>', '<?= $item['diskon_persen'] ?? 0 ?>')"
                                     title="Edit">
                                     <i class="fa fa-edit"></i>
                                 </button>
@@ -320,12 +310,10 @@ if($sql_jasa) {
 // Calculate total jasa
 function hitungTotalJasaV2() {
     var harga = parseFloat($('#add_harga_jasa_v2').val()) || 0;
-    var qty = parseInt($('#add_qty_jasa_v2').val()) || 1;
     var disc = parseFloat($('#add_disc_jasa_v2').val()) || 0;
-    
-    var subtotal = harga * qty;
-    var diskon = subtotal * (disc / 100);
-    var total = subtotal - diskon;
+
+    var diskon = harga * (disc / 100);
+    var total = harga - diskon;
 
     $('#add_total_jasa_v2').val('Rp ' + total.toLocaleString('id-ID'));
 }
@@ -334,7 +322,7 @@ function hitungTotalJasaV2() {
 (function waitForJQ(){
     if (typeof window.jQuery === 'function') {
         jQuery(function($){
-            $('#add_harga_jasa_v2, #add_qty_jasa_v2, #add_disc_jasa_v2').on('input change', hitungTotalJasaV2);
+            $('#add_harga_jasa_v2, #add_disc_jasa_v2').on('input change', hitungTotalJasaV2);
             // Enter key search
             $('#search_jasa_v2').on('keypress', function(e) {
                 if(e.which === 13) {
@@ -396,7 +384,6 @@ function pilihJasaV2(kode, nama, harga, waktu) {
     $('#add_nama_jasa_v2').val(nama);
     $('#add_harga_jasa_v2').val(harga);
     $('#add_waktu_jasa_v2').val(waktu);
-    $('#add_qty_jasa_v2').val(1);
     $('#search_results_jasa_v2').hide();
     hitungTotalJasaV2();
 
@@ -412,7 +399,6 @@ function tambahItemJasaV2() {
     var kode = $('#add_kode_jasa_v2').val();
     var nama = $('#add_nama_jasa_v2').val();
     var harga = $('#add_harga_jasa_v2').val();
-    var qty = $('#add_qty_jasa_v2').val();
     var waktu = $('#add_waktu_jasa_v2').val();
 
     if(!kode || !nama) {
@@ -429,21 +415,22 @@ function tambahItemJasaV2() {
     var form = $('<form method="POST">' +
         '<input type="hidden" name="txtnosrv" value="<?= $no_service ?>">' +
         '<input type="hidden" name="btnaddsrv" value="1">' +
-        '<input type="hidden" name="txtcarisrv" value="' + kode + '">' +
-        '<input type="hidden" name="txtpotsrv" value="' + ($('#add_disc_jasa_v2').val() || 0) + '">' +
+        '<input type="hidden" name="txtcarisrv">' +
+        '<input type="hidden" name="txtpotsrv">' +
         '<input type="hidden" name="tab" value="jasa">' +
         '</form>');
+    form.find('[name="txtcarisrv"]').val(kode);
+    form.find('[name="txtpotsrv"]').val($('#add_disc_jasa_v2').val() || 0);
     $('body').append(form);
     form.submit();
 }
 
 // Edit & Delete
 // Edit & Delete
-function editItemJasa(id, nama, harga, qty, waktu, disc) {
+function editItemJasa(id, nama, harga, waktu, disc) {
     $('#edit_id_jasa').val(id);
     $('#edit_nama_jasa').val(nama);
     $('#edit_harga_jasa').val(harga);
-    $('#edit_qty_jasa').val(qty);
     $('#edit_waktu_jasa').val(waktu);
     $('#edit_disc_jasa').val(disc);
     $('#modalEditJasa').modal('show');

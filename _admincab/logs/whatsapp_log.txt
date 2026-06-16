@@ -30,3 +30,5 @@
 [2026-01-10 04:39:18] Service: SV26000000305 | Phone:  | Status: failed | Message: Gagal mengirim pesan: HTTP 400
 [2026-01-25 04:49:59] Service: AUTO | Phone: 6283892696653 | Status: failed | Message: 
 [2026-01-25 04:49:59] Service: SV26000000320 | Phone:  | Status: failed | Message: Gagal mengirim pesan: HTTP 400
+[2026-06-13 05:12:35] Service: AUTO | Phone: 62 | Status: failed | Message: 
+[2026-06-13 05:12:35] Service: SV26000000210 | Phone:  | Status: failed | Message: Gagal mengirim pesan: HTTP 400

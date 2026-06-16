@@ -5,8 +5,9 @@
  */
 
 // Get kepala mekanik harian
-if(file_exists("get_kepala_mekanik_harian.php")) {
-    include_once "get_kepala_mekanik_harian.php";
+$kepala_mekanik_helper = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'get_kepala_mekanik_harian.php';
+if(file_exists($kepala_mekanik_helper)) {
+    include_once $kepala_mekanik_helper;
     $kepala_mekanik_harian = getKepalaMetanikHarian($koneksi, $kd_cabang, isset($tanggal_srv) ? $tanggal_srv : null);
     $has_kepala_mekanik_harian = hasKepalaMetanikHarian($koneksi, $kd_cabang, isset($tanggal_srv) ? $tanggal_srv : null);
 } else {
@@ -28,6 +29,62 @@ $auto_discount_percent = 0;
 if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
     $auto_discount_percent = getDiskonPelanggan($koneksi, $no_pelanggan);
 }
+
+if (!function_exists('buildServiceStaffOptions')) {
+    function buildServiceStaffOptions($koneksi, $kodeCabang, array $posisiList, $fallbackTable = '')
+    {
+        $options = [];
+        $kodeCabang = mysqli_real_escape_string($koneksi, (string) $kodeCabang);
+        $posisiSafe = array_map(function ($item) use ($koneksi) {
+            return "'" . mysqli_real_escape_string($koneksi, (string) $item) . "'";
+        }, $posisiList);
+        $posisiSql = implode(',', $posisiSafe);
+
+        $sqlPrimary = "SELECT nama_lengkap AS nama
+                       FROM tbuser_karyawan
+                       WHERE kode_posisi IN ({$posisiSql})
+                       AND (
+                            tanggal_keluar IS NULL
+                            OR CAST(tanggal_keluar AS CHAR(10)) IN ('', '0000-00-00')
+                       )
+                       AND (kode_cabang = '{$kodeCabang}' OR kode_cabang IN ('CAB001', 'ALL') OR kode_cabang IS NULL OR kode_cabang = '')
+                       ORDER BY nama_lengkap";
+        $resultPrimary = mysqli_query($koneksi, $sqlPrimary);
+        if ($resultPrimary instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($resultPrimary)) {
+                $nama = trim((string) ($row['nama'] ?? ''));
+                if ($nama !== '') {
+                    $options[$nama] = $nama;
+                }
+            }
+        }
+
+        if (!empty($options) || $fallbackTable === '') {
+            return array_values($options);
+        }
+
+        $fallbackSafe = mysqli_real_escape_string($koneksi, $fallbackTable);
+        $sqlFallback = "SELECT nama
+                        FROM {$fallbackSafe}
+                        WHERE status = 'aktif'
+                        ORDER BY nama";
+        $resultFallback = mysqli_query($koneksi, $sqlFallback);
+        if ($resultFallback instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($resultFallback)) {
+                $nama = trim((string) ($row['nama'] ?? ''));
+                if ($nama !== '') {
+                    $options[$nama] = $nama;
+                }
+            }
+        }
+
+        return array_values($options);
+    }
+}
+
+$opsi_kepala_mekanik = buildServiceStaffOptions($koneksi, $kd_cabang, ['KM'], 'tblmekanik');
+$opsi_admin_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['CS', 'KSR', 'ADM']);
+$opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], 'tblmekanik');
 ?>
 
 <!-- Kepala Mekanik Alert -->
@@ -232,19 +289,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbokepala_mekanik1" id="cbokepala_mekanik1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_kepala1_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            $q_km = "SELECT id, kode_karyawan, nama_lengkap AS nama FROM tbuser_karyawan
-                                     WHERE kode_posisi = 'KM' AND (tanggal_keluar IS NULL OR tanggal_keluar = '0000-00-00')
-                                     AND (kode_cabang = '".mysqli_real_escape_string($koneksi, $kd_cabang)."' OR kode_cabang IN ('CAB001', 'ALL') OR kode_cabang IS NULL OR kode_cabang = '')
-                                     ORDER BY nama_lengkap";
-                            $r_km = mysqli_query($koneksi, $q_km);
-                            if($r_km) {
-                                while($row = mysqli_fetch_array($r_km)) {
-                                    $sel = (isset($kepala_mekanik1) && ($kepala_mekanik1 == $row['nama'] || $kepala_mekanik1 == $row['kode_karyawan'])) ? 'selected' : '';
-                                    echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                                }
-                            }
-                            ?>
+                            <?php foreach($opsi_kepala_mekanik as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($kepala_mekanik1) && $kepala_mekanik1 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_kepala1" id="txtpersen_kepala1_v2" class="rd-input text-center"
@@ -260,19 +309,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cboadmin1" id="cboadmin1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_admin1_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            $q_admin = "SELECT id, kode_karyawan, nama_lengkap AS nama FROM tbuser_karyawan
-                                       WHERE kode_posisi IN ('CS', 'KSR', 'ADM') AND (tanggal_keluar IS NULL OR tanggal_keluar = '0000-00-00')
-                                       AND (kode_cabang = '".mysqli_real_escape_string($koneksi, $kd_cabang)."' OR kode_cabang IN ('CAB001', 'ALL') OR kode_cabang IS NULL OR kode_cabang = '')
-                                       ORDER BY nama_lengkap";
-                            $r_admin = mysqli_query($koneksi, $q_admin);
-                            if($r_admin) {
-                                while($row = mysqli_fetch_array($r_admin)) {
-                                    $sel = (isset($admin1) && ($admin1 == $row['nama'])) ? 'selected' : '';
-                                    echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                                }
-                            }
-                            ?>
+                            <?php foreach($opsi_admin_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($admin1) && $admin1 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_admin1" id="txtpersen_admin1_v2" class="rd-input text-center"
@@ -288,19 +329,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbomekanik1" id="cbomekanik1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik1_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            $q_mk = "SELECT id, kode_karyawan, nama_lengkap AS nama FROM tbuser_karyawan
-                                     WHERE kode_posisi = 'MK' AND (tanggal_keluar IS NULL OR tanggal_keluar = '0000-00-00')
-                                     AND (kode_cabang = '".mysqli_real_escape_string($koneksi, $kd_cabang)."' OR kode_cabang IN ('CAB001', 'ALL') OR kode_cabang IS NULL OR kode_cabang = '')
-                                     ORDER BY nama_lengkap";
-                            $r_mk = mysqli_query($koneksi, $q_mk);
-                            if($r_mk) {
-                                while($row = mysqli_fetch_array($r_mk)) {
-                                    $sel = (isset($mekanik1) && ($mekanik1 == $row['nama'])) ? 'selected' : '';
-                                    echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                                }
-                            }
-                            ?>
+                            <?php foreach($opsi_mekanik_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik1) && $mekanik1 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_mekanik1" id="txtpersen_mekanik1_v2" class="rd-input text-center"
@@ -316,13 +349,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbomekanik2" id="cbomekanik2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik2_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            mysqli_data_seek($r_mk, 0);
-                            while($row = mysqli_fetch_array($r_mk)) {
-                                $sel = (isset($mekanik2) && ($mekanik2 == $row['nama'])) ? 'selected' : '';
-                                echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                            }
-                            ?>
+                            <?php foreach($opsi_mekanik_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik2) && $mekanik2 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_mekanik2" id="txtpersen_mekanik2_v2" class="rd-input text-center"
@@ -341,13 +372,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbokepala_mekanik2" id="cbokepala_mekanik2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_kepala2_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            mysqli_data_seek($r_km, 0);
-                            while($row = mysqli_fetch_array($r_km)) {
-                                $sel = (isset($kepala_mekanik2) && ($kepala_mekanik2 == $row['nama'])) ? 'selected' : '';
-                                echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                            }
-                            ?>
+                            <?php foreach($opsi_kepala_mekanik as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($kepala_mekanik2) && $kepala_mekanik2 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_kepala2" id="txtpersen_kepala2_v2" class="rd-input text-center"
@@ -363,13 +392,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cboadmin2" id="cboadmin2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_admin2_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            mysqli_data_seek($r_admin, 0);
-                            while($row = mysqli_fetch_array($r_admin)) {
-                                $sel = (isset($admin2) && ($admin2 == $row['nama'])) ? 'selected' : '';
-                                echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                            }
-                            ?>
+                            <?php foreach($opsi_admin_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($admin2) && $admin2 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_admin2" id="txtpersen_admin2_v2" class="rd-input text-center"
@@ -385,13 +412,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbomekanik3" id="cbomekanik3_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik3_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            mysqli_data_seek($r_mk, 0);
-                            while($row = mysqli_fetch_array($r_mk)) {
-                                $sel = (isset($mekanik3) && ($mekanik3 == $row['nama'])) ? 'selected' : '';
-                                echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                            }
-                            ?>
+                            <?php foreach($opsi_mekanik_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik3) && $mekanik3 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_mekanik3" id="txtpersen_mekanik3_v2" class="rd-input text-center"
@@ -407,13 +432,11 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                     <div class="rd-flex rd-gap-8">
                         <select name="cbomekanik4" id="cbomekanik4_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik4_v2')">
                             <option value="">- Pilih -</option>
-                            <?php
-                            mysqli_data_seek($r_mk, 0);
-                            while($row = mysqli_fetch_array($r_mk)) {
-                                $sel = (isset($mekanik4) && ($mekanik4 == $row['nama'])) ? 'selected' : '';
-                                echo "<option value='".htmlspecialchars($row['nama'], ENT_QUOTES)."' $sel>".htmlspecialchars($row['nama'])."</option>";
-                            }
-                            ?>
+                            <?php foreach($opsi_mekanik_service as $nama_staff): ?>
+                            <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik4) && $mekanik4 == $nama_staff) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($nama_staff) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="rd-input-group" style="flex: 0 0 100px;">
                             <input type="number" name="txtpersen_mekanik4" id="txtpersen_mekanik4_v2" class="rd-input text-center"
@@ -467,7 +490,7 @@ if(!empty($no_pelanggan) && function_exists('getDiskonPelanggan')) {
                 </button>
             </div>
             <div class="rd-flex rd-gap-8">
-                <button type="submit" name="btnsave" class="rd-btn primary" style="padding: 12px 24px;" onclick="return validateMechanicPersen(event)">
+                <button type="submit" name="btnsimpan" class="rd-btn primary" style="padding: 12px 24px;" onclick="return validateMechanicPersen(event)">
                     <i class="fa fa-save"></i> Simpan
                 </button>
                 <button type="submit" name="btnbayar" class="rd-btn success" style="padding: 12px 24px;" onclick="return validateMechanicPersen(event)">
@@ -493,13 +516,12 @@ function toggleBuktiV2() {
 function hitungTotalV2() {
     // Get values
     var subtotal = parseRupiah($('#txttotal_v2').val()) || 0;
-    var diskonMember = parseFloat($('#txtdiskon_member_v2').val()) || 0;
     var diskonTambahan = parseFloat($('#txtpotfaktur_persen_v2').val()) || 0;
     var ppnPersen = parseFloat($('#txtpajak_persen_v2').val()) || 0;
 
-    // Calculate discounts
-    var totalDiskonPersen = diskonMember + diskonTambahan;
-    var totalDiskon = subtotal * (totalDiskonPersen / 100);
+    // Diskon member sudah diterapkan per-item (txttotal_jasa/txttotal_barang sudah net diskon member),
+    // jadi hanya Diskon Tambahan yang dipotong di level invoice agar tidak dobel.
+    var totalDiskon = subtotal * (diskonTambahan / 100);
     var subtotalSetelahDiskon = subtotal - totalDiskon;
 
     // Calculate PPN
@@ -608,23 +630,27 @@ function validateMechanicPersen(e) {
     // IF the user considers KM as "Mekanik" in their sentence. 
     // To be safe, I will enforce it for Admin and Mechanic (Worker) as requested.
     
-    if(hasKM) {
-        if((km1 + km2) !== 100) {
-            alert('Total Persentase KEPALA MEKANIK harus 100% (Saat ini: ' + (km1+km2) + '%)');
-            e.preventDefault();
-            return false;
-        }
+    // Check KM - MANDATORY (selaras dengan validasi server: 'Kepala Mekanik wajib diisi')
+    if(!hasKM) {
+        alert('Kepala Mekanik wajib diisi.');
+        e.preventDefault();
+        return false;
+    }
+    if(Math.abs((km1 + km2) - 100) > 0.01) {
+        alert('Total Persentase KEPALA MEKANIK harus 100% (Saat ini: ' + (km1+km2) + '%)');
+        e.preventDefault();
+        return false;
     }
 
     // Check Admin - MANDATORY
-    if((adm1 + adm2) !== 100) {
+    if(Math.abs((adm1 + adm2) - 100) > 0.01) {
         alert('Total Persentase ADMIN/KASIR harus 100% (Saat ini: ' + (adm1+adm2) + '%)');
         e.preventDefault();
         return false;
     }
 
     // Check Mekanik - MANDATORY
-    if((mk1 + mk2 + mk3 + mk4) !== 100) {
+    if(Math.abs((mk1 + mk2 + mk3 + mk4) - 100) > 0.01) {
         alert('Total Persentase MEKANIK harus 100% (Saat ini: ' + (mk1+mk2+mk3+mk4) + '%)');
         e.preventDefault();
         return false;

@@ -13,6 +13,7 @@ if(empty($_SESSION['_iduser'])){
 
 $id_user = $_SESSION['_iduser'];
 include "../config/koneksi.php";
+include "_include_kategori_member.php"; // Member kategori & discount helper
 
 // Get user info
 $cari_user = mysqli_query($koneksi, "SELECT nama_user FROM tbuser WHERE id='$id_user'");
@@ -54,6 +55,36 @@ if($penawaran['status_penawaran'] != 'pending') {
     exit;
 }
 
+// Hitung diskon promo/member aktif untuk item ini
+$no_polisi_svc = '';
+$q_cust = mysqli_query($koneksi, "SELECT no_polisi FROM tblservice WHERE no_service='{$penawaran['no_service']}'");
+if($q_cust && ($cust = mysqli_fetch_assoc($q_cust))) {
+    $no_polisi_svc = $cust['no_polisi'] ?? '';
+}
+
+$quantity = (int)$penawaran['quantity'];
+$harga_satuan = floatval($penawaran['harga_satuan']);
+$diskon_source = '';
+$diskon_persen = 0;
+$diskon_nominal = 0;
+$id_promo = 'NULL';
+
+if(function_exists('calculateItemDiscount') && !empty($no_polisi_svc)) {
+    $disc = calculateItemDiscount($koneksi, $no_polisi_svc, $penawaran['kode_barang'], 'barang', $harga_satuan);
+    if(($disc['diskon_nominal'] ?? 0) > 0) {
+        $diskon_persen = floatval($disc['diskon_persen']);
+        $diskon_nominal = floatval($disc['diskon_nominal']);
+        $diskon_source = (stripos($disc['discount_source'], 'promo') !== false) ? 'promo' : ((stripos($disc['discount_source'], 'member') !== false) ? 'member' : '');
+        if($diskon_source === 'promo' && function_exists('getActiveDiscountForService')) {
+            $ad = getActiveDiscountForService($koneksi, $no_polisi_svc);
+            if(!empty($ad['promo_id'])) { $id_promo = intval($ad['promo_id']); }
+        }
+    }
+}
+
+$total_after_discount = floatval($penawaran['total_harga']) - ($diskon_nominal * $quantity);
+if($total_after_discount < 0) { $total_after_discount = 0; }
+
 mysqli_begin_transaction($koneksi);
 
 try {
@@ -65,15 +96,23 @@ try {
                             qty_retur,
                             harga_jual,
                             potongan,
-                            total
+                            total,
+                            diskon_source,
+                            diskon_persen,
+                            diskon_nominal,
+                            id_promo
                           ) VALUES (
                             '{$penawaran['no_service']}',
                             '{$penawaran['kode_barang']}',
-                            '{$penawaran['quantity']}',
+                            '$quantity',
                             0,
-                            '{$penawaran['harga_satuan']}',
-                            0,
-                            '{$penawaran['total_harga']}'
+                            '$harga_satuan',
+                            '$diskon_persen',
+                            '$total_after_discount',
+                            '$diskon_source',
+                            '$diskon_persen',
+                            '$diskon_nominal',
+                            $id_promo
                           )";
 
     if(!mysqli_query($koneksi, $sql_insert_barang)) {

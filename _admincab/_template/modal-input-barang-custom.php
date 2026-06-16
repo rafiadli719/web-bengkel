@@ -412,7 +412,6 @@ function applyCustomItemToForm(data) {
         $('#add_kode_jasa_v2').val(data.kode_barang || '');
         $('#add_nama_jasa_v2').val(data.nama_barang || '');
         $('#add_harga_jasa_v2').val(data.harga_jual || 0);
-        $('#add_qty_jasa_v2').val(1);
 
         // Calculate total
         if (typeof hitungTotalJasaV2 === 'function') {

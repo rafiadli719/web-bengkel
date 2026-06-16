@@ -37,6 +37,21 @@
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
 
+        if (!function_exists('normalizePostedInt')) {
+            function normalizePostedInt($value, $default = 0)
+            {
+                if ($value === null || $value === '') {
+                    return (int) $default;
+                }
+
+                if (is_string($value)) {
+                    $value = preg_replace('/[^0-9\-]/', '', $value);
+                }
+
+                return ($value === '' || $value === null) ? (int) $default : (int) $value;
+            }
+        }
+
         // Ensure tbservis_pending_items exists (used by WO pending approval)
         mysqli_query($koneksi, "CREATE TABLE IF NOT EXISTS tbservis_pending_items (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -88,9 +103,9 @@
     // --------------------
 
 		$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
-    $txtcaribrg=$_GET['kd'] ?? '';
-    $txtcarisrv=$_GET['kdjasa'] ?? '';
-    $txtcariwo=$_GET['kdwo'] ?? '';
+    $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+    $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
 
     // Fallback if index.php passes no_service instead of snoserv
     if (empty($no_service) && isset($_GET['no_service'])) { $no_service = $_GET['no_service']; }
@@ -384,8 +399,8 @@
         $txtkeluhan = $_POST['txtkeluhan'];
         $kode_keluhan = $_POST['kode_keluhan'] ?? '';
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -865,7 +880,7 @@
     }
 
     // Handler untuk submit form
-    if(isset($_POST['btnsimpan'])) {
+    if(isset($_POST['btnsimpan']) && empty($no_service)) {
         // Generate nomor service jika belum ada
         if(empty($no_service)) {
             $tanggal_service = date('Y-m-d');
@@ -899,22 +914,24 @@
             $no_polisi = $_POST['no_polisi'] ?? '';
             $keluhan = $_POST['keluhan'] ?? '';
 
+            $keluhan_esc = mysqli_real_escape_string($koneksi, $keluhan);
             $query_insert_service = "INSERT INTO tblservice (
-                no_service, tanggal, jam, no_pelanggan, no_polisi, keluhan,
-                status_servis, tipe_service, user_input, kd_cabang, created_at
+                no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user,
+                status, status_servis, status_jemput, keterangan, created_at
             ) VALUES (
                 '$no_service', '$tanggal_service', '$jam_input', '$kode_pelanggan',
-                '$no_polisi', '$keluhan', 'dijemput', 'jemput', '$_nama', '$kd_cabang', NOW()
+                '$no_polisi', '$kd_cabang', '$id_user',
+                '1', 'datang', '1', '$keluhan_esc', NOW()
             )";
 
             if(mysqli_query($koneksi, $query_insert_service)) {
                 // Insert ke tabel antrian
                 $query_insert_antrian = "INSERT INTO tb_antrian_servis (
-                    no_service, no_antrian, tanggal, jam, no_pelanggan, no_polisi,
-                    status_antrian, tipe_service, created_at
+                    no_service, no_antrian, tanggal, jam_ambil,
+                    status_antrian, prioritas, created_at
                 ) VALUES (
                     '$no_service', '$no_antrian', '$tanggal_service', '$jam_input',
-                    '$kode_pelanggan', '$no_polisi', 'dijemput', 'jemput', NOW()
+                    'menunggu', 'normal', NOW()
                 )";
 
                 if(mysqli_query($koneksi, $query_insert_antrian)) {
@@ -934,8 +951,8 @@
         $no_service = $_POST['txtnosrv'];
         $kode_wo = $_POST['txtcariwo'];
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
 
@@ -1298,8 +1315,8 @@
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         if(!empty($no_service)) {
             // Always redirect to workorder search page for browsing and selection
@@ -2016,8 +2033,8 @@
     $persen_mekanik4 = 0;
 
     // Initialize additional variables for templates
-    $txtcaribrg = $_GET['kd'] ?? '';
-    $txtcarisrv = $_GET['kdjasa'] ?? '';
+    $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv = mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtnamaitem = '';
     $txtnamasrv = '';
 
@@ -2195,10 +2212,10 @@
 
     // Payment Processing for Jemput
     // ========== HANDLER: SAVE SERVICE (NO PAYMENT) ==========
-    if(isset($_POST['btnsave'])) {
+    if(isset($_POST['btnsave']) || (isset($_POST['btnsimpan']) && !empty($_POST['txtnosrv'] ?? ''))) {
         $no_service = $_POST['txtnosrv'] ?? $no_service;
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         // Get mechanic data (Manual extraction to ensure we capture all fields)
         $kepala_mekanik1 = $_POST['cbokepala_mekanik1'] ?? '';
@@ -2260,12 +2277,12 @@
 
     if(isset($_POST['btnbayar'])) {
         $no_service= $_POST['txtnosrv'] ?? $no_service;
-        $km_skr=$_POST['txtkm_skr'] ?? 0;
-        $km_berikut=$_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         $diskon_member = $_POST['txtdiskon_member'] ?? 0;
         $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'] ?? 0;
-        $total_diskon_persen = ($diskon_member > 0 ? $diskon_member : $txtpotfaktur_persen);
+        $total_diskon_persen = $diskon_member + $txtpotfaktur_persen;
         $txtpotfaktur_nom= str_replace(['.', ','], '', $_POST['txtpotfaktur_nom'] ?? '0'); // Remove formatting
         $txtpajak_persen= $_POST['txtpajak_persen'] ?? 0;
         $metode_pembayaran= $_POST['metode_pembayaran'] ?? 'Tunai';
@@ -2420,6 +2437,11 @@
                                 total='$tot_pay',
                                 diskon_persen='$total_diskon_persen', diskon_nom='$diskon_plus_nominal',
                                 ppn_persen='$txtpajak_persen', ppn_nom='$ppn',
+                                subtotal_item='$total_barang_pay',
+                                subtotal_jasa='$total_service_pay',
+                                subtotal='$tot_pay',
+                                total_diskon='$diskon_plus_nominal',
+                                total_pajak='$ppn',
                                 total_grand='$net_pay',
                                 total_akhir='$net_pay',
                                 total_waktu='$total_waktu_pay',
@@ -2835,6 +2857,11 @@ if ((!isset($no_polisi) || empty($no_polisi)) && !empty($no_service) && isset($k
         box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
     }
     </style>
+
+    <!-- Scripts loaded early so legacy inline handlers can safely use jQuery/$ -->
+    <script src="assets/js/jquery-2.1.4.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery-ui.custom.min.js"></script>
 </head>
 
 <body>
@@ -3065,12 +3092,6 @@ if ((!isset($no_polisi) || empty($no_polisi)) && !empty($no_service) && isset($k
         echo renderModalStatistikPelanggan($koneksi, $kode_pelanggan);
     }
     ?>
-
-    <!-- Scripts with local fallbacks -->
-    <!-- Scripts: Use local files directly to avoid CDN blocking issues -->
-    <script src="assets/js/jquery-2.1.4.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery-ui.custom.min.js"></script>
 
     <script>
     $(document).ready(function() {

@@ -45,11 +45,6 @@ $chk_item_map = mysqli_query($koneksi, "SHOW COLUMNS FROM tbitem_jenis_motor LIK
 if (!$chk_item_map || mysqli_num_rows($chk_item_map) == 0) {
     $item_map_col = 'kd_jenis_motor';
 }
-$wo_map_col = 'kd_kategori_motor';
-$chk_wo_map = mysqli_query($koneksi, "SHOW COLUMNS FROM tbworkorder_jenis_motor LIKE 'kd_kategori_motor'");
-if (!$chk_wo_map || mysqli_num_rows($chk_wo_map) == 0) {
-    $wo_map_col = 'kd_jenis_motor';
-}
 
 // Escape keyword for SQL
 $keyword_safe = mysqli_real_escape_string($koneksi, $keyword);
@@ -80,50 +75,9 @@ if($result_item_jasa && mysqli_num_rows($result_item_jasa) > 0) {
     }
 }
 
-// 2. Search in tbworkorderheader (Work Order packages)
-$sql_wo = "SELECT kode_wo, nama_wo, waktu, harga
-           FROM tbworkorderheader
-           WHERE (kode_wo LIKE '%{$keyword_safe}%'
-                  OR nama_wo LIKE '%{$keyword_safe}%')
-           ORDER BY nama_wo ASC
-           LIMIT 15";
-
-$result_wo = mysqli_query($koneksi, $sql_wo);
-
-if($result_wo && mysqli_num_rows($result_wo) > 0) {
-    while($row = mysqli_fetch_assoc($result_wo)) {
-        $kode_wo = $row['kode_wo'];
-
-        // Use header price/time; fallback to sum detail.total for price if needed
-        $harga = floatval($row['harga'] ?? 0);
-        $waktu = intval($row['waktu'] ?? 0);
-        if ($harga <= 0) {
-            $detail_query = mysqli_query($koneksi, "SELECT SUM(total) as total_harga FROM tbworkorderdetail WHERE kode_wo='{$kode_wo}'");
-            if($detail_query && $detail = mysqli_fetch_assoc($detail_query)) {
-                $harga = floatval($detail['total_harga'] ?? 0);
-            }
-        }
-
-        // Applicable check against mapping table
-        $applicable_wo = 1;
-        if ($kd_kategori_motor > 0) {
-            $res_app = mysqli_query($koneksi, "SELECT 1 FROM tbworkorder_jenis_motor WHERE kode_wo='{$kode_wo}' AND ".$wo_map_col."={$kd_kategori_motor} LIMIT 1");
-            $applicable_wo = ($res_app && mysqli_num_rows($res_app) > 0) ? 1 : 0;
-        }
-
-        $items[] = [
-            'kode' => $kode_wo,
-            'nama' => '[WO] ' . ($row['nama_wo'] ?? ''),
-            'harga' => $harga,
-            'waktu' => $waktu,
-            'applicable' => $applicable_wo
-        ];
-    }
-}
-
-// 3. Search in tblitem where it's jasa type (fallback)
+// 2. Search in tblitem where it's jasa type (fallback)
 $sql_item = "SELECT i.noitem, i.namaitem, i.hargajual, i.jasawaktu,
-                    CASE WHEN " . ($kd_kategori_motor > 0 ? "EXISTS (SELECT 1 FROM tbitem_jenis_motor m WHERE m.noitem=i.noitem AND m.".$item_map_col."={$kd_kategori_motor})" : "1=1") . "
+                    CASE WHEN " . ($kd_kategori_motor > 0 ? "EXISTS (SELECT 1 FROM tbitem_jenis_motor m WHERE m.noitem=i.noitem COLLATE utf8mb4_unicode_ci AND m.".$item_map_col."={$kd_kategori_motor})" : "1=1") . "
                     THEN 1 ELSE 0 END AS applicable
              FROM tblitem i
              WHERE (i.noitem LIKE '%{$keyword_safe}%'

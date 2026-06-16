@@ -235,7 +235,7 @@ $cari_kd=mysqli_query($koneksi,"SELECT
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_penjualan03.php"; ?>
+<?php include "menu_dashboard.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>

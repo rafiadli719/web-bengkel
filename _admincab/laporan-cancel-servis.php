@@ -144,7 +144,7 @@ $query_top_alasan = mysqli_query($koneksi, "
 
     <div class="main-container ace-save-state" id="main-container">
         <div id="sidebar" class="sidebar responsive ace-save-state">
-            <?php include "menu_laporan.php"; ?>
+            <?php include "menu_dashboard.php"; ?>
         </div>
 
         <div class="main-content">

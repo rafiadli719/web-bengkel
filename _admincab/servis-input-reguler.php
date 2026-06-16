@@ -16,6 +16,21 @@
         include "_handler_barang_custom.php";
         include "_handler_status_keluhan_wo.php";
 
+        if (!function_exists('normalizePostedInt')) {
+            function normalizePostedInt($value, $default = 0)
+            {
+                if ($value === null || $value === '') {
+                    return (int) $default;
+                }
+
+                if (is_string($value)) {
+                    $value = preg_replace('/[^0-9\-]/', '', $value);
+                }
+
+                return ($value === '' || $value === null) ? (int) $default : (int) $value;
+            }
+        }
+
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
                                         FROM tbuser WHERE id='$id_user'");			
@@ -44,9 +59,9 @@
     // --------------------
         
 		$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
-        $txtcaribrg=$_GET['kd'] ?? '';
-        $txtcarisrv=$_GET['kdjasa'] ?? '';
-        $txtcariwo=$_GET['kdwo'] ?? '';
+        $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+        $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+        $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
         
         // Fallback if index.php passes no_service instead of snoserv
         if (empty($no_service) && isset($_GET['no_service'])) { $no_service = $_GET['no_service']; }
@@ -79,6 +94,23 @@
             $active_tab = 'service-jasa';
         } elseif (!empty($txtcariwo)) {
             $active_tab = 'workorder-details';
+        }
+
+        // Handler hapus item barang/jasa (tombol "Hapus" di tab Item Barang/Item Jasa)
+        if (!empty($no_service)) {
+            $no_service_esc = mysqli_real_escape_string($koneksi, $no_service);
+            if (isset($_GET['hapus_brg'])) {
+                $id_hapus = (int) $_GET['hapus_brg'];
+                mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE id={$id_hapus} AND no_service='{$no_service_esc}'");
+                header('Location: servis-input-reguler.php?snoserv=' . urlencode($no_service) . '&tab=items');
+                exit;
+            }
+            if (isset($_GET['hapus_srv'])) {
+                $id_hapus = (int) $_GET['hapus_srv'];
+                mysqli_query($koneksi, "DELETE FROM tblservis_jasa WHERE id={$id_hapus} AND no_service='{$no_service_esc}'");
+                header('Location: servis-input-reguler.php?snoserv=' . urlencode($no_service) . '&tab=jasa');
+                exit;
+            }
         }
 
         function _tbl_exists_local($koneksi, $name) {
@@ -476,11 +508,11 @@
         // ========== HANDLER: PAYMENT PROCESSING FOR REGULER SERVICE ==========
         if(isset($_POST['btnbayar'])) {
             $no_service = $_POST['txtnosrv'] ?? $no_service;
-            $km_skr = $_POST['txtkm_skr'] ?? 0;
+            $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
             
             $diskon_member = $_POST['txtdiskon_member'] ?? 0;
             $txtpotfaktur_persen = $_POST['txtpotfaktur_persen'] ?? 0;
-            $total_diskon_persen = ($diskon_member > 0 ? $diskon_member : $txtpotfaktur_persen);
+            $total_diskon_persen = $diskon_member + $txtpotfaktur_persen;
             $txtpotfaktur_nom = str_replace(['.', ','], '', $_POST['txtpotfaktur_nom'] ?? '0');
             $txtpajak_persen = $_POST['txtpajak_persen'] ?? 0;
             $metode_pembayaran = $_POST['metode_pembayaran'] ?? 'Tunai';
@@ -587,8 +619,10 @@
             $tot_pay = $total_service_pay + $total_barang_pay;
             
             // Discount Logic for Manual Invoice Discount (Additional)
-            // Use txtpotfaktur_persen as Additional Discount
-            $diskon_plus_nominal = $tot_pay * ($total_diskon_persen / 100);
+            // $tot_pay (sum of tblservis_jasa/tblservis_barang.total) is already net of member discount,
+            // so only the additional invoice-level discount (txtpotfaktur_persen) is applied here
+            // to avoid double-discounting. $total_diskon_persen is kept for the diskon_persen record/report column.
+            $diskon_plus_nominal = $tot_pay * ($txtpotfaktur_persen / 100);
             
             $ppn = ($tot_pay - $diskon_plus_nominal) * ($txtpajak_persen / 100);
             $net_pay = $tot_pay - $diskon_plus_nominal + $ppn;
@@ -618,6 +652,11 @@
                 total='$tot_pay', 
                 diskon_persen='$total_diskon_persen', diskon_nom='$diskon_plus_nominal', 
                 ppn_persen='$txtpajak_persen', ppn_nom='$ppn', 
+                subtotal_item='$total_barang_pay',
+                subtotal_jasa='$total_service_pay',
+                subtotal='$tot_pay',
+                total_diskon='$diskon_plus_nominal',
+                total_pajak='$ppn',
                 total_grand='$net_pay',
                 total_akhir='$net_pay',
                 total_waktu='$total_waktu_pay',
@@ -950,9 +989,9 @@
         $persen_kerja4 = 0;
         
         // Initialize additional variables for templates
-        $txtcaribrg = $_GET['kd'] ?? '';
-        $txtcarisrv = $_GET['kdjasa'] ?? '';
-        $txtcariwo = $_GET['kdwo'] ?? '';
+        $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+        $txtcarisrv = mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+        $txtcariwo = mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
         $txtnamaitem = '';
         $txtnamasrv = '';
         $txtnamawo = '';
@@ -1309,8 +1348,8 @@
                 $txtcarisrv = mysqli_real_escape_string($koneksi, $_POST['txtcarisrv'] ?? '');
                 $txtcaribrg = mysqli_real_escape_string($koneksi, $_POST['txtcaribrg'] ?? '');
 
-                $km_skr = $_POST['txtkm_skr'] ?? 0;
-                $km_berikut = $_POST['txtkm_next'] ?? 0;
+                $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+                $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
                 // Update KM data before redirecting
                 if(!empty($no_service_post)) {
@@ -1330,8 +1369,8 @@
                 $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan'] ?? '');
                 $kode_keluhan = mysqli_real_escape_string($koneksi, $_POST['kode_keluhan'] ?? '');
 
-                $km_skr = $_POST['txtkm_skr'] ?? 0;
-                $km_berikut = $_POST['txtkm_next'] ?? 0;
+                $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+                $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
                 $txtcarisrv = $_POST['txtcarisrv'] ?? '';
                 $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -1369,8 +1408,8 @@
                 $no_service_post = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
                 $kode_wo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo'] ?? '');
 
-                $km_skr = $_POST['txtkm_skr'] ?? 0;
-                $km_berikut = $_POST['txtkm_next'] ?? 0;
+                $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+                $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
                 $txtcarisrv = $_POST['txtcarisrv'] ?? '';
                 $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -2263,280 +2302,21 @@
                 }
             }
 
-            // ========================================
-            // HANDLER APPROVE PENAWARAN PART
-            // ========================================
-            if (isset($_POST['btnsetujuipenawaran'])) {
-                $penawaran_id = mysqli_real_escape_string($koneksi, $_POST['penawaran_id'] ?? '');
-                $no_service_post = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
-
-                if (!empty($penawaran_id)) {
-                    // Get penawaran data
-                    $q_penawaran = mysqli_query($koneksi, "SELECT * FROM tbservis_penawaran_part
-                                                           WHERE id='$penawaran_id'
-                                                           AND no_service='$no_service_post'
-                                                           AND status_penawaran='pending'");
-
-                    if ($q_penawaran && mysqli_num_rows($q_penawaran) > 0) {
-                        $penawaran_data = mysqli_fetch_array($q_penawaran);
-
-                        // Check if item already exists in tblservis_barang
-                        $check_existing = mysqli_query($koneksi, "SELECT COUNT(*) as cnt FROM tblservis_barang
-                                                                  WHERE no_service='$no_service_post'
-                                                                  AND no_item='{$penawaran_data['kode_barang']}'");
-                        $check_result = mysqli_fetch_array($check_existing);
-
-                        if ($check_result['cnt'] == 0) {
-                            // Get item details from tblitem
-                            $q_item = mysqli_query($koneksi, "SELECT * FROM tblitem WHERE noitem='{$penawaran_data['kode_barang']}'");
-
-                            if ($q_item && mysqli_num_rows($q_item) > 0) {
-                                $item_data = mysqli_fetch_array($q_item);
-
-                                // Get max nobaris for this service
-                                $q_nobaris = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris), 0) as max_nobaris
-                                                                     FROM tblservis_barang
-                                                                     WHERE no_service='$no_service_post'");
-                                $nobaris_data = mysqli_fetch_array($q_nobaris);
-                                $nobaris = $nobaris_data['max_nobaris'] + 1;
-
-                                // Insert to tblservis_barang
-                                $sql_insert = "INSERT INTO tblservis_barang
-                                              (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total)
-                                              VALUES
-                                              ('$no_service_post',
-                                               $nobaris,
-                                               '{$penawaran_data['kode_barang']}',
-                                               '{$penawaran_data['quantity']}',
-                                               0,
-                                               '{$penawaran_data['harga_satuan']}',
-                                               0,
-                                               '{$penawaran_data['total_harga']}')";
-
-                                if (mysqli_query($koneksi, $sql_insert)) {
-                                    // Update status penawaran
-                                    $user_respon = $_SESSION['_nama'] ?? 'System';
-                                    mysqli_query($koneksi, "UPDATE tbservis_penawaran_part
-                                                           SET status_penawaran='disetujui',
-                                                               tanggal_respon=NOW(),
-                                                               user_respon='$user_respon',
-                                                               updated_at=NOW()
-                                                           WHERE id='$penawaran_id'");
-
-                                    echo "<script>
-                                        alert('Penawaran berhasil disetujui! Part telah ditambahkan ke Item Barang.');
-                                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                                    </script>";
-                                    exit;
-                                } else {
-                                    $error_msg = addslashes(mysqli_error($koneksi));
-                                    echo "<script>
-                                        alert('Gagal menambahkan ke item barang! Error: $error_msg');
-                                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                                    </script>";
-                                    exit;
-                                }
-                            } else {
-                                // Item tidak ada di tblitem, kemungkinan custom item
-                                // Get max nobaris for this service
-                                $q_nobaris = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris), 0) as max_nobaris
-                                                                     FROM tblservis_barang
-                                                                     WHERE no_service='$no_service_post'");
-                                $nobaris_data = mysqli_fetch_array($q_nobaris);
-                                $nobaris = $nobaris_data['max_nobaris'] + 1;
-
-                                // Insert langsung ke tblservis_barang tanpa cek tblitem
-                                // Calculate Discount for Custom Item
-                                $harga_jual = $penawaran_data['harga_satuan'];
-                                $quantity = $penawaran_data['quantity'];
-                                
-                                $harga_final = $harga_jual;
-                                $diskon_source = '';
-                                $diskon_persen = 0;
-                                $diskon_nominal = 0;
-                                $id_promo = 0;
-                                
-                                // Check Member Discount for Custom Item (Barang)
-                                if($diskon_persen == 0) {
-                                     $kode_pelanggan_check = '';
-                                     // Get customer code from service
-                                     $q_cust = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service_post'");
-                                     if($q_cust && $row_cust = mysqli_fetch_array($q_cust)) {
-                                         $kode_pelanggan_check = $row_cust['no_pelanggan'];
-                                     }
-                                     
-                                     if(!empty($kode_pelanggan_check)) {
-                                          $item_code_check = $penawaran_data['kode_barang']; // 'ITEM-CUSTOM-...'
-                                          
-                                          // Check exclude
-                                          $is_excluded = false;
-                                          if(function_exists('isItemExcludedFromMemberDiscount')) {
-                                              $is_excluded = isItemExcludedFromMemberDiscount($koneksi, $item_code_check);
-                                          }
-                                          
-                                          if(!$is_excluded) {
-                                               $mem_disc = 0;
-                                               if(function_exists('getMemberDiscountForItem')) {
-                                                   $mem_disc = getMemberDiscountForItem($koneksi, $kode_pelanggan_check, $item_code_check, 'barang');
-                                               }
-                                               
-                                               if($mem_disc > 0) {
-                                                   $diskon_source = 'member';
-                                                   $diskon_persen = $mem_disc;
-                                                   $diskon_nominal = $harga_jual * ($diskon_persen / 100);
-                                                   $harga_final = $harga_jual - $diskon_nominal;
-                                               }
-                                          }
-                                     }
-                                }
-                                
-                                $subtotal = $harga_final * $quantity;
-
-                                // Insert langsung ke tblservis_barang tanpa cek tblitem
-                                $sql_insert = "INSERT INTO tblservis_barang
-                                              (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
-                                              VALUES
-                                              ('$no_service_post',
-                                               $nobaris,
-                                               '{$penawaran_data['kode_barang']}',
-                                               '{$quantity}',
-                                               0,
-                                               '{$harga_jual}',
-                                               '$diskon_persen',
-                                               '$subtotal',
-                                               '$diskon_source',
-                                               '$diskon_persen',
-                                               '$diskon_nominal',
-                                               '$id_promo')";
-
-                                if (mysqli_query($koneksi, $sql_insert)) {
-                                    // Update status penawaran
-                                    $user_respon = $_SESSION['_nama'] ?? 'System';
-                                    mysqli_query($koneksi, "UPDATE tbservis_penawaran_part
-                                                           SET status_penawaran='disetujui',
-                                                               tanggal_respon=NOW(),
-                                                               user_respon='$user_respon',
-                                                               updated_at=NOW()
-                                                           WHERE id='$penawaran_id'");
-
-                                    echo "<script>
-                                        alert('Penawaran berhasil disetujui! Custom item telah ditambahkan ke Item Barang.');
-                                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                                    </script>";
-                                    exit;
-                                } else {
-                                    $error_msg = addslashes(mysqli_error($koneksi));
-                                    echo "<script>
-                                        alert('Gagal menambahkan custom item! Error: $error_msg');
-                                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                                    </script>";
-                                    exit;
-                                }
-                            }
-                        } else {
-                            echo "<script>
-                                alert('Item sudah ada di daftar Item Barang!');
-                                window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                            </script>";
-                            exit;
-                        }
-                    } else {
-                        echo "<script>
-                            alert('Penawaran tidak ditemukan atau sudah diproses!');
-                            window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                        </script>";
-                        exit;
-                    }
-                } else {
-                    echo "<script>
-                        alert('ID penawaran tidak valid!');
-                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                    </script>";
-                    exit;
-                }
-            }
-
-            // ========================================
-            // HANDLER REJECT PENAWARAN PART
-            // ========================================
-            if (isset($_POST['btnrejectpenawaran'])) {
-                $penawaran_id = mysqli_real_escape_string($koneksi, $_POST['penawaran_id'] ?? '');
-                $no_service_post = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
-                $alasan_tolak = mysqli_real_escape_string($koneksi, $_POST['alasan_tolak'] ?? 'lainnya');
-                $keterangan_tolak = mysqli_real_escape_string($koneksi, $_POST['keterangan_tolak'] ?? '');
-
-                if (!empty($penawaran_id)) {
-                    // Get penawaran data
-                    $q_penawaran = mysqli_query($koneksi, "SELECT * FROM tbservis_penawaran_part
-                                                           WHERE id='$penawaran_id'
-                                                           AND no_service='$no_service_post'
-                                                           AND status_penawaran='pending'");
-
-                    if ($q_penawaran && mysqli_num_rows($q_penawaran) > 0) {
-                        // Update status to rejected
-                        $user_respon = $_SESSION['_nama'] ?? 'System';
-                        $sql_update = "UPDATE tbservis_penawaran_part
-                                      SET status_penawaran='ditolak',
-                                          alasan_tolak='$alasan_tolak',
-                                          keterangan_tolak='$keterangan_tolak',
-                                          tanggal_respon=NOW(),
-                                          user_respon='$user_respon',
-                                          updated_at=NOW()
-                                      WHERE id='$penawaran_id'";
-
-                        if (mysqli_query($koneksi, $sql_update)) {
-                            $alasan_text_map = array(
-                                'customer_tidak_mau' => 'Customer tidak mau',
-                                'stok_bengkel_kosong' => 'Stok bengkel kosong',
-                                'stok_supplier_kosong' => 'Stok supplier kosong',
-                                'harga_tidak_cocok' => 'Harga tidak cocok',
-                                'lainnya' => 'Lainnya'
-                            );
-                            $alasan_text = $alasan_text_map[$alasan_tolak] ?? $alasan_tolak;
-
-                            echo "<script>
-                                alert('Penawaran berhasil ditolak! Alasan: $alasan_text');
-                                window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                            </script>";
-                            exit;
-                        } else {
-                            $error_msg = addslashes(mysqli_error($koneksi));
-                            echo "<script>
-                                alert('Gagal menolak penawaran! Error: $error_msg');
-                                window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                            </script>";
-                            exit;
-                        }
-                    } else {
-                        echo "<script>
-                            alert('Penawaran tidak ditemukan atau sudah diproses!');
-                            window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                        </script>";
-                        exit;
-                    }
-                } else {
-                    echo "<script>
-                        alert('ID penawaran tidak valid!');
-                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=temuan';
-                    </script>";
-                    exit;
-                }
-            }
         }
 
     // ========================================
     // HANDLER UPDATE BARANG
     // ========================================
     if(isset($_POST['btnupdatebrg'])){
-        $id_detail = $_POST['id_detail'];
-        $qty_baru = $_POST['qty_brg'];
-        $harga_baru = str_replace(array('.',','),'',''.$_POST['hrg_brg'].''); // Clean currency format
-        $diskon_persen_baru = $_POST['disc_brg'] ?? 0;
-        
+        $id_detail = (int) ($_POST['id_detail'] ?? 0);
+        $qty_baru = max(1, (int) ($_POST['qty_brg'] ?? 1));
+        $harga_baru = (float) str_replace(array('.',','),'',''.($_POST['hrg_brg'] ?? '0').''); // Clean currency format
+        $diskon_persen_baru = (float) ($_POST['disc_brg'] ?? 0);
+
         $no_service_post = $_POST['txtnosrv'] ?? $no_service; // Ensure no_service is set from post if available
 
         // Get current data to preserve unedited info if needed
-        $q_curr = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE id='$id_detail'");
+        $q_curr = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE id={$id_detail}");
         if($q_curr && mysqli_num_rows($q_curr) > 0) {
             $curr = mysqli_fetch_array($q_curr);
             
@@ -2562,15 +2342,15 @@
                 $source = ($diskon_persen_baru > 0) ? 'manual' : 'none';
             }
             
-            $sql_update = "UPDATE tblservis_barang SET 
-                            quantity='$qty_baru',
-                            harga_jual='$harga_baru',
-                            diskon_persen='$diskon_persen_baru',
-                            diskon_nominal='$diskon_nominal_store',
-                            potongan='$diskon_persen_baru', 
-                            total='$total_baru',
+            $sql_update = "UPDATE tblservis_barang SET
+                            quantity={$qty_baru},
+                            harga_jual={$harga_baru},
+                            diskon_persen={$diskon_persen_baru},
+                            diskon_nominal={$diskon_nominal_store},
+                            potongan={$diskon_persen_baru},
+                            total={$total_baru},
                             diskon_source='$source'
-                           WHERE id='$id_detail'";
+                           WHERE id={$id_detail}";
                            
             if(mysqli_query($koneksi, $sql_update)){
                  echo "<script>window.location='servis-input-reguler.php?snoserv=$no_service_post&tab=items';</script>";
@@ -2588,28 +2368,35 @@
     // HANDLER UPDATE JASA
     // ========================================
     if(isset($_POST['btnupdatesrv'])){
-        $id_detail = $_POST['id_detail'];
-        $qty_baru = $_POST['qty_srv'];
-        $harga_baru = str_replace(array('.',','),'',''.$_POST['hrg_srv'].'');
-        $waktu_baru = $_POST['waktu_srv'] ?? 0;
-        $diskon_persen_baru = $_POST['disc_srv'] ?? 0;
-        
+        $id_detail = (int) ($_POST['id_detail'] ?? 0);
+        $harga_baru = (float) str_replace(array('.',','),'',''.($_POST['hrg_srv'] ?? '0').'');
+        $waktu_baru = (int) ($_POST['waktu_srv'] ?? 0);
+        $diskon_persen_baru = (float) ($_POST['disc_srv'] ?? 0);
+
         $no_service_post = $_POST['txtnosrv'] ?? $no_service;
 
-        // Calculate
+        // Get current data to preserve diskon_source if unedited
+        $q_curr = mysqli_query($koneksi, "SELECT diskon_source FROM tblservis_jasa WHERE id={$id_detail}");
+        $curr = $q_curr ? mysqli_fetch_array($q_curr) : null;
+        $source = $curr['diskon_source'] ?? '';
+        if(empty($source) || $source == 'none') {
+            $source = ($diskon_persen_baru > 0) ? 'manual' : 'none';
+        }
+
+        // Calculate (jasa = 1 unit per baris, tidak ada kolom quantity)
         $diskon_nominal_per_unit = $harga_baru * ($diskon_persen_baru / 100);
         $harga_net_satuan = $harga_baru - $diskon_nominal_per_unit;
-        $total_baru = $harga_net_satuan * $qty_baru;
-        
-        $sql_update = "UPDATE tblservis_jasa SET 
-                        quantity='$qty_baru',
-                        harga='$harga_baru',
-                        waktu='$waktu_baru',
-                        diskon_persen='$diskon_persen_baru',
-                        diskon_nominal='$diskon_nominal_per_unit',
-                        total='$total_baru'
-                       WHERE id='$id_detail'";
-                       
+        $total_baru = $harga_net_satuan;
+
+        $sql_update = "UPDATE tblservis_jasa SET
+                        harga={$harga_baru},
+                        waktu={$waktu_baru},
+                        diskon_persen={$diskon_persen_baru},
+                        diskon_nominal={$diskon_nominal_per_unit},
+                        total={$total_baru},
+                        diskon_source='$source'
+                       WHERE id={$id_detail}";
+
         if(mysqli_query($koneksi, $sql_update)){
              echo "<script>window.location='servis-input-reguler.php?snoserv=$no_service_post&tab=jasa';</script>";
              exit;
@@ -2620,259 +2407,6 @@
         }
         exit;
     }
-
-    // ========================================
-    // HANDLER: PAYMENT PROCESSING (btnbayar)
-    // ========================================
-    if(isset($_POST['btnbayar'])) {
-        $no_service= $_POST['txtnosrv'] ?? $no_service;
-        $km_skr=$_POST['txtkm_skr'] ?? 0;
-        $km_berikut=$_POST['txtkm_next'] ?? 0;
-
-        $diskon_member = $_POST['txtdiskon_member'] ?? 0;
-        $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'] ?? 0;
-        $total_diskon_persen = $diskon_member + $txtpotfaktur_persen;
-        $txtpotfaktur_nom= str_replace(['.', ','], '', $_POST['txtpotfaktur_nom'] ?? '0'); // Remove formatting
-        $txtpajak_persen= $_POST['txtpajak_persen'] ?? 0;
-        $metode_pembayaran= $_POST['metode_pembayaran'] ?? 'Tunai';
-        $txtbayar= str_replace(['.', ','], '', $_POST['txtbayar'] ?? '0'); // Remove formatting
-
-        // Fix Calculation for Payment Processing
-        // We will recalculate $tot_pay, $net_pay correctly before updating
-        // The previous code had duplicate logic, but we need to ensure this block also uses correct calculation
-        // However, this block seems to be just variable initialization, the calculation happens later.
-        // Wait, checking subsequent lines...
-        // The calculation logic is around line 1500+ (after mechanic data)
-        // Let's ensure we target that block.
-
-        // Handle bukti pembayaran upload
-        $bukti_pembayaran_path = '';
-        if($metode_pembayaran != 'Tunai' && isset($_FILES['bukti_pembayaran']) && $_FILES['bukti_pembayaran']['error'] == 0) {
-            $upload_dir = 'uploads/bukti_pembayaran/';
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-
-            $file_ext = strtolower(pathinfo($_FILES['bukti_pembayaran']['name'], PATHINFO_EXTENSION));
-            $allowed_ext = ['jpg', 'jpeg', 'png', 'pdf'];
-
-            if(in_array($file_ext, $allowed_ext) && $_FILES['bukti_pembayaran']['size'] <= 2097152) { // 2MB max
-                $new_filename = 'bukti_' . $no_service . '_' . time() . '.' . $file_ext;
-                $upload_path = $upload_dir . $new_filename;
-
-                if(move_uploaded_file($_FILES['bukti_pembayaran']['tmp_name'], $upload_path)) {
-                    $bukti_pembayaran_path = $upload_path;
-                }
-            }
-        }
-
-        // Get mechanic data
-        $kepala_mekanik1 = $_POST['cbokepala_mekanik1'] ?? '';
-        $persen_kepala1 = $_POST['txtpersen_kepala1'] ?? 0;
-        $kepala_mekanik2 = $_POST['cbokepala_mekanik2'] ?? '';
-        $persen_kepala2 = $_POST['txtpersen_kepala2'] ?? 0;
-        $mekanik1 = $_POST['cbomekanik1'] ?? '';
-        $persen_mekanik1 = $_POST['txtpersen_mekanik1'] ?? 0;
-        $mekanik2 = $_POST['cbomekanik2'] ?? '';
-        $persen_mekanik2 = $_POST['txtpersen_mekanik2'] ?? 0;
-        $mekanik3 = $_POST['cbomekanik3'] ?? '';
-        $persen_mekanik3 = $_POST['txtpersen_mekanik3'] ?? 0;
-        $mekanik4 = $_POST['cbomekanik4'] ?? '';
-        $persen_mekanik4 = $_POST['txtpersen_mekanik4'] ?? 0;
-
-    // == Total dari Item & Waktu Service ==============
-        $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot,
-                                        sum(waktu) as tot_waktu
-                                        FROM tblservis_jasa
-                                        WHERE
-                                        no_service='$no_service'");
-        $tm_cari=mysqli_fetch_array($cari_kd);
-        $total_service_pay=$tm_cari['tot'];
-        $total_waktu_pay=$tm_cari['tot_waktu'];
-
-    // == Total dari Item Barang ==============
-    $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot
-                                        FROM tblservis_barang
-                                        WHERE
-                                        no_service='$no_service'");
-    $tm_cari=mysqli_fetch_array($cari_kd);
-    $total_barang_pay=$tm_cari['tot'];
-
-        $tot_pay=$total_service_pay+$total_barang_pay;
-        $diskon_nominal = $tot_pay * ($total_diskon_persen / 100);
-        $ppn=$tot_pay*($txtpajak_persen/100);
-        $net_pay=$tot_pay-$diskon_nominal+$ppn;
-        $kembalian_pay=$txtbayar-$net_pay;
-
-        // Validate payment amount
-        if($txtbayar < $net_pay) {
-            echo"<script>window.alert('Jumlah pembayaran tidak mencukupi! Total: Rp " . number_format($net_pay, 0, ',', '.') . ", Bayar: Rp " . number_format($txtbayar, 0, ',', '.') . "');
-            window.history.back();</script>";
-            exit;
-        }
-
-        if($net_pay <= 0) {
-            echo"<script>window.alert('Total service harus lebih dari 0!');
-            window.history.back();</script>";
-            exit;
-        }
-
-        $update_query = "UPDATE tblservice
-                                SET status='2',
-                                total='$tot_pay',
-                                diskon_persen='$total_diskon_persen', diskon_nom='$diskon_nominal',
-                                ppn_persen='$txtpajak_persen', ppn_nom='$ppn',
-                                total_grand='$net_pay',
-                                total_akhir='$net_pay',
-                                total_waktu='$total_waktu_pay',
-                                km_skr='$km_skr',
-                                km_berikut='$km_berikut',
-                                status_servis='bayar',
-                                kepala_mekanik1='$kepala_mekanik1',
-                                kepala_mekanik2='$kepala_mekanik2',
-                                persen_kepala_mekanik1='$persen_kepala1',
-                                persen_kepala_mekanik2='$persen_kepala2',
-                                admin1='$admin1',
-                                admin2='$admin2',
-                                persen_admin1='$persen_admin1',
-                                persen_admin2='$persen_admin2',
-                                mekanik1='$mekanik1',
-                                mekanik2='$mekanik2',
-                                mekanik3='$mekanik3',
-                                mekanik4='$mekanik4',
-                                persen_mekanik1='$persen_mekanik1',
-                                persen_mekanik2='$persen_mekanik2',
-                                persen_mekanik3='$persen_mekanik3',
-                                persen_mekanik4='$persen_mekanik4',
-                                metode_pembayaran='$metode_pembayaran',
-                                bayar='$txtbayar',
-                                kembali='$kembalian_pay'";
-
-        // Add bukti_pembayaran if uploaded
-        if(!empty($bukti_pembayaran_path)) {
-            $update_query .= ", bukti_pembayaran='$bukti_pembayaran_path'";
-        }
-
-        $update_query .= " WHERE no_service='$no_service'";
-
-        mysqli_query($koneksi, $update_query);
-
-        // 🆕 AUTO-UPDATE STATISTIK PELANGGAN, MEMBER TIER & HISTORY SERVICE
-        $get_customer = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
-        if ($get_customer && $customer_row = mysqli_fetch_assoc($get_customer)) {
-            $no_pelanggan_bayar = $customer_row['no_pelanggan'];
-            if (!empty($no_pelanggan_bayar)) {
-                // Gunakan fungsi processAfterPayment untuk update semua data
-                if (function_exists('processAfterPayment')) {
-                    $payment_result = processAfterPayment($koneksi, $no_pelanggan_bayar, $no_service, 'reguler');
-                    // Log jika naik tier
-                    if ($payment_result['naik_tier']) {
-                        error_log("Customer $no_pelanggan_bayar naik tier: " . json_encode($payment_result['tier_info']));
-                    }
-                } else {
-                    // Fallback ke fungsi lama jika fungsi baru belum ada
-                    updateStatistikPelangganAfterPayment($koneksi, $no_pelanggan_bayar, $no_service);
-                }
-            }
-        }
-
-        // Update stock for items used in service
-        $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang
-                                        WHERE
-                                        no_service='$no_service'");
-        while ($tampil = mysqli_fetch_array($sql)) {
-            $no_item=$tampil['no_item'];
-            $qty=$tampil['quantity'];
-            mysqli_query($koneksi,"INSERT INTO tbstok
-                                (tipe, no_transaksi, no_item,
-                                tanggal, masuk, keluar, keterangan,
-                                kd_cabang)
-                                VALUES
-                                ('4','$no_service','$no_item',
-                                '$tanggal_srv','0','$qty',
-                                'Penjualan Service Reguler','$kd_cabang')");
-        }
-
-        // ========== SISTEM ANTRIAN - SERVICE REGULER ==========
-        // Cek apakah sudah ada nomor antrian untuk service ini
-        $check_antrian = mysqli_query($koneksi, "SELECT no_antrian FROM tb_antrian_servis WHERE no_service='$no_service'");
-
-        if(mysqli_num_rows($check_antrian) == 0) {
-            // Belum ada antrian, generate nomor antrian baru
-            $tanggal_antrian = date('Y-m-d');
-            $jam_antrian = date('H:i:s');
-
-            // Hitung total antrian hari ini
-            $query_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal='$tanggal_antrian'");
-            $count = mysqli_fetch_array($query_count);
-            $nomor_urut = $count['total'] + 1;
-
-            // Format nomor antrian: A001, A002, dst
-            $no_antrian = 'A' . str_pad($nomor_urut, 3, '0', STR_PAD_LEFT);
-
-            // Insert ke tabel antrian dengan prioritas NORMAL untuk Reguler
-            $insert_antrian = mysqli_query($koneksi, "INSERT INTO tb_antrian_servis (
-                no_service, no_antrian, tanggal, jam_ambil,
-                status_antrian, prioritas, estimasi_waktu, created_at
-            ) VALUES (
-                '$no_service', '$no_antrian', '$tanggal_antrian', '$jam_antrian',
-                'selesai', 'normal', '$total_waktu_pay', NOW()
-            )");
-
-            // Update jam_selesai karena langsung bayar
-            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET jam_selesai=NOW() WHERE no_service='$no_service'");
-        } else {
-            // Sudah ada antrian, update status menjadi selesai
-            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET status_antrian='selesai', jam_selesai=NOW() WHERE no_service='$no_service'");
-
-            $existing = mysqli_fetch_array($check_antrian);
-            $no_antrian = $existing['no_antrian'];
-        }
-
-        // ========== KIRIM WHATSAPP OTOMATIS ==========
-        try {
-            if(file_exists('config_whatsapp.php')) {
-                require_once 'config_whatsapp.php';
-            }
-
-            if(file_exists('class_whatsapp_automation.php')) {
-                require_once 'class_whatsapp_automation.php';
-            }
-
-            if(defined('WA_API_ENABLED') && WA_API_ENABLED &&
-               defined('WA_AUTO_SEND_AFTER_PAYMENT') && WA_AUTO_SEND_AFTER_PAYMENT) {
-
-                if(class_exists('WhatsAppAutomation')) {
-                    if(defined('WA_SEND_DELAY')) sleep(WA_SEND_DELAY);
-
-                    $wa = new WhatsAppAutomation($koneksi, WA_API_KEY, WA_API_URL);
-                    $wa_result = $wa->sendTerimaKasih($no_service);
-
-                    if(function_exists('logWhatsAppActivity')) {
-                        if(isset($wa_result['success']) && $wa_result['success']) {
-                            $phone = isset($wa_result['phone']) ? $wa_result['phone'] : '';
-                            logWhatsAppActivity($no_service, $phone, 'sent', 'Auto-sent after payment (Reguler)');
-                        } else {
-                            $msg = isset($wa_result['message']) ? $wa_result['message'] : 'Unknown error';
-                            logWhatsAppActivity($no_service, '', 'failed', $msg);
-                        }
-                    }
-                }
-            }
-        } catch(Exception $e) {
-            if(function_exists('logWhatsAppActivity')) {
-                logWhatsAppActivity($no_service, '', 'error', 'Exception: ' . $e->getMessage());
-            }
-        }
-        // ========== END KIRIM WHATSAPP ==========
-
-        if(function_exists('clearSessionDiscount')) { clearSessionDiscount(); }
-
-        echo"<script>window.alert('Pembayaran Service Reguler Berhasil!\\n\\nNomor Antrian: $no_antrian\\nKembalian: Rp " . number_format($kembalian_pay, 0, ',', '.') . "');
-        window.location=('servis-print.php?snoserv=$no_service');</script>";
-        exit;
-    }
-    // ========== END PAYMENT PROCESSING ==========
 
     // Get existing mechanic data if service exists
         if(!empty($no_service)) {
@@ -3204,6 +2738,9 @@
         to { opacity: 1; transform: translateY(0); }
     }
     </style>
+    <script src="assets/js/jquery-2.1.4.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery-ui.custom.min.js"></script>
 </head>
 
 <body>
@@ -3401,16 +2938,17 @@
     <!-- Include Modals -->
     <?php
     // Include existing modals
-    if(file_exists("_template/modal-callbacks.php")) include "_template/modal-callbacks.php";
-    if(file_exists("_template/modal-search-temuan.php")) include "_template/modal-search-temuan.php";
-    if(file_exists("_template/modal-search-keluhan.php")) include "_template/modal-search-keluhan.php";
-    if(file_exists("_template/modal-fastmoves-v2.php")) include "_template/modal-fastmoves-v2.php";
-    if(file_exists("_template/modal-fastmoves-part.php")) include "_template/modal-fastmoves-part.php";
-    if(file_exists("_template/modal-tambah-keluhan-baru.php")) include "_template/modal-tambah-keluhan-baru.php";
-    if(file_exists("_template/modal-input-barang-custom.php")) include "_template/modal-input-barang-custom.php";
-    if(file_exists("_template/_modal_riwayat_kendaraan.php")) include "_template/_modal_riwayat_kendaraan.php";
-    if(file_exists("_template/_modal_update_status_keluhan.php")) include "_template/_modal_update_status_keluhan.php";
-    if(file_exists("_template/_modal_cancel_service.php")) include "_template/_modal_cancel_service.php";
+    $template_dir = __DIR__ . DIRECTORY_SEPARATOR . '_template' . DIRECTORY_SEPARATOR;
+    if(file_exists($template_dir . "modal-callbacks.php")) include $template_dir . "modal-callbacks.php";
+    if(file_exists($template_dir . "modal-search-temuan.php")) include $template_dir . "modal-search-temuan.php";
+    if(file_exists($template_dir . "modal-search-keluhan.php")) include $template_dir . "modal-search-keluhan.php";
+    if(file_exists($template_dir . "modal-fastmoves-v2.php")) include $template_dir . "modal-fastmoves-v2.php";
+    if(file_exists($template_dir . "modal-fastmoves-part.php")) include $template_dir . "modal-fastmoves-part.php";
+    if(file_exists($template_dir . "modal-tambah-keluhan-baru.php")) include $template_dir . "modal-tambah-keluhan-baru.php";
+    if(file_exists($template_dir . "modal-input-barang-custom.php")) include $template_dir . "modal-input-barang-custom.php";
+    if(file_exists($template_dir . "_modal_riwayat_kendaraan.php")) include $template_dir . "_modal_riwayat_kendaraan.php";
+    if(file_exists($template_dir . "_modal_update_status_keluhan.php")) include $template_dir . "_modal_update_status_keluhan.php";
+    if(file_exists($template_dir . "_modal_cancel_service.php")) include $template_dir . "_modal_cancel_service.php";
 
     // Include Statistik Pelanggan Modal
     if(!empty($kode_pelanggan) && function_exists('renderModalStatistikPelanggan')) {
@@ -3418,14 +2956,8 @@
     }
     ?>
 
-    <!-- Scripts: Use local files directly to avoid CDN blocking issues -->
-    <script src="assets/js/jquery-2.1.4.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery-ui.custom.min.js"></script>
-
     <script>
     (function() {
-        function initServiceTabs() {
         function getTabParam(target) {
             switch (target) {
                 case 'service-items': return 'items';
@@ -3435,6 +2967,23 @@
                 case 'temuan-penawaran': return 'temuan';
                 default: return 'details';
             }
+        }
+
+        function initServiceTabs() {
+            document.querySelectorAll('.rd-tab-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var target = button.getAttribute('data-target');
+                    window.switchServiceTab(target);
+                });
+            });
+
+            document.querySelectorAll('form').forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    var activeButton = document.querySelector('.rd-tab-btn.active');
+                    var activeTarget = activeButton ? activeButton.getAttribute('data-target') : 'service-details';
+                    ensureTabField(form, getTabParam(activeTarget));
+                });
+            });
         }
 
         function ensureTabField(form, tabParam) {
@@ -3479,13 +3028,6 @@
             return true;
         }
 
-        document.querySelectorAll('.rd-tab-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var target = button.getAttribute('data-target');
-                window.switchServiceTab(target);
-            });
-        });
-
         window.toggleCardBody = function(header) {
             var body = header ? header.nextElementSibling : null;
             var icon = header ? header.querySelector('.rd-collapse-icon') : null;
@@ -3521,14 +3063,6 @@
             }
             showModal('modalUpdateStatusKeluhan');
         };
-
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function() {
-                var activeButton = document.querySelector('.rd-tab-btn.active');
-                var activeTarget = activeButton ? activeButton.getAttribute('data-target') : 'service-details';
-                ensureTabField(form, getTabParam(activeTarget));
-            });
-        });
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initServiceTabs);

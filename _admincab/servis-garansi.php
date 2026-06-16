@@ -16,6 +16,21 @@
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
 
+        if (!function_exists('normalizePostedInt')) {
+            function normalizePostedInt($value, $default = 0)
+            {
+                if ($value === null || $value === '') {
+                    return (int) $default;
+                }
+
+                if (is_string($value)) {
+                    $value = preg_replace('/[^0-9\-]/', '', $value);
+                }
+
+                return ($value === '' || $value === null) ? (int) $default : (int) $value;
+            }
+        }
+
 		$cari_kd=mysqli_query($koneksi,"SELECT
                                         nama_user, password, user_akses, foto_user
                                         FROM tbuser WHERE id='$id_user'");
@@ -60,9 +75,9 @@
             }
         }
     }
-    $txtcaribrg=$_GET['kd'] ?? '';
-    $txtcarisrv=$_GET['kdjasa'] ?? '';
-    $txtcariwo=$_GET['kdwo'] ?? '';
+    $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+    $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
 
     // ========== HANDLE REFERENCE SERVICE (FOR WARRANTY) ==========
     // ref_service contains the original service number that this warranty is based on
@@ -118,22 +133,24 @@
             $no_polisi = $_POST['no_polisi'] ?? '';
             $keluhan = $_POST['keluhan'] ?? '';
 
+            $keluhan_esc = mysqli_real_escape_string($koneksi, $keluhan);
             $query_insert_service = "INSERT INTO tblservice (
-                no_service, tanggal, jam, no_pelanggan, no_polisi, keluhan,
-                status_servis, tipe_service, user_input, kd_cabang, created_at
+                no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user,
+                status, status_servis, status_jemput, keterangan, created_at
             ) VALUES (
                 '$no_service', '$tanggal_service', '$jam_input', '$kode_pelanggan',
-                '$no_polisi', '$keluhan', 'datang', 'garansi', '$_nama', '$kd_cabang', NOW()
+                '$no_polisi', '$kd_cabang', '$id_user',
+                '1', 'datang', '0', '$keluhan_esc', NOW()
             )";
 
             if(mysqli_query($koneksi, $query_insert_service)) {
                 // Insert ke tabel antrian dengan prioritas tinggi untuk garansi
                 $query_insert_antrian = "INSERT INTO tb_antrian_servis (
-                    no_service, no_antrian, tanggal, jam, no_pelanggan, no_polisi,
-                    status_antrian, tipe_service, prioritas, created_at
+                    no_service, no_antrian, tanggal, jam_ambil,
+                    status_antrian, prioritas, created_at
                 ) VALUES (
                     '$no_service', '$no_antrian', '$tanggal_service', '$jam_input',
-                    '$kode_pelanggan', '$no_polisi', 'menunggu', 'garansi', 'tinggi', NOW()
+                    'menunggu', 'urgent', NOW()
                 )";
 
                 if(mysqli_query($koneksi, $query_insert_antrian)) {
@@ -233,8 +250,8 @@
     $persen_kerja4 = 0;
 
     // Initialize additional variables for templates
-    $txtcaribrg = $_GET['kd'] ?? '';
-    $txtcarisrv = $_GET['kdjasa'] ?? '';
+    $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv = mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtnamaitem = '';
     $txtnamasrv = '';
 
@@ -515,8 +532,8 @@
         $no_service = $_POST['txtnosrv'];
         $txtkeluhan = $_POST['txtkeluhan'];
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -572,13 +589,13 @@
 
     // ========== HANDLER: SEARCH WORKORDER (GARANSI) ==========
     if(isset($_POST['btncariwo'])) {
-        $no_service = $_POST['txtnosrv'];
-        $txtcariwo = $_POST['txtcariwo'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
+        $txtcariwo = $_POST['txtcariwo'] ?? '';
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         // Update KM data before redirecting
         if(!empty($no_service)) {
@@ -590,16 +607,16 @@
         // Redirect to workorder search page
         $cbocari = "";
         $cbourut = "52";
-        echo"<script>window.location=('servis-add-workorder-cari.php?snoserv=$no_service&_key=$txtcariwo&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
+        echo"<script>window.location=('servis-add-workorder-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtcariwo) . "&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
     }
 
     // ========== HANDLER: ADD WORKORDER TO SPK (GARANSI) ==========
     if(isset($_POST['btnaddworkorder'])) {
-        $no_service = $_POST['txtnosrv'];
-        $kode_wo = $_POST['txtcariwo'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
+        $kode_wo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo'] ?? '');
 
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -697,7 +714,7 @@
 
                     echo"<script>
                         alert('Work Order GARANSI berhasil ditambahkan ke SPK!\\nSemua item di-set GRATIS (potongan 100%).');
-                        window.location=('servis-garansi.php?snoserv=$no_service&kd=$txtcaribrg&kdjasa=$txtcarisrv&kdwo=');
+                        window.location=('servis-garansi.php?snoserv=" . urlencode($no_service) . "&kd=" . urlencode($txtcaribrg) . "&kdjasa=" . urlencode($txtcarisrv) . "&kdwo=');
                     </script>";
                 } else {
                     echo"<script>
@@ -708,7 +725,7 @@
             } else {
                 echo"<script>
                     alert('Work Order ini sudah ada di SPK Garansi!');
-                    window.location=('servis-garansi.php?snoserv=$no_service&kd=$txtcaribrg&kdjasa=$txtcarisrv&kdwo=');
+                    window.location=('servis-garansi.php?snoserv=" . urlencode($no_service) . "&kd=" . urlencode($txtcaribrg) . "&kdjasa=" . urlencode($txtcarisrv) . "&kdwo=');
                 </script>";
             }
         } else {
@@ -793,10 +810,10 @@
     // ========== END AUTO-FILL KEPALA MEKANIK HARIAN ==========
 
     // ========== HANDLER: SAVE SERVICE (NO PAYMENT - GARANSI) ==========
-    if(isset($_POST['btnsave'])) {
+    if(isset($_POST['btnsave']) || (isset($_POST['btnsimpan']) && !empty($_POST['txtnosrv'] ?? ''))) {
         $no_service = $_POST['txtnosrv'] ?? $no_service;
-        $km_skr = $_POST['txtkm_skr'] ?? 0;
-        $km_berikut = $_POST['txtkm_next'] ?? 0;
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         // Get mechanic data
         $kepala_mekanik1 = $_POST['cbokepala_mekanik1'] ?? '';
@@ -856,6 +873,8 @@
     // ========== HANDLER: PAYMENT/BAYAR (GARANSI) ==========
     if(isset($_POST['btnbayar'])) {
         $no_service = $_POST['txtnosrv'] ?? '';
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         if(!empty($no_service)) {
             // Validasi Pre-Payment (Complaints, Findings, Offers)
@@ -906,7 +925,7 @@
             $txtcariwo = $_POST['txtcariwo'] ?? '';
 
             // Get payment data
-            $tipe_pembayaran = $_POST['metode_pembayaran'] ?? 'Tunai';
+            $metode_pembayaran = $_POST['metode_pembayaran'] ?? 'Tunai';
             $txttotal_jasa = str_replace(['.', ','], '', $_POST['txttotal_jasa'] ?? '0');
             $txttotal_barang = str_replace(['.', ','], '', $_POST['txttotal_barang'] ?? '0');
 
@@ -928,30 +947,52 @@
             $jumlah_bayar = str_replace(['.', ','], '', $_POST['txtbayar'] ?? '0');
             $kembalian = $jumlah_bayar - $total_akhir;
 
+            $bukti_pembayaran_path = '';
+            if($metode_pembayaran != 'Tunai' && isset($_FILES['bukti_pembayaran']) && $_FILES['bukti_pembayaran']['error'] == 0) {
+                $upload_dir = 'uploads/bukti_pembayaran/';
+                if (!file_exists($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+
+                $file_ext = strtolower(pathinfo($_FILES['bukti_pembayaran']['name'], PATHINFO_EXTENSION));
+                $allowed_ext = ['jpg', 'jpeg', 'png', 'pdf'];
+                if(in_array($file_ext, $allowed_ext) && $_FILES['bukti_pembayaran']['size'] <= 2097152) {
+                    $new_filename = 'bukti_' . $no_service . '_' . time() . '.' . $file_ext;
+                    $upload_path = $upload_dir . $new_filename;
+                    if(move_uploaded_file($_FILES['bukti_pembayaran']['tmp_name'], $upload_path)) {
+                        $bukti_pembayaran_path = $upload_path;
+                    }
+                }
+            }
+
              // Validate payment amount (allow 0 for full warranty)
             if($jumlah_bayar < $total_akhir && $total_akhir > 0) {
                  echo "<script>alert('Jumlah pembayaran kurang!'); window.history.back();</script>";
                  exit;
             }
 
-            // Update service status to bayar
+            // Update service status to selesai
             $update_payment = "UPDATE tblservice SET
+                status = '2',
                 status_servis = 'selesai',
-                tipe_pembayaran = '$tipe_pembayaran',
-                total_jasa = '$txttotal_jasa',
-                total_barang = '$txttotal_barang',
+                total = '$subtotal',
+                subtotal_jasa = '$txttotal_jasa',
+                subtotal_item = '$txttotal_barang',
                 subtotal = '$subtotal',
-
-                diskon = '$diskon_nominal',
                 diskon_persen = '$total_diskon_persen',
                 diskon_nom = '$diskon_nominal',
+                total_diskon = '$diskon_nominal',
                 ppn_persen = '$pajak_persen',
                 ppn_nom = '$ppn_nominal',
-
+                total_pajak = '$ppn_nominal',
+                total_grand = '$total_akhir',
                 total_akhir = '$total_akhir',
-                dibayar = '$jumlah_bayar',
+                total_waktu = COALESCE((SELECT SUM(waktu) FROM tblservis_jasa WHERE no_service = '$no_service'), 0),
+                km_skr = '$km_skr',
+                km_berikut = '$km_berikut',
+                metode_pembayaran = '$metode_pembayaran',
+                bayar = '$jumlah_bayar',
                 kembali = '$kembalian',
-                tanggal_bayar = NOW(),
                 updated_at = NOW(),
                 kepala_mekanik1 = '$kepala_mekanik1',
                 kepala_mekanik2 = '$kepala_mekanik2',
@@ -968,7 +1009,8 @@
                 persen_mekanik1 = '$persen_mekanik1',
                 persen_mekanik2 = '$persen_mekanik2',
                 persen_mekanik3 = '$persen_mekanik3',
-                persen_mekanik4 = '$persen_mekanik4'
+                persen_mekanik4 = '$persen_mekanik4'"
+                . (!empty($bukti_pembayaran_path) ? ", bukti_pembayaran = '$bukti_pembayaran_path'" : "") . "
                 WHERE no_service = '$no_service'";
 
             if(mysqli_query($koneksi, $update_payment)) {

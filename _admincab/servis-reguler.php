@@ -65,7 +65,14 @@ if(empty($_SESSION['_iduser'])){
             $hasil = "Ditemukan $total_found data servis";
         }
     }
-    
+
+    // Filter opsional via query string (misal ?filter=garansi -> riwayat klaim garansi yang sudah selesai)
+    $filter_type = $_GET['filter'] ?? '';
+    if ($filter_type === 'garansi' && empty($where_clause)) {
+        $where_clause = "WHERE s.tipe_service LIKE '%garansi%' AND (s.status_servis = 'selesai' OR s.status_servis = 'bayar')";
+        $hasil = "Riwayat Servis Garansi (Selesai)";
+    }
+
     // Main query (include robust computed total for display)
     $sql_query = "SELECT 
                     s.*, 
@@ -187,7 +194,7 @@ if(empty($_SESSION['_iduser'])){
     <!-- Main Container -->
     <div class="main-container ace-save-state" id="main-container">
         <div id="sidebar" class="sidebar responsive ace-save-state">
-            <?php include "menu_servis01.php"; ?>
+            <?php include "menu_dashboard.php"; ?>
             <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
                 <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state"></i>
             </div>

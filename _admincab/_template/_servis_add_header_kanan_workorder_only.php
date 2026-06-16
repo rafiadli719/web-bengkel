@@ -252,12 +252,14 @@ if(isset($no_service) && isset($koneksi)) {
                                                     <input type="text" class="form-control input-sm"
                                                     id="txtcariwo" name="txtcariwo"
                                                     value="<?php echo $txtcariwo; ?>"
-                                                    placeholder="Masukkan kode WO" autocomplete="off" />
+                                                    placeholder="Masukkan kode WO" autocomplete="off"
+                                                    <?php echo !empty($is_readonly_wo) ? 'disabled' : ''; ?> />
                                                 </td>
                                                 <td width="30%">
                                                     <label>&nbsp;</label><br>
                                                     <button class="btn btn-primary btn-sm btn-block" type="submit" formnovalidate
-                                                    id="btncariwo" name="btncariwo">
+                                                    id="btncariwo" name="btncariwo"
+                                                    <?php echo !empty($is_readonly_wo) ? 'disabled' : ''; ?>>
                                                         <i class="ace-icon fa fa-search"></i> Cari
                                                     </button>
                                                 </td>
@@ -273,7 +275,8 @@ if(isset($no_service) && isset($koneksi)) {
                                             <tr>
                                                 <td colspan="2">
                                                     <button class="btn btn-success btn-sm btn-block" type="submit" formnovalidate
-                                                    id="btnaddworkorder" name="btnaddworkorder" onclick="return validateWorkOrder()">
+                                                    id="btnaddworkorder" name="btnaddworkorder" onclick="return validateWorkOrder()"
+                                                    <?php echo !empty($is_readonly_wo) ? 'disabled' : ''; ?>>
                                                         <i class="ace-icon fa fa-plus"></i> Tambah Work Order ke SPK
                                                     </button>
                                                 </td>

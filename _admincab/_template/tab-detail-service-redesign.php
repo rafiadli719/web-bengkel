@@ -268,6 +268,26 @@ if (typeof window.showRiwayatKendaraan !== 'function') {
                 $sql_count_kel = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tbservis_keluhan_status WHERE no_service='".mysqli_real_escape_string($koneksi,$prev_no_service)."'");
                 if($sql_count_kel) { $count_keluhan = (int) (mysqli_fetch_array($sql_count_kel)['total'] ?? 0); }
             }
+
+            // Mekanik yang menangani servis sebelumnya (sinkron dengan modal Riwayat Kendaraan)
+            $prev_mekanik_list = [];
+            if (!empty($prev_no_service)) {
+                $q_prev_mek = mysqli_query($koneksi, "SELECT kepala_mekanik1, kepala_mekanik2, mekanik1, mekanik2, mekanik3, mekanik4
+                                                       FROM tblservice WHERE no_service='".mysqli_real_escape_string($koneksi,$prev_no_service)."' LIMIT 1");
+                if ($q_prev_mek && ($r_prev_mek = mysqli_fetch_array($q_prev_mek))) {
+                    $mek_codes = array_filter([
+                        $r_prev_mek['kepala_mekanik1'], $r_prev_mek['kepala_mekanik2'],
+                        $r_prev_mek['mekanik1'], $r_prev_mek['mekanik2'], $r_prev_mek['mekanik3'], $r_prev_mek['mekanik4']
+                    ]);
+                    if (!empty($mek_codes)) {
+                        $mek_codes_esc = array_map(function($c) use ($koneksi) { return "'".mysqli_real_escape_string($koneksi,$c)."'"; }, $mek_codes);
+                        $mek_map = [];
+                        $q_mek_nama = mysqli_query($koneksi, "SELECT nomekanik, nama FROM tblmekanik WHERE nomekanik IN (".implode(',', $mek_codes_esc).")");
+                        if ($q_mek_nama) { while($rm = mysqli_fetch_array($q_mek_nama)) { $mek_map[$rm['nomekanik']] = $rm['nama']; } }
+                        foreach ($mek_codes as $code) { $prev_mekanik_list[] = $mek_map[$code] ?? $code; }
+                    }
+                }
+            }
             ?>
             <span class="rd-badge solid-warning"><?= $count_keluhan ?> Keluhan</span>
         </h5>
@@ -308,6 +328,15 @@ if (typeof window.showRiwayatKendaraan !== 'function') {
             <div class="rd-empty-state" style="padding: 20px;">
                 <i class="fa fa-comment-slash"></i>
                 <p>Servis sebelumnya tidak memiliki keluhan tercatat.</p>
+            </div>
+            <?php endif; ?>
+            <?php if(!empty($prev_mekanik_list)): ?>
+            <div class="rd-flex-between" style="padding: 10px 16px; margin-top: 10px; background: var(--rd-bg-light); border-radius: var(--rd-radius-sm); border-left: 3px solid var(--rd-info);">
+                <div class="rd-flex rd-gap-12">
+                    <i class="fa fa-wrench"></i>
+                    <span>Mekanik servis sebelumnya (<?= htmlspecialchars($prev_no_service) ?>)</span>
+                </div>
+                <div><strong><?= htmlspecialchars(implode(', ', $prev_mekanik_list)) ?></strong></div>
             </div>
             <?php endif; ?>
             <div class="rd-divider" style="margin-top:12px;"></div>

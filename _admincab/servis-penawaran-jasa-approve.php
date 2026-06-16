@@ -10,6 +10,7 @@ if(empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+include "_include_kategori_member.php"; // Member kategori & discount helper
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $snoserv = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : '';
@@ -39,9 +40,37 @@ if(!$penawaran) {
 
 $no_service = $penawaran['no_service'];
 $kode_jasa = $penawaran['kode_jasa'];
-$harga = $penawaran['harga'];
+$harga = floatval($penawaran['harga']);
 $waktu = $penawaran['waktu_estimasi'];
 $user_respon = $_SESSION['_nama'] ?? 'System';
+
+// Hitung diskon promo/member aktif untuk item ini
+$no_polisi_svc = '';
+$q_cust = mysqli_query($koneksi, "SELECT no_polisi FROM tblservice WHERE no_service='$no_service'");
+if($q_cust && ($cust = mysqli_fetch_assoc($q_cust))) {
+    $no_polisi_svc = $cust['no_polisi'] ?? '';
+}
+
+$diskon_source = '';
+$diskon_persen = 0;
+$diskon_nominal = 0;
+$id_promo = 'NULL';
+
+if(function_exists('calculateItemDiscount') && !empty($no_polisi_svc)) {
+    $disc = calculateItemDiscount($koneksi, $no_polisi_svc, $kode_jasa, 'jasa', $harga);
+    if(($disc['diskon_nominal'] ?? 0) > 0) {
+        $diskon_persen = floatval($disc['diskon_persen']);
+        $diskon_nominal = floatval($disc['diskon_nominal']);
+        $diskon_source = (stripos($disc['discount_source'], 'promo') !== false) ? 'promo' : ((stripos($disc['discount_source'], 'member') !== false) ? 'member' : '');
+        if($diskon_source === 'promo' && function_exists('getActiveDiscountForService')) {
+            $ad = getActiveDiscountForService($koneksi, $no_polisi_svc);
+            if(!empty($ad['promo_id'])) { $id_promo = intval($ad['promo_id']); }
+        }
+    }
+}
+
+$total_jasa = $harga - $diskon_nominal;
+if($total_jasa < 0) { $total_jasa = 0; }
 
 // Update status penawaran
 $update = mysqli_query($koneksi, "UPDATE tbservis_penawaran_jasa
@@ -63,14 +92,14 @@ if($update) {
     // Insert ke tblservis_jasa
     if($has_waktu) {
         $insert = mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                                           (no_service, nobaris, no_item, harga, waktu, potongan, total)
+                                           (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                            VALUES
-                                           ('$no_service', '$nobaris', '$kode_jasa', '$harga', '$waktu', 0, '$harga')");
+                                           ('$no_service', '$nobaris', '$kode_jasa', '$harga', '$waktu', '$diskon_persen', '$total_jasa', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
     } else {
         $insert = mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                                           (no_service, nobaris, no_item, harga, potongan, total)
+                                           (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                            VALUES
-                                           ('$no_service', '$nobaris', '$kode_jasa', '$harga', 0, '$harga')");
+                                           ('$no_service', '$nobaris', '$kode_jasa', '$harga', '$diskon_persen', '$total_jasa', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
     }
 
     if($insert) {

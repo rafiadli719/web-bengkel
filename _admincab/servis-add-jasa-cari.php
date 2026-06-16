@@ -29,8 +29,8 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $no_service = $_GET['snoserv'];        
-        $txtkey= $_GET['_key'];
+        $no_service = $_GET['snoserv'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key'] ?? '');
         $txtcari= $_GET['_cari'];
         $txturut= $_GET['_urut'];
         $txtflt= $_GET['_flt'];
@@ -122,22 +122,22 @@
 
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
-		if(isset($_POST['btnasc'])) {	
+		if(isset($_POST['btnasc'])) {
 			$no_service= $_POST['txtnosrv'];
-                        
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
+
+			$txtkey= $_POST['txtkey'];
+			$cbocari= $_POST['cbocari'];
 			$cbourut= $_POST['cbourut'];
-            echo"<script>window.location=('servis-add-jasa-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
+            echo"<script>window.location=('servis-add-jasa-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=asc');</script>";
         }
 
-		if(isset($_POST['btndesc'])) {				
+		if(isset($_POST['btndesc'])) {
 			$no_service= $_POST['txtnosrv'];
-                        
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
+
+			$txtkey= $_POST['txtkey'];
+			$cbocari= $_POST['cbocari'];
 			$cbourut= $_POST['cbourut'];
-            echo"<script>window.location=('servis-add-jasa-cari.php?snoserv=$no_service&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";
+            echo"<script>window.location=('servis-add-jasa-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=desc');</script>";
         }
 
 
@@ -291,7 +291,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_servis01.php"; ?>
+<?php include "menu_dashboard.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>

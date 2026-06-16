@@ -4,6 +4,69 @@
  * Include file ini di servis-input-*.php
  */
 
+/**
+ * Hitung diskon promo/member aktif untuk satu item pending, lalu insert
+ * ke tblservis_barang/tblservis_jasa. Dipakai oleh approve single & bulk.
+ */
+function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc) {
+    $tipe = $item['tipe'];
+    $kode_item = $item['kode_item'];
+    $quantity = (int)$item['quantity'];
+    $harga_satuan = (float)$item['harga_satuan'];
+    $waktu = (int)($item['waktu'] ?? 0);
+
+    // Hitung diskon promo/member aktif untuk item ini
+    $diskon_source = '';
+    $diskon_persen = 0;
+    $diskon_nominal = 0;
+    $id_promo = 'NULL';
+    if(function_exists('calculateItemDiscount') && !empty($no_polisi_svc)) {
+        $disc = calculateItemDiscount($koneksi, $no_polisi_svc, $kode_item, $tipe, $harga_satuan);
+        if(($disc['diskon_nominal'] ?? 0) > 0) {
+            $diskon_persen = floatval($disc['diskon_persen']);
+            $diskon_nominal = floatval($disc['diskon_nominal']);
+            $diskon_source = (stripos($disc['discount_source'], 'promo') !== false) ? 'promo' : ((stripos($disc['discount_source'], 'member') !== false) ? 'member' : '');
+            if($diskon_source === 'promo' && function_exists('getActiveDiscountForService')) {
+                $ad = getActiveDiscountForService($koneksi, $no_polisi_svc);
+                if(!empty($ad['promo_id'])) { $id_promo = intval($ad['promo_id']); }
+            }
+        }
+    }
+
+    if($tipe === 'barang') {
+        $subtotal = ($harga_satuan * $quantity) - ($diskon_nominal * $quantity);
+        if($subtotal < 0) { $subtotal = 0; }
+        $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_barang WHERE no_service='$no_service'");
+        $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
+        return mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$quantity', 0, '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+    }
+
+    // jasa
+    $subtotal = $harga_satuan - $diskon_nominal;
+    if($subtotal < 0) { $subtotal = 0; }
+    $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_jasa WHERE no_service='$no_service'");
+    $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
+    $has_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
+    if($has_waktu && mysqli_num_rows($has_waktu) > 0) {
+        return mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+    }
+    return mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+}
+
+/**
+ * Bangun teks catatan untuk satu item WO yang ditolak.
+ * Dipakai oleh reject single & bulk.
+ */
+function _buildRejectServisItemNote($item, $alasan_tolak, $keterangan_tolak = '') {
+    $tipe_readable = ($item['tipe'] == 'barang') ? 'Barang' : 'Jasa';
+    $alasan_readable = str_replace('_', ' ', ucwords($alasan_tolak, '_'));
+    $note = "$tipe_readable: {$item['nama_item']} - Alasan: $alasan_readable";
+    if(!empty($keterangan_tolak)) {
+        $note .= " - $keterangan_tolak";
+    }
+    return $note;
+}
+
 // ============================================
 // HANDLER UPDATE STATUS KELUHAN
 // ============================================
@@ -64,30 +127,19 @@ if(isset($_POST['btnapprove_wo_bulk'])) {
     $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
     $ok = 0; $fail = 0;
     if(!is_array($ids)) { $ids = [$ids]; }
+
+    // Ambil no_polisi untuk perhitungan diskon promo/member aktif
+    $q_cust = mysqli_query($koneksi, "SELECT no_polisi FROM tblservice WHERE no_service='$no_service'");
+    $cust = $q_cust ? mysqli_fetch_assoc($q_cust) : null;
+    $no_polisi_svc = $cust['no_polisi'] ?? '';
+
     foreach($ids as $rid) {
         $item_id = mysqli_real_escape_string($koneksi, $rid);
         if($item_id === '') { $fail++; continue; }
         $q = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id='$item_id' AND no_service='$no_service' AND status_approval='pending'");
         if(!$q || mysqli_num_rows($q) == 0) { $fail++; continue; }
         $item = mysqli_fetch_array($q);
-        $tipe = $item['tipe'];
-        $kode_item = $item['kode_item'];
-        $quantity = (int)$item['quantity'];
-        $harga_satuan = (float)$item['harga_satuan'];
-        $total = (float)$item['total'];
-        $waktu = (int)($item['waktu'] ?? 0);
-        if($tipe === 'barang') {
-            $ins = mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total) VALUES ('$no_service', '$kode_item', '$quantity', 0, '$harga_satuan', 0, '$total')");
-            if(!$ins) { $fail++; continue; }
-        } else {
-            $has_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
-            if($has_waktu && mysqli_num_rows($has_waktu) > 0) {
-                $ins = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, no_item, harga, waktu, potongan, total) VALUES ('$no_service', '$kode_item', '$harga_satuan', '$waktu', 0, '$total')");
-            } else {
-                $ins = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, no_item, harga, potongan, total) VALUES ('$no_service', '$kode_item', '$harga_satuan', 0, '$total')");
-            }
-            if(!$ins) { $fail++; continue; }
-        }
+        if(!_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)) { $fail++; continue; }
         mysqli_query($koneksi, "UPDATE tbservis_pending_items SET status_approval='disetujui', approved_by='$user', approved_at=NOW() WHERE id='$item_id'");
         $ok++;
     }
@@ -115,10 +167,7 @@ if(isset($_POST['btnreject_wo_bulk'])) {
         $item = mysqli_fetch_array($q);
         $upd = mysqli_query($koneksi, "UPDATE tbservis_pending_items SET status_approval='ditolak', alasan_tolak='$alasan', keterangan_tolak=" . (empty($ket) ? "NULL" : "'$ket'") . ", approved_by='$user', approved_at=NOW() WHERE id='$item_id'");
         if(!$upd) { $fail++; continue; }
-        $tipe_readable = ($item['tipe'] == 'barang') ? 'Barang' : 'Jasa';
-        $alasan_readable = str_replace('_', ' ', ucwords($alasan, '_'));
-        $note = "$tipe_readable: {$item['nama_item']} - Alasan: $alasan_readable" . (empty($ket) ? '' : " - $ket");
-        $notes[] = $note;
+        $notes[] = _buildRejectServisItemNote($item, $alasan, $ket);
         $ok++;
     }
     if($ok > 0) {
@@ -209,63 +258,24 @@ if(isset($_POST['btnsetujuiitem'])) {
     $item = mysqli_fetch_array($query_item);
     
     if($item) {
-        $tipe = $item['tipe'];
-        $kode_item = $item['kode_item'];
-        $nama_item = $item['nama_item'];
-        $quantity = $item['quantity'];
-        $harga_satuan = $item['harga_satuan'];
-        $total = $item['total'];
-        $waktu = $item['waktu'] ?? 0;
-        
-        if($tipe == 'barang') {
-            // Insert to tblservis_barang
-            $query_barang = "INSERT INTO tblservis_barang 
-                            (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total)
-                            VALUES 
-                            ('$no_service', '$kode_item', '$quantity', 0, '$harga_satuan', 0, '$total')";
-            
-            if(mysqli_query($koneksi, $query_barang)) {
-                // Update status
-                mysqli_query($koneksi, "UPDATE tbservis_pending_items 
-                                       SET status_approval='disetujui', 
-                                           approved_by='$user', 
-                                           approved_at=NOW()
-                                       WHERE id='$item_id'");
-                
-                echo "<script>alert('Item barang berhasil disetujui dan ditambahkan ke service!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
-            } else {
-                echo "<script>alert('Gagal menambahkan item barang: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
-            }
-        } else { // jasa
-            // Insert to tblservis_jasa
-            $check_waktu_col = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
-            
-            if(mysqli_num_rows($check_waktu_col) > 0) {
-                // Insert with waktu
-                $query_jasa = "INSERT INTO tblservis_jasa 
-                              (no_service, no_item, harga, waktu, potongan, total)
-                              VALUES 
-                              ('$no_service', '$kode_item', '$harga_satuan', '$waktu', 0, '$total')";
-            } else {
-                // Insert without waktu
-                $query_jasa = "INSERT INTO tblservis_jasa 
-                              (no_service, no_item, harga, potongan, total)
-                              VALUES 
-                              ('$no_service', '$kode_item', '$harga_satuan', 0, '$total')";
-            }
-            
-            if(mysqli_query($koneksi, $query_jasa)) {
-                // Update status
-                mysqli_query($koneksi, "UPDATE tbservis_pending_items 
-                                       SET status_approval='disetujui', 
-                                           approved_by='$user', 
-                                           approved_at=NOW()
-                                       WHERE id='$item_id'");
-                
-                echo "<script>alert('Item jasa berhasil disetujui dan ditambahkan ke service!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
-            } else {
-                echo "<script>alert('Gagal menambahkan item jasa: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
-            }
+        $tipe_readable = ($item['tipe'] == 'barang') ? 'barang' : 'jasa';
+
+        // Ambil no_polisi untuk perhitungan diskon promo/member aktif
+        $q_cust = mysqli_query($koneksi, "SELECT no_polisi FROM tblservice WHERE no_service='$no_service'");
+        $cust = $q_cust ? mysqli_fetch_assoc($q_cust) : null;
+        $no_polisi_svc = $cust['no_polisi'] ?? '';
+
+        if(_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)) {
+            // Update status
+            mysqli_query($koneksi, "UPDATE tbservis_pending_items
+                                   SET status_approval='disetujui',
+                                       approved_by='$user',
+                                       approved_at=NOW()
+                                   WHERE id='$item_id'");
+
+            echo "<script>alert('Item $tipe_readable berhasil disetujui dan ditambahkan ke service!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
+        } else {
+            echo "<script>alert('Gagal menambahkan item $tipe_readable: " . mysqli_error($koneksi) . "'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
         }
     } else {
         echo "<script>alert('Item tidak ditemukan!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";

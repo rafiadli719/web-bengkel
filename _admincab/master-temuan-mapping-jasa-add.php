@@ -174,7 +174,7 @@ if (!$temuan_rs) {
 
     <div class="main-container ace-save-state" id="main-container">
         <div id="sidebar" class="sidebar responsive ace-save-state">
-            <?php include "menu_servis01.php"; ?>
+            <?php include "menu_dashboard.php"; ?>
             <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
                 <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
             </div>

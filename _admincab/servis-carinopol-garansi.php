@@ -177,7 +177,7 @@ if(empty($_SESSION['_iduser'])){
     <!-- Main Container -->
     <div class="main-container ace-save-state" id="main-container">
         <div id="sidebar" class="sidebar responsive ace-save-state">
-            <?php include "menu_servis03.php"; ?>
+            <?php include "menu_dashboard.php"; ?>
             <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
                 <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state"></i>
             </div>

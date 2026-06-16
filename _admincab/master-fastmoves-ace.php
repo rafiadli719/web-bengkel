@@ -172,7 +172,7 @@ if(empty($_SESSION['_iduser'])){
         </script>
 
         <!-- Sidebar -->
-        <?php include "menu_adm01.php"; ?>
+        <?php include "menu_dashboard.php"; ?>
 
         <!-- Main Content -->
         <div class="main-content">

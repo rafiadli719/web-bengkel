@@ -30,7 +30,7 @@
     // --------------------
         
 		$no_service=$_GET['snoserv'];
-        $_key=$_GET['_key'];
+        $_key=$_GET['_key'] ?? '';
         $_cari=$_GET['_cari'];
         $_urut=$_GET['_urut'];
         $_flt=$_GET['_flt'];
@@ -179,7 +179,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_servis01.php"; ?>
+<?php include "menu_dashboard.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -222,10 +222,10 @@
                                             <input type="hidden" name="_urut" value="<?php echo $_urut; ?>" />
                                             <input type="hidden" name="_flt" value="<?php echo $_flt; ?>" />
 											<span class="input-icon">
-												<input type="text" placeholder="Cari work order ..." class="nav-search-input" id="_cari" name="_cari" value="<?php echo $_cari; ?>" autocomplete="off" />
+												<input type="text" placeholder="Cari work order ..." class="nav-search-input" id="_cari" name="_cari" value="<?php echo htmlspecialchars($_cari); ?>" autocomplete="off" />
 												<i class="ace-icon fa fa-search nav-search-icon"></i>
 											</span>
-                                            <input type="text" class="hide" id="_key" name="_key" value="<?php echo $_key; ?>" />
+                                            <input type="text" class="hide" id="_key" name="_key" value="<?php echo htmlspecialchars($_key); ?>" />
 											<input class="btn btn-purple btn-sm" type="submit" value="Cari" />
                                             <a href="servis-input-reguler.php?snoserv=<?php echo $no_service; ?>&tab=workorder" class="btn btn-warning btn-sm">Kembali</a>
 										</form>
@@ -235,7 +235,7 @@
 								<div class="row">
 									<div class="col-xs-12">
 										<div class="table-header">
-											Results for "<?php echo $_key; ?>"
+											Results for "<?php echo htmlspecialchars($_key); ?>"
 										</div>
 
 										<!-- div.table-responsive -->
@@ -263,15 +263,15 @@
                                                         if($_cari<>"") {
                                                             $sql = mysqli_query($koneksi,"SELECT 
                                                                                             kode_wo, nama_wo, keterangan, waktu, harga
-                                                                                            FROM tbworkorderheader 
-                                                                                            WHERE (kode_wo LIKE '%$_cari%' OR nama_wo LIKE '%$_cari%') 
+                                                                                            FROM tbworkorderheader
+                                                                                            WHERE (kode_wo LIKE '%" . mysqli_real_escape_string($koneksi, $_cari) . "%' OR nama_wo LIKE '%" . mysqli_real_escape_string($koneksi, $_cari) . "%')
                                                                                             AND status='0'
                                                                                             ORDER BY kode_wo ASC");
                                                         } else {
-                                                            $sql = mysqli_query($koneksi,"SELECT 
+                                                            $sql = mysqli_query($koneksi,"SELECT
                                                                                             kode_wo, nama_wo, keterangan, waktu, harga
-                                                                                            FROM tbworkorderheader 
-                                                                                            WHERE kode_wo LIKE '%$_key%' OR nama_wo LIKE '%$_key%'
+                                                                                            FROM tbworkorderheader
+                                                                                            WHERE kode_wo LIKE '%" . mysqli_real_escape_string($koneksi, $_key) . "%' OR nama_wo LIKE '%" . mysqli_real_escape_string($koneksi, $_key) . "%'
                                                                                             AND status='0'
                                                                                             ORDER BY kode_wo ASC");
                                                         }

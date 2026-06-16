@@ -778,7 +778,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
         </div>
         
         <!-- Export Estimasi Button -->
-        <a href="temuan-penawaran-export.php?format=estimasi&no_service=<?= $no_service ?>" 
+        <a href="temuan-penawaran-export.php?format=estimasi&no_service=<?= urlencode($no_service) ?>"
            target="_blank"
            class="btn-export-estimasi"
            title="Export Estimasi Biaya Servis ke PDF">
@@ -952,7 +952,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
                             <select name="temuan_id" class="form-control">
                                 <option value="">-- Tanpa Temuan --</option>
                                 <?php
-                                $q_t = mysqli_query($koneksi, "SELECT id, COALESCE(temuan_custom, (SELECT nama_temuan FROM tbmaster_temuan WHERE kode_temuan = tbservis_temuan.kode_temuan)) AS nama FROM tbservis_temuan WHERE no_service='{$no_service}' ORDER BY id DESC");
+                                $q_t = mysqli_query($koneksi, "SELECT id, COALESCE(temuan_custom, (SELECT nama_temuan FROM tbmaster_temuan WHERE kode_temuan = tbservis_temuan.kode_temuan)) AS nama FROM tbservis_temuan WHERE no_service='{$no_service}' AND status_temuan NOT IN ('selesai','ditolak') ORDER BY id DESC");
                                 if ($q_t) {
                                     while($t = mysqli_fetch_array($q_t)){
                                         echo "<option value='".$t['id']."'>".htmlspecialchars($t['nama'])."</option>";
@@ -1415,7 +1415,6 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div id="wrapper-reject-v2">
-                <input type="hidden" name="btnreject_wo_item" value="1">
                 <input type="hidden" id="reject_item_id_v2" value="">
                 
                 <div class="modal-header" style="background: var(--danger-red); color: white;">
@@ -1883,12 +1882,16 @@ function submitRejectItemV2() {
 
     var form = document.createElement('form');
     form.method = 'POST';
-    form.innerHTML = '<input type="hidden" name="txtnosrv" value="' + no_service + '">' +
+    form.innerHTML = '<input type="hidden" name="txtnosrv">' +
                      '<input type="hidden" name="btnreject_wo_item" value="1">' +
-                     '<input type="hidden" name="pending_item_id" value="' + id + '">' +
-                     '<input type="hidden" name="alasan_reject" value="' + alasan + '">' +
-                     '<input type="hidden" name="keterangan_reject" value="' + keterangan + '">';
-    
+                     '<input type="hidden" name="pending_item_id">' +
+                     '<input type="hidden" name="alasan_reject">' +
+                     '<input type="hidden" name="keterangan_reject">';
+    $(form).find('[name="txtnosrv"]').val(no_service);
+    $(form).find('[name="pending_item_id"]').val(id);
+    $(form).find('[name="alasan_reject"]').val(alasan);
+    $(form).find('[name="keterangan_reject"]').val(keterangan);
+
     document.body.appendChild(form);
     form.submit();
 }

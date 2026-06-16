@@ -16,9 +16,13 @@ if (!empty($vehicle_no_polisi) && isset($koneksi)) {
     $query_service = "SELECT s.no_service,
                              DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_serv,
                              s.km_skr,
-                             s.status_servis
+                             s.status_servis,
+                             s.kepala_mekanik1, s.kepala_mekanik2,
+                             s.mekanik1, s.mekanik2, s.mekanik3, s.mekanik4,
+                             s.persen_kepala_mekanik1, s.persen_kepala_mekanik2,
+                             s.persen_mekanik1, s.persen_mekanik2, s.persen_mekanik3, s.persen_mekanik4
                       FROM tblservice s
-                      WHERE s.no_polisi='".$vehicle_no_polisi."' 
+                      WHERE s.no_polisi='".$vehicle_no_polisi."'
                       AND s.status_servis IN ('selesai','bayar')
                       ORDER BY s.tanggal DESC, s.no_service DESC
                       LIMIT 10";
@@ -177,13 +181,14 @@ function getMechanicNameModal($koneksi, $mechanic_code) {
                                             <th class="center">Tanggal</th>
                                             <th class="center">KM</th>
                                             <th>Keluhan Sebelumnya</th>
+                                            <th>Mekanik</th>
                                             <th class="center">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
+                                        <?php
                                         $no = 1;
-                                        foreach ($service_history as $history): 
+                                        foreach ($service_history as $history):
                                             $no_service_history = $history['no_service'];
                                             
                                             // Status badge
@@ -254,6 +259,37 @@ function getMechanicNameModal($koneksi, $mechanic_code) {
                                                     }
                                                 ?>
                                             </td>
+                                            <td>
+                                                <?php
+                                                    $hist_kepala_list = [];
+                                                    if (!empty($history['kepala_mekanik1'])) {
+                                                        $p = $history['persen_kepala_mekanik1'];
+                                                        $hist_kepala_list[] = getMechanicNameModal($koneksi, $history['kepala_mekanik1']) . ($p > 0 ? " ({$p}%)" : '');
+                                                    }
+                                                    if (!empty($history['kepala_mekanik2'])) {
+                                                        $p = $history['persen_kepala_mekanik2'];
+                                                        $hist_kepala_list[] = getMechanicNameModal($koneksi, $history['kepala_mekanik2']) . ($p > 0 ? " ({$p}%)" : '');
+                                                    }
+                                                    $hist_mekanik_list = [];
+                                                    foreach ([1,2,3,4] as $mi) {
+                                                        $kode_mek = $history["mekanik$mi"] ?? '';
+                                                        if (!empty($kode_mek)) {
+                                                            $p = $history["persen_mekanik$mi"];
+                                                            $hist_mekanik_list[] = getMechanicNameModal($koneksi, $kode_mek) . ($p > 0 ? " ({$p}%)" : '');
+                                                        }
+                                                    }
+                                                    if (empty($hist_kepala_list) && empty($hist_mekanik_list)) {
+                                                        echo '<span class="text-muted">-</span>';
+                                                    } else {
+                                                        foreach ($hist_kepala_list as $km) {
+                                                            echo '<div><small><i class="ace-icon fa fa-user-md blue"></i> ' . htmlspecialchars($km) . '</small></div>';
+                                                        }
+                                                        foreach ($hist_mekanik_list as $m) {
+                                                            echo '<div><small><i class="ace-icon fa fa-wrench green"></i> ' . htmlspecialchars($m) . '</small></div>';
+                                                        }
+                                                    }
+                                                ?>
+                                            </td>
                                             <td class="center"><?php echo $status_badge; ?></td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -262,7 +298,7 @@ function getMechanicNameModal($koneksi, $mechanic_code) {
                             </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <!-- Tab Riwayat Mekanik -->
                     <div role="tabpanel" class="tab-pane" id="tab-mechanic-history">
                         <div class="alert alert-info" style="margin-bottom: 15px;">

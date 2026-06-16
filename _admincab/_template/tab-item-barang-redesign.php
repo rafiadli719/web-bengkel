@@ -400,10 +400,12 @@ function tambahItemBarangV2() {
     var form = $('<form method="POST">' +
         '<input type="hidden" name="txtnosrv" value="<?= $no_service ?>">' +
         '<input type="hidden" name="btnadd" value="1">' +
-        '<input type="hidden" name="txtcaribrg" value="' + kode + '">' +
-        '<input type="hidden" name="txtqty" value="' + qty + '">' +
+        '<input type="hidden" name="txtcaribrg">' +
+        '<input type="hidden" name="txtqty">' +
         '<input type="hidden" name="tab" value="items">' +
         '</form>');
+    form.find('[name="txtcaribrg"]').val(kode);
+    form.find('[name="txtqty"]').val(qty);
     $('body').append(form);
     form.submit();
 }
@@ -508,7 +510,6 @@ window.applyCustomItemToForm = function(data) {
                     $('#add_kode_jasa_v2').val(kode);
                     $('#add_nama_jasa_v2').val(nama);
                     $('#add_harga_jasa_v2').val(harga);
-                    $('#add_qty_jasa_v2').val(qty);
                     if (typeof hitungTotalJasaV2 === 'function') {
                         hitungTotalJasaV2();
                     }

@@ -44,11 +44,12 @@
     // --------------------				        
     
         $no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
-    $txtcaribrg=$_GET['kd'] ?? '';
-    $txtcarisrv=$_GET['kdjasa'] ?? '';
-    $txtcariwo=$_GET['kdwo'] ?? '';
+    $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+    $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
     
 // [READ-ONLY] Save handler removed
+    $is_readonly_wo = true; // halaman garansi selesai: tombol cari/tambah Work Order dinonaktifkan (tidak ada handler POST)
     
     // Get service data if exists
     if(!empty($no_service)) {
@@ -129,8 +130,8 @@
     $persen_kerja4 = 0;
     
     // Initialize additional variables for templates
-    $txtcaribrg = $_GET['kd'] ?? '';
-    $txtcarisrv = $_GET['kdjasa'] ?? '';
+    $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv = mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtnamaitem = '';
     $txtnamasrv = '';
     
@@ -357,7 +358,7 @@
 					try{ace.settings.loadState('sidebar')}catch(e){}
 				</script>
 
-<?php include "menu_servis01.php"; ?>
+<?php include "menu_dashboard.php"; ?>
 
 				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
 					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
@@ -374,12 +375,18 @@
 							</li>
                             <li>
 								<a href="#">Service</a>
-							</li>                            
-							<li class="active">Input Service Garansi</li>
+							</li>
+							<li class="active">Detail Service Garansi (Selesai)</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 
 					<div class="page-content">
+
+                        <div class="alert alert-success">
+                            <i class="ace-icon fa fa-check-circle green bigger-130"></i>
+                            <strong>Servis garansi ini sudah SELESAI.</strong>
+                            Halaman ini hanya untuk melihat &amp; mencetak ulang data (mode lihat saja, tidak bisa diedit lagi).
+                        </div>
 
                         <form class="form-horizontal" action="" method="post" role="form" enctype="multipart/form-data">
 						<!-- Hidden fields for form submission -->
@@ -390,10 +397,10 @@
 									<div class="widget-header widget-header-blue widget-header-flat">
 										<h4 class="widget-title lighter">
 											<i class="ace-icon fa fa-shield orange"></i>
-											Input Service Garansi <?php echo $no_service ? '#'.$no_service : ''; ?>
+											Detail Service Garansi <?php echo $no_service ? '#'.$no_service : ''; ?>
 										</h4>
                                         <div class="widget-toolbar">
-                                            <span class="label label-warning arrowed-in arrowed-in-right">Warranty Service</span>
+                                            <span class="label label-success arrowed-in arrowed-in-right">Selesai</span>
                                         </div>
 									</div>
 

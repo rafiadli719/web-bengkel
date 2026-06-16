@@ -272,7 +272,7 @@ if(empty($_SESSION['_iduser'])){
 
     <div class="main-container ace-save-state" id="main-container">
         <div id="sidebar" class="sidebar responsive ace-save-state">
-            <?php include "menu_master01a.php"; ?>
+            <?php include "menu_dashboard.php"; ?>
         </div>
 
         <div class="main-content">

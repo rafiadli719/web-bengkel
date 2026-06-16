@@ -44,9 +44,9 @@
     // --------------------
 
 		$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
-    $txtcaribrg=$_GET['kd'] ?? '';
-    $txtcarisrv=$_GET['kdjasa'] ?? '';
-    $txtcariwo=$_GET['kdwo'] ?? '';
+    $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
+    $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
 
     // Set active tab based on URL parameter or search parameters
     $active_tab = 'service-details'; // Default tab
@@ -465,6 +465,13 @@
         $km_berikut = $_POST['txtkm_next'] ?? 0;
 
         if($kode_wo != '') {
+            // Ambil no_polisi untuk hitung diskon member/promo
+            $no_polisi_svc = '';
+            $q_cust_wo = mysqli_query($koneksi, "SELECT no_polisi FROM tblservice WHERE no_service='$no_service'");
+            if($q_cust_wo && ($cust_wo = mysqli_fetch_assoc($q_cust_wo))) {
+                $no_polisi_svc = $cust_wo['no_polisi'] ?? '';
+            }
+
             // Check if work order exists
             $check_wo = mysqli_query($koneksi,"SELECT COUNT(*) as count FROM tbservis_workorder
                                                WHERE no_service='$no_service' AND kode_wo='$kode_wo'");
@@ -503,20 +510,38 @@
                         $nobaris_jasa_data = mysqli_fetch_array($q_nobaris_jasa);
                         $nobaris_jasa = $nobaris_jasa_data['next_nobaris'] ?? 1;
 
+                        // Hitung diskon member/promo aktif untuk item ini
+                        $diskon_source = ''; $diskon_persen = 0; $diskon_nominal = 0; $id_promo = 'NULL';
+                        $harga_jasa_wo = floatval($detail['harga']);
+                        if(function_exists('calculateItemDiscount') && !empty($no_polisi_svc)) {
+                            $disc = calculateItemDiscount($koneksi, $no_polisi_svc, $detail['kode_barang'], 'jasa', $harga_jasa_wo);
+                            if(($disc['diskon_nominal'] ?? 0) > 0) {
+                                $diskon_persen = floatval($disc['diskon_persen']);
+                                $diskon_nominal = floatval($disc['diskon_nominal']);
+                                $diskon_source = (stripos($disc['discount_source'], 'promo') !== false) ? 'promo' : ((stripos($disc['discount_source'], 'member') !== false) ? 'member' : '');
+                                if($diskon_source === 'promo' && function_exists('getActiveDiscountForService')) {
+                                    $ad = getActiveDiscountForService($koneksi, $no_polisi_svc);
+                                    if(!empty($ad['promo_id'])) { $id_promo = intval($ad['promo_id']); }
+                                }
+                            }
+                        }
+                        $total_jasa_wo = $harga_jasa_wo - $diskon_nominal;
+                        if($total_jasa_wo < 0) { $total_jasa_wo = 0; }
+
                         // Check if waktu column exists in tblservis_jasa before inserting
                         $check_jasa_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
                         if(mysqli_num_rows($check_jasa_waktu) > 0) {
                             // Insert with waktu column
                             mysqli_query($koneksi,"INSERT INTO tblservis_jasa
-                                                  (no_service, nobaris, no_item, harga, waktu, potongan, total)
+                                                  (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                   VALUES
-                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '{$detail['harga']}', '$waktu', '0', '{$detail['total']}')");
+                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$waktu', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                         } else {
                             // Insert without waktu column
                             mysqli_query($koneksi,"INSERT INTO tblservis_jasa
-                                                  (no_service, nobaris, no_item, harga, potongan, total)
+                                                  (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                   VALUES
-                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '{$detail['harga']}', '0', '{$detail['total']}')");
+                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                         }
                     } else { // Barang
                         // Get next nobaris for barang
@@ -524,10 +549,29 @@
                         $nobaris_brg_data = mysqli_fetch_array($q_nobaris_brg);
                         $nobaris_brg = $nobaris_brg_data['next_nobaris'] ?? 1;
 
+                        // Hitung diskon member/promo aktif untuk item ini
+                        $diskon_source = ''; $diskon_persen = 0; $diskon_nominal = 0; $id_promo = 'NULL';
+                        $harga_brg_wo = floatval($detail['harga']);
+                        $qty_brg_wo = intval($detail['jumlah']);
+                        if(function_exists('calculateItemDiscount') && !empty($no_polisi_svc)) {
+                            $disc = calculateItemDiscount($koneksi, $no_polisi_svc, $detail['kode_barang'], 'barang', $harga_brg_wo);
+                            if(($disc['diskon_nominal'] ?? 0) > 0) {
+                                $diskon_persen = floatval($disc['diskon_persen']);
+                                $diskon_nominal = floatval($disc['diskon_nominal']);
+                                $diskon_source = (stripos($disc['discount_source'], 'promo') !== false) ? 'promo' : ((stripos($disc['discount_source'], 'member') !== false) ? 'member' : '');
+                                if($diskon_source === 'promo' && function_exists('getActiveDiscountForService')) {
+                                    $ad = getActiveDiscountForService($koneksi, $no_polisi_svc);
+                                    if(!empty($ad['promo_id'])) { $id_promo = intval($ad['promo_id']); }
+                                }
+                            }
+                        }
+                        $total_brg_wo = ($harga_brg_wo * $qty_brg_wo) - ($diskon_nominal * $qty_brg_wo);
+                        if($total_brg_wo < 0) { $total_brg_wo = 0; }
+
                         mysqli_query($koneksi,"INSERT INTO tblservis_barang
-                                              (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total)
+                                              (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                               VALUES
-                                              ('$no_service', '$nobaris_brg', '{$detail['kode_barang']}', '{$detail['jumlah']}', '0', '{$detail['harga']}', '0', '{$detail['total']}')");
+                                              ('$no_service', '$nobaris_brg', '{$detail['kode_barang']}', '$qty_brg_wo', '0', '$harga_brg_wo', '$diskon_persen', '$total_brg_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                     }
                 }
 
@@ -786,8 +830,8 @@
     $persen_kerja4 = 0;
 
     // Initialize additional variables for templates
-    $txtcaribrg = $_GET['kd'] ?? '';
-    $txtcarisrv = $_GET['kdjasa'] ?? '';
+    $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
+    $txtcarisrv = mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtnamaitem = '';
     $txtnamasrv = '';
 
