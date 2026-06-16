@@ -19,26 +19,44 @@ if($foto_user=='') {
     $foto_user="file_upload/avatar.png";
 }
 
+// Get tipe_cabang untuk isolasi data per cabang
+$cari_cab = mysqli_query($koneksi, "SELECT tipe_cabang FROM tbcabang WHERE kode_cabang='$kd_cabang'");
+$tm_cab = mysqli_fetch_array($cari_cab);
+$tipe_cabang = $tm_cab['tipe_cabang'] ?? '';
+
 // Get filter parameters
-$tanggal_dari = $_GET['tgl_dari'] ?? date('Y-m-01'); // Awal bulan
-$tanggal_sampai = $_GET['tgl_sampai'] ?? date('Y-m-d'); // Hari ini
+$tanggal_dari    = $_GET['tgl_dari'] ?? date('Y-m-01');
+$tanggal_sampai  = $_GET['tgl_sampai'] ?? date('Y-m-d');
 $kategori_filter = $_GET['kategori'] ?? '';
+$kd_cabang_safe  = mysqli_real_escape_string($koneksi, $kd_cabang);
+$tgl_dari_safe   = mysqli_real_escape_string($koneksi, $tanggal_dari);
+$tgl_sampai_safe = mysqli_real_escape_string($koneksi, $tanggal_sampai);
 
-// Build query
-$query_where = "WHERE DATE(lc.tanggal_cancel) BETWEEN '$tanggal_dari' AND '$tanggal_sampai'";
+// Build WHERE untuk view_laporan_cancel_servis (kolom unqualified, view sudah punya kd_cabang)
+$view_conds = ["DATE(tanggal_cancel) BETWEEN '$tgl_dari_safe' AND '$tgl_sampai_safe'"];
+// Subquery cabang untuk query langsung ke tb_log_cancel_servis (tabel itu tidak punya kd_cabang)
+$cabang_inline = $tipe_cabang !== 'Pusat'
+    ? " AND no_service IN (SELECT no_service FROM tblservice WHERE kd_cabang = '$kd_cabang_safe')"
+    : '';
 
-if(!empty($kategori_filter)) {
-    $query_where .= " AND lc.kategori_alasan = '$kategori_filter'";
+if (!empty($kategori_filter)) {
+    $kat_safe = mysqli_real_escape_string($koneksi, $kategori_filter);
+    $view_conds[] = "kategori_alasan = '$kat_safe'";
 }
+if ($tipe_cabang !== 'Pusat') {
+    $view_conds[] = "kd_cabang = '$kd_cabang_safe'";
+}
+
+$query_where_view = "WHERE " . implode(" AND ", $view_conds);
 
 // Get data cancel
 $query_cancel = mysqli_query($koneksi, "
     SELECT * FROM view_laporan_cancel_servis
-    $query_where
+    $query_where_view
     ORDER BY tanggal_cancel DESC
 ");
 
-// Get statistik
+// Get statistik dari view agar konsisten dengan filter kd_cabang
 $query_stats = mysqli_query($koneksi, "
     SELECT
         COUNT(*) as total_cancel,
@@ -46,19 +64,24 @@ $query_stats = mysqli_query($koneksi, "
         SUM(nominal_dp) as total_dp,
         SUM(nominal_refund) as total_refund,
         AVG(biaya_cancel) as avg_biaya_cancel
-    FROM tb_log_cancel_servis lc
-    $query_where
+    FROM view_laporan_cancel_servis
+    $query_where_view
 ");
 $stats = mysqli_fetch_array($query_stats);
 
-// Get top alasan
+// Get top alasan (tb_log_cancel_servis tidak punya kd_cabang, filter cabang via subquery)
 $query_top_alasan = mysqli_query($koneksi, "
     SELECT
         kategori_alasan,
         COUNT(*) as jumlah,
-        ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM tb_log_cancel_servis WHERE DATE(tanggal_cancel) BETWEEN '$tanggal_dari' AND '$tanggal_sampai')), 2) as persentase
+        ROUND((COUNT(*) * 100.0 / (
+            SELECT COUNT(*) FROM tb_log_cancel_servis
+            WHERE DATE(tanggal_cancel) BETWEEN '$tgl_dari_safe' AND '$tgl_sampai_safe'
+            $cabang_inline
+        )), 2) as persentase
     FROM tb_log_cancel_servis
-    WHERE DATE(tanggal_cancel) BETWEEN '$tanggal_dari' AND '$tanggal_sampai'
+    WHERE DATE(tanggal_cancel) BETWEEN '$tgl_dari_safe' AND '$tgl_sampai_safe'
+    $cabang_inline
     GROUP BY kategori_alasan
     ORDER BY jumlah DESC
 ");

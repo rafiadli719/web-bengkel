@@ -73,6 +73,17 @@ if(empty($_SESSION['_iduser'])){
         $hasil = "Riwayat Servis Garansi (Selesai)";
     }
 
+    // Isolasi per cabang — user non-Pusat hanya melihat data cabangnya sendiri
+    if ($tipe_cabang !== 'Pusat') {
+        $kd_cabang_safe = mysqli_real_escape_string($koneksi, $kd_cabang);
+        $cabang_cond = "s.kd_cabang = '$kd_cabang_safe'";
+        if (empty($where_clause)) {
+            $where_clause = "WHERE $cabang_cond";
+        } else {
+            $where_clause .= " AND $cabang_cond";
+        }
+    }
+
     // Main query (include robust computed total for display)
     $sql_query = "SELECT 
                     s.*, 
@@ -278,6 +289,7 @@ if(empty($_SESSION['_iduser'])){
                                             <th width="10%">No. Polisi</th>
                                             <th width="20%">Nama Pelanggan</th>
                                             <th width="15%">Kendaraan</th>
+                                            <?php if ($tipe_cabang === 'Pusat'): ?><th width="7%">Cabang</th><?php endif; ?>
                                             <th width="8%">Status</th>
                                             <th width="9%">Total</th>
                                         </tr>
@@ -444,6 +456,9 @@ if(empty($_SESSION['_iduser'])){
                                                 <?php echo htmlspecialchars($tampil['merek'] . ' ' . $tampil['tipe']); ?>
                                                 <br><small class="text-muted"><?php echo htmlspecialchars($tampil['warna']); ?></small>
                                             </td>
+                                            <?php if ($tipe_cabang === 'Pusat'): ?>
+                                            <td><small><?php echo htmlspecialchars($tampil['kd_cabang'] ?? ''); ?></small></td>
+                                            <?php endif; ?>
                                             <td>
                                                 <span class="service-status <?php echo $status_class; ?>">
                                                     <?php echo $ket_status; ?>
@@ -460,7 +475,7 @@ if(empty($_SESSION['_iduser'])){
                                             $no++;
                                             }
                                         } else {
-                                            echo '<tr><td colspan="9" class="text-center text-muted">
+                                            echo '<tr><td colspan="' . ($tipe_cabang === 'Pusat' ? 10 : 9) . '" class="text-center text-muted">
                                                     <h4><i class="ace-icon fa fa-search"></i> Tidak ada data ditemukan</h4>';
                                             if (!empty($search_query)) {
                                                 echo '<p>Tidak ada hasil untuk pencarian: <strong>' . htmlspecialchars($search_query) . '</strong></p>';
