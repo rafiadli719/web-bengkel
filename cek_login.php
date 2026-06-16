@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Login successful but Accurate config not loaded: " . ($config_error ?? 'Unknown error'));
         }
 
-        // RBAC MENU SYSTEM: Redirect ALL users to _admincab
+        // RBAC MENU SYSTEM: Redirect ALL users to app/
         // Menu sidebar will auto-filter based on permissions from tb_master_posisi
         $location = 'panel/';
 

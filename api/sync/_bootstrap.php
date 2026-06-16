@@ -2,7 +2,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 include dirname(__DIR__, 2) . '/config/koneksi.php';
-require_once dirname(__DIR__, 2) . '/_admincab/_include_access_sync.php';
+require_once dirname(__DIR__, 2) . '/app/_include_access_sync.php';
 
 function accessSyncApiRespond($payload, $httpCode = 200) {
     http_response_code($httpCode);

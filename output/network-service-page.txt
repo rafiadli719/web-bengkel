@@ -1,0 +1,4 @@
+2. [GET] http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/assets/css/bootstrap.min.css => [200] OK
+4. [GET] http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/assets/css/jquery-ui.custom.min.css => [200] OK
+10. [GET] http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/assets/css/bootstrap.min.css => [200] OK
+12. [GET] http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/assets/css/jquery-ui.custom.min.css => [200] OK

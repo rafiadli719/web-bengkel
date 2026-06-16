@@ -3,7 +3,7 @@ declare(strict_types=1);
 
     $baseUrl = $argv[1] ?? 'http://localhost/web-bengkel/aplikasi/aplikasi/api/sync';
 
-require_once __DIR__ . '/../_admincab/_include_access_sync.php';
+require_once __DIR__ . '/../app/_include_access_sync.php';
 
 $token = accessSyncGetApiToken();
 if ($token === '') {
