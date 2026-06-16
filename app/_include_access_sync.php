@@ -921,24 +921,25 @@ function accessSyncUpsertMekanik($koneksi, $row) {
 
 function accessSyncUpsertItem($koneksi, $row) {
     $defaults = [
-        'no_item' => $row['no_item'] ?? '',
+        'no_item'      => $row['no_item']      ?? '',
+        'kd_cabang'    => $row['kd_cabang']    ?? '',
         'kode_barcode' => $row['kode_barcode'] ?? '',
-        'nama_item' => $row['nama_item'] ?? '',
-        'jenis' => $row['jenis'] ?? '',
-        'satuan' => $row['satuan'] ?? 'PCS',
-        'harga_pokok' => $row['harga_pokok'] ?? '0',
-        'harga_jual' => $row['harga_jual'] ?? '0',
-        'harga_jual2' => $row['harga_jual2'] ?? ($row['harga_jual'] ?? '0'),
-        'harga_jual3' => $row['harga_jual3'] ?? ($row['harga_jual'] ?? '0'),
-        'quantity' => $row['quantity'] ?? '0',
-        'stok_min' => $row['stok_min'] ?? '0',
-        'status_item' => $row['status_item'] ?? '',
-        'supplier1' => $row['supplier1'] ?? '',
-        'supplier2' => $row['supplier2'] ?? '',
-        'supplier3' => $row['supplier3'] ?? '',
+        'nama_item'    => $row['nama_item']    ?? '',
+        'jenis'        => $row['jenis']        ?? '',
+        'satuan'       => $row['satuan']       ?? 'PCS',
+        'harga_pokok'  => $row['harga_pokok']  ?? '0',
+        'harga_jual'   => $row['harga_jual']   ?? '0',
+        'harga_jual2'  => $row['harga_jual2']  ?? ($row['harga_jual'] ?? '0'),
+        'harga_jual3'  => $row['harga_jual3']  ?? ($row['harga_jual'] ?? '0'),
+        'quantity'     => $row['quantity']     ?? '0',
+        'stok_min'     => $row['stok_min']     ?? '0',
+        'status_item'  => $row['status_item']  ?? '',
+        'supplier1'    => $row['supplier1']    ?? '',
+        'supplier2'    => $row['supplier2']    ?? '',
+        'supplier3'    => $row['supplier3']    ?? '',
         'status_produk' => !empty($row['status_produk']) ? substr((string) $row['status_produk'], 0, 1) : '1',
-        'rak_barang' => !empty($row['rak_barang']) ? substr((string) $row['rak_barang'], 0, 3) : '',
-        'jasa_waktu' => $row['jasa_waktu'] ?? '0'
+        'rak_barang'   => !empty($row['rak_barang']) ? substr((string) $row['rak_barang'], 0, 3) : '',
+        'jasa_waktu'   => $row['jasa_waktu']   ?? '0',
     ];
 
     $existsStmt = mysqli_prepare($koneksi, "SELECT noitem FROM tblitem WHERE noitem = ? LIMIT 1");
@@ -959,6 +960,11 @@ function accessSyncUpsertItem($koneksi, $row) {
         );
         accessSyncExecuteStatementOrThrow($stmt);
         mysqli_stmt_close($stmt);
+
+        // Fix #1 & #2: update harga cabang + stok cabang saat item di-update juga
+        accessSyncUpsertItemHargaCabang($koneksi, $defaults);
+        accessSyncUpsertStokCabang($koneksi, $defaults);
+
         return 'updated';
     }
 
@@ -976,7 +982,69 @@ function accessSyncUpsertItem($koneksi, $row) {
     );
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
+
+    // Fix #1: simpan harga per cabang ke tblitem_harga_cabang
+    accessSyncUpsertItemHargaCabang($koneksi, $defaults);
+
+    // Fix #2: upsert saldo stok per cabang ke tbstok
+    accessSyncUpsertStokCabang($koneksi, $defaults);
+
     return 'inserted';
+}
+
+function accessSyncUpsertItemHargaCabang($koneksi, $defaults) {
+    $kdCabang = trim((string)($defaults['kd_cabang'] ?? ''));
+    $noItem   = trim((string)($defaults['no_item']   ?? ''));
+    if ($noItem === '' || $kdCabang === '') return;
+
+    $sql = "INSERT INTO tblitem_harga_cabang
+                (noitem, kd_cabang, hargapokok, hargajual, hargajual2, hargajual3, qty_access, tanggal_sync)
+            VALUES (?,?,?,?,?,?,?,NOW())
+            ON DUPLICATE KEY UPDATE
+                hargapokok=VALUES(hargapokok), hargajual=VALUES(hargajual),
+                hargajual2=VALUES(hargajual2), hargajual3=VALUES(hargajual3),
+                qty_access=VALUES(qty_access), tanggal_sync=NOW()";
+    $stmt = mysqli_prepare($koneksi, $sql);
+    if (!$stmt) return;
+    $qty = (int)($defaults['quantity'] ?? 0);
+    mysqli_stmt_bind_param($stmt, 'ssddddid',
+        $noItem, $kdCabang,
+        (float)($defaults['harga_pokok'] ?? 0),
+        (float)($defaults['harga_jual']  ?? 0),
+        (float)($defaults['harga_jual2'] ?? 0),
+        (float)($defaults['harga_jual3'] ?? 0),
+        $qty
+    );
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+}
+
+function accessSyncUpsertStokCabang($koneksi, $defaults) {
+    $kdCabang = trim((string)($defaults['kd_cabang'] ?? ''));
+    $noItem   = trim((string)($defaults['no_item']   ?? ''));
+    $qty      = (int)($defaults['quantity'] ?? 0);
+    if ($noItem === '' || $kdCabang === '' || $qty <= 0) return;
+
+    // Marker khusus saldo awal dari Access — DELETE lama lalu INSERT baru
+    $noTrxSync = 'SYNC-ACC-' . strtoupper($kdCabang);
+
+    $del = mysqli_prepare($koneksi,
+        "DELETE FROM tbstok WHERE no_item=? AND kd_cabang=? AND no_transaksi=?");
+    if ($del) {
+        mysqli_stmt_bind_param($del, 'sss', $noItem, $kdCabang, $noTrxSync);
+        mysqli_stmt_execute($del);
+        mysqli_stmt_close($del);
+    }
+
+    $ins = mysqli_prepare($koneksi,
+        "INSERT INTO tbstok
+             (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+         VALUES ('M', ?, ?, CURDATE(), ?, 0, 'Saldo awal sync Access', ?)");
+    if ($ins) {
+        mysqli_stmt_bind_param($ins, 'ssis', $noTrxSync, $noItem, $qty, $kdCabang);
+        mysqli_stmt_execute($ins);
+        mysqli_stmt_close($ins);
+    }
 }
 
 function accessSyncUpsertPelanggan($koneksi, $row) {
@@ -1047,23 +1115,69 @@ function accessSyncUpsertPelanggan($koneksi, $row) {
     return 'inserted';
 }
 
+function accessSyncResolveNoPelangganFromNama($koneksi, $namaPelanggan, $telephone) {
+    $namaPelanggan = trim((string)$namaPelanggan);
+    if ($namaPelanggan === '') return '';
+
+    // Cari berdasarkan nama pelanggan (case-insensitive)
+    $stmt = mysqli_prepare($koneksi,
+        "SELECT nopelanggan FROM tblpelanggan WHERE UPPER(namapelanggan) = UPPER(?) LIMIT 1");
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 's', $namaPelanggan);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $found  = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+        if ($found && !empty($found['nopelanggan'])) {
+            return $found['nopelanggan'];
+        }
+    }
+
+    // Cari juga berdasarkan telephone jika nama tidak ketemu
+    $tel = trim((string)$telephone);
+    if ($tel !== '') {
+        $stmt2 = mysqli_prepare($koneksi,
+            "SELECT nopelanggan FROM tblpelanggan WHERE telephone = ? LIMIT 1");
+        if ($stmt2) {
+            mysqli_stmt_bind_param($stmt2, 's', $tel);
+            mysqli_stmt_execute($stmt2);
+            $result2 = mysqli_stmt_get_result($stmt2);
+            $found2  = mysqli_fetch_assoc($result2);
+            mysqli_stmt_close($stmt2);
+            if ($found2 && !empty($found2['nopelanggan'])) {
+                return $found2['nopelanggan'];
+            }
+        }
+    }
+
+    // Belum ada — generate kode baru format KND-{ymd}-{hash5}
+    return 'KND-' . date('ymd') . '-' . strtoupper(substr(md5($namaPelanggan . $telephone), 0, 5));
+}
+
 function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
+    // Fix #3: resolusi no_pelanggan dari nama/telephone, bukan dari no_polisi
+    $resolvedNoPelanggan = accessSyncResolveNoPelangganFromNama(
+        $koneksi,
+        $row['nama_pelanggan'] ?? '',
+        $row['telephone'] ?? ''
+    );
+
     $pelangganRow = [
-        'no_pelanggan' => $row['no_polisi'],
+        'no_pelanggan'  => $resolvedNoPelanggan,
         'nama_pelanggan' => $row['nama_pelanggan'],
-        'alamat' => $row['alamat'],
-        'kota' => $row['kota'],
-        'propinsi' => '',
-        'kode_post' => '',
-        'negara' => 'Indonesia',
-        'telephone' => $row['telephone'],
-        'fax' => '',
+        'alamat'        => $row['alamat'],
+        'kota'          => $row['kota'],
+        'propinsi'      => '',
+        'kode_post'     => '',
+        'negara'        => 'Indonesia',
+        'telephone'     => $row['telephone'],
+        'fax'           => '',
         'kontak_person' => $row['kontak_person'],
-        'note' => $row['note'],
-        'potongan' => 0,
-        'tipe_pot' => 'C',
-        'lavel_harga' => 'A',
-        'kgrup' => $row['grup'] ?: '001'
+        'note'          => $row['note'],
+        'potongan'      => 0,
+        'tipe_pot'      => 'C',
+        'lavel_harga'   => 'A',
+        'kgrup'         => $row['grup'] ?: '001'
     ];
     accessSyncUpsertPelanggan($koneksi, $pelangganRow);
 
@@ -1091,21 +1205,33 @@ function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
     }
 
     if ($found) {
+        // pemilik diisi nopelanggan yang sudah diresolve (bukan no_polisi)
         $sql = "UPDATE tblkendaraan SET pemilik=?, alamat=?, kode_merek=?, tipe=?, jenis=?, tahun_buat=?, warna=?, note=? WHERE nopolisi=?";
         $stmt = mysqli_prepare($koneksi, $sql);
-        mysqli_stmt_bind_param($stmt, 'sssssssss', $row['nama_pelanggan'], $row['alamat'], $resolvedMerek, $row['tipe'], $row['jenis'], $row['tahun_buat'], $row['warna'], $row['note'], $row['no_polisi']);
+        mysqli_stmt_bind_param($stmt, 'sssssssss',
+            $resolvedNoPelanggan, $row['alamat'], $resolvedMerek,
+            $row['tipe'], $row['jenis'], $row['tahun_buat'],
+            $row['warna'], $row['note'], $row['no_polisi']
+        );
         accessSyncExecuteStatementOrThrow($stmt);
         mysqli_stmt_close($stmt);
         return 'updated';
     }
 
-    $defaultKodeTipe = '0';
+    $defaultKodeTipe  = '0';
     $defaultKodeJenis = '0';
     $defaultTahunRakit = '';
     $defaultKodeWarna = '0';
-    $sql = "INSERT INTO tblkendaraan (nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis, tahun_buat, tahun_rakit, warna, kode_warna, note) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $sql = "INSERT INTO tblkendaraan
+                (nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis,
+                 tahun_buat, tahun_rakit, warna, kode_warna, note)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssssssssssss', $row['no_polisi'], $row['nama_pelanggan'], $row['alamat'], $resolvedMerek, $row['tipe'], $defaultKodeTipe, $row['jenis'], $defaultKodeJenis, $row['tahun_buat'], $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']);
+    mysqli_stmt_bind_param($stmt, 'sssssssssssss',
+        $row['no_polisi'], $resolvedNoPelanggan, $row['alamat'], $resolvedMerek,
+        $row['tipe'], $defaultKodeTipe, $row['jenis'], $defaultKodeJenis,
+        $row['tahun_buat'], $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']
+    );
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
     return 'inserted';
