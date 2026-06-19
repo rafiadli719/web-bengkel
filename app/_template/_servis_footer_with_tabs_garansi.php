@@ -364,4 +364,52 @@ function checkWarrantyClaim() {
     $('.warranty-status').removeClass('label-danger').addClass('label-success').text('AKTIF');
     return true;
 }
+
+window.saveMechanicData = function() {
+    var noService = '<?php echo $no_service ?? ''; ?>';
+    if (!noService) {
+        alert('Nomor service tidak ditemukan!');
+        return;
+    }
+
+    var data = {
+        no_service:      noService,
+        kepala_mekanik1: $('#cbokepala_mekanik1').val() || '',
+        persen_kepala1:  $('#txtpersen_kepala1').val() || 0,
+        kepala_mekanik2: $('#cbokepala_mekanik2').val() || '',
+        persen_kepala2:  $('#txtpersen_kepala2').val() || 0,
+        mekanik1:        $('#cbomekanik1').val() || '',
+        persen_mekanik1: $('#txtpersen_mekanik1').val() || 0,
+        mekanik2:        $('#cbomekanik2').val() || '',
+        persen_mekanik2: $('#txtpersen_mekanik2').val() || 0,
+        mekanik3:        $('#cbomekanik3').val() || '',
+        persen_mekanik3: $('#txtpersen_mekanik3').val() || 0,
+        mekanik4:        $('#cbomekanik4').val() || '',
+        persen_mekanik4: $('#txtpersen_mekanik4').val() || 0,
+        km_skr:          $('#txtkm_skr').val() || 0,
+        km_berikut:      $('#txtkm_next').val() || 0
+    };
+
+    var button = $('#btnSaveMechanicData');
+    button.prop('disabled', true).html('<i class="ace-icon fa fa-spinner fa-spin"></i> Menyimpan...');
+
+    $.ajax({
+        url: '_ajax/save_mechanic_data.php',
+        type: 'POST',
+        data: data,
+        dataType: 'json',
+        success: function(response) {
+            button.prop('disabled', false).html('<i class="ace-icon fa fa-save"></i> Simpan Data Mekanik & Persentase');
+            if (response.status === 'success') {
+                alert('Data mekanik dan persentase berhasil disimpan!');
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            button.prop('disabled', false).html('<i class="ace-icon fa fa-save"></i> Simpan Data Mekanik & Persentase');
+            alert('Terjadi kesalahan saat menyimpan data: ' + error);
+        }
+    });
+};
 </script>

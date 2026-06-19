@@ -276,8 +276,8 @@
     // Payment Processing for Garansi
     if(isset($_POST['btnbayar'])) {	
         $no_service= $_POST['txtnosrv'] ?? $no_service;			
-        $km_skr=$_POST['txtkm_skr'] ?? 0;
-        $km_berikut=$_POST['txtkm_next'] ?? 0;    
+        $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+        $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
         $diskon_member = $_POST['txtdiskon_member'] ?? 0;
         $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'] ?? 0;  

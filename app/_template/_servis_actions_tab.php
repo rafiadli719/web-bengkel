@@ -695,6 +695,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label no-padding-right">KM Berikut:</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="txtkm_next" name="txtkm_next"
+                                           value="<?php echo $km_berikut; ?>" min="0" />
+                                    <span class="input-group-addon">KM</span>
+                                </div>
+                                <small class="help-block">KM servis berikutnya</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="hr hr-24"></div>

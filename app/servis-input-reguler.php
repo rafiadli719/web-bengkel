@@ -428,7 +428,9 @@
                 $kode_pelanggan = $_POST['kode_pelanggan'] ?? '';
                 $no_polisi = $_POST['no_polisi'] ?? '';
                 $keluhan = $_POST['keluhan'] ?? '';
-                
+                $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
+                $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
+
                 // Capture Mechanic Data from POST for btnsimpan update
                 // Note: The form layout might have these fields outside the main form or in a different tab. 
                 // But if they are POSTed, we should update them.
@@ -474,12 +476,14 @@
                     persen_mekanik4='$persen_mekanik4'";
                 }
 
-                $query_update_service = "UPDATE tblservice SET 
+                $query_update_service = "UPDATE tblservice SET
                     tanggal = '$tanggal_service',
                     jam = '$jam_input',
                     no_pelanggan = '$kode_pelanggan',
                     no_polisi = '$no_polisi',
-                    keterangan = '$keluhan'
+                    keterangan = '$keluhan',
+                    km_skr = '$km_skr',
+                    km_berikut = '$km_berikut'
                     $extra_update,
                     updated_at = NOW()
                     WHERE no_service = '$no_service'";
@@ -509,7 +513,8 @@
         if(isset($_POST['btnbayar'])) {
             $no_service = $_POST['txtnosrv'] ?? $no_service;
             $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
-            
+            $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
+
             $diskon_member = $_POST['txtdiskon_member'] ?? 0;
             $txtpotfaktur_persen = $_POST['txtpotfaktur_persen'] ?? 0;
             $total_diskon_persen = $diskon_member + $txtpotfaktur_persen;
@@ -661,6 +666,7 @@
                 total_akhir='$net_pay',
                 total_waktu='$total_waktu_pay',
                 km_skr='$km_skr',
+                km_berikut='$km_berikut',
                 status_servis='selesai'";
 
             if ($has_tgl_bayar_col) {
