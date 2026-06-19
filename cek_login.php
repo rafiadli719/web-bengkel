@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // RBAC MENU SYSTEM: Redirect ALL users to app/
         // Menu sidebar will auto-filter based on permissions from tb_master_posisi
-        $location = 'panel/';
+        $location = 'app/';
 
         error_log("Successful login for user: $txtnama (ID: $id_user, Access Level: $lvl_akses) - Redirecting to: $location");
         header("Location: $location");

@@ -7,7 +7,7 @@ include "config/koneksi.php";
 
 // Destroy session if user is already logged in
 if (isset($_SESSION['_iduser'])) {
-    header("Location: panel/");
+    header("Location: app/");
     exit;
 }
 ?>
