@@ -287,7 +287,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-user-tie"></i> Kepala Mekanik 1</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbokepala_mekanik1" id="cbokepala_mekanik1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_kepala1_v2')">
+                        <select name="cbokepala_mekanik1" id="cbokepala_mekanik1_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('km')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_kepala_mekanik as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($kepala_mekanik1) && $kepala_mekanik1 == $nama_staff) ? 'selected' : '' ?>>
@@ -307,7 +307,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-user-edit"></i> Admin/Kasir 1</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cboadmin1" id="cboadmin1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_admin1_v2')">
+                        <select name="cboadmin1" id="cboadmin1_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('admin')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_admin_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($admin1) && $admin1 == $nama_staff) ? 'selected' : '' ?>>
@@ -327,7 +327,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-wrench"></i> Mekanik 1</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbomekanik1" id="cbomekanik1_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik1_v2')">
+                        <select name="cbomekanik1" id="cbomekanik1_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('mekanik')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_mekanik_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik1) && $mekanik1 == $nama_staff) ? 'selected' : '' ?>>
@@ -347,7 +347,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-wrench"></i> Mekanik 2</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbomekanik2" id="cbomekanik2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik2_v2')">
+                        <select name="cbomekanik2" id="cbomekanik2_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('mekanik')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_mekanik_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik2) && $mekanik2 == $nama_staff) ? 'selected' : '' ?>>
@@ -370,7 +370,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-user-tie"></i> Kepala Mekanik 2</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbokepala_mekanik2" id="cbokepala_mekanik2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_kepala2_v2')">
+                        <select name="cbokepala_mekanik2" id="cbokepala_mekanik2_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('km')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_kepala_mekanik as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($kepala_mekanik2) && $kepala_mekanik2 == $nama_staff) ? 'selected' : '' ?>>
@@ -390,7 +390,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-user-edit"></i> Admin/Kasir 2</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cboadmin2" id="cboadmin2_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_admin2_v2')">
+                        <select name="cboadmin2" id="cboadmin2_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('admin')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_admin_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($admin2) && $admin2 == $nama_staff) ? 'selected' : '' ?>>
@@ -410,7 +410,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-wrench"></i> Mekanik 3</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbomekanik3" id="cbomekanik3_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik3_v2')">
+                        <select name="cbomekanik3" id="cbomekanik3_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('mekanik')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_mekanik_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik3) && $mekanik3 == $nama_staff) ? 'selected' : '' ?>>
@@ -430,7 +430,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <div class="rd-form-group">
                     <label class="rd-label"><i class="fa fa-wrench"></i> Mekanik 4</label>
                     <div class="rd-flex rd-gap-8">
-                        <select name="cbomekanik4" id="cbomekanik4_v2" class="rd-input" style="flex: 1;" onchange="set100Percent(this, 'txtpersen_mekanik4_v2')">
+                        <select name="cbomekanik4" id="cbomekanik4_v2" class="rd-input" style="flex: 1;" onchange="autoDistributePersenGroup('mekanik')">
                             <option value="">- Pilih -</option>
                             <?php foreach($opsi_mekanik_service as $nama_staff): ?>
                             <option value="<?= htmlspecialchars($nama_staff, ENT_QUOTES) ?>" <?= (isset($mekanik4) && $mekanik4 == $nama_staff) ? 'selected' : '' ?>>
@@ -457,7 +457,7 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
     </div>
     <div class="rd-card-body">
         <div class="rd-form-row">
-            <div class="rd-form-group" style="display:none;">
+            <div class="rd-form-group">
                 <label class="rd-label">KM Saat Ini</label>
                 <div class="rd-input-group">
                     <input type="number" class="rd-input" id="txtkm_skr_v2" name="txtkm_skr"
@@ -647,67 +647,74 @@ $(document).ready(function() {
     hitungTotalV2();
 });
 
-// Auto set 100% logic
-function set100Percent(selectEl, targetId) {
-    if(selectEl.value !== "") {
-        $('#' + targetId).val(100);
-    } else {
-        // Optional: Reset to 0 if cleared, or leave as is? 
-        // User asked "jika pilih sudah otomatis 100%", implying connection.
-        // Let's reset to 0 to be safe/clean.
-        $('#' + targetId).val(0);
+// Auto distribute 100% evenly across selected staff in a group
+function autoDistributePersenGroup(group) {
+    var groups = {
+        km:     { selects: ['cbokepala_mekanik1_v2','cbokepala_mekanik2_v2'],
+                  persens: ['txtpersen_kepala1_v2','txtpersen_kepala2_v2'] },
+        admin:  { selects: ['cboadmin1_v2','cboadmin2_v2'],
+                  persens: ['txtpersen_admin1_v2','txtpersen_admin2_v2'] },
+        mekanik:{ selects: ['cbomekanik1_v2','cbomekanik2_v2','cbomekanik3_v2','cbomekanik4_v2'],
+                  persens: ['txtpersen_mekanik1_v2','txtpersen_mekanik2_v2','txtpersen_mekanik3_v2','txtpersen_mekanik4_v2'] }
+    };
+    var g = groups[group];
+    if (!g) return;
+
+    var active = [];
+    g.selects.forEach(function(id, i) {
+        if (($('#' + id).val() || '') !== '') active.push(i);
+    });
+
+    if (active.length === 0) {
+        g.persens.forEach(function(id) { $('#' + id).val(0); });
+        return;
     }
+
+    var per = Math.floor(100 / active.length);
+    var rem = 100 - (per * active.length);
+    g.persens.forEach(function(id, i) {
+        var idx = active.indexOf(i);
+        if (idx === -1) {
+            $('#' + id).val(0);
+        } else {
+            $('#' + id).val(per + (idx === 0 ? rem : 0));
+        }
+    });
 }
 
-// Validate Mechanic Percentages
+// Validate Mechanic Percentages — only validate groups with at least one person selected
 function validateMechanicPersen(e) {
-    // Collect specific groups
-    var km1 = parseFloat($('#txtpersen_kepala1_v2').val()) || 0;
-    var km2 = parseFloat($('#txtpersen_kepala2_v2').val()) || 0;
-    
+    var km1  = parseFloat($('#txtpersen_kepala1_v2').val()) || 0;
+    var km2  = parseFloat($('#txtpersen_kepala2_v2').val()) || 0;
     var adm1 = parseFloat($('#txtpersen_admin1_v2').val()) || 0;
     var adm2 = parseFloat($('#txtpersen_admin2_v2').val()) || 0;
-    
-    var mk1 = parseFloat($('#txtpersen_mekanik1_v2').val()) || 0;
-    var mk2 = parseFloat($('#txtpersen_mekanik2_v2').val()) || 0;
-    var mk3 = parseFloat($('#txtpersen_mekanik3_v2').val()) || 0;
-    var mk4 = parseFloat($('#txtpersen_mekanik4_v2').val()) || 0;
+    var mk1  = parseFloat($('#txtpersen_mekanik1_v2').val()) || 0;
+    var mk2  = parseFloat($('#txtpersen_mekanik2_v2').val()) || 0;
+    var mk3  = parseFloat($('#txtpersen_mekanik3_v2').val()) || 0;
+    var mk4  = parseFloat($('#txtpersen_mekanik4_v2').val()) || 0;
 
-    // Check KM
-    var hasKM = $('#cbokepala_mekanik1_v2').val() || $('#cbokepala_mekanik2_v2').val();
-    // User requested strict warning for Admin & Mekanik "jika 0%".
-    // Assuming KM is also mandatory if following the pattern, OR we leave KM flexible?
-    // "mekanik dan admin" was specifically mentioned.
-    // Let's make KM mandatory too for consistency, or keep "if(hasKM)"?
-    // Let's keep KM flexible (only if selected) unless told otherwise, 
-    // BUT Admin and Mechanic are definitely mandatory now.
-    
-    // Actually, usually KM is mandatory daily. Let's make it mandatory 
-    // IF the user considers KM as "Mekanik" in their sentence. 
-    // To be safe, I will enforce it for Admin and Mechanic (Worker) as requested.
-    
-    // Check KM - MANDATORY (selaras dengan validasi server: 'Kepala Mekanik wajib diisi')
-    if(!hasKM) {
+    var hasKM    = ($('#cbokepala_mekanik1_v2').val() || '') !== '' || ($('#cbokepala_mekanik2_v2').val() || '') !== '';
+    var hasAdmin = ($('#cboadmin1_v2').val() || '') !== '' || ($('#cboadmin2_v2').val() || '') !== '';
+    var hasMK    = ($('#cbomekanik1_v2').val() || '') !== '' || ($('#cbomekanik2_v2').val() || '') !== ''
+                || ($('#cbomekanik3_v2').val() || '') !== '' || ($('#cbomekanik4_v2').val() || '') !== '';
+
+    if (!hasKM) {
         alert('Kepala Mekanik wajib diisi.');
         e.preventDefault();
         return false;
     }
-    if(Math.abs((km1 + km2) - 100) > 0.01) {
-        alert('Total Persentase KEPALA MEKANIK harus 100% (Saat ini: ' + (km1+km2) + '%)');
+    if (Math.abs((km1 + km2) - 100) > 0.01) {
+        alert('Total Persentase KEPALA MEKANIK harus 100% (Saat ini: ' + (km1 + km2) + '%)');
         e.preventDefault();
         return false;
     }
-
-    // Check Admin - MANDATORY
-    if(Math.abs((adm1 + adm2) - 100) > 0.01) {
-        alert('Total Persentase ADMIN/KASIR harus 100% (Saat ini: ' + (adm1+adm2) + '%)');
+    if (hasAdmin && Math.abs((adm1 + adm2) - 100) > 0.01) {
+        alert('Total Persentase ADMIN/KASIR harus 100% (Saat ini: ' + (adm1 + adm2) + '%)');
         e.preventDefault();
         return false;
     }
-
-    // Check Mekanik - MANDATORY
-    if(Math.abs((mk1 + mk2 + mk3 + mk4) - 100) > 0.01) {
-        alert('Total Persentase MEKANIK harus 100% (Saat ini: ' + (mk1+mk2+mk3+mk4) + '%)');
+    if (hasMK && Math.abs((mk1 + mk2 + mk3 + mk4) - 100) > 0.01) {
+        alert('Total Persentase MEKANIK harus 100% (Saat ini: ' + (mk1 + mk2 + mk3 + mk4) + '%)');
         e.preventDefault();
         return false;
     }
