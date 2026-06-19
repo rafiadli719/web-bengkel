@@ -101,13 +101,55 @@ if(empty($_SESSION['_iduser'])){
         
         if($action == 'activate') {
             $id = $_POST['id'];
-            
+
             $query = "UPDATE tbmaster_keluhan_workorder SET status_aktif='1' WHERE id='$id'";
-            
+
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Mapping berhasil diaktifkan!'); window.location='master-workorder-mapping.php';</script>";
             } else {
                 echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+            }
+        }
+
+        if($action == 'bulk_import') {
+            $sql_file = __DIR__ . '/tools/sql/mapping_keluhan_workorder.sql';
+            if (!file_exists($sql_file)) {
+                echo "<script>alert('File SQL tidak ditemukan: tools/sql/mapping_keluhan_workorder.sql');</script>";
+            } else {
+                $sql_raw = file_get_contents($sql_file);
+                $lines = explode("\n", $sql_raw);
+                $lines = array_filter($lines, function($l) {
+                    $t = trim($l);
+                    return $t !== '' && strpos($t, '--') !== 0;
+                });
+                $statements = array_filter(array_map('trim', explode(';', implode("\n", $lines))));
+
+                $ok = 0; $errors = [];
+                foreach ($statements as $stmt) {
+                    if (stripos($stmt, 'START TRANSACTION') === 0) continue;
+                    if (strtoupper(trim($stmt)) === 'COMMIT') continue;
+                    if (stripos($stmt, 'SELECT') === 0) continue;
+                    if (mysqli_query($koneksi, $stmt)) {
+                        $ok++;
+                    } else {
+                        $errors[] = mysqli_error($koneksi);
+                    }
+                }
+
+                // Sync workorder_default ke tbmaster_keluhan
+                $sync = "UPDATE tbmaster_keluhan mk
+                         INNER JOIN (
+                             SELECT kode_keluhan, kode_workorder,
+                                    ROW_NUMBER() OVER (PARTITION BY kode_keluhan ORDER BY id ASC) as rn
+                             FROM tbmaster_keluhan_workorder WHERE status_aktif='1'
+                         ) mwo ON mk.kode_keluhan = mwo.kode_keluhan AND mwo.rn = 1
+                         SET mk.workorder_default = mwo.kode_workorder";
+                mysqli_query($koneksi, $sync);
+                $synced = mysqli_affected_rows($koneksi);
+
+                $msg = "Bulk import selesai: $ok statement berhasil. Sync workorder_default: $synced keluhan diupdate.";
+                if ($errors) $msg .= "\nError: " . implode(', ', array_slice($errors, 0, 3));
+                echo "<script>alert(" . json_encode($msg) . "); window.location='master-workorder-mapping.php';</script>";
             }
         }
         
@@ -675,6 +717,9 @@ if(empty($_SESSION['_iduser'])){
                                             <button type="button" class="btn btn-success btn-sm" onclick="showAddModal()">
                                                 <i class="ace-icon fa fa-plus"></i> Tambah Mapping
                                             </button>
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="bulkImport()">
+                                                <i class="ace-icon fa fa-upload"></i> Import 102 Keluhan
+                                            </button>
                                             <button type="button" class="btn btn-warning btn-sm" onclick="bulkSync()">
                                                 <i class="ace-icon fa fa-refresh"></i> Sync to Master
                                             </button>
@@ -1110,6 +1155,10 @@ if(empty($_SESSION['_iduser'])){
         <input type="hidden" name="action" value="bulk_sync">
     </form>
 
+    <form id="form-bulk-import" method="POST" style="display: none;">
+        <input type="hidden" name="action" value="bulk_import">
+    </form>
+
     <!-- Scripts -->
     <script src="assets/js/jquery-2.1.4.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -1200,6 +1249,12 @@ if(empty($_SESSION['_iduser'])){
             if(confirm('Yakin ingin mengaktifkan mapping ini?')) {
                 $('#activate_id').val(id);
                 $('#form-activate').submit();
+            }
+        }
+
+        function bulkImport() {
+            if(confirm('Import mapping 102 keluhan (KEL024-KEL125) dari data lapangan?\nData mapping lama untuk kode ini akan ditimpa.')) {
+                $('#form-bulk-import').submit();
             }
         }
 
