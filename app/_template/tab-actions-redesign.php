@@ -488,6 +488,9 @@ $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], '
                 <button type="button" class="rd-btn outline-primary" onclick="printEstimasiV2()">
                     <i class="fa fa-print"></i> Print Estimasi
                 </button>
+                <button type="button" class="rd-btn outline-warning" id="btnSaveMechanicData" onclick="saveMechanicDataV2()">
+                    <i class="fa fa-user-cog"></i> Simpan Data Mekanik
+                </button>
             </div>
             <div class="rd-flex rd-gap-8">
                 <button type="submit" name="btnsimpan" class="rd-btn primary" style="padding: 12px 24px;" onclick="return validateMechanicPersen(event)">
@@ -583,6 +586,59 @@ function cancelServiceV2() {
 // Print estimasi
 function printEstimasiV2() {
     window.open('servis-estimasi-pdf.php?no=<?= $no_service ?>', '_blank');
+}
+
+// Simpan data mekanik & KM via AJAX (tanpa full form submit)
+function saveMechanicDataV2() {
+    var noService = '<?php echo $no_service ?? ''; ?>';
+    if (!noService) {
+        alert('Nomor service tidak ditemukan!');
+        return;
+    }
+
+    var data = {
+        no_service:      noService,
+        kepala_mekanik1: $('#cbokepala_mekanik1_v2').val() || '',
+        persen_kepala1:  $('#txtpersen_kepala1_v2').val() || 0,
+        kepala_mekanik2: $('#cbokepala_mekanik2_v2').val() || '',
+        persen_kepala2:  $('#txtpersen_kepala2_v2').val() || 0,
+        admin1:          $('#cboadmin1_v2').val() || '',
+        persen_admin1:   $('#txtpersen_admin1_v2').val() || 0,
+        admin2:          $('#cboadmin2_v2').val() || '',
+        persen_admin2:   $('#txtpersen_admin2_v2').val() || 0,
+        mekanik1:        $('#cbomekanik1_v2').val() || '',
+        persen_mekanik1: $('#txtpersen_mekanik1_v2').val() || 0,
+        mekanik2:        $('#cbomekanik2_v2').val() || '',
+        persen_mekanik2: $('#txtpersen_mekanik2_v2').val() || 0,
+        mekanik3:        $('#cbomekanik3_v2').val() || '',
+        persen_mekanik3: $('#txtpersen_mekanik3_v2').val() || 0,
+        mekanik4:        $('#cbomekanik4_v2').val() || '',
+        persen_mekanik4: $('#txtpersen_mekanik4_v2').val() || 0,
+        km_skr:          $('#txtkm_skr_v2').val() || 0,
+        km_berikut:      $('#txtkm_next_v2').val() || 0
+    };
+
+    var button = $('#btnSaveMechanicData');
+    button.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+
+    $.ajax({
+        url: '_ajax/save_mechanic_data.php',
+        type: 'POST',
+        data: data,
+        dataType: 'json',
+        success: function(response) {
+            button.prop('disabled', false).html('<i class="fa fa-user-cog"></i> Simpan Data Mekanik');
+            if (response.status === 'success') {
+                alert('Data mekanik dan persentase berhasil disimpan!');
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            button.prop('disabled', false).html('<i class="fa fa-user-cog"></i> Simpan Data Mekanik');
+            alert('Terjadi kesalahan saat menyimpan data: ' + error);
+        }
+    });
 }
 
 // Initialize
