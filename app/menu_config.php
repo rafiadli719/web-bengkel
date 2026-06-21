@@ -195,6 +195,7 @@ return [
                     ['title' => 'Input Manual', 'url' => 'pembelian_add.php', 'permission' => 'pembelian_add_read'],
                 ]
             ],
+            ['title' => 'Retur Pembelian', 'url' => 'retur_pembelian.php', 'icon' => 'fa-undo', 'permission' => 'pembelian_read'],
             ['title' => 'Pembayaran Hutang', 'url' => 'pmby_hutang.php', 'permission' => 'pmby_hutang_read'],
         ]
     ],
@@ -222,6 +223,7 @@ return [
                     ['title' => 'Input Manual', 'url' => 'penjualan_add.php', 'permission' => 'penjualan_add_read'],
                 ]
             ],
+            ['title' => 'Retur Penjualan', 'url' => 'retur_penjualan.php', 'icon' => 'fa-undo', 'permission' => 'penjualan_read'],
             [
                 'title' => 'Piutang',
                 'icon' => 'fa-caret-right',
@@ -313,6 +315,7 @@ return [
             ],
             ['title' => 'Otomatis', 'url' => 'penyesuaian-stok-otomatis.php', 'permission' => 'stok_otomatis_read'],
             ['title' => 'Lihat Stok Akhir', 'url' => 'stok-akhir.php', 'permission' => 'stok_akhir_read'],
+            ['title' => 'Kartu Stok', 'url' => 'kartu_stok.php', 'icon' => 'fa-book', 'permission' => 'stok_akhir_read'],
         ]
     ],
     [
@@ -322,6 +325,7 @@ return [
         'submenu' => [
             ['title' => 'Pesanan Pembelian', 'url' => 'lap_pesanan_pembelian.php', 'permission' => 'lap_pesanan_pembelian_read'],
             ['title' => 'Pembelian', 'url' => 'lap_pembelian.php', 'permission' => 'lap_pembelian_read'],
+            ['title' => 'Retur Pembelian', 'url' => 'lap_retur_pembelian.php', 'permission' => 'pembelian_read'],
             [
                 'title' => 'Hutang',
                 'icon' => 'fa-caret-right',
@@ -334,6 +338,8 @@ return [
             ],
             ['title' => 'Pesanan Penjualan', 'url' => 'lap_pesanan_penjualan.php', 'permission' => 'lap_pesanan_penjualan_read'],
             ['title' => 'Penjualan', 'url' => 'lap_penjualan.php', 'permission' => 'lap_penjualan_read'],
+            ['title' => 'Profit Penjualan', 'url' => 'lap_profit_penjualan.php', 'permission' => 'lap_penjualan_read'],
+            ['title' => 'Retur Penjualan', 'url' => 'lap_retur_penjualan.php', 'permission' => 'penjualan_read'],
             [
                 'title' => 'Piutang',
                 'icon' => 'fa-caret-right',

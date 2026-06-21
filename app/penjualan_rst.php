@@ -419,6 +419,10 @@
                                                                     <li>
                                                                         <a target="_blank" href="penjualan_struk.php?snobl=<?php echo $tampil['notransaksi']; ?>">Cetak</a>
                                                                     </li>
+                                                                    <li class="divider"></li>
+                                                                    <li>
+                                                                        <a href="retur_penjualan_add.php?nopenjualan=<?php echo urlencode($tampil['notransaksi']); ?>"><i class="fa fa-undo"></i> Retur Penjualan</a>
+                                                                    </li>
                                                                 </ul>
                                                             </div><!-- /.btn-group -->                                                        
                                                         </td>														

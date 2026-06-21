@@ -414,6 +414,10 @@
                                                                     <li>
                                                                         <a target="_blank" href="pembelian_struk.php?snobl=<?php echo $tampil['notransaksi']; ?>">Cetak</a>
                                                                     </li>
+                                                                    <li class="divider"></li>
+                                                                    <li>
+                                                                        <a href="retur_pembelian_add.php?nopembelian=<?php echo urlencode($tampil['notransaksi']); ?>"><i class="fa fa-undo"></i> Retur Pembelian</a>
+                                                                    </li>
                                                                 </ul>
                                                             </div><!-- /.btn-group -->                                                        
                                                         </td>														
