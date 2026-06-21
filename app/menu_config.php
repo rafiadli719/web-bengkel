@@ -360,6 +360,7 @@ return [
                 ]
             ],
             ['title' => 'Service', 'url' => 'lap_servis.php', 'permission' => 'lap_servis_read'],
+            ['title' => 'Rekap Kunjungan Pelanggan', 'url' => 'lap_rekap_kunjungan.php', 'icon' => 'fa-users', 'permission' => 'lap_servis_read'],
             ['title' => 'Konsolidasi Access', 'url' => 'access-sync-report.php', 'permission' => 'laporan_menu_read'],
             ['title' => 'Laporan Cancel Service', 'url' => 'lap_cancel_servis.php', 'permission' => 'lap_cancel_servis_read'],
             ['title' => 'Kas Masuk', 'url' => 'lap_kas_masuk.php', 'permission' => 'lap_kas_masuk_read'],

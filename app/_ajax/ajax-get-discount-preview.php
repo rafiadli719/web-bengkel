@@ -88,7 +88,11 @@ $customerStats = [
     'total_nominal' => 0,
     'jumlah_kunjungan' => 0,
     'tanggal_terakhir_transaksi' => null,
+    'tanggal_pertama_transaksi' => null,
     'total_diskon_diberikan' => 0,
+    'rata_jarak_kunjungan' => 0,
+    'lama_tidak_datang' => 0,
+    'estimasi_datang_berikutnya' => null,
 ];
 
 if($mappedCustomerCode !== '') {
@@ -101,7 +105,11 @@ if($mappedCustomerCode !== '') {
             COALESCE(total_nominal, 0) AS total_nominal,
             COALESCE(jumlah_kunjungan, 0) AS jumlah_kunjungan,
             tanggal_terakhir_transaksi,
-            {$statistikTotalDiskonExpr}
+            tanggal_pertama_transaksi,
+            {$statistikTotalDiskonExpr},
+            COALESCE(rata_jarak_kunjungan, 0) AS rata_jarak_kunjungan,
+            COALESCE(lama_tidak_datang, 0) AS lama_tidak_datang,
+            estimasi_datang_berikutnya
         FROM statistik_pelanggan
         WHERE no_pelanggan = ?
         LIMIT 1"
@@ -133,7 +141,11 @@ $response['customer'] = [
     'total_nominal' => $customerStats['total_nominal'] ?? 0,
     'jumlah_kunjungan' => $customerStats['jumlah_kunjungan'] ?? 0,
     'tanggal_terakhir_transaksi' => $customerStats['tanggal_terakhir_transaksi'] ?? null,
+    'tanggal_pertama_transaksi' => $customerStats['tanggal_pertama_transaksi'] ?? null,
     'total_diskon_diberikan' => $customerStats['total_diskon_diberikan'] ?? 0,
+    'rata_jarak_kunjungan' => (float)($customerStats['rata_jarak_kunjungan'] ?? 0),
+    'lama_tidak_datang' => (int)($customerStats['lama_tidak_datang'] ?? 0),
+    'estimasi_datang_berikutnya' => $customerStats['estimasi_datang_berikutnya'] ?? null,
 ];
 
 // Get which member system is active

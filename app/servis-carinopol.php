@@ -1261,6 +1261,17 @@
 				var hasDiscount = false;
 
 				// Customer Info Section
+				var lamaHari = customer.lama_tidak_datang || 0;
+				var lamaLabel = lamaHari === 0 ? 'Hari ini' : lamaHari + ' hari lalu';
+				var lamaClass = lamaHari > 90 ? 'text-danger' : (lamaHari > 45 ? 'text-warning' : 'text-success');
+				var estimasiTgl = customer.estimasi_datang_berikutnya || '';
+				var estimasiHtml = estimasiTgl
+					? `<span class="label label-info"><i class="ace-icon fa fa-calendar"></i> ${estimasiTgl}</span>`
+					: '<span class="text-muted">-</span>';
+				var intervalHari = customer.rata_jarak_kunjungan > 0
+					? 'Setiap ~' + Math.round(customer.rata_jarak_kunjungan) + ' hari'
+					: (customer.jumlah_kunjungan <= 1 ? 'Kunjungan pertama' : '-');
+
 				html += `
 				<div class="row">
 					<div class="col-md-12">
@@ -1275,13 +1286,24 @@
 											<p><strong>No. Polisi:</strong> ${customer.nopolisi}</p>
 											<p><strong>Nama:</strong> ${customer.nama_pelanggan || '-'}</p>
 											<p><strong>Telepon:</strong> ${customer.telephone || '-'}</p>
+											<p><strong>Motor:</strong> ${customer.merek || '-'} ${customer.tipe || ''}</p>
 										</div>
 										<div class="col-sm-6">
-											<p><strong>Motor:</strong> ${customer.merek || '-'} ${customer.tipe || ''}</p>
 											<p><strong>Total Kunjungan:</strong> ${customer.jumlah_kunjungan || 0}x</p>
 											<p><strong>Total Transaksi:</strong> Rp ${formatNumber(customer.total_nominal || 0)}</p>
+											<p><strong>Terakhir Datang:</strong> <span class="${lamaClass}">${lamaLabel}</span></p>
+											<p><strong>Interval Servis:</strong> ${intervalHari}</p>
 										</div>
 									</div>
+									${estimasiTgl ? `
+									<div class="row" style="margin-top:5px;">
+										<div class="col-sm-12">
+											<div style="background:#f0f7ff;border-left:3px solid #3498db;padding:6px 10px;border-radius:3px;">
+												<i class="ace-icon fa fa-calendar-check-o blue"></i>
+												<strong>Estimasi Kunjungan Berikutnya:</strong> ${estimasiHtml}
+											</div>
+										</div>
+									</div>` : ''}
 								</div>
 							</div>
 						</div>
