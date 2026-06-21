@@ -495,6 +495,72 @@ function accessSyncDatasetConfigs() {
                 'tipe_member' => ['tipemember', 'tipe_member', 'status_member'],
                 'no_polisi' => ['nopolisi', 'no_polisi', 'nopol']
             ]
+        ],
+        'insentif' => [
+            'label' => 'Insentif Jual & Servis',
+            'table' => 'stg_access_gabung_insentif',
+            'required' => ['trx'],
+            'fields' => [
+                'kd_cabang', 'sts_source', 'tanggal_data',
+                'siklus', 'tgl', 'trx', 'garap', 'stts', 'sts', 'kode',
+                'mekanik', 'tipe', 'no_item', 'quantity', 'jualnet', 'tothpp', 'laba', 'kategori'
+            ],
+            'aliases' => [
+                'kd_cabang'    => ['kd_cabang', 'sts', 'cabang'],
+                'sts_source'   => ['sts_source'],
+                'tanggal_data' => ['tanggal_data'],
+                'siklus'       => ['siklus', 'SIKLUS'],
+                'tgl'          => ['tgl', 'TGL', 'tanggal'],
+                'trx'          => ['trx', 'TRX', 'no_transaksi'],
+                'garap'        => ['garap', 'GARAP'],
+                'stts'         => ['stts', 'STTS'],
+                'sts'          => ['sts', 'STS'],
+                'kode'         => ['kode', 'KODE'],
+                'mekanik'      => ['mekanik', 'MEKANIK'],
+                'tipe'         => ['tipe', 'TIPE'],
+                'no_item'      => ['noitem', 'no_item', 'NoItem', 'NOITEM'],
+                'quantity'     => ['quantity', 'Quantity', 'QUANTITY', 'qty'],
+                'jualnet'      => ['jualnet', 'JUALNET'],
+                'tothpp'       => ['tothpp', 'TOTHPP'],
+                'laba'         => ['laba', 'LABA'],
+                'kategori'     => ['kategori', 'KATEGORI']
+            ]
+        ],
+        'beli_peritem' => [
+            'label' => 'Harga Beli Per Item',
+            'table' => 'stg_access_beli_peritem',
+            'required' => ['no_item'],
+            'fields' => [
+                'kd_cabang', 'tanggal_data',
+                'id_tabel', 'tanggal', 'no_item', 'hrgnet', 'no_supplier', 'fax'
+            ],
+            'aliases' => [
+                'kd_cabang'   => ['kd_cabang', 'IDTABEL', 'id_tabel'],
+                'tanggal_data'=> ['tanggal_data'],
+                'id_tabel'    => ['idtabel', 'id_tabel', 'IDTABEL'],
+                'tanggal'     => ['tanggal', 'Tanggal', 'TANGGAL'],
+                'no_item'     => ['noitem', 'no_item', 'NoItem', 'NOITEM'],
+                'hrgnet'      => ['hrgnet', 'HRGNET', 'harga_net', 'harga_beli'],
+                'no_supplier' => ['nosupplier', 'no_supplier', 'NoSupplier'],
+                'fax'         => ['fax', 'FAX', 'keterangan']
+            ]
+        ],
+        'nomor_wa' => [
+            'label' => 'Nomor WA Pelanggan',
+            'table' => 'stg_access_nomor_wa',
+            'required' => ['no_pelanggan'],
+            'fields' => [
+                'kd_cabang', 'tanggal_data',
+                'nama_pelanggan', 'telephone', 'no_pelanggan', 'domisili'
+            ],
+            'aliases' => [
+                'kd_cabang'     => ['kd_cabang', 'domisili', 'DOMISILI'],
+                'tanggal_data'  => ['tanggal_data'],
+                'nama_pelanggan'=> ['namapelanggan', 'nama_pelanggan', 'NamaPelanggan'],
+                'telephone'     => ['telephone', 'Telephone', 'no_hp', 'hp'],
+                'no_pelanggan'  => ['nopelanggan', 'no_pelanggan', 'NoPelanggan'],
+                'domisili'      => ['domisili', 'DOMISILI']
+            ]
         ]
     ];
 }
@@ -525,7 +591,8 @@ function accessSyncNormalizeValue($field, $value) {
         'total_jual', 'harga_jual', 'biayam1', 'biayam2', 'biayam3', 'biayam4',
         'km_sekarang', 'km_berikut', 'total_waktu', 'subtotal_jasa', 'subtotal_item', 'subtotal',
         'harga_jual2', 'harga_jual3', 'stok_min', 'jasa_waktu', 'saldo_awal', 'jml_bayar', 'sisa',
-        'potongan'
+        'potongan',
+        'garap', 'jualnet', 'tothpp', 'laba', 'hrgnet'
     ];
 
     $dateFields = ['tanggal_data', 'tanggal', 'tanggal_order', 'tanggal_jt', 'tanggal_lunas', 'per_tanggal'];
@@ -751,7 +818,8 @@ function accessSyncExecuteStatementOrThrow($stmt) {
 }
 
 function accessSyncMasterDatasets() {
-    return ['item', 'supplier', 'mekanik', 'kendaraan_pelanggan', 'pelanggan', 'member_pelanggan'];
+    return ['item', 'supplier', 'mekanik', 'kendaraan_pelanggan', 'pelanggan', 'member_pelanggan',
+            'beli_peritem', 'nomor_wa'];
 }
 
 function accessSyncIsMasterDataset($datasetKey) {
@@ -759,7 +827,8 @@ function accessSyncIsMasterDataset($datasetKey) {
 }
 
 function accessSyncTransactionDatasets() {
-    return ['pembelian', 'penjualan', 'service', 'service_barang', 'service_jasa', 'service_advisor'];
+    return ['pembelian', 'penjualan', 'service', 'service_barang', 'service_jasa', 'service_advisor',
+            'insentif'];
 }
 
 function accessSyncIsTransactionDataset($datasetKey) {
@@ -1322,6 +1391,12 @@ function accessSyncMergeMasterRun($koneksi, $datasetKey, $runId) {
                 case 'member_pelanggan':
                     $status = accessSyncApplyMemberPelanggan($koneksi, $row);
                     break;
+                case 'beli_peritem':
+                    $status = accessSyncUpsertBeliPerItem($koneksi, $row);
+                    break;
+                case 'nomor_wa':
+                    $status = accessSyncUpdateNomorWa($koneksi, $row);
+                    break;
             }
 
             if ($status === 'inserted') {
@@ -1777,15 +1852,74 @@ function accessSyncMergeTransactionRun($koneksi, $datasetKey, $runId) {
                 accessSyncUpsertServiceHistoryJasa($koneksi, $row);
             } elseif ($datasetKey === 'service_advisor') {
                 accessSyncReplaceServiceAdvisor($koneksi, $row);
+            } elseif ($datasetKey === 'insentif') {
+                // insentif: diproses bulk di akhir, bukan per-row
             }
             $upserted++;
         }
+        if ($datasetKey === 'insentif') {
+            $upserted = accessSyncMergeInsentifBulk($koneksi, $runId);
+        }
+
         mysqli_commit($koneksi);
         return ['success' => true, 'processed' => $processed, 'upserted' => $upserted];
     } catch (Throwable $e) {
         mysqli_rollback($koneksi);
         return ['success' => false, 'message' => $e->getMessage()];
     }
+}
+
+function accessSyncMergeInsentifBulk($koneksi, $runId) {
+    $runId = (int) $runId;
+
+    // Hapus rows untuk kombinasi (sts, siklus) yang ada di staging run ini
+    $res = mysqli_query($koneksi,
+        "SELECT DISTINCT sts, siklus FROM stg_access_gabung_insentif WHERE sync_run_id = {$runId}"
+    );
+    $deleted = 0;
+    if ($res) {
+        while ($r = mysqli_fetch_assoc($res)) {
+            $sts    = mysqli_real_escape_string($koneksi, (string) $r['sts']);
+            $siklus = mysqli_real_escape_string($koneksi, (string) $r['siklus']);
+            if ($sts !== '' && $siklus !== '') {
+                mysqli_query($koneksi,
+                    "DELETE FROM tbinsentif_jual_servis WHERE sts='$sts' AND siklus='$siklus'"
+                );
+                $deleted += mysqli_affected_rows($koneksi);
+            }
+        }
+    }
+
+    // Bulk INSERT dari staging
+    $inserted = 0;
+    mysqli_query($koneksi,
+        "INSERT INTO tbinsentif_jual_servis
+         (siklus, tgl, trx, garap, stts, sts, kode, mekanik, tipe, no_item,
+          quantity, jualnet, tothpp, laba, kategori, tanggal_data, kd_cabang)
+         SELECT
+          COALESCE(siklus,''),
+          CASE WHEN tgl IS NOT NULL AND tgl > '1000-01-01' THEN DATE(tgl) ELSE NULL END,
+          COALESCE(trx,''),
+          COALESCE(garap,0),
+          COALESCE(stts,''),
+          COALESCE(sts,''),
+          COALESCE(kode,''),
+          COALESCE(mekanik,''),
+          COALESCE(tipe,''),
+          COALESCE(no_item,''),
+          COALESCE(quantity,0),
+          COALESCE(jualnet,0),
+          COALESCE(tothpp,0),
+          COALESCE(laba,0),
+          COALESCE(kategori,''),
+          tanggal_data,
+          COALESCE(kd_cabang,'')
+         FROM stg_access_gabung_insentif
+         WHERE sync_run_id = {$runId} AND COALESCE(trx,'') <> ''"
+    );
+    $inserted = mysqli_affected_rows($koneksi);
+
+    return $inserted;
 }
 
 function accessSyncNormalizeDate($value) {
@@ -2623,4 +2757,77 @@ function accessSyncFetchRecentErrors($koneksi, $limit = 30) {
         }
     }
     return $rows;
+}
+
+// accessSyncUpsertInsentif tidak dipakai langsung — merge dilakukan bulk via accessSyncMergeInsentifBulk
+// Fungsi ini disimpan untuk referensi / keperluan satu-per-satu jika diperlukan di masa depan
+function accessSyncUpsertInsentif($koneksi, $row) {
+    return 'skipped';
+}
+
+// ============================================================
+// UPSERT: Harga Beli Per Item -> tbbeli_peritem_history
+// ============================================================
+function accessSyncUpsertBeliPerItem($koneksi, $row) {
+    $idTabel    = trim((string) ($row['id_tabel']    ?? ''));
+    $noItem     = trim((string) ($row['no_item']     ?? ''));
+    $noSupplier = trim((string) ($row['no_supplier'] ?? ''));
+    $fax        = trim((string) ($row['fax']         ?? ''));
+    $kdCabang   = trim((string) ($row['kd_cabang']   ?? ''));
+
+    $tanggal = accessSyncNormalizeDate((string) ($row['tanggal'] ?? '')) ?: null;
+    $hrgnet  = (float) ($row['hrgnet'] ?? 0);
+
+    if ($noItem === '') {
+        return 'skipped';
+    }
+
+    $sql = "INSERT INTO tbbeli_peritem_history (id_tabel, tanggal, no_item, hrgnet, no_supplier, fax, kd_cabang)
+            VALUES (?,?,?,?,?,?,?)
+            ON DUPLICATE KEY UPDATE
+            hrgnet=VALUES(hrgnet), no_supplier=VALUES(no_supplier), fax=VALUES(fax), kd_cabang=VALUES(kd_cabang)";
+
+    $stmt = mysqli_prepare($koneksi, $sql);
+    mysqli_stmt_bind_param($stmt, 'ssdssss', $idTabel, $tanggal, $hrgnet, $noSupplier, $fax, $kdCabang, $noItem);
+    mysqli_stmt_execute($stmt);
+    $affected = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $affected > 0 ? 'upserted' : 'skipped';
+}
+
+// ============================================================
+// UPDATE: Nomor WA -> tblpelanggan.no_wa + domisili_cabang
+// ============================================================
+function accessSyncUpdateNomorWa($koneksi, $row) {
+    $noPelanggan = trim((string) ($row['no_pelanggan'] ?? ''));
+    $telephone   = trim((string) ($row['telephone']    ?? ''));
+    $domisili    = trim((string) ($row['domisili']     ?? ''));
+
+    if ($noPelanggan === '' || $telephone === '') {
+        return 'skipped';
+    }
+
+    $wa = preg_replace('/\D/', '', $telephone);
+    if (substr($wa, 0, 2) === '08') {
+        $wa = '628' . substr($wa, 2);
+    } elseif (substr($wa, 0, 1) === '8') {
+        $wa = '628' . substr($wa, 1);
+    }
+    $wa = substr($wa, 0, 30);
+
+    $domisiliMap = ['PESALAKAN' => 'PSL', 'PACUL' => 'PCL', 'CIKDITIRO' => 'CDT', 'TRAYEMAN' => 'TRM'];
+    $domisiliUpper  = strtoupper($domisili);
+    $domisiliCabang = isset($domisiliMap[$domisiliUpper]) ? $domisiliMap[$domisiliUpper] : substr($domisili, 0, 10);
+
+    $stmt = mysqli_prepare($koneksi,
+        "UPDATE tblpelanggan SET no_wa = ?, domisili_cabang = ?
+         WHERE nopelanggan = ? AND (no_wa = '' OR no_wa IS NULL)"
+    );
+    mysqli_stmt_bind_param($stmt, 'sss', $wa, $domisiliCabang, $noPelanggan);
+    mysqli_stmt_execute($stmt);
+    $affected = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $affected > 0 ? 'updated' : 'skipped';
 }

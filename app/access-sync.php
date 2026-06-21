@@ -309,6 +309,68 @@ if ($qHistory) {
                         </div>
                     </div>
 
+                    <div class="widget-box" style="margin-bottom:20px;">
+                        <div class="widget-header" style="background:#5a5a8a;color:#fff;padding:10px 15px;border-radius:4px 4px 0 0;">
+                            <h4 class="widget-title" style="color:#fff;margin:0;">
+                                <i class="fa fa-terminal"></i> Script Migrasi Bulk Python (Urgensi Tinggi)
+                            </h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <p class="text-muted">Script berikut dijalankan <strong>sekali</strong> dari Windows untuk migrasi data historis dari Access ke MySQL. Jalankan di Command Prompt / PowerShell Windows.</p>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading"><strong><i class="fa fa-database"></i> Insentif Jual &amp; Servis</strong></div>
+                                            <div class="panel-body">
+                                                <p class="text-muted small">Sumber: <code>INSENTIF_JUAL_SERVIS_GABUNG_DATA</code><br>Target: <code>tbinsentif_jual_servis</code><br>~2.3 juta baris</p>
+                                                <pre style="background:#2b2b2b;color:#f8f8f2;padding:10px;border-radius:4px;font-size:11px;">python "E:\BENGKEL 2.0\migrate_insentif.py"
+
+# Per siklus saja:
+python "E:\BENGKEL 2.0\migrate_insentif.py" --siklus 2026-06
+
+# Dry run:
+python "E:\BENGKEL 2.0\migrate_insentif.py" --dry</pre>
+                                                <p class="text-info small">Unlocks: Laporan profit per transaksi, kalkulasi insentif mekanik</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading"><strong><i class="fa fa-tags"></i> Harga Beli Per Item</strong></div>
+                                            <div class="panel-body">
+                                                <p class="text-muted small">Sumber: <code>BELI_PERITEM_ALL</code> + <code>HARGA_JUAL</code><br>Target: <code>tbbeli_peritem_history</code> + <code>tbharga_jual_rules</code><br>~60K baris</p>
+                                                <pre style="background:#2b2b2b;color:#f8f8f2;padding:10px;border-radius:4px;font-size:11px;">python "E:\BENGKEL 2.0\migrate_beli_peritem.py"
+
+# Dry run:
+python "E:\BENGKEL 2.0\migrate_beli_peritem.py" --dry</pre>
+                                                <p class="text-success small">Unlocks: Auto-suggest HPP saat input pembelian</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="panel panel-warning">
+                                            <div class="panel-heading"><strong><i class="fa fa-whatsapp"></i> Nomor WA Pelanggan</strong></div>
+                                            <div class="panel-body">
+                                                <p class="text-muted small">Sumber: <code>NOMOR_WA__DOMISILI_POLISI_DATA</code><br>Target: <code>tblpelanggan.no_wa</code><br>~31K pelanggan</p>
+                                                <pre style="background:#2b2b2b;color:#f8f8f2;padding:10px;border-radius:4px;font-size:11px;">python "E:\BENGKEL 2.0\migrate_nomor_wa.py"
+
+# Dry run:
+python "E:\BENGKEL 2.0\migrate_nomor_wa.py" --dry</pre>
+                                                <p class="text-warning small">Unlocks: WA blast reminder servis otomatis</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info" style="margin-top:5px;margin-bottom:0;">
+                                    <i class="fa fa-info-circle"></i>
+                                    <strong>Setelah migrasi selesai</strong>, gunakan uploader di atas untuk sync incremental menggunakan dataset
+                                    <code>Insentif Jual &amp; Servis</code>, <code>Harga Beli Per Item</code>, dan <code>Nomor WA Pelanggan</code>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="history-box">
                         <h4><i class="fa fa-history"></i> Histori Sync Terakhir</h4>
                         <div class="table-responsive">
