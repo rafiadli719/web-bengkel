@@ -30,42 +30,57 @@
     $tanggal_bl=$tm_cari['tanggal'];
     
     // Cek apakah ada link DO pada pembelian ini; jika ada, stok tidak perlu diposting ulang
-    $hdr = mysqli_query($koneksi,"SELECT no_do FROM tblpembelian_header WHERE notransaksi='$no_order'");
+    $hdr = mysqli_query($koneksi,"SELECT no_do, kd_cabang FROM tblpembelian_header WHERE notransaksi='$no_order'");
     $row_hdr = mysqli_fetch_array($hdr);
-    $linked_do = isset($row_hdr['no_do']) ? trim($row_hdr['no_do']) : '';
+    $linked_do = isset($row_hdr['no_do'])     ? trim($row_hdr['no_do'])     : '';
+    $kd_cabang = isset($row_hdr['kd_cabang']) ? trim($row_hdr['kd_cabang']) : '';
 
-    mysqli_query($koneksi,"UPDATE tblpembelian_header 
-                            SET 
-                            total_qty='$totqty', 
-                            total_beli='$txttotal', 
-                            diskon='$txtpotfaktur_persen', 
-                            total_diskon='$txtpotfaktur_nom', 
-                            pajak='$txtpajak_persen', 
-                            total_pajak='$txtpajak_nom', 
-                            total_akhir='$txtnet', 
-                            pembayaran='$txtdp', 
+    $has_kd_cabang_stok = false;
+    $qcol = mysqli_query($koneksi, "SHOW COLUMNS FROM tbstok LIKE 'kd_cabang'");
+    if($qcol && mysqli_num_rows($qcol) > 0){ $has_kd_cabang_stok = true; }
+
+    mysqli_query($koneksi,"UPDATE tblpembelian_header
+                            SET
+                            total_qty='$totqty',
+                            total_beli='$txttotal',
+                            diskon='$txtpotfaktur_persen',
+                            total_diskon='$txtpotfaktur_nom',
+                            pajak='$txtpajak_persen',
+                            total_pajak='$txtpajak_nom',
+                            total_akhir='$txtnet',
+                            pembayaran='$txtdp',
                             jumlah_bayar='$txtkekurangan',
                             status_lunas='$status_lunas',
-                            tanggal_lunas='$tanggal_lunas_val' 
-                            WHERE 
+                            tanggal_lunas='$tanggal_lunas_val'
+                            WHERE
                             notransaksi='$no_order'");
 
     if($linked_do=='') {
-        $sql = mysqli_query($koneksi,"SELECT 
-                                        no_item, quantity 
-                                        FROM tblpembelian_detail 
+        $sql = mysqli_query($koneksi,"SELECT
+                                        no_item, quantity
+                                        FROM tblpembelian_detail
                                         WHERE no_transaksi='$no_order'");
         while ($tampil = mysqli_fetch_array($sql)) {
             $no_item=$tampil['no_item'];
             $quantity=$tampil['quantity'];
 
-            mysqli_query($koneksi,"INSERT INTO tbstok 
-                            (tipe, no_transaksi, no_item, 
-                            tanggal, masuk, keluar, keterangan) 
-                            VALUES 
-                            ('2','$no_order','$no_item',
-                            '$tanggal_bl','$quantity',
-                            '0','Pembelian')");
+            if($has_kd_cabang_stok){
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                                (tipe, no_transaksi, no_item,
+                                tanggal, masuk, keluar, keterangan, kd_cabang)
+                                VALUES
+                                ('2','$no_order','$no_item',
+                                '$tanggal_bl','$quantity',
+                                '0','Pembelian','$kd_cabang')");
+            } else {
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                                (tipe, no_transaksi, no_item,
+                                tanggal, masuk, keluar, keterangan)
+                                VALUES
+                                ('2','$no_order','$no_item',
+                                '$tanggal_bl','$quantity',
+                                '0','Pembelian')");
+            }
         }
     }
 
