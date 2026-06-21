@@ -1204,13 +1204,16 @@ function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
         mysqli_stmt_close($merekStmt);
     }
 
+    // tahun_buat adalah varchar(10) NOT NULL — fallback ke '' agar tidak error strict mode
+    $tahunBuat = trim((string)($row['tahun_buat'] ?? ''));
+
     if ($found) {
         // pemilik diisi nopelanggan yang sudah diresolve (bukan no_polisi)
         $sql = "UPDATE tblkendaraan SET pemilik=?, alamat=?, kode_merek=?, tipe=?, jenis=?, tahun_buat=?, warna=?, note=? WHERE nopolisi=?";
         $stmt = mysqli_prepare($koneksi, $sql);
         mysqli_stmt_bind_param($stmt, 'sssssssss',
             $resolvedNoPelanggan, $row['alamat'], $resolvedMerek,
-            $row['tipe'], $row['jenis'], $row['tahun_buat'],
+            $row['tipe'], $row['jenis'], $tahunBuat,
             $row['warna'], $row['note'], $row['no_polisi']
         );
         accessSyncExecuteStatementOrThrow($stmt);
@@ -1230,7 +1233,7 @@ function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
     mysqli_stmt_bind_param($stmt, 'sssssssssssss',
         $row['no_polisi'], $resolvedNoPelanggan, $row['alamat'], $resolvedMerek,
         $row['tipe'], $defaultKodeTipe, $row['jenis'], $defaultKodeJenis,
-        $row['tahun_buat'], $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']
+        $tahunBuat, $defaultTahunRakit, $row['warna'], $defaultKodeWarna, $row['note']
     );
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
