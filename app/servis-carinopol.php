@@ -57,7 +57,10 @@
                     k.warna,
                     COALESCE(pm.merek, 'Unknown') as merek,
                     COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
-                    COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                    COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member,
+                    COALESCE(sp_map.lama_tidak_datang, sp_plate.lama_tidak_datang, 0) as lama_tidak_datang,
+                    COALESCE(sp_map.estimasi_datang_berikutnya, sp_plate.estimasi_datang_berikutnya) as estimasi_datang_berikutnya,
+                    COALESCE(sp_map.jumlah_kunjungan, sp_plate.jumlah_kunjungan, 0) as jumlah_kunjungan
                     FROM tblkendaraan k
                     LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
                     LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
@@ -88,7 +91,10 @@
                             k.warna,
                             COALESCE(pm.merek, 'Unknown') as merek,
                             COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
-                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member,
+                    COALESCE(sp_map.lama_tidak_datang, sp_plate.lama_tidak_datang, 0) as lama_tidak_datang,
+                    COALESCE(sp_map.estimasi_datang_berikutnya, sp_plate.estimasi_datang_berikutnya) as estimasi_datang_berikutnya,
+                    COALESCE(sp_map.jumlah_kunjungan, sp_plate.jumlah_kunjungan, 0) as jumlah_kunjungan
                             FROM tblkendaraan k
                             LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
                             LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
@@ -130,7 +136,10 @@
                             k.warna,
                             COALESCE(pm.merek, 'Unknown') as merek,
                             COALESCE(p_map.telephone, p_plate.telephone, 'N/A') as telephone,
-                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member
+                            COALESCE(sp_map.status_member, sp_plate.status_member, 'Bronze') as kategori_member,
+                    COALESCE(sp_map.lama_tidak_datang, sp_plate.lama_tidak_datang, 0) as lama_tidak_datang,
+                    COALESCE(sp_map.estimasi_datang_berikutnya, sp_plate.estimasi_datang_berikutnya) as estimasi_datang_berikutnya,
+                    COALESCE(sp_map.jumlah_kunjungan, sp_plate.jumlah_kunjungan, 0) as jumlah_kunjungan
                             FROM tblkendaraan k
                             LEFT JOIN {$serviceCustomerMapSql} map ON map.no_polisi = k.nopolisi
                             LEFT JOIN tblpelanggan p_map ON p_map.nopelanggan = map.no_pelanggan_map
@@ -430,14 +439,16 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <td width="10%"></td>
-                                            <td width="10%">No. Polisi</td>
-                                            <td width="20%">Nama Pelanggan</td>
-                                            <td width="10%" align="center">Tipe</td>
-                                            <td width="15%" align="center">Jenis</td>
-                                            <td width="10%">Telepon</td>
-                                            <td width="15%" align="center">Warna</td>
-                                            <td width="10%" align="center">Kategori Member</td>                                            
+                                            <td width="8%"></td>
+                                            <td width="9%">No. Polisi</td>
+                                            <td width="17%">Nama Pelanggan</td>
+                                            <td width="9%" align="center">Tipe</td>
+                                            <td width="8%" align="center">Jenis</td>
+                                            <td width="9%">Telepon</td>
+                                            <td width="8%" align="center">Warna</td>
+                                            <td width="9%" align="center">Kategori Member</td>
+                                            <td width="10%" align="center">Terakhir Datang</td>
+                                            <td width="13%" align="center">Estimasi Berikutnya</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -511,13 +522,50 @@
                                                     }
                                                 ?>
                                             </td>
+                                            <td class="center">
+                                                <?php
+                                                    $lama = (int)($tampil['lama_tidak_datang'] ?? 0);
+                                                    $kunjungan = (int)($tampil['jumlah_kunjungan'] ?? 0);
+                                                    if($kunjungan === 0) {
+                                                        echo '<span class="text-muted"><small>Belum pernah</small></span>';
+                                                    } elseif($lama === 0) {
+                                                        echo '<span class="label label-success">Hari ini</span>';
+                                                    } elseif($lama > 90) {
+                                                        echo '<span class="label label-danger">' . $lama . ' hari</span>';
+                                                    } elseif($lama > 45) {
+                                                        echo '<span class="label label-warning">' . $lama . ' hari</span>';
+                                                    } else {
+                                                        echo '<span class="label label-success">' . $lama . ' hari</span>';
+                                                    }
+                                                ?>
+                                            </td>
+                                            <td class="center">
+                                                <?php
+                                                    $estimasi = $tampil['estimasi_datang_berikutnya'] ?? '';
+                                                    if($estimasi && $estimasi !== '0000-00-00') {
+                                                        $est_fmt = date('d/m/Y', strtotime($estimasi));
+                                                        $est_ts  = strtotime($estimasi);
+                                                        $today_ts = strtotime(date('Y-m-d'));
+                                                        $selisih = (int)(($est_ts - $today_ts) / 86400);
+                                                        if($selisih < 0) {
+                                                            echo '<span class="label label-danger"><i class="fa fa-clock-o"></i> ' . $est_fmt . '</span>';
+                                                        } elseif($selisih <= 7) {
+                                                            echo '<span class="label label-warning"><i class="fa fa-calendar"></i> ' . $est_fmt . '</span>';
+                                                        } else {
+                                                            echo '<span class="label label-info"><i class="fa fa-calendar"></i> ' . $est_fmt . '</span>';
+                                                        }
+                                                    } else {
+                                                        echo '<span class="text-muted"><small>-</small></span>';
+                                                    }
+                                                ?>
+                                            </td>
                                         </tr>
                                         <?php
                                                 }
                                             } else {
                                         ?>
                                         <tr>
-                                            <td colspan="8" class="center">
+                                            <td colspan="10" class="center">
                                                 <div class="alert alert-warning" style="margin: 20px;">
                                                     <i class="ace-icon fa fa-exclamation-triangle bigger-120"></i>
                                                     <strong>Tidak ada data!</strong><br>
