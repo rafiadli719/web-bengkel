@@ -306,7 +306,25 @@ if(empty($_SESSION['_iduser'])){
                                     <span class="info-label"><i class="fa fa-phone"></i> Telepon</span><br>
                                     <span class="info-value"><?php echo $pelanggan['telephone'] ?: '-'; ?></span>
                                 </div>
-                                
+
+                                <?php if (!empty($pelanggan['no_wa'])): ?>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fa fa-whatsapp" style="color:#25D366;"></i> WhatsApp</span><br>
+                                    <span class="info-value">
+                                        <a href="https://wa.me/<?php echo htmlspecialchars($pelanggan['no_wa']); ?>" target="_blank" class="text-success">
+                                            <?php echo htmlspecialchars($pelanggan['no_wa']); ?>
+                                        </a>
+                                    </span>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($pelanggan['domisili_cabang'])): ?>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fa fa-map-pin"></i> Domisili Cabang</span><br>
+                                    <span class="info-value"><?php echo htmlspecialchars($pelanggan['domisili_cabang']); ?></span>
+                                </div>
+                                <?php endif; ?>
+
                                 <div class="info-row">
                                     <span class="info-label"><i class="fa fa-map-marker"></i> Alamat</span><br>
                                     <span class="info-value"><?php echo $pelanggan['alamat'] ?: '-'; ?></span>

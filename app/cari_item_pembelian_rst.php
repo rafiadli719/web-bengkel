@@ -431,14 +431,42 @@
                                             <td class="center" width="9%">Stok</td>
                                             <td class="center" width="9%">Satuan</td>
                                             <td class="center" width="10%">Rak</td>
-                                            <td align="right" width="9%">Harga Pokok</td> 
+                                            <td align="right" width="9%">Harga Pokok</td>
+                                            <td align="right" width="9%" title="HPP terakhir dari riwayat pembelian Access">HPP Terakhir</td>
                                             <td align="right" width="9%">Harga Jual</td>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
-                                            $sql = mysqli_query($koneksi,$sql_query);
-                                            while ($tampil = mysqli_fetch_array($sql)) {
+                                        <?php
+                                            // Buffer hasil query agar bisa batch-query HPP
+                                            $sql = mysqli_query($koneksi, $sql_query);
+                                            $itemRows = [];
+                                            $noitemList = [];
+                                            while ($r = mysqli_fetch_array($sql, MYSQLI_ASSOC)) {
+                                                $itemRows[] = $r;
+                                                $noitemList[] = "'" . mysqli_real_escape_string($koneksi, $r['noitem']) . "'";
+                                            }
+
+                                            // Ambil HPP terakhir per item dari tbbeli_peritem_history
+                                            $hppMap = [];
+                                            if (!empty($noitemList)) {
+                                                $resHpp = mysqli_query($koneksi,
+                                                    "SELECT no_item, hrgnet, tanggal
+                                                     FROM tbbeli_peritem_history
+                                                     WHERE no_item IN (" . implode(',', $noitemList) . ")
+                                                     ORDER BY tanggal DESC"
+                                                );
+                                                if ($resHpp) {
+                                                    while ($rh = mysqli_fetch_assoc($resHpp)) {
+                                                        if (!isset($hppMap[$rh['no_item']])) {
+                                                            $hppMap[$rh['no_item']] = $rh;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            foreach ($itemRows as $tampil):
+                                                $hppData = $hppMap[$tampil['noitem']] ?? null;
                                         ?>
                                         <tr>
                                             <td class="center">
@@ -452,21 +480,28 @@
                                                             <a href="pembelian_detail.php?snotrx=<?php echo $tampil['noitem']; ?>">Pilih</a>
                                                         </li>
                                                     </ul>
-                                                </div><!-- /.btn-group -->                                                        
-                                            </td>														
-                                            <td><?php echo $tampil['noitem']?></td>														
-                                            <td><?php echo $tampil['kodebarcode']?></td>														                                                        
-                                            <td><?php echo $tampil['namaitem']?></td>														                                                                                                                
-                                            <td class="center"><?php echo $tampil['namajenis']?></td>														                                                                                                                
-                                            <td class="center"></td>														                                                                                                                                                                        
-                                            <td class="center"><?php echo $tampil['satuan']?></td>														
-                                            <td class="center"><?php echo $tampil['rakbarang']?></td>														                                                        
-                                            <td align="right"><?php echo number_format($tampil['hargapokok'],0)?></td>														                                                        
-                                            <td align="right"><?php echo number_format($tampil['hargajual'],0)?></td>														                                                                                                                
+                                                </div><!-- /.btn-group -->
+                                            </td>
+                                            <td><?php echo $tampil['noitem'] ?></td>
+                                            <td><?php echo $tampil['kodebarcode'] ?></td>
+                                            <td><?php echo $tampil['namaitem'] ?></td>
+                                            <td class="center"><?php echo $tampil['namajenis'] ?></td>
+                                            <td class="center"></td>
+                                            <td class="center"><?php echo $tampil['satuan'] ?></td>
+                                            <td class="center"><?php echo $tampil['rakbarang'] ?></td>
+                                            <td align="right"><?php echo number_format($tampil['hargapokok'], 0) ?></td>
+                                            <td align="right">
+                                                <?php if ($hppData): ?>
+                                                    <span title="Terakhir beli: <?php echo htmlspecialchars($hppData['tanggal']); ?>" style="color:#1a7abf;font-weight:bold;cursor:help;">
+                                                        <?php echo number_format($hppData['hrgnet'], 0) ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td align="right"><?php echo number_format($tampil['hargajual'], 0) ?></td>
                                         </tr>
-                                    <?php
-                                        }
-                                    ?>
+                                    <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>

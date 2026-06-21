@@ -50,7 +50,13 @@ function cleanPhone($phone) {
     return $phone;
 }
 
-$phone = cleanPhone($data['telephone'] ?: $data['notlp']);
+// Prefer no_wa (sudah format 628xx dari migrasi) daripada telephone
+$rawWa = $data['no_wa'] ?? '';
+if (!empty($rawWa)) {
+    $phone = preg_replace('/[^0-9]/', '', $rawWa);
+} else {
+    $phone = cleanPhone($data['telephone'] ?: $data['notlp']);
+}
 $message = $data['template_pesan_wa'];
 $wa_link = "https://wa.me/{$phone}?text=" . urlencode($message);
 ?>
