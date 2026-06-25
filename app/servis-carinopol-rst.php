@@ -2,60 +2,56 @@
 	session_start();
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
+		exit;
 	} else {
-		$id_user=$_SESSION['_iduser'];	
-		$kd_cabang=$_SESSION['_cabang'];		                	
+		$id_user=$_SESSION['_iduser'];
+		$kd_cabang=$_SESSION['_cabang'];
 		include "../config/koneksi.php";
-        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
-                                        FROM tbuser WHERE id='$id_user'");			
+		include_once "../lib/rbac.php";
+		rbac_require_any(array('input_servis_read','servis_menu_read','service_create','service_update'));
+
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_user, password, user_akses, foto_user
+                                        FROM tbuser WHERE id='$id_user'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$_nama=$tm_cari['nama_user'];				        
-		$pwd=$tm_cari['password'];				        
-		$lvl_akses=$tm_cari['user_akses'];				                
-		$foto_user=$tm_cari['foto_user'];				
+		$_nama=$tm_cari['nama_user'] ?? '';
+		$pwd=$tm_cari['password'] ?? '';
+		$lvl_akses=$tm_cari['user_akses'] ?? '';
+		$foto_user=$tm_cari['foto_user'] ?? '';
 		if($foto_user=='') {
 			$foto_user="file_upload/avatar.png";
 		}
 
     // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_cabang, tipe_cabang 
-                                        FROM tbcabang 
-                                        WHERE kode_cabang='$kd_cabang'");			
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_cabang, tipe_cabang
+                                        FROM tbcabang
+                                        WHERE kode_cabang='$kd_cabang'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$nama_cabang=$tm_cari['nama_cabang'];				        
-        $tipe_cabang=$tm_cari['tipe_cabang'];	
+		$nama_cabang=$tm_cari['nama_cabang'] ?? '';
+        $tipe_cabang=$tm_cari['tipe_cabang'] ?? '';
     // --------------------
-    
-		$tgl_skr=date('d');	
+
+		$tgl_skr=date('d');
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
-        
-        $txtsearch= $_POST['txtsearch'];
-        $sql_query="SELECT 
-                        nopolisi, pemilik, tipe, jenis, warna, merek 
-                        FROM 
-                        view_pelanggan_kendaraan 
-                        WHERE 
-                        (nopolisi like '%".$txtsearch."%') OR 
-                        (pemilik like '%".$txtsearch."%') OR 
-                        (telephone like '%".$txtsearch."%') 
-                        order by pemilik asc";            
-        echo $sql_query;
-        
-		if(isset($_POST['btncari'])) {				
-			$txtsearch= $_POST['txtsearch'];
-            $sql_query="SELECT 
-                        nopolisi, pemilik, tipe, jenis, warna, merek 
-                        FROM 
-                        view_pelanggan_kendaraan 
-                        WHERE 
-                        (nopolisi like '%".$txtsearch."%') OR 
-                        (pemilik like '%".$txtsearch."%') OR 
-                        (telephone like '%".$txtsearch."%') 
-                        order by pemilik asc";    
+
+        $txtsearch = '';
+        $sql_query = "SELECT nopolisi, pemilik, tipe, jenis, warna, merek
+                      FROM view_pelanggan_kendaraan
+                      WHERE 1=0 ORDER BY pemilik ASC";
+
+		if(isset($_POST['btncari'])) {
+			$txtsearch = mysqli_real_escape_string($koneksi, $_POST['txtsearch'] ?? '');
+            $sql_query = "SELECT
+                        nopolisi, pemilik, tipe, jenis, warna, merek
+                        FROM
+                        view_pelanggan_kendaraan
+                        WHERE
+                        (nopolisi like '%".$txtsearch."%') OR
+                        (pemilik like '%".$txtsearch."%') OR
+                        (telephone like '%".$txtsearch."%')
+                        order by pemilik asc";
         }
 ?>
 
@@ -252,8 +248,8 @@
                                         No. Polisi / Nama Pemilik / No. Telepon : </label>
 										<div class="col-sm-7">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" name="txtsearch" id="txtsearch" 
-                                                value="<?php $txtsearch; ?>" required autocomplete="off" />
+                                                <input type="text" class="form-control" name="txtsearch" id="txtsearch"
+                                                value="<?php echo htmlspecialchars($txtsearch); ?>" autocomplete="off" />
                                                 <div class="input-group-btn">
                                                     <button type="submit" class="btn btn-default no-border btn-sm" 
                                                     id="btncari" name="btncari" >

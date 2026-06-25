@@ -66,11 +66,19 @@ if(empty($_SESSION['_iduser'])){
     }
     
     // Main query - Only show completed services (status 3 or 4) for warranty
+    // Totals di-JOIN sekali, menghindari N+1 queries di loop
     $sql_query = "SELECT s.*, p.namapelanggan, v.merek, v.tipe, v.warna,
-                         DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_trx
+                         DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_trx,
+                         COALESCE(sb.total_barang, 0) AS harga_brg,
+                         COALESCE(sj.total_jasa, 0) AS harga_jasa,
+                         COALESCE(sj.total_waktu, 0) AS totwaktu
                   FROM tblservice s
                   LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
                   LEFT JOIN view_cari_kendaraan v ON s.no_polisi = v.nopolisi
+                  LEFT JOIN (SELECT no_service, SUM(total) AS total_barang
+                             FROM tblservis_barang GROUP BY no_service) sb ON sb.no_service = s.no_service
+                  LEFT JOIN (SELECT no_service, SUM(total) AS total_jasa, SUM(waktu) AS total_waktu
+                             FROM tblservis_jasa GROUP BY no_service) sj ON sj.no_service = s.no_service
                   $where_clause
                   " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status IN ('3', '4')
                   ORDER BY s.tanggal DESC, s.jam DESC
@@ -297,24 +305,10 @@ if(empty($_SESSION['_iduser'])){
                                                         break;
                                                 }
                                                 
-                                                // Calculate totals
-                                                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                sum(total) as tot 
-                                                                                FROM 
-                                                                                tblservis_barang 
-                                                                                WHERE no_service='$no_service'");			
-                                                $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $harga_brg=$tm_cari['tot'] ?? 0;
-
-                                                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                sum(total) as tot, sum(waktu) as totwaktu  
-                                                                                FROM 
-                                                                                tblservis_jasa 
-                                                                                WHERE no_service='$no_service'");			
-                                                $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $harga_jasa=$tm_cari['tot'] ?? 0;				        
-                                                $totwaktu=$tm_cari['totwaktu'] ?? 0;				        
-                                                
+                                                // Totals sudah di-JOIN di main query
+                                                $harga_brg    = $tampil['harga_brg'];
+                                                $harga_jasa   = $tampil['harga_jasa'];
+                                                $totwaktu     = $tampil['totwaktu'];
                                                 $harga_servis = $harga_brg + $harga_jasa;
                                                 
                                                 // Highlight search results

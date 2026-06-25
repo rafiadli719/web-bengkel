@@ -491,19 +491,9 @@
 
                 while($detail = mysqli_fetch_array($detail_wo)) {
                     if($detail['tipe'] == '1') { // Jasa
-                        // Try to get waktu from tbworkorderheader
-                        $waktu = 0; // Default waktu value
-                        try {
-                            $check_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tbworkorderheader LIKE 'waktu'");
-                            if(mysqli_num_rows($check_waktu) > 0) {
-                                $waktu_query = mysqli_query($koneksi,"SELECT waktu FROM tbworkorderheader WHERE kode_wo='{$detail['kode_barang']}'");
-                                if($waktu_query && $waktu_data = mysqli_fetch_array($waktu_query)) {
-                                    $waktu = $waktu_data['waktu'] ?? 0;
-                                }
-                            }
-                        } catch (Exception $e) {
-                            $waktu = 0;
-                        }
+                        // Ambil waktu langsung dari tbworkorderheader (kolom sudah pasti ada)
+                        $waktu_query = mysqli_query($koneksi,"SELECT waktu FROM tbworkorderheader WHERE kode_wo='{$detail['kode_barang']}'");
+                        $waktu = ($waktu_query && $waktu_data = mysqli_fetch_array($waktu_query)) ? ($waktu_data['waktu'] ?? 0) : 0;
 
                         // Get next nobaris for jasa
                         $q_nobaris_jasa = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris), 0) + 1 as next_nobaris FROM tblservis_jasa WHERE no_service='$no_service'");
@@ -528,21 +518,11 @@
                         $total_jasa_wo = $harga_jasa_wo - $diskon_nominal;
                         if($total_jasa_wo < 0) { $total_jasa_wo = 0; }
 
-                        // Check if waktu column exists in tblservis_jasa before inserting
-                        $check_jasa_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
-                        if(mysqli_num_rows($check_jasa_waktu) > 0) {
-                            // Insert with waktu column
-                            mysqli_query($koneksi,"INSERT INTO tblservis_jasa
-                                                  (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
-                                                  VALUES
-                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$waktu', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
-                        } else {
-                            // Insert without waktu column
-                            mysqli_query($koneksi,"INSERT INTO tblservis_jasa
-                                                  (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
-                                                  VALUES
-                                                  ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
-                        }
+                        // Kolom waktu sudah pasti ada di tblservis_jasa
+                        mysqli_query($koneksi,"INSERT INTO tblservis_jasa
+                                              (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                              VALUES
+                                              ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$waktu', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                     } else { // Barang
                         // Get next nobaris for barang
                         $q_nobaris_brg = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris), 0) + 1 as next_nobaris FROM tblservis_barang WHERE no_service='$no_service'");
@@ -1202,20 +1182,19 @@
         }
 
         // Update stock for items used in service
-        $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang
-                                        WHERE
-                                        no_service='$no_service'");
-        while ($tampil = mysqli_fetch_array($sql)) {
-            $no_item=$tampil['no_item'];
-            $qty=$tampil['quantity'];
-            mysqli_query($koneksi,"INSERT INTO tbstok
-                                (tipe, no_transaksi, no_item,
-                                tanggal, masuk, keluar, keterangan,
-                                kd_cabang)
-                                VALUES
-                                ('4','$no_service','$no_item',
-                                '$tanggal_srv','0','$qty',
-                                'Penjualan Service Jemput RST','$kd_cabang')");
+        // Guard agar tidak double-insert tbstok saat bayar ulang
+        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+        $r_chk = mysqli_fetch_assoc($chk_stok);
+        if ((int)$r_chk['cnt'] === 0) {
+            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+            while ($tampil = mysqli_fetch_array($sql)) {
+                $no_item = $tampil['no_item'];
+                $qty     = (int)$tampil['quantity'];
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                    (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                    VALUES
+                    ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
+            }
         }
 
         // ========== KIRIM WHATSAPP OTOMATIS ==========

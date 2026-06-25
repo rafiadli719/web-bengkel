@@ -15,6 +15,7 @@
         include "_handler_temuan_penawaran.php";
         include "_handler_barang_custom.php";
         include "_handler_status_keluhan_wo.php";
+        include_once "helper-functions.php";
 
         if (!function_exists('normalizePostedInt')) {
             function normalizePostedInt($value, $default = 0)
@@ -114,21 +115,28 @@
         }
 
         function _tbl_exists_local($koneksi, $name) {
-            $name = mysqli_real_escape_string($koneksi, $name);
-            $res = mysqli_query($koneksi, "SHOW TABLES LIKE '{$name}'");
-            return ($res && mysqli_num_rows($res) > 0);
+            static $cache = [];
+            if (array_key_exists($name, $cache)) return $cache[$name];
+            $escaped = mysqli_real_escape_string($koneksi, $name);
+            $res = mysqli_query($koneksi, "SHOW TABLES LIKE '{$escaped}'");
+            $cache[$name] = ($res && mysqli_num_rows($res) > 0);
+            return $cache[$name];
         }
 
         function _get_item_map_col($koneksi) {
+            static $col = null;
+            if ($col !== null) return $col;
             $chk = mysqli_query($koneksi, "SHOW COLUMNS FROM tbitem_jenis_motor LIKE 'kd_kategori_motor'");
-            if ($chk && mysqli_num_rows($chk) > 0) return 'kd_kategori_motor';
-            return 'kd_jenis_motor';
+            $col = ($chk && mysqli_num_rows($chk) > 0) ? 'kd_kategori_motor' : 'kd_jenis_motor';
+            return $col;
         }
 
         function _get_wo_map_col($koneksi) {
+            static $col = null;
+            if ($col !== null) return $col;
             $chk = mysqli_query($koneksi, "SHOW COLUMNS FROM tbworkorder_jenis_motor LIKE 'kd_kategori_motor'");
-            if ($chk && mysqli_num_rows($chk) > 0) return 'kd_kategori_motor';
-            return 'kd_jenis_motor';
+            $col = ($chk && mysqli_num_rows($chk) > 0) ? 'kd_kategori_motor' : 'kd_jenis_motor';
+            return $col;
         }
 
         function _get_kd_kategori_motor_by_service($koneksi, $no_service) {
@@ -646,11 +654,7 @@
                 exit;
             }
             
-            $has_tgl_bayar_col = false;
-            $chk_tgl_bayar = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservice LIKE 'tgl_bayar'");
-            if ($chk_tgl_bayar && mysqli_num_rows($chk_tgl_bayar) > 0) {
-                $has_tgl_bayar_col = true;
-            }
+            $has_tgl_bayar_col = true;
 
             $update_query = "UPDATE tblservice SET 
                 status='2', 
@@ -667,7 +671,7 @@
                 total_waktu='$total_waktu_pay',
                 km_skr='$km_skr',
                 km_berikut='$km_berikut',
-                status_servis='selesai'";
+                status_servis='bayar'";
 
             if ($has_tgl_bayar_col) {
                 $update_query .= ", tgl_bayar=NOW()";
@@ -731,15 +735,19 @@
                 }
             }
 
-            // Update stock for items used in service
-            $sql = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
-            while ($tampil = mysqli_fetch_array($sql)) {
-                $no_item = $tampil['no_item'];
-                $qty = $tampil['quantity'];
-                mysqli_query($koneksi, "INSERT INTO tbstok 
-                    (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang) 
-                    VALUES 
-                    ('4','$no_service','$no_item', CURDATE(),'0','$qty','Penjualan Service Reguler','$kd_cabang')");
+            // Update stock for items used in service — guard agar tidak double-insert
+            $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+            $r_chk = mysqli_fetch_assoc($chk_stok);
+            if ((int)$r_chk['cnt'] === 0) {
+                $sql = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+                while ($tampil = mysqli_fetch_array($sql)) {
+                    $no_item = $tampil['no_item'];
+                    $qty    = (int)$tampil['quantity'];
+                    mysqli_query($koneksi, "INSERT INTO tbstok
+                        (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                        VALUES
+                        ('4','$no_service','$no_item', CURDATE(),'0','$qty','Servis','$kd_cabang')");
+                }
             }
             
             // ========== KIRIM WHATSAPP OTOMATIS ==========
@@ -1319,10 +1327,7 @@
                     
                     $total = $harga - $diskon_nominal;
                     
-                    // Cek apakah kolom waktu tersedia
-                    $has_waktu = false;
-                    $chk = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
-                    if ($chk && mysqli_num_rows($chk) > 0) { $has_waktu = true; }
+                    $has_waktu = true;
                     
                     if ($has_waktu) {
                         mysqli_query($koneksi, "INSERT INTO tblservis_jasa 
