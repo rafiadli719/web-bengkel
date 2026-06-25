@@ -56,7 +56,7 @@ if(empty($_SESSION['_iduser'])){
             $count_sql = "SELECT COUNT(*) as total 
                          FROM tblservice s
                          LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-                         $where_clause AND s.status IN ('3', '4')";
+                         $where_clause AND s.status_servis IN ('bayar', 'selesai')";
             $count_result = mysqli_query($koneksi, $count_sql);
             $count_data = mysqli_fetch_assoc($count_result);
             $total_found = $count_data['total'];
@@ -80,7 +80,7 @@ if(empty($_SESSION['_iduser'])){
                   LEFT JOIN (SELECT no_service, SUM(total) AS total_jasa, SUM(waktu) AS total_waktu
                              FROM tblservis_jasa GROUP BY no_service) sj ON sj.no_service = s.no_service
                   $where_clause
-                  " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status IN ('3', '4')
+                  " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status_servis IN ('bayar', 'selesai')
                   ORDER BY s.tanggal DESC, s.jam DESC
                   LIMIT 100";
 ?>
@@ -287,20 +287,20 @@ if(empty($_SESSION['_iduser'])){
                                         if (mysqli_num_rows($sql) > 0) {
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no_service = $tampil['no_service'];
-                                                $status = $tampil['status'] ?? '1';
-                                                
+                                                $status = $tampil['status_servis'] ?? '';
+
                                                 // Determine status description
                                                 switch($status) {
-                                                    case '3':
+                                                    case 'bayar':
+                                                        $ket_status = 'Lunas';
+                                                        $status_class = 'status-finish';
+                                                        break;
+                                                    case 'selesai':
                                                         $ket_status = 'Selesai';
                                                         $status_class = 'status-selesai';
                                                         break;
-                                                    case '4':
-                                                        $ket_status = 'Finish';
-                                                        $status_class = 'status-finish';
-                                                        break;
                                                     default:
-                                                        $ket_status = 'Unknown';
+                                                        $ket_status = ucfirst($status);
                                                         $status_class = '';
                                                         break;
                                                 }

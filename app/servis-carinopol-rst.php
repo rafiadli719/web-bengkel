@@ -242,7 +242,7 @@
 
 						<div class="row">
 							<div class="col-xs-8">
-                                <form class="form-horizontal" role="form" action="">
+                                <form class="form-horizontal" role="form" action="" method="post">
 									<div class="form-group">
 										<label class="col-sm-5 control-label no-padding-right" for="txtsearch"> 
                                         No. Polisi / Nama Pemilik / No. Telepon : </label>
