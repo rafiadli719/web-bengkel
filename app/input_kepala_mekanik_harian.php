@@ -57,26 +57,24 @@ if(empty($_SESSION['_iduser'])){
         $data_hari_ini = null;
     }
 
-    // Get Kepala Mekanik list from unified tbuser (posisi KM or legacy level 10)
-    $master_kepala = mysqli_query($koneksi, "SELECT 
-                                                id,
-                                                COALESCE(nama_lengkap, nama_user) AS nama_kepala_mekanik
-                                            FROM tbuser
-                                            WHERE status_row='0'
-                                              AND is_active='active'
-                                              AND (kode_posisi='KM' OR user_akses=10)
-                                              AND (kode_cabang='$kd_cabang' OR kode_cabang IS NULL OR kode_cabang='')
+    // Get Kepala Mekanik list from tbl_master_kepala_mekanik (data real KM per cabang)
+    $master_kepala = mysqli_query($koneksi, "SELECT
+                                                nip_karyawan AS id,
+                                                nama_kepala_mekanik
+                                            FROM tbl_master_kepala_mekanik
+                                            WHERE kode_cabang='$kd_cabang'
+                                              AND status_aktif='aktif'
+                                              AND nip_karyawan NOT LIKE 'KRY-%'
                                             ORDER BY nama_kepala_mekanik");
 
     // Fallback: jika tidak ada hasil untuk cabang saat ini, ambil semua KM aktif (tanpa filter cabang)
     if ($master_kepala && mysqli_num_rows($master_kepala) === 0) {
-        $master_kepala = mysqli_query($koneksi, "SELECT 
-                                                    id,
-                                                    COALESCE(nama_lengkap, nama_user) AS nama_kepala_mekanik
-                                                FROM tbuser
-                                                WHERE status_row='0'
-                                                  AND is_active='active'
-                                                  AND (kode_posisi='KM' OR user_akses=10)
+        $master_kepala = mysqli_query($koneksi, "SELECT
+                                                    nip_karyawan AS id,
+                                                    nama_kepala_mekanik
+                                                FROM tbl_master_kepala_mekanik
+                                                WHERE status_aktif='aktif'
+                                                  AND nip_karyawan NOT LIKE 'KRY-%'
                                                 ORDER BY nama_kepala_mekanik");
     } elseif (!$master_kepala) {
         if (isset($_GET['debug']) && $_GET['debug'] == '1') {

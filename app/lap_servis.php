@@ -6,9 +6,10 @@
 		$id_user=$_SESSION['_iduser'];		
 		$kd_cabang=$_SESSION['_cabang'];		                
 		include "../config/koneksi.php";
-        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
+        include "helper-functions.php";
+
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_user, password, user_akses, foto_user
                                         FROM tbuser WHERE id='$id_user'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$_nama=$tm_cari['nama_user'];				        
@@ -44,13 +45,17 @@
         $tgl_pilih_dari=date('d/m/Y');
         $tgl_pilih_sampai=date('d/m/Y');
         $nopelanggan="";
+        $tglmulai = date('Y-m-d');
+        $tglselesai = date('Y-m-d');
 
     // ---- SQL Detail -----
-        $sql_query="SELECT * FROM view_service 
-                            WHERE 
-                            (tanggal>='$tgl_pilih_dari_eng' AND 
-                            tanggal<='$tgl_pilih_sampai_eng') 
-                            ORDER BY tanggal, no_service";    
+        $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
+                            FROM view_service vs
+                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service
+                            WHERE
+                            (vs.tanggal>='$tgl_pilih_dari_eng' AND
+                            vs.tanggal<='$tgl_pilih_sampai_eng')
+                            ORDER BY vs.tanggal, vs.no_service";
 
     // ---- SQL Total Data -----                            
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -72,46 +77,46 @@
             $tglselesai = ubahformatTgl($_POST['id-date-picker-2']); 
                 
             if($nopelanggan=='') {
-            // ---- SQL Hasil Data ----- 
-                $sql_query="SELECT * FROM view_service 
-                                    WHERE 
-                                    (tanggal>='$tglmulai' AND 
-                                    tanggal<='$tglselesai') 
-                                    ORDER BY tanggal, no_service";      
+            // ---- SQL Hasil Data -----
+                $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
+                            FROM view_service vs
+                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service
+                            WHERE
+                            (vs.tanggal>='$tglmulai' AND
+                            vs.tanggal<='$tglselesai')
+                            ORDER BY vs.tanggal, vs.no_service";
 
-            // ---- SQL Total Data -----                            
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot 
-                                                FROM view_service 
-                                                WHERE 
-                                                (tanggal>='$tglmulai' AND 
-                                                tanggal<='$tglselesai')");			
+            // ---- SQL Total Data -----
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot
+                                                FROM view_service
+                                                WHERE
+                                                (tanggal>='$tglmulai' AND
+                                                tanggal<='$tglselesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];  
-                $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";             
+                $tot=$tm_cari['tot'];
+                $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
             } else {
-            // ---- SQL Hasil Data ----- 
-                $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
-                            FROM view_service 
-                                    WHERE 
-                                    (tanggal>='$tglmulai' AND 
-                                    tanggal<='$tglselesai') AND 
-                                    (no_pelanggan like '%".$nopelanggan."%') OR 
-                                    (namapelanggan like '%".$nopelanggan."%')  
-                                    ORDER BY tanggal, no_service";                   
+            // ---- SQL Hasil Data -----
+                $nopelanggan_esc = mysqli_real_escape_string($koneksi, $nopelanggan);
+                $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4,
+                            DATE_FORMAT(vs.tanggal,'%d/%m/%Y') AS tanggal_trx
+                            FROM view_service vs
+                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service
+                            WHERE
+                            (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
+                            (vs.no_pelanggan LIKE '%$nopelanggan_esc%' OR vs.namapelanggan LIKE '%$nopelanggan_esc%')
+                            ORDER BY vs.tanggal, vs.no_service";
 
-            // ---- SQL Total Data -----                            
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot 
-                                                FROM view_service 
-                                                WHERE 
-                                                (tanggal>='$tglmulai' AND 
-                                                tanggal<='$tglselesai') AND 
-                                                (no_pelanggan like '%".$nopelanggan."%') OR 
-                                    (namapelanggan like '%".$nopelanggan."%')");			
+            // ---- SQL Total Data -----
+                $cari_kd=mysqli_query($koneksi,"SELECT count(*) as tot
+                                                FROM view_service
+                                                WHERE
+                                                (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
+                                                (no_pelanggan LIKE '%$nopelanggan_esc%' OR namapelanggan LIKE '%$nopelanggan_esc%')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];  
-                $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";                
+                $tot=$tm_cari['tot'];
+                $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
             }
         }     
 
@@ -324,54 +329,53 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <td bgcolor="gainsboro" class="center" width="5%"><b>No</b></td>
-                                            <td bgcolor="gainsboro" class="center" width="10%"><b>No. Service</b></td>
-                                            <td bgcolor="gainsboro" class="center" width="10%"><b>Tanggal</b></td>
-                                            <td bgcolor="gainsboro" width="10%"><b>No. Polisi</b></td>
-                                            <td bgcolor="gainsboro" width="20%"><b>Nama Pelanggan</b></td>
-                                            <td bgcolor="gainsboro" width="15%" align="right"><b>Barang</b></td>
-                                            <td bgcolor="gainsboro" width="15%" align="right"><b>Jasa Service</b></td>
-                                            <td bgcolor="gainsboro" width="15%" align="right"><b>Total</b></td>
+                                            <td bgcolor="gainsboro" class="center" width="4%"><b>No</b></td>
+                                            <td bgcolor="gainsboro" class="center" width="9%"><b>No. Service</b></td>
+                                            <td bgcolor="gainsboro" class="center" width="8%"><b>Tanggal</b></td>
+                                            <td bgcolor="gainsboro" width="8%"><b>No. Polisi</b></td>
+                                            <td bgcolor="gainsboro" width="17%"><b>Nama Pelanggan</b></td>
+                                            <td bgcolor="gainsboro" width="16%"><b>Mekanik</b></td>
+                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Barang</b></td>
+                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Jasa Service</b></td>
+                                            <td bgcolor="gainsboro" width="14%" align="right"><b>Total</b></td>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php 
+                                    <?php
+                                        // Preload totals: 2 query untuk semua baris, mengganti N×2 query
+                                        $_preload_brg = [];
+                                        $q_pb = mysqli_query($koneksi, "SELECT sb.no_service, SUM(sb.total) as tot FROM tblservis_barang sb INNER JOIN tblservice ts ON sb.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sb.no_service");
+                                        while ($r = mysqli_fetch_assoc($q_pb)) $_preload_brg[$r['no_service']] = (float)$r['tot'];
+
+                                        $_preload_jsa = [];
+                                        $q_pj = mysqli_query($koneksi, "SELECT sj.no_service, SUM(sj.total) as tot FROM tblservis_jasa sj INNER JOIN tblservice ts ON sj.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sj.no_service");
+                                        while ($r = mysqli_fetch_assoc($q_pj)) $_preload_jsa[$r['no_service']] = (float)$r['tot'];
+
                                         $no = 0 ;
                                         $tot_brg=0;
                                         $tot_jasa=0;
-                                        $tot_jual=0;                                        
+                                        $tot_jual=0;
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             $no++;
                                             $no_service=$tampil['no_service'];
 
-                                            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                            sum(total) as tot 
-                                                                            FROM 
-                                                                            tblservis_barang 
-                                                                            WHERE no_service='$no_service'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $harga_brg=$tm_cari['tot'];				        
-                                            $tot_brg=$tot_brg+$harga_brg;
+                                            $harga_brg = $_preload_brg[$no_service] ?? 0;
+                                            $tot_brg = $tot_brg + $harga_brg;
 
-                                            $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                            sum(total) as tot 
-                                                                            FROM 
-                                                                            tblservis_jasa 
-                                                                            WHERE no_service='$no_service'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $harga_jasa=$tm_cari['tot'];				        
-                                            $tot_jasa=$tot_jasa+$harga_jasa;
-                                            
+                                            $harga_jasa = $_preload_jsa[$no_service] ?? 0;
+                                            $tot_jasa = $tot_jasa + $harga_jasa;
+
                                             $harga_servis=$harga_brg+$harga_jasa;
                                             $tot_jual=$tot_jual+$harga_servis;
                                     ?>
                                         <tr>
-                                            <td class="center"><?php echo $no; ?></td>														
-                                            <td class="center"><?php echo $tampil['no_service']?></td>														
-                                            <td class="center"><?php echo $tampil['tanggal_trx']?></td>				
-                                            <td><?php echo $tampil['no_polisi']?></td>														
-                                            <td><?php echo $tampil['namapelanggan']?></td>														                                                        
+                                            <td class="center"><?php echo $no; ?></td>
+                                            <td class="center"><?php echo $tampil['no_service']?></td>
+                                            <td class="center"><?php echo $tampil['tanggal_trx']?></td>
+                                            <td><?php echo $tampil['no_polisi']?></td>
+                                            <td><?php echo $tampil['namapelanggan']?></td>
+                                            <td><?php echo htmlspecialchars(getMekanikNamaGabung($koneksi, $tampil['mekanik1'], $tampil['mekanik2'], $tampil['mekanik3'], $tampil['mekanik4'])); ?></td>
                                             <td align="right"><?php echo number_format($harga_brg,0)?></td>
                                             <td align="right"><?php echo number_format($harga_jasa,0)?></td>
                                             <td align="right"><?php echo number_format($harga_servis,0)?></td>															                                                                                                                
@@ -382,7 +386,7 @@
                                     ?>
 
                                         <tr>
-                                            <td colspan="5" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>														
+                                            <td colspan="6" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>														
                                             <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_brg,0)?></b></td>
                                             <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jasa,0)?></b></td>                                            
                                             <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jual,0)?></b></td>                                                                                        

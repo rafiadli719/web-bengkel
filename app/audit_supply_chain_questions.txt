@@ -1,0 +1,206 @@
+================================================================================
+  PERTANYAAN UNTUK DISKUSI PENGADAAN BARANG ANTAR CABANG
+  Web Bengkel - FitMotor
+  Tanggal: 29 Juni 2026
+================================================================================
+
+Hai semua, ini daftar pertanyaan yang perlu kita jawab bareng sebelum
+fitur "kirim/minta barang antar cabang" dibuatkan di sistem web baru.
+
+Nggak perlu jawaban teknis ya — cukup ceritain gimana prosesnya sekarang
+di lapangan. Jawaban ini yang nanti jadi panduan bikin sistemnya.
+
+
+================================================================================
+BAGIAN 1 — SIAPA YANG MINTA & KAPAN
+================================================================================
+
+1. Kalau cabang butuh barang dari pusat, siapa yang mulai minta?
+   ( ) Cabang yang minta ke pusat
+   ( ) Pusat yang inisiatif kirim ke cabang tanpa diminta
+   ( ) Dua-duanya bisa terjadi
+
+2. Biasanya barang minta ke pusat itu karena apa?
+   ( ) Stok hampir habis, admin otomatis minta
+   ( ) Admin atau kepala mekanik minta sendiri pas butuh
+   ( ) Sudah ada jadwal rutin (misalnya tiap Senin pusat kirim)
+   ( ) Kombinasi
+
+3. Apakah semua cabang bisa minta barang ke pusat, atau hanya cabang tertentu?
+   Jawab: _______________________________________________
+
+
+================================================================================
+BAGIAN 2 — SIAPA YANG BOLEH & PERLU IZIN NGGAK
+================================================================================
+
+4. Kalau cabang sudah kirim permintaan, pusat langsung proses atau perlu
+   disetujui dulu?
+   ( ) Langsung diproses, nggak perlu persetujuan dulu
+   ( ) Harus disetujui admin gudang pusat dulu
+   ( ) Harus disetujui manajer dulu
+
+5. Di cabang, siapa yang boleh bikin permintaan barang ke pusat?
+   ( ) Hanya admin/kasir cabang
+   ( ) Kepala mekanik juga boleh
+   ( ) Siapa saja yang ada di cabang
+   ( ) Tergantung jabatan/posisi
+
+6. Ada nggak batasan berapa banyak atau berapa nilai barang yang boleh
+   diminta sekali kirim?
+   Jawab: _______________________________________________
+
+
+================================================================================
+BAGIAN 3 — BARANG DIKIRIM — PAKAI DOKUMEN APA
+================================================================================
+
+7. Waktu barang dikirim dari pusat ke cabang, ada dokumen yang harus ada nggak?
+   ( ) Surat Jalan (kertas yang ikut sama barangnya)
+   ( ) Nggak perlu, langsung kirim saja
+   ( ) Lainnya: _____________________________
+
+8. Surat jalannya dibuat oleh siapa? Pusat yang cetak, atau ada orang khusus?
+   Jawab: _______________________________________________
+
+9. Pengiriman pakai jasa ekspedisi atau diantar sendiri (motor/mobil intern)?
+   ( ) Pakai ekspedisi/kurir, ada nomor resi yang dicatat
+   ( ) Diantar sendiri, tidak ada resi
+
+   Kalau pakai ekspedisi, nama ekspedisinya biasanya apa?
+   Jawab: _______________________________________________
+
+
+================================================================================
+BAGIAN 4 — STOK — INI YANG PALING PENTING
+================================================================================
+
+10. Waktu pusat sudah kirimkan barang ke cabang, stok barang di pusat
+    dikurangi kapan?
+    ( ) Saat permintaan dari cabang masuk (langsung dikurangi)
+    ( ) Saat barang benar-benar sudah dikirim dari gudang pusat
+    ( ) Saat cabang konfirmasi sudah terima barang
+
+    Kenapa ini penting: Kalau salah pilih, stok pusat bisa salah hitung
+    (terlalu banyak atau terlalu sedikit).
+
+11. Stok di cabang bertambah kapan?
+    ( ) Otomatis saat pusat input "sudah dikirim"
+    ( ) Saat cabang sendiri klik/input "sudah terima" di sistem
+    ( ) Saat cabang input nota pembelian secara manual
+
+    Kenapa ini penting: Kalau salah, stok cabang bisa kelihatan ada
+    padahal barangnya belum sampai.
+
+12. Kalau barang yang sampai di cabang jumlahnya kurang dari yang diminta
+    (misal minta 10 tapi yang datang cuma 8), gimana penanganannya?
+    ( ) Terima dulu yang 8, yang 2 lagi tunggu kiriman berikutnya
+    ( ) Tolak semua, minta dikirim ulang lengkap
+    ( ) Terima 8 saja, anggap selesai meskipun kurang
+    ( ) Lainnya: _____________________________
+
+
+================================================================================
+BAGIAN 5 — HARGA BARANG ANTAR CABANG
+================================================================================
+
+13. Barang yang dikirim dari pusat ke cabang, harganya pakai harga apa?
+    ( ) Harga beli/modal pusat (berapa pusat beli dari supplier)
+    ( ) Harga jual pusat (sama seperti harga jual ke pelanggan)
+    ( ) Harga khusus antar cabang (beda dari keduanya)
+    ( ) Gratis / nggak ada harga, dicatat sebagai mutasi internal
+
+    Ini penting untuk laporan untung/rugi tiap cabang.
+
+14. Apakah harganya bisa beda antara cabang yang jauh dan yang dekat
+    (misalnya karena ongkos kirim)?
+    ( ) Iya, beda tergantung jarak/ongkos kirim
+    ( ) Tidak, harga sama untuk semua cabang
+
+    Kalau iya, ongkos kirimnya ditanggung siapa?
+    Jawab: _______________________________________________
+
+
+================================================================================
+BAGIAN 6 — KALAU ADA MASALAH
+================================================================================
+
+15. Apakah cabang bisa kembalikan barang ke pusat (retur)?
+    Misalnya: barang salah kirim, atau tidak laku lama di cabang.
+    ( ) Bisa, ada prosedurnya
+    ( ) Tidak bisa, sekali kirim tidak bisa dikembalikan
+    ( ) Bisa, tapi caranya lewat WhatsApp/telepon dulu, nggak ada di sistem
+
+    Kalau bisa, prosedurnya gimana?
+    Jawab: _______________________________________________
+
+16. Kalau barang rusak waktu dalam perjalanan pengiriman, siapa yang tanggung?
+    Jawab: _______________________________________________
+
+17. Kalau cabang ternyata salah pesan (item yang diminta ternyata bukan yang
+    dibutuhkan), bisa dibatalkan nggak?
+    ( ) Bisa dibatalkan, selama barang belum dikirim
+    ( ) Nggak bisa dibatalkan setelah permintaan dibuat
+
+
+================================================================================
+BAGIAN 7 — SIAPA BISA LIHAT STOK SIAPA
+================================================================================
+
+18. Apakah orang di pusat bisa lihat stok di semua cabang sekaligus?
+    ( ) Bisa, langsung kelihatan real-time
+    ( ) Bisa, tapi harus minta laporan dulu ke cabang
+    ( ) Tidak bisa, pusat hanya lihat stok pusat sendiri
+
+19. Apakah orang di cabang bisa lihat stok cabang lain?
+    ( ) Bisa lihat stok semua cabang
+    ( ) Tidak bisa, hanya lihat stok sendiri
+    ( ) Hanya bisa lihat stok pusat
+
+20. Apakah sudah ada laporan yang menampilkan stok gabungan semua cabang?
+    ( ) Sudah ada
+    ( ) Belum ada, tapi dibutuhkan
+
+
+================================================================================
+BAGIAN 8 — KONDISI SEKARANG
+================================================================================
+
+21. Sekarang proses minta/kirim barang antar cabang dilakukan lewat apa?
+    (boleh pilih lebih dari satu)
+    [ ] WhatsApp / telepon
+    [ ] Excel / Google Sheet
+    [ ] Aplikasi FitMotor lama (Access)
+    [ ] Sudah pakai web ini sebagian
+
+22. Berapa cabang yang saat ini aktif beroperasi?
+    Jawab: _______________________________________________
+    (tolong tulis nama-nama cabangnya)
+
+23. Kira-kira dalam seminggu, berapa kali ada kirim barang dari pusat ke cabang?
+    ( ) Hampir setiap hari
+    ( ) Seminggu sekali
+    ( ) Tidak menentu, tergantung kebutuhan
+
+
+================================================================================
+CATATAN PENTING — 5 PERTANYAAN YANG HARUS DIJAWAB DULU
+================================================================================
+
+  Dari semua pertanyaan di atas, 5 ini yang PALING KRITIS dan harus
+  dijawab sebelum sistem bisa dibangun:
+
+  1. Pertanyaan no. 1  — Cabang yang minta atau pusat yang inisiatif kirim?
+  2. Pertanyaan no. 10 — Stok pusat berkurang kapan?
+  3. Pertanyaan no. 11 — Stok cabang bertambah kapan?
+  4. Pertanyaan no. 13 — Pakai harga modal atau harga jual?
+  5. Pertanyaan no. 4  — Perlu izin/approval dulu atau langsung diproses?
+
+  Kalau 5 pertanyaan ini belum ada jawaban, sistemnya belum bisa dibuat
+  dengan benar dan stok bisa salah hitung nanti.
+
+
+================================================================================
+  Dibuat untuk: Tim FitMotor — Diskusi Fitur Pengadaan Antar Cabang
+  Proyek: Web Bengkel FitMotor
+================================================================================

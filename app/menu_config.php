@@ -261,6 +261,15 @@ return [
                 ]
             ],
             ['title' => 'Daftar Transaksi', 'url' => 'antarcab_list.php', 'permission' => 'antar_cabang_list_read'],
+            [
+                'title' => 'Pengadaan Barang',
+                'icon' => 'fa-caret-right',
+                'permission' => 'antar_cabang_read',
+                'submenu' => [
+                    ['title' => 'Daftar Permintaan', 'url' => 'pengadaan_antarcab.php', 'permission' => 'antar_cabang_read'],
+                    ['title' => 'Buat Permintaan', 'url' => 'pengadaan_antarcab_add.php', 'permission' => 'antar_cabang_pesan_read'],
+                ]
+            ],
         ]
     ],
     [

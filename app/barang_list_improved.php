@@ -495,7 +495,7 @@ $result = mysqli_query($koneksi, $query);
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/ace-elements.min.js"></script>
     <script src="assets/js/ace.min.js"></script>
-    
+
     <script type="text/javascript">
         jQuery(function($) {
             // Auto-submit filter on change
@@ -506,7 +506,3 @@ $result = mysqli_query($koneksi, $query);
     </script>
 </body>
 </html>
-
-<?php
-}
-?>

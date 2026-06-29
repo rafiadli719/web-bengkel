@@ -59,7 +59,13 @@ $foto_patokan = '';
 
 // Generate new service number if empty
 if (empty($no_service)) {
-    $no_service = "SV" . date('Y') . sprintf("%08d", rand(1, 99999999));
+    $year = date('Y');
+    $prefix = 'SV' . $year;
+    $q_max = mysqli_query($koneksi, "SELECT MAX(CAST(SUBSTRING(no_service, 7) AS UNSIGNED)) AS maxnum
+                                      FROM tblservice WHERE no_service LIKE '{$prefix}%'");
+    $row_max = mysqli_fetch_assoc($q_max);
+    $next_num = intval($row_max['maxnum'] ?? 0) + 1;
+    $no_service = $prefix . sprintf("%08d", $next_num);
 }
 
 // Initialize additional variables

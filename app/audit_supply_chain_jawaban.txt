@@ -1,0 +1,274 @@
+================================================================================
+  JAWABAN AUDIT SUPPLY CHAIN - MODUL PENGADAAN ANTAR CABANG
+  Web Bengkel - FitMotor
+  Diperoleh dari: Analisa database Access (FITMOTOR APP.mdb & FITMOTOR GABUNG.mdb)
+  Tanggal analisa: 29 Juni 2026
+================================================================================
+
+CATATAN: Jawaban di bawah ini diperoleh dari membaca data & struktur di
+database Access FitMotor yang sudah berjalan. Bukan dari wawancara.
+Jika ada yang berbeda dengan praktik nyata di lapangan, tolong koreksi.
+
+
+================================================================================
+BAGIAN 1 — INISIASI & ALUR PERMINTAAN
+================================================================================
+
+Q1. Siapa yang menginisiasi permintaan barang antar cabang?
+    [X] Cabang yang request ke Pusat (model PULL)
+
+    BUKTI DARI DATA:
+    - Di setiap cabang ada tabel pembelian dengan kolom "NoOrder" berisi nomor
+      pesanan dengan prefix "PS" (contoh: PS25000000006)
+    - Supplier untuk pesanan ini adalah kode FitMotor pusat (FM2, FITMT1, FMS)
+    - Artinya: cabang buat pesanan → pusat kirim → cabang catat sebagai pembelian
+
+    ALUR YANG TERJADI DI SISTEM LAMA:
+    Cabang buka form "Order ke Pusat" → isi barang yang dibutuhkan →
+    Pusat terima order → Pusat kirim barang → Cabang catat sebagai "Pembelian"
+    dengan nomor transaksi BL... dan NoOrder = PS...
+
+
+Q2. Apa yang menjadi trigger permintaan?
+    JAWABAN: Belum bisa dipastikan dari data (tidak ada field otomatis).
+    Kemungkinan: Request manual dari admin/kepala mekanik sesuai kebutuhan.
+
+    INDIKASI DARI DATA:
+    - PACUL: rata-rata ~480-500 pesanan/tahun (hampir setiap hari ada transaksi)
+    - PESALAKAN: 20-111 pesanan/tahun (tidak konsisten, kemungkinan sesuai kebutuhan)
+    - Tidak ditemukan field "minimum stok" atau trigger otomatis
+
+    REKOMENDASI: Tanyakan langsung ke kepala mekanik/admin — apakah mereka
+    order setiap hari atau saat stok mau habis?
+
+
+Q3. Apakah semua cabang bisa request ke pusat?
+    JAWABAN: YA, semua 4 cabang aktif melakukan pembelian dari pusat.
+
+    DATA CABANG AKTIF:
+    - PESALAKAN (kode: A)
+    - PACUL    (kode: P) — paling aktif, ratusan transaksi/tahun
+    - CIKDITIRO (kode: C)
+    - TRAYEMAN  (kode: T)
+
+
+================================================================================
+BAGIAN 2 — APPROVAL & OTORISASI
+================================================================================
+
+Q4. Apakah ada tahap approval sebelum barang dikirim dari pusat?
+    JAWABAN: Tidak ditemukan di sistem Access lama.
+
+    BUKTI DARI DATA:
+    - Status pembelian hanya satu nilai: "Pembelian" (tidak ada "Menunggu Approval",
+      "Disetujui", "Ditolak")
+    - Tidak ada tabel atau field untuk approval workflow
+    - Kemungkinan: approval dilakukan via WhatsApp/telepon, lalu diinput langsung
+
+    REKOMENDASI UNTUK SISTEM BARU: Tambahkan tahap approval jika dibutuhkan.
+
+
+Q5. Siapa yang berwenang membuat pesanan antar cabang?
+    JAWABAN: Tidak bisa dipastikan dari data (tidak ada pembatasan role di tabel).
+    Ada field "User" di setiap transaksi, tapi tidak ada field role/jabatan.
+
+    REKOMENDASI: Tanyakan apakah hanya admin cabang atau kepala mekanik juga bisa.
+
+
+Q6. Apakah ada batas maksimal nilai atau jumlah qty per pesanan?
+    JAWABAN: Tidak ditemukan di sistem Access.
+    Tidak ada field limit/batas di tabel pesanan maupun pembelian.
+
+
+================================================================================
+BAGIAN 3 — PENGIRIMAN & DOKUMEN
+================================================================================
+
+Q7. Dokumen apa yang ada saat pengiriman?
+    JAWABAN: Tidak ada dokumen pengiriman yang tercatat di sistem Access.
+
+    BUKTI DARI DATA:
+    - Tidak ada tabel surat jalan, delivery order, atau faktur pengiriman
+    - Sistem langsung dari "order" ke "pembelian" (tidak ada status "sedang dikirim")
+    - Kemungkinan: surat jalan dibuat manual/cetak terpisah di luar sistem
+
+Q8. Siapa yang buat Surat Jalan?
+    JAWABAN: Tidak bisa dipastikan dari sistem. Kemungkinan dibuat manual oleh
+    admin pusat dan tidak tercatat digital.
+
+Q9. Apakah ada catatan ekspedisi/kurir?
+    JAWABAN: Tidak ditemukan. Tidak ada tabel atau field untuk nomor resi,
+    nama ekspedisi, atau tanggal kirim terpisah.
+
+
+================================================================================
+BAGIAN 4 — STOK (PALING KRITIS)
+================================================================================
+
+Q10. Kapan stok PUSAT dikurangi?
+     JAWABAN: Saat penjualan antar cabang diinput oleh pusat (bukan saat
+     cabang konfirmasi terima).
+
+     PENJELASAN:
+     - Di sistem lama, pusat mencatat sebagai "Penjualan" biasa ke customer
+       yang kodenya FitMotor cabang (FM2, FM3, dll)
+     - Stok pusat langsung berkurang saat transaksi penjualan diinput
+     - Tidak ada status "barang dalam perjalanan" (in-transit)
+
+     RISIKO: Jika barang hilang/rusak di jalan, stok pusat sudah berkurang
+     tapi stok cabang belum bertambah.
+
+
+Q11. Kapan stok CABANG bertambah?
+     JAWABAN: Saat cabang input "Pembelian" (BL...) dengan konfirmasi barang diterima.
+
+     PENJELASAN:
+     - Cabang baru bisa input pembelian setelah barang fisik datang
+     - Stok cabang bertambah saat pembelian diinput ke sistem
+     - Ada gap waktu antara "pusat kirim" dan "cabang input terima" — ini normal
+
+
+Q12. Jika ada selisih qty yang dipesan vs diterima?
+     JAWABAN: Tidak ditemukan mekanisme formal di sistem Access.
+
+     BUKTI DARI DATA:
+     - Ada field QtyOrder dan Quantity di detail pembelian
+     - Jika QtyOrder = 10 tapi Quantity = 8, sistem tetap bisa diinput
+     - Tidak ada alur "partial receive" yang formal atau status pending sisa
+
+     KEMUNGKINAN PRAKTIK: Terima sesuai yang datang, selisih dikomunikasikan
+     via WhatsApp ke pusat.
+
+
+================================================================================
+BAGIAN 5 — HARGA TRANSFER
+================================================================================
+
+Q13. Harga barang antar cabang menggunakan harga apa?
+     JAWABAN: [X] HARGA POKOK (HPP) — tidak ada margin antar cabang
+
+     BUKTI DARI DATA (contoh nyata):
+     - Cabang PESALAKAN beli dari pusat: item OLSDGE HPP = Rp 11.980
+     - Cabang PACUL beli dari pusat: item PECSL99 HPP = Rp 6.000
+     - Kolom yang dipakai adalah "HargaPokok" (bukan HargaJual)
+
+     ARTINYA: Transfer antar cabang dilakukan di harga modal, tidak ada profit
+     recognition antara cabang. Laporan laba/rugi per cabang tidak mencerminkan
+     margin dari penjualan pusat ke cabang.
+
+
+Q14. Apakah harga bisa berbeda per cabang?
+     JAWABAN: Tidak ditemukan mekanisme harga berbeda per cabang di data.
+     Semua cabang sepertinya menggunakan HPP yang sama dari pusat.
+
+     CATATAN: Ini perlu dikonfirmasi — apakah ongkos kirim dibebankan ke cabang
+     atau ditanggung pusat?
+
+
+================================================================================
+BAGIAN 6 — RETUR & PENANGANAN MASALAH
+================================================================================
+
+Q15. Apakah ada alur retur barang dari cabang ke pusat?
+     JAWABAN: Ada tabel Mutasi Stok (IM...) dan Keluar Stok (IK...) untuk
+     penyesuaian, tapi tidak ada alur retur formal yang terdokumentasi.
+
+     KEMUNGKINAN: Retur dilakukan lewat penyesuaian stok manual (koreksi),
+     bukan melalui alur retur pembelian yang terdokumentasi.
+
+Q16. Jika barang rusak saat pengiriman, siapa yang menanggung?
+     JAWABAN: Tidak ditemukan aturan ini di sistem. Perlu tanya manajemen.
+
+Q17. Jika cabang salah pesan, apakah bisa dibatalkan?
+     JAWABAN: Tidak ada mekanisme pembatalan order di data.
+     Kemungkinan: Dibatalkan via komunikasi (WA/telp) sebelum diproses pusat.
+
+
+================================================================================
+BAGIAN 7 — VISIBILITAS STOK
+================================================================================
+
+Q18. Apakah Pusat bisa lihat stok semua cabang?
+     JAWABAN: YA, lewat database GABUNG yang menggabungkan data semua cabang.
+
+     BUKTI:
+     - Ada tabel stok per cabang: CIKDITIRO, PACUL, PESALAKAN, TRAYEMAN
+     - Pusat bisa lihat semua lewat aplikasi FITMOTOR GABUNG
+
+Q19. Apakah cabang bisa lihat stok cabang lain?
+     JAWABAN: TIDAK di sistem cabang masing-masing. Hanya bisa lihat stok sendiri.
+     Yang bisa lihat gabungan hanya yang punya akses ke database GABUNG (pusat).
+
+Q20. Apakah ada laporan konsolidasi stok semua cabang?
+     JAWABAN: YA, sudah ada di database GABUNG.
+     Ada tabel gabungan item per bengkel dan pembelian gabungan semua cabang.
+
+
+================================================================================
+BAGIAN 8 — KONDISI SISTEM SAAT INI
+================================================================================
+
+Q21. Saat ini proses antar cabang dilakukan lewat mana?
+     [X] Sistem lama (Access/FitMotor) — TERBUKTI dari data
+
+     BUKTI: Ada ratusan transaksi antar cabang di database Access dengan
+     pola yang konsisten (prefix PS untuk order, BL untuk realisasi pembelian).
+
+Q22. Berapa cabang yang aktif saat ini?
+     JAWABAN: 4 cabang aktif:
+     1. PESALAKAN (pusat / paling lama)
+     2. PACUL (paling aktif — rata-rata ~500 transaksi antar cabang/tahun)
+     3. CIKDITIRO
+     4. TRAYEMAN
+
+Q23. Seberapa sering transaksi antar cabang terjadi?
+     JAWABAN: Hampir SETIAP HARI (khususnya PACUL).
+
+     DATA NYATA PER TAHUN:
+     - PACUL:     2021=207, 2022=480, 2023=468, 2024=503, 2025=504 pesanan
+                  → rata-rata ~1,4 pesanan per hari kerja
+     - PESALAKAN: 2021=20,  2022=90,  2023=111, 2024=39,  2025=6
+                  → frekuensi menurun belakangan ini
+
+
+================================================================================
+RINGKASAN TEMUAN KRITIS
+================================================================================
+
+  PRIORITAS 1 (Q1)  — Model PULL terkonfirmasi. Cabang request, pusat kirim.
+
+  PRIORITAS 2 (Q10) — Stok pusat langsung berkurang saat penjualan diinput.
+                       Tidak ada status "barang dalam perjalanan".
+                       Ini risiko jika barang hilang/rusak di jalan.
+
+  PRIORITAS 3 (Q11) — Stok cabang bertambah saat cabang input penerimaan.
+                       Gap waktu antara kirim & terima adalah hal yang normal.
+
+  PRIORITAS 4 (Q13) — Harga transfer = HPP (harga pokok). Tidak ada margin.
+                       Laporan laba/rugi per cabang perlu dipahami dalam konteks ini.
+
+  PRIORITAS 5 (Q4)  — TIDAK ada sistem approval di Access saat ini.
+                       Perlu diputuskan: apakah sistem web baru perlu approval?
+
+  TEMUAN TAMBAHAN   — Tidak ada surat jalan digital, tidak ada status in-transit,
+                       tidak ada batas qty per order, tidak ada mekanisme retur formal.
+                       Semua ini adalah peluang perbaikan di sistem web baru.
+
+
+================================================================================
+HAL YANG MASIH PERLU DITANYAKAN LANGSUNG KE TIM
+================================================================================
+
+  1. Siapa yang boleh buat pesanan antar cabang? (hanya admin atau siapa saja?)
+  2. Apakah perlu approval pusat sebelum barang dikirim, atau langsung proses?
+  3. Ongkos kirim ditanggung siapa — pusat atau cabang?
+  4. Jika barang rusak/kurang saat sampai, prosedurnya bagaimana?
+  5. Apakah ada rencana cabang bisa request ke sesama cabang (bukan hanya pusat)?
+
+
+================================================================================
+  Dibuat oleh: Claude Code — Analisa Database Access FitMotor
+  Sumber data: E:\BENGKEL 2.0\FITMOTOR APP.mdb
+               E:\web bengkel\FIT MOTOR GABUNG LOKAL\FITMOTOR GABUNG.mdb
+  Proyek: Web Bengkel FitMotor
+================================================================================

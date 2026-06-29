@@ -368,21 +368,19 @@
                                 WHERE 
                                 no_service='$no_service'");
                                 
-        // Update stock for items used in service
-        $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang 
-                                        WHERE 
-                                        no_service='$no_service'");
-        while ($tampil = mysqli_fetch_array($sql)) {
-            $no_item=$tampil['no_item'];
-            $qty=$tampil['quantity'];
-            mysqli_query($koneksi,"INSERT INTO tbstok 
-                                (tipe, no_transaksi, no_item, 
-                                tanggal, masuk, keluar, keterangan, 
-                                kd_cabang) 
-                                VALUES 
-                                ('4','$no_service','$no_item',
-                                '$tanggal_srv','0','$qty',
-                                'Penjualan Service Garansi','$kd_cabang')"); 
+        // Update stock for items used in service — guard agar tidak double-insert
+        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+        $r_chk = mysqli_fetch_assoc($chk_stok);
+        if ((int)$r_chk['cnt'] === 0) {
+            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+            while ($tampil = mysqli_fetch_array($sql)) {
+                $no_item = $tampil['no_item'];
+                $qty     = (int)$tampil['quantity'];
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                    (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                    VALUES
+                    ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
+            }
         }
         
         // ========== KIRIM WHATSAPP OTOMATIS ==========
@@ -435,842 +433,180 @@
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta charset="utf-8" />
-		<title><?php include "../lib/titel.php"; ?></title>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <title><?php include "../lib/titel.php"; ?> - Input Service Garansi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css"/>
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css"/>
+    <!-- Redesign Styles -->
+    <?php include "_template/_redesign_styles.php"; ?>
+    <!-- Kasir 3-Column Layout -->
+    <?php include "_template/_kasir_3col_layout.php"; ?>
+    <style>
+    body { font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif; }
+    .ks-status-pill.garansi { background: linear-gradient(135deg,#27ae60,#2ecc71); color:#fff; }
+    .ks-btn-bayar { background: linear-gradient(135deg,#27ae60,#2ecc71) !important; }
+    .ks-tab-btn.active { border-bottom-color: #27ae60 !important; color: #27ae60 !important; }
+    .garansi-meta { padding:8px 12px; background:#f8fffe; border-bottom:1px solid #d1e8dc; }
+    .garansi-meta label { font-size:10px;color:#6b7280;text-transform:uppercase;margin:0 0 2px;display:block; }
+    .garansi-meta .rd-input, .garansi-meta textarea {
+        width:100%;font-size:12px;padding:4px 8px;
+        border:1px solid #d1d5db;border-radius:4px;background:#fff;
+    }
+    .garansi-meta textarea { resize:vertical; min-height:52px; }
+    </style>
+    <script src="assets/js/jquery-2.1.4.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery-ui.custom.min.js"></script>
+    <script src="assets/js/bootstrap-datepicker.min.js"></script>
+</head>
 
-		<meta name="description" content="Input Service Garansi" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<body>
+<?php $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'workorder-details'; ?>
+<div class="ks-shell">
 
-		<!-- bootstrap & fontawesome -->
-		<link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <!-- Topbar -->
+    <div class="ks-topbar">
+        <a class="ks-topbar-brand" href="index.php">
+            <i class="fa fa-leaf"></i>
+            <?php include "../lib/subtitel.php"; ?>
+        </a>
+        <div class="ks-topbar-info">
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Service</span>
+                <span class="val"><?= htmlspecialchars($no_service ?: 'BARU') ?></span>
+            </div>
+            <span class="ks-status-pill garansi">
+                <i class="fa fa-shield"></i> GARANSI
+            </span>
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">Pelanggan</span>
+                <span class="val"><?= htmlspecialchars($namapelanggan ?: '-') ?></span>
+            </div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Polisi</span>
+                <span class="val"><?= htmlspecialchars($no_polisi ?: '-') ?></span>
+            </div>
+        </div>
+        <div class="ks-topbar-right">
+            <div class="ks-total-live-wrap">
+                <span class="lbl">Total</span>
+                <span class="ks-total-live" id="ks-live-total">
+                    Rp <?= number_format($net ?? $tot ?? 0, 0, ',', '.') ?>
+                </span>
+            </div>
+            <a href="servis-garansi-rst.php" class="ks-topbar-btn">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+            <div class="ks-user-badge">
+                <img src="../<?= $foto_user ?>" alt="User" class="ks-user-photo">
+                <span class="ks-user-name"><?= htmlspecialchars($_nama) ?></span>
+            </div>
+        </div>
+    </div>
 
-		<!-- page specific plugin styles -->
-		<link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css" />
-		<link rel="stylesheet" href="assets/css/fullcalendar.min.css" />
+    <!-- 3-Column Form -->
+    <form class="form-horizontal" action="" method="post" id="formServiceGaransi" role="form">
+        <div class="ks-body">
 
-		<!-- text fonts -->
-		<link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
-
-		<!-- ace styles -->
-		<link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
-
-		<!--[if lte IE 9]>
-			<link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
-		<![endif]-->
-		<link rel="stylesheet" href="assets/css/ace-skins.min.css" />
-		<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
-
-		<!--[if lte IE 9]>
-		  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
-		<![endif]-->
-
-		<!-- ace settings handler -->
-		<script src="assets/js/ace-extra.min.js"></script>
-
-		<!--[if lte IE 8]>
-		<script src="assets/js/html5shiv.min.js"></script>
-		<script src="assets/js/respond.min.js"></script>
-		<![endif]-->
-		<script src="assets/js/jquery-2.1.4.min.js"></script>
-	</head>
-
-	<body class="no-skin">
-		<div id="navbar" class="navbar navbar-default          ace-save-state">
-			<div class="navbar-container ace-save-state" id="navbar-container">
-				<button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
-					<span class="sr-only">Toggle sidebar</span>
-
-					<span class="icon-bar"></span>
-
-					<span class="icon-bar"></span>
-
-					<span class="icon-bar"></span>
-				</button>
-
-				<div class="navbar-header pull-left">
-					
-					<table>
-						<tr>
-							<td width="20%">
-								<a href="index.php" class="navbar-brand">
-									<small>
-					<i class="fa fa-leaf"></i>
-					<?php include "../lib/subtitel.php"; ?>
-									</small>							
-								</a>									
-							</td>
-							<td>
-
-                            </td>							
-						</tr>
-					</table>
-				
-				</div>
-
-				<div class="navbar-buttons navbar-header pull-right" role="navigation">
-					
-					<ul class="nav ace-nav">
-
-						<li class="light-blue dropdown-modal">
-							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-								<img class="nav-user-photo" src="../<?php echo $foto_user; ?>" alt="User Profil" />
-								<span class="user-info">
-									<small>Welcome,</small>
-									<?php echo $_nama; ?>
-								</span>
-
-								<i class="ace-icon fa fa-caret-down"></i>
-							</a>
-
-							<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-								<li>
-									<a href="change_pwd.php">
-										<i class="ace-icon fa fa-cog"></i>
-										Change Password
-									</a>
-								</li>
-
-								<li>
-									<a href="profile.php">
-										<i class="ace-icon fa fa-user"></i>
-										Profile
-									</a>
-								</li>
-
-								<li class="divider"></li>
-
-								<li>
-									<a href="logout.php">
-										<i class="ace-icon fa fa-power-off"></i>
-										Logout
-									</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-				<div class="navbar-header pull-right">
-					<a href="#" class="navbar-brand"><small></small></a>					
-				</div>
-			</div><!-- /.navbar-container -->
-		</div>
-		
-		<div class="main-container ace-save-state" id="main-container">
-			<script type="text/javascript">
-				try{ace.settings.loadState('main-container')}catch(e){}
-			</script>
-
-			<div id="sidebar" class="sidebar                  responsive                    ace-save-state">
-				<script type="text/javascript">
-					try{ace.settings.loadState('sidebar')}catch(e){}
-				</script>
-
-<?php include "menu_dashboard.php"; ?>
-
-				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
-					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
-				</div>
-			</div>
-
-			<div class="main-content">
-				<div class="main-content-inner">
-					<div class="breadcrumbs ace-save-state" id="breadcrumbs">
-						<ul class="breadcrumb">
-							<li>
-								<i class="ace-icon fa fa-home home-icon"></i>
-								<a href="index.php">Home</a>
-							</li>
-                            <li>
-								<a href="#">Service</a>
-							</li>                            
-							<li class="active">Input Service Garansi</li>
-						</ul><!-- /.breadcrumb -->
-					</div>
-
-					<div class="page-content">
-
-                        <form class="form-horizontal" action="" method="post" role="form">
-						<div class="row">
-							<div class="col-xs-12">
-								<div class="widget-box">
-									<div class="widget-header widget-header-blue widget-header-flat">
-										<h4 class="widget-title lighter">
-											<i class="ace-icon fa fa-shield orange"></i>
-											Input Service Garansi <?php echo $no_service ? '#'.$no_service : ''; ?>
-										</h4>
-                                        <div class="widget-toolbar">
-                                            <span class="label label-warning arrowed-in arrowed-in-right">Warranty Service</span>
-                                        </div>
-									</div>
-
-									<div class="widget-body">
-										<div class="widget-main padding-12 no-padding-left no-padding-right">
-											<div class="tabbable">
-												<ul class="nav nav-tabs" id="myTab">
-													<li class="active">
-														<a data-toggle="tab" href="#service-details" aria-expanded="true">
-															<i class="green ace-icon fa fa-info-circle bigger-120"></i>
-															Detail Service
-														</a>
-													</li>
-
-													<li class="">
-														<a data-toggle="tab" href="#workorder-details" aria-expanded="false">
-															<i class="blue ace-icon fa fa-clipboard bigger-120"></i>
-															Work Order
-														</a>
-													</li>
-
-													<li class="">
-														<a data-toggle="tab" href="#service-items" aria-expanded="false">
-															<i class="orange ace-icon fa fa-truck bigger-120"></i>
-															Item Barang
-														</a>
-													</li>
-
-													<li class="">
-														<a data-toggle="tab" href="#service-jasa" aria-expanded="false">
-															<i class="purple ace-icon fa fa-cogs bigger-120"></i>
-															Item Jasa
-														</a>
-													</li>
-
-													<li class="">
-														<a data-toggle="tab" href="#service-actions" aria-expanded="false">
-															<i class="grey ace-icon fa fa-cogs bigger-120"></i>
-															Actions
-														</a>
-													</li>
-												</ul>
-
-												<div class="tab-content">
-													<div id="service-details" class="tab-pane fade active in">
-														<div class="row">
-															<div class="col-xs-12">
-																<div class="padding-18">
-																	<div class="row">
-																		<div class="col-xs-12 col-sm-6">
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> No. Service :</label>													
-																				<div class="col-sm-8">
-																					<input type="text" id="txtnoservice" name="txtnoservice" class="form-control" 
-																					value="<?php echo $no_service; ?>" readonly="true" />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> Tanggal :</label>													
-																				<div class="col-sm-8">
-																					<div class="input-group">
-																						<input class="form-control date-picker" id="id-date-picker-1" name="id-date-picker-1" type="text" autocomplete="off" 
-																						value="<?php echo $tanggal; ?>" data-date-format="dd/mm/yyyy" />
-																						<span class="input-group-addon">
-																							<i class="fa fa-calendar bigger-110"></i>
-																						</span>
-																					</div>
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> Jam :</label>													
-																				<div class="col-sm-8">
-																					<input type="time" class="form-control" name="jam_service" id="jam_service" 
-																					value="<?php echo $jam; ?>" />
-																				</div>
-																			</div>
-																		</div>
-																		<div class="col-xs-12 col-sm-6">
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> User :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" 
-																					value="<?php echo $_nama; ?>" disabled />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> Kode Pelanggan :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="kode_pelanggan" id="kode_pelanggan" 
-																					value="<?php echo $kode_pelanggan; ?>" placeholder="Kode pelanggan..." />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> Nama Pelanggan :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="namapelanggan" id="namapelanggan" 
-																					value="<?php echo $namapelanggan; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-														<label class="col-sm-3 control-label no-padding-right"> Statistik :</label>
-														<div class="col-sm-9">
-															<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalStatistikPelanggan" style="text-align: left; position: relative; padding: 12px 15px;">
-																<i class="fa fa-bar-chart"></i> <strong>Lihat Statistik Pelanggan Lengkap</strong>
-																<span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">
-																	<i class="fa fa-arrow-circle-right"></i>
-																</span>
-																<br>
-																<small style="color: #e3f2fd;">
-																	Kategori Member, Kendaraan, Riwayat Transaksi, dll
-																</small>
-															</button>
-														</div>
-													</div>
-																		</div>
-																	</div>
-																	
-																	<div class="hr hr-24"></div>
-																	
-																	<div class="row">
-																		<div class="col-xs-12 col-sm-6">
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> No. Polisi :</label>													
-																				<div class="col-sm-8">
-																					<input type="text" class="form-control" name="no_polisi" id="no_polisi" 
-																					value="<?php echo $no_polisi; ?>" placeholder="Nomor polisi..." />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> Pemilik :</label>													
-																				<div class="col-sm-8">
-																					<input type="text" class="form-control" name="pemilik" id="pemilik" 
-																					value="<?php echo $pemilik; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> Jenis :</label>													
-																				<div class="col-sm-8">
-																					<input type="text" class="form-control" name="jenis" id="jenis" 
-																					value="<?php echo $jenis; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-4 control-label no-padding-right"> Keluhan Garansi :</label>
-																				<div class="col-sm-8">
-																					<textarea class="form-control" id="keluhan" name="keluhan" rows="3" 
-																					placeholder="Keluhan garansi pelanggan..."><?php echo $keluhan; ?></textarea>
-																				</div>
-																			</div>
-																		</div>
-																		<div class="col-xs-12 col-sm-6">
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> Merek :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="merek" id="merek" 
-																					value="<?php echo $merek; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> Warna :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="warna" id="warna" 
-																					value="<?php echo $warna; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> No. Rangka :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="no_rangka" id="no_rangka" 
-																					value="<?php echo $no_rangka; ?>" readonly />
-																				</div>
-																			</div>
-																			<div class="form-group">
-																				<label class="col-sm-3 control-label no-padding-right"> No. Mesin :</label>													
-																				<div class="col-sm-9">
-																					<input type="text" class="form-control" name="no_mesin" id="no_mesin" 
-																					value="<?php echo $no_mesin; ?>" readonly />
-																				</div>
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div id="workorder-details" class="tab-pane fade">
-														<?php include "_template/_servis_add_header_kanan_combined.php"; ?>
-													</div>
-
-													<div id="service-items" class="tab-pane fade">
-														<div class="row">
-															<div class="col-xs-12">
-																<div class="padding-18">
-																	<h4 class="orange">
-																		<i class="ace-icon fa fa-cubes"></i>
-																		Item Barang - Service Garansi
-																	</h4>
-																	<?php include "_template/_servis_garansi_detail_barang.php"; ?>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div id="service-jasa" class="tab-pane fade">
-														<div class="row">
-															<div class="col-xs-12">
-																<div class="padding-18">
-																	<h4 class="purple">
-																		<i class="ace-icon fa fa-cogs"></i>
-																		Item Jasa - Service Garansi
-																	</h4>
-																	<?php include "_template/_servis_garansi_detail_servis.php"; ?>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div id="service-actions" class="tab-pane fade">
-														<?php include "_template/_servis_actions_tab_garansi.php"; ?>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+            <!-- LEFT: Info Garansi + Kendaraan + Mekanik -->
+            <div class="ks-left">
+                <!-- Garansi-specific: tanggal, jam, keluhan -->
+                <div class="garansi-meta">
+                    <div style="display:flex;gap:8px;margin-bottom:8px;">
+                        <div style="flex:1;">
+                            <label>Tanggal</label>
+                            <input type="text" name="id-date-picker-1" class="rd-input date-picker"
+                                   value="<?= htmlspecialchars($tanggal) ?>" data-date-format="dd/mm/yyyy">
                         </div>
-                        </form>                            
+                        <div style="flex:0 0 76px;">
+                            <label>Jam</label>
+                            <input type="time" name="jam_service" class="rd-input"
+                                   value="<?= htmlspecialchars($jam) ?>">
                         </div>
+                    </div>
+                    <label>Keluhan Garansi</label>
+                    <textarea name="keluhan" id="keluhan" rows="3"
+                              placeholder="Keluhan garansi..."><?= htmlspecialchars($keluhan ?? '') ?></textarea>
+                </div>
+                <?php include "_template/panel-kiri-kasir.php"; ?>
+            </div>
 
+            <!-- CENTER: Work Order + Barang + Jasa -->
+            <div class="ks-center">
+                <div class="ks-tabs-nav">
+                    <a class="ks-tab-btn <?= $active_tab=='workorder-details'?'active':'' ?>"
+                       data-target="workorder-details">
+                        <i class="fa fa-clipboard-list"></i> Work Order
+                        <?php $c_wo=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tbservis_workorder WHERE no_service='$no_service'"); if($r){$c_wo=mysqli_fetch_assoc($r)['c'];} if($c_wo>0): ?>
+                        <span class="ks-badge"><?= $c_wo ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-items'?'active':'' ?>"
+                       data-target="service-items">
+                        <i class="fa fa-box"></i> Item Barang
+                        <?php $c_b=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_barang WHERE no_service='$no_service'"); if($r){$c_b=mysqli_fetch_assoc($r)['c'];} if($c_b>0): ?>
+                        <span class="ks-badge"><?= $c_b ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-jasa'?'active':'' ?>"
+                       data-target="service-jasa">
+                        <i class="fa fa-tools"></i> Item Jasa
+                        <?php $c_j=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_jasa WHERE no_service='$no_service'"); if($r){$c_j=mysqli_fetch_assoc($r)['c'];} if($c_j>0): ?>
+                        <span class="ks-badge"><?= $c_j ?></span><?php endif; ?>
+                    </a>
+                </div>
+                <div class="ks-tab-contents">
+                    <?php $g_act = in_array($active_tab,['workorder-details','service-items','service-jasa']) ? $active_tab : 'workorder-details'; ?>
+                    <div id="workorder-details" class="ks-tab-pane <?= $g_act=='workorder-details'?'active':'' ?>">
+                        <?php include "_template/tab-workorder-redesign.php"; ?>
+                    </div>
+                    <div id="service-items" class="ks-tab-pane <?= $g_act=='service-items'?'active':'' ?>"
+                         style="padding:16px;">
+                        <?php include "_template/_servis_garansi_detail_barang.php"; ?>
+                    </div>
+                    <div id="service-jasa" class="ks-tab-pane <?= $g_act=='service-jasa'?'active':'' ?>">
+                        <?php include "_template/_servis_garansi_detail_servis.php"; ?>
+                    </div>
+                </div>
+            </div>
 
-					</div><!-- /.page-content -->
-				</div>
-			</div><!-- /.main-content -->
+            <!-- RIGHT: Payment -->
+            <div class="ks-right">
+                <?php include "_template/panel-kanan-kasir.php"; ?>
+            </div>
 
-			<div class="footer">
-				<div class="footer-inner">
-					<div class="footer-content">
-                        <?php include "_template/_servis_footer_with_tabs_garansi.php"; ?>
-					</div>
-				</div>
-			</div>
+        </div>
+    </form>
+</div>
 
-			<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-				<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-			</a>
-		</div><!-- /.main-container -->
+<!-- Modals -->
+<?php
+if(!empty($kode_pelanggan) && function_exists('renderModalStatistikPelanggan')) {
+    echo renderModalStatistikPelanggan($koneksi, $kode_pelanggan);
+}
+?>
 
-		<!-- basic scripts -->
+<script>
+$(document).ready(function() {
+    $('.ks-tab-btn').on('click', function(e) {
+        e.preventDefault();
+        var target = $(this).data('target');
+        $('.ks-tab-btn').removeClass('active');
+        $(this).addClass('active');
+        $('.ks-tab-pane').removeClass('active');
+        $('#' + target).addClass('active');
+    });
+    if($.fn.datepicker) {
+        $('.date-picker').datepicker({ autoclose: true, todayHighlight: true });
+    }
+    if(typeof hitungTotalV2 === 'function') hitungTotalV2();
+});
+</script>
 
-		<!--[if IE]>
-<script src="assets/js/jquery-1.11.3.min.js"></script>
-<![endif]-->
-		<script type="text/javascript">
-			if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
-		</script>
-		<script src="assets/js/bootstrap.min.js"></script>
-
-		<!-- page specific plugin scripts -->
-
-		<!--[if lte IE 8]>
-		  <script src="assets/js/excanvas.min.js"></script>
-		<![endif]-->
-		<script src="assets/js/jquery-ui.custom.min.js"></script>
-		<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
-		<script src="assets/js/chosen.jquery.min.js"></script>
-		<script src="assets/js/spinbox.min.js"></script>
-		<script src="assets/js/bootstrap-datepicker.min.js"></script>
-		<script src="assets/js/bootstrap-timepicker.min.js"></script>
-		<script src="assets/js/moment.min.js"></script>
-		<script src="assets/js/daterangepicker.min.js"></script>
-		<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
-		<script src="assets/js/bootstrap-colorpicker.min.js"></script>
-		<script src="assets/js/jquery.knob.min.js"></script>
-		<script src="assets/js/autosize.min.js"></script>
-		<script src="assets/js/jquery.inputlimiter.min.js"></script>
-		<script src="assets/js/jquery.maskedinput.min.js"></script>
-		<script src="assets/js/bootstrap-tag.min.js"></script>
-
-		<!-- ace scripts -->
-		<script src="assets/js/ace-elements.min.js"></script>
-		<script src="assets/js/ace.min.js"></script>
-
-		<!-- inline scripts related to this page -->
-		<script type="text/javascript">
-			jQuery(function($) {
-				
-				$('#id-disable-check').on('click', function() {
-					var inp = $('#form-input-readonly').get(0);
-					if(inp.hasAttribute('disabled')) {
-						inp.setAttribute('readonly' , 'true');
-						inp.removeAttribute('disabled');
-						inp.value="This text field is readonly!";
-					}
-					else {
-						inp.setAttribute('disabled' , 'disabled');
-						inp.removeAttribute('readonly');
-						inp.value="This text field is disabled!";
-					}
-				});
-			
-			
-				if(!ace.vars['touch']) {
-					$('.chosen-select').chosen({allow_single_deselect:true}); 
-					//resize the chosen on window resize
-			
-					$(window)
-					.off('resize.chosen')
-					.on('resize.chosen', function() {
-						$('.chosen-select').each(function() {
-							 var $this = $(this);
-							 $this.next().css({'width': $this.parent().width()});
-						})
-					}).trigger('resize.chosen');
-					//resize chosen on sidebar collapse/expand
-					$(document).on('settings.ace.chosen', function(e, event_name, event_val) {
-						if(event_name != 'sidebar_collapsed') return;
-						$('.chosen-select').each(function() {
-							 var $this = $(this);
-							 $this.next().css({'width': $this.parent().width()});
-						})
-					});
-				}
-
-				$('[data-rel=tooltip]').tooltip({container:'body'});
-				$('[data-rel=popover]').popover({container:'body'});
-			
-				autosize($('textarea[class*=autosize]'));
-			
-				//datepicker plugin
-				$('.date-picker').datepicker({
-					autoclose: true,
-					todayHighlight: true
-				})
-				//show datepicker when clicking on the icon
-				.next().on(ace.click_event, function(){
-					$(this).prev().focus();
-				});
-			});
-		</script>
-
-		<!-- Payment Calculation JavaScript for Garansi -->
-		<script type="text/javascript">
-		    $(document).ready(function() {
-		        // Update totals when page loads
-		        updatePaymentTotals();
-		        
-		        // Format currency inputs
-		        function formatNumber(num) {
-		            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-		        }
-		        
-		        function parseNumber(str) {
-		            return parseInt(str.replace(/\./g, '')) || 0;
-		        }
-		        
-		        // Calculate payment totals
-		        function updatePaymentTotals() {
-		            // Get current totals from service and items
-		            updateServiceTotals();
-		            
-		            var subtotal = parseNumber($("#txttotal").val()) || 0;
-		            var diskonMember = parseFloat($("#txtdiskon_member").val()) || 0;
-		            var diskonTambahan = parseFloat($("#txtpotfaktur_persen").val()) || 0;
-		            var pajakPersen = parseFloat($("#txtpajak_persen").val()) || 0;
-		            
-		            // Calculate total discount percentage (member + additional)
-		            var totalDiskonPersen = diskonMember + diskonTambahan;
-		            
-		            // Calculate total discount nominal
-		            var diskonNom = (totalDiskonPersen / 100) * subtotal;
-		            $("#txtpotfaktur_nom").val(formatNumber(diskonNom));
-		            
-		            // Calculate tax nominal
-		            var pajakNom = (pajakPersen / 100) * subtotal;
-		            $("#txtpajak_nom").val(formatNumber(pajakNom));
-		            
-		            // Calculate net total
-		            var net = subtotal - diskonNom + pajakNom;
-		            $("#txtnet").val(formatNumber(net));
-		            
-		            // Update payment amount to match net total if not manually changed
-		            if (!$("#txtbayar").data('manually-changed')) {
-		                $("#txtbayar").val(formatNumber(net));
-		            }
-		            
-		            // Calculate change
-		            calculateChange();
-		        }
-		        
-		        // Update service totals from database/current items
-		        function updateServiceTotals() {
-		            // Get current totals from PHP values
-		            var totalJasa = <?php echo $total_service; ?>;
-		            var totalBarang = <?php echo $total_barang; ?>;
-		            var currentTotal = totalJasa + totalBarang;
-		            
-		            $("#txttotal_jasa").val(formatNumber(totalJasa));
-		            $("#txttotal_barang").val(formatNumber(totalBarang));
-		            $("#txttotal").val(formatNumber(currentTotal));
-		        }
-		        
-		        // Calculate change
-		        function calculateChange() {
-		            var net = parseNumber($("#txtnet").val());
-		            var bayar = parseNumber($("#txtbayar").val());
-		            var kembalian = bayar - net;
-		            
-		            $("#txtkembalian").val(formatNumber(kembalian));
-		            
-		            // Change color based on amount
-		            if (kembalian < 0) {
-		                $("#txtkembalian").css("background-color", "#ffebee");
-		                $("#txtkembalian").css("color", "#d32f2f");
-		            } else {
-		                $("#txtkembalian").css("background-color", "#f0f8ff");
-		                $("#txtkembalian").css("color", "#333");
-		            }
-		        }
-		        
-		        // Event handlers for additional discount percentage
-		        $("#txtpotfaktur_persen").on('keyup change', function() {
-		            updatePaymentTotals();
-		        });
-		        
-		        // Event handlers for tax percentage
-		        $("#txtpajak_persen").on('keyup change', function() {
-		            updatePaymentTotals();
-		        });
-		        
-		        // Event handlers for payment amount
-		        $("#txtbayar").on('keyup change', function() {
-		            $(this).data('manually-changed', true);
-		            calculateChange();
-		        }).on('focus', function() {
-		            $(this).data('manually-changed', true);
-		        });
-		        
-		        // Format currency on blur
-		        $("#txtpotfaktur_nom, #txtbayar").on('blur', function() {
-		            var value = parseNumber($(this).val());
-		            $(this).val(formatNumber(value));
-		        });
-		        
-		        // Payment method change handler
-		        $("#metode_pembayaran").on('change', function() {
-		            var method = $(this).val();
-		            if (method === 'Tunai') {
-		                $("#txtbayar").prop('readonly', false);
-		            } else {
-		                // For non-cash payments, set exact amount
-		                var net = parseNumber($("#txtnet").val());
-		                $("#txtbayar").val(formatNumber(net));
-		                $("#txtbayar").prop('readonly', true);
-		                calculateChange();
-		            }
-		        });
-		        
-		        // Validate payment before submit
-		        $("#btnbayar").on('click', function(e) {
-		            var net = parseNumber($("#txtnet").val());
-		            var bayar = parseNumber($("#txtbayar").val());
-		            
-		            if (bayar < net) {
-		                e.preventDefault();
-		                alert('Jumlah pembayaran tidak mencukupi!');
-		                return false;
-		            }
-		            
-		            if (net <= 0) {
-		                e.preventDefault();
-		                alert('Total pembayaran harus lebih dari 0!');
-		                return false;
-		            }
-		            
-		            var kembalian = bayar - net;
-		            var confirmMsg = 'Konfirmasi Pembayaran Service Garansi:\n';
-		            confirmMsg += 'Total: Rp ' + formatNumber(net) + '\n';
-		            confirmMsg += 'Bayar: Rp ' + formatNumber(bayar) + '\n';
-		            confirmMsg += 'Kembalian: Rp ' + formatNumber(kembalian) + '\n';
-		            confirmMsg += 'Metode: ' + $("#metode_pembayaran").val() + '\n\n';
-		            confirmMsg += 'Service garansi telah selesai.\n\n';
-		            confirmMsg += 'Lanjutkan pembayaran?';
-		            
-		            if (!confirm(confirmMsg)) {
-		                e.preventDefault();
-		                return false;
-		            }
-		        });
-		    });
-		    
-		    // Print service function
-		    function printService() {
-		        var noService = '<?php echo $no_service; ?>';
-		        if (noService) {
-		            window.open('servis-print.php?snoserv=' + noService, '_blank');
-		        } else {
-		            alert('Simpan service terlebih dahulu sebelum mencetak!');
-		        }
-		    }
-		    
-		    // Reset service function
-		    function resetService() {
-		        if (confirm('Yakin ingin mereset service garansi ini?\nData yang sudah diinput akan dikosongkan!')) {
-		            var noService = '<?php echo $no_service; ?>';
-		            if (noService) {
-		                window.location.href = 'servis-carinopol-kosongkan.php?snoserv=' + noService;
-		            } else {
-		                window.location.reload();
-		            }
-		        }
-		    }
-		    
-		    // Check warranty function
-		    function checkWarranty() {
-		        var noService = '<?php echo $no_service; ?>';
-		        if (noService) {
-		            if (confirm('Buka halaman cek garansi untuk service: ' + noService + '?\nAnda akan diarahkan ke halaman informasi garansi.')) {
-		                // Redirect to warranty check page
-		                window.location.href = 'cek-garansi.php?snoserv=' + noService;
-		            }
-		        } else {
-		            alert('Simpan service terlebih dahulu sebelum mengecek garansi!');
-		        }
-		    }
-		    
-		    // Cancel service function
-		    function cancelService() {
-		        if (confirm('Yakin ingin membatalkan service garansi ini?\nData yang sudah diinput akan hilang!')) {
-		            window.location.href = 'servis.php';
-		        }
-		    }
-		</script>
-
-        <script type="text/javascript">
-        setTimeout(function(){
-            if (typeof jQuery === 'undefined') return;
-            jQuery(function($){
-                var $modal = $('#modalStatistikPelanggan');
-                if ($modal.length && typeof $.fn.modal !== 'undefined'){
-                    $modal.modal({backdrop:'static', keyboard:true, show:false});
-                }
-                $(document).on('click','button[data-target="#modalStatistikPelanggan"]', function(e){
-                    e.preventDefault();
-                    var noPelanggan = '<?php echo $kode_pelanggan; ?>';
-                    if (!noPelanggan) {
-                        alert('Pilih Kode/Nama Pelanggan terlebih dahulu.');
-                        return false;
-                    }
-                    if ($('#modalStatistikPelanggan').length && typeof $.fn.modal !== 'undefined'){
-                        $('#modalStatistikPelanggan').modal('show');
-                    }
-                });
-            });
-        },300);
-        </script>
-
-        <script type="text/javascript">
-        (function(){
-            if (typeof jQuery === 'undefined') return;
-            jQuery(function($){
-                var $tabs = $('#myTab a[data-toggle="tab"]');
-                if ($tabs.length) {
-                    if (typeof $.fn.tab === 'undefined') {
-                        $tabs.on('click', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var target = $(this).attr('href');
-                            $('#myTab li').removeClass('active');
-                            $(this).parent().addClass('active');
-                            $('.tab-content .tab-pane').removeClass('active in');
-                            $(target).addClass('active in');
-                        });
-                    } else {
-                        $tabs.on('click', function(e){ e.preventDefault(); e.stopPropagation(); $(this).tab('show'); });
-                    }
-                }
-
-                $.get('get_kepala_mekanik_harian.php?ajax=get_kepala_mekanik', function(res){
-                    try{
-                        if(res && res.success && res.has_data === false){
-                            var go = confirm('Belum ada input Kepala Mekanik Harian untuk hari ini. Buka halaman input sekarang?');
-                            if(go && res.redirect_url) window.location.href = res.redirect_url;
-                        }
-                    }catch(err){}
-                }, 'json');
-            });
-        })();
-
-        function refreshKepalaMetanikHarian(){ window.location.reload(); }
-        </script>
-
-        <script type="text/javascript">
-        (function(){
-            function unlockUI(){
-                try{
-                    ['.modal-backdrop','.blockUI','.block-ui','.ui-widget-overlay'].forEach(function(sel){
-                        document.querySelectorAll(sel).forEach(function(n){ if(n && n.parentNode){ n.parentNode.removeChild(n); } });
-                    });
-                    document.body.classList.remove('modal-open');
-                    document.querySelectorAll('.nav-tabs a,.btn,button,[data-toggle="tab"]').forEach(function(el){ el.style.pointerEvents='auto'; });
-                }catch(e){}
-            }
-            if(document.readyState==='loading'){
-                document.addEventListener('DOMContentLoaded', function(){ setTimeout(unlockUI, 200); });
-            } else {
-                setTimeout(unlockUI, 200);
-            }
-            document.addEventListener('keydown', function(ev){ if(ev.key==='Escape'){ unlockUI(); } });
-        })();
-        </script>
-
-        <script type="text/javascript">
-        (function(){
-            // Global tabs fallback with debug logs
-            var DEBUG = true;
-            function log(){ if (DEBUG && window.console) try{ console.log.apply(console, arguments); }catch(e){} }
-            function bindTabsWithjQuery($){
-                var $links = $('a[data-toggle="tab"]');
-                log('[TabsInit][Garansi] Found tab links:', $links.length, 'Bootstrap tab:', typeof $.fn.tab);
-                if ($links.length===0) return;
-                if (typeof $.fn.tab === 'undefined'){
-                    $links.off('click.__fallback').on('click.__fallback', function(ev){
-                        ev.preventDefault(); ev.stopPropagation();
-                        var target = $(this).attr('href');
-                        log('[TabsInit][Garansi] Fallback activating tab:', target);
-                        $('#myTab li').removeClass('active');
-                        $(this).parent().addClass('active');
-                        $('.tab-content .tab-pane').removeClass('active in');
-                        $(target).addClass('active in');
-                    });
-                } else {
-                    $links.off('click.__force').on('click.__force', function(ev){
-                        ev.preventDefault(); ev.stopPropagation();
-                        var target = $(this).attr('href');
-                        log('[TabsInit][Garansi] Bootstrap show tab:', target);
-                        $(this).tab('show');
-                    });
-                }
-            }
-            function bindTabsVanilla(){
-                if (window.jQuery) return; // prefer jQuery binding
-                var listener = function(ev){
-                    var a = ev.target && ev.target.closest ? ev.target.closest('a[data-toggle="tab"]') : null;
-                    if (!a) return;
-                    ev.preventDefault(); ev.stopPropagation();
-                    var target = a.getAttribute('href');
-                    log('[TabsInit][Garansi][Vanilla] Fallback activating tab:', target);
-                    try{
-                        document.querySelectorAll('#myTab li').forEach(function(li){ li.classList.remove('active'); });
-                        if (a.parentNode) a.parentNode.classList.add('active');
-                        document.querySelectorAll('.tab-content .tab-pane').forEach(function(p){ p.classList.remove('active'); p.classList.remove('in'); });
-                        var el = document.querySelector(target);
-                        if (el){ el.classList.add('active'); el.classList.add('in'); }
-                    }catch(e){ log('[TabsInit][Garansi][Vanilla] Error:', e); }
-                };
-                document.addEventListener('click', listener, true);
-                log('[TabsInit][Garansi] Vanilla fallback bound');
-            }
-            function init(){
-                log('[TabsInit][Garansi] Initializing...');
-                if (window.jQuery) { jQuery(function($){ bindTabsWithjQuery($); }); }
-                else { bindTabsVanilla(); }
-            }
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-        })();
-        </script>
-	</body>
+</body>
 </html>
-

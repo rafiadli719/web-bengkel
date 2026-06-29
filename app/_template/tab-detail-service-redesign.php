@@ -340,7 +340,7 @@ if (typeof window.showRiwayatKendaraan !== 'function') {
             </div>
             <?php endif; ?>
             <div class="rd-divider" style="margin-top:12px;"></div>
-            <small class="rd-text-muted">Keluhan pada tab ini bersifat informatif (riwayat). Penambahan keluhan baru dilakukan melalui tab <strong>Work Order</strong>.</small>
+            <small class="rd-text-muted">Keluhan di atas adalah riwayat servis sebelumnya — bersifat informatif.</small>
         <?php endif; ?>
     </div>
 </div>

@@ -35,26 +35,19 @@ if(empty($_SESSION['_iduser'])){
     $tipe_cabang = $tm_cari ? $tm_cari['tipe_cabang'] : '';	
     // --------------------
     
-    // Ambil data antrian hari ini
+    // Ambil semua statistik antrian hari ini dalam 1 query
     $tanggal_hari_ini = date('Y-m-d');
-    $query_antrian_hari_ini = "SELECT COUNT(*) as total_antrian FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini'";
-    $result_antrian_hari_ini = mysqli_query($koneksi, $query_antrian_hari_ini);
-    $total_antrian_hari_ini = mysqli_fetch_array($result_antrian_hari_ini)['total_antrian'];
-    
-    // Ambil data antrian yang sedang diproses
-    $query_antrian_diproses = "SELECT COUNT(*) as total_diproses FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini' AND status_antrian = 'diproses'";
-    $result_antrian_diproses = mysqli_query($koneksi, $query_antrian_diproses);
-    $total_antrian_diproses = mysqli_fetch_array($result_antrian_diproses)['total_diproses'];
-    
-    // Ambil data antrian yang selesai
-    $query_antrian_selesai = "SELECT COUNT(*) as total_selesai FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini' AND status_antrian = 'selesai'";
-    $result_antrian_selesai = mysqli_query($koneksi, $query_antrian_selesai);
-    $total_antrian_selesai = mysqli_fetch_array($result_antrian_selesai)['total_selesai'];
-    
-    // Ambil data antrian yang menunggu
-    $query_antrian_menunggu = "SELECT COUNT(*) as total_menunggu FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini' AND status_antrian = 'menunggu'";
-    $result_antrian_menunggu = mysqli_query($koneksi, $query_antrian_menunggu);
-    $total_antrian_menunggu = mysqli_fetch_array($result_antrian_menunggu)['total_menunggu'];
+    $result_stats = mysqli_query($koneksi, "SELECT
+        COUNT(*) as total_antrian,
+        SUM(CASE WHEN status_antrian='diproses' THEN 1 ELSE 0 END) as total_diproses,
+        SUM(CASE WHEN status_antrian='selesai' THEN 1 ELSE 0 END) as total_selesai,
+        SUM(CASE WHEN status_antrian='menunggu' THEN 1 ELSE 0 END) as total_menunggu
+        FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini'");
+    $stats = mysqli_fetch_array($result_stats);
+    $total_antrian_hari_ini = (int)$stats['total_antrian'];
+    $total_antrian_diproses  = (int)$stats['total_diproses'];
+    $total_antrian_selesai   = (int)$stats['total_selesai'];
+    $total_antrian_menunggu  = (int)$stats['total_menunggu'];
     
     // Ambil data antrian terbaru
     $query_antrian_terbaru = "SELECT a.*, s.no_polisi, s.no_pelanggan, p.namapelanggan 

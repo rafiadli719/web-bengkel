@@ -15,6 +15,7 @@
 		include "_handler_temuan_penawaran.php";
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
+		include_once "helper-functions.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 

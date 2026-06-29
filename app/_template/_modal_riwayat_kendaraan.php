@@ -100,17 +100,7 @@ if (!empty($vehicle_no_polisi) && isset($koneksi)) {
 
 // Function to get mechanic name
 function getMechanicNameModal($koneksi, $mechanic_code) {
-    if (empty($mechanic_code)) return '';
-    
-    $query = "SELECT nama FROM tblmekanik WHERE nomekanik = '$mechanic_code' LIMIT 1";
-    $result = mysqli_query($koneksi, $query);
-    
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_array($result);
-        return $row['nama'];
-    }
-    
-    return $mechanic_code;
+    return getMekanikNama($koneksi, $mechanic_code);
 }
 ?>
 

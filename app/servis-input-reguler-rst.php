@@ -15,6 +15,7 @@
 		include "_handler_temuan_penawaran.php";
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
+		include_once "helper-functions.php";
 
 		$cari_kd=mysqli_query($koneksi,"SELECT
                                         nama_user, password, user_akses, foto_user
@@ -950,21 +951,19 @@
             }
         }
 
-        // Update stock for items used in service
-        $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang
-                                        WHERE
-                                        no_service='$no_service'");
-        while ($tampil = mysqli_fetch_array($sql)) {
-            $no_item=$tampil['no_item'];
-            $qty=$tampil['quantity'];
-            mysqli_query($koneksi,"INSERT INTO tbstok
-                                (tipe, no_transaksi, no_item,
-                                tanggal, masuk, keluar, keterangan,
-                                kd_cabang)
-                                VALUES
-                                ('4','$no_service','$no_item',
-                                '$tanggal_srv','0','$qty',
-                                'Penjualan Service RST','$kd_cabang')");
+        // Update stock for items used in service — guard agar tidak double-insert
+        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+        $r_chk = mysqli_fetch_assoc($chk_stok);
+        if ((int)$r_chk['cnt'] === 0) {
+            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+            while ($tampil = mysqli_fetch_array($sql)) {
+                $no_item = $tampil['no_item'];
+                $qty     = (int)$tampil['quantity'];
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                    (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                    VALUES
+                    ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
+            }
         }
 
         // ========== SISTEM ANTRIAN - RST SERVICE ==========

@@ -45,14 +45,20 @@ if(empty($_SESSION['_iduser'])){
     
     // Kode karyawan akan dibuat otomatis saat simpan berdasarkan tanggal masuk (format: yyyy-mm-0001)
     
-    // Get posisi list
-    $query_posisi = "SELECT * FROM tb_master_posisi ORDER BY kode_posisi ASC";
+    // Posisi untuk karyawan non-mekanik (MK dan KM dikelola via tblmekanik)
+    $query_posisi = "SELECT * FROM tb_master_posisi WHERE kode_posisi NOT IN ('MK','KM') ORDER BY kode_posisi ASC";
     $result_posisi = mysqli_query($koneksi, $query_posisi);
-    
-    // Get level list
-    $query_level = "SELECT * FROM tb_master_level ORDER BY kode_level ASC";
-    $result_level = mysqli_query($koneksi, $query_level);
-    
+
+    // Jabatan per posisi — difilter JS saat posisi dipilih
+    $query_jabatan = "SELECT * FROM master_jabatan WHERE is_active='active' ORDER BY kode_posisi, urutan ASC";
+    $result_jabatan = mysqli_query($koneksi, $query_jabatan);
+    $jabatan_data = [];
+    if ($result_jabatan) {
+        while ($jb = mysqli_fetch_assoc($result_jabatan)) {
+            $jabatan_data[$jb['kode_posisi']][] = $jb;
+        }
+    }
+
     // Get cabang list
     $query_cabang = "SELECT * FROM tbcabang ORDER BY nama_cabang ASC";
     $result_cabang = mysqli_query($koneksi, $query_cabang);
@@ -369,17 +375,9 @@ if(empty($_SESSION['_iduser'])){
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Level</label>
-                                        <select name="kode_level" class="form-control">
-                                            <option value="">-- Pilih Level --</option>
-                                            <?php if ($result_level && mysqli_num_rows($result_level) > 0) { 
-                                                while($row = mysqli_fetch_assoc($result_level)) { ?>
-                                                <option value="<?php echo $row['kode_level']; ?>">
-                                                    <?php echo $row['nama_level']; ?>
-                                                </option>
-                                            <?php } } else { ?>
-                                                <option value="" disabled>Data level belum tersedia</option>
-                                            <?php } ?>
+                                        <label>Jabatan</label>
+                                        <select name="kode_jabatan" id="kode_jabatan" class="form-control">
+                                            <option value="">-- Pilih Posisi dulu --</option>
                                         </select>
                                     </div>
                                 </div>
@@ -459,7 +457,24 @@ if(empty($_SESSION['_iduser'])){
     <script src="assets/js/bootstrap.min.js"></script>
 
     <script>
+        var jabatanData = <?php echo json_encode($jabatan_data); ?>;
+
+        function updateJabatanDropdown(kode_posisi, selected) {
+            var $sel = $('#kode_jabatan');
+            $sel.empty().append('<option value="">-- Pilih Jabatan --</option>');
+            var list = jabatanData[kode_posisi] || [];
+            $.each(list, function(i, j) {
+                var opt = $('<option>').val(j.kode_jabatan).text(j.nama_jabatan);
+                if (selected && j.kode_jabatan === selected) { opt.prop('selected', true); }
+                $sel.append(opt);
+            });
+        }
+
         $(document).ready(function() {
+            $('select[name="kode_posisi"]').on('change', function() {
+                updateJabatanDropdown($(this).val(), null);
+            });
+
             $('#formKaryawan').submit(function(e) {
                 e.preventDefault();
                 

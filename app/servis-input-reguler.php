@@ -1402,13 +1402,13 @@
 
                     echo "<script>
                         alert('Keluhan berhasil ditambahkan ke SPK!');
-                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=workorder';
+                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=details';
                     </script>";
                     exit;
                 } else {
                     echo "<script>
                         alert('Keluhan tidak boleh kosong!');
-                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=workorder';
+                        window.location.href = 'servis-input-reguler.php?snoserv=$no_service_post&tab=details';
                     </script>";
                     exit;
                 }
@@ -2486,19 +2486,18 @@
                         return;
                     }
 
-                    var container = document.querySelector('.page-content') || document.body;
+                    var container = document.querySelector('.ks-left') || document.querySelector('.page-content') || document.body;
                     if (!container) {
                         return;
                     }
 
                     var warningWrapper = document.createElement('div');
                     warningWrapper.className = 'alert alert-danger alert-dismissible alert-km-missing';
-                    warningWrapper.style.margin = '10px 0';
+                    warningWrapper.style.cssText = 'margin:0 0 6px;font-size:11px;padding:6px 10px;border-radius:4px;';
                     warningWrapper.innerHTML =
-                        '<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>' +
-                        '<i class=\"icon fa fa-warning\"></i> <strong>PERHATIAN!</strong> ' +
-                        'Kepala Mekanik Harian untuk tanggal hari ini belum diinput. ' +
-                        '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold; text-decoration:underline;\">Klik disini untuk input sekarang</a>';
+                        '<button type=\"button\" class=\"close\" data-dismiss=\"alert\" style=\"font-size:14px;line-height:1;\">&times;</button>' +
+                        '<i class=\"fa fa-warning\"></i> <strong>KM Harian belum diinput!</strong> ' +
+                        '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold;\">Input sekarang</a>';
 
                     container.insertBefore(warningWrapper, container.firstChild);
                 });
@@ -2515,6 +2514,7 @@
     $estimasi_selesai = '';
 
     // Totals and payment defaults for Actions tab
+    $tipe_servis = 'REGULER';
     $no_pelanggan = $kode_pelanggan ?? '';
     $total_barang = 0;
     $total_service = 0;
@@ -2555,199 +2555,12 @@
 
     <!-- Redesign Styles -->
     <?php include "_template/_redesign_styles.php"; ?>
+    <!-- Kasir 3-Column Layout -->
+    <?php include "_template/_kasir_3col_layout.php"; ?>
 
     <style>
-    /* Page-specific overrides */
-    body {
-        background: #f4f6f9;
-        font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
-    }
+    body { font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif; }
 
-    .navbar {
-        min-height: 56px;
-        margin-bottom: 0;
-        border: 0;
-        border-radius: 0;
-        box-shadow: 0 2px 8px rgba(31, 45, 61, 0.12);
-    }
-
-    .navbar .container-fluid {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 56px;
-        padding: 0 16px;
-    }
-
-    .navbar .container-fluid::before,
-    .navbar .container-fluid::after {
-        content: none;
-        display: none;
-    }
-
-    .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        height: auto;
-        padding: 0;
-        color: #d8e6f3 !important;
-        font-size: 28px;
-        line-height: 1;
-    }
-
-    .navbar-brand i {
-        color: #2d7fd3;
-        font-size: 22px;
-    }
-
-    .navbar-nav {
-        margin: 0;
-        margin-left: auto;
-    }
-
-    .navbar .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-        color: #f3f7fb !important;
-    }
-
-    .navbar .nav-link:hover,
-    .navbar .nav-link:focus {
-        color: #ffffff !important;
-        text-decoration: none;
-    }
-
-    .navbar-user-photo {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 2px solid rgba(255,255,255,0.55);
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    .navbar-user-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        line-height: 1.15;
-        min-width: 0;
-    }
-
-    .navbar-user-info small {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-        opacity: .75;
-        margin-bottom: 2px;
-    }
-
-    .navbar-user-name {
-        font-size: 14px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .rd-page-wrapper {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .rd-page-header {
-        background: linear-gradient(135deg, var(--rd-primary) 0%, #3A7BC8 100%);
-        color: white;
-        padding: 20px 24px;
-        border-radius: var(--rd-radius-lg);
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--rd-shadow-md);
-    }
-
-    .rd-page-header h1 {
-        margin: 0;
-        font-size: 22px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .rd-page-header .rd-breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        opacity: 0.9;
-    }
-
-    .rd-page-header .rd-breadcrumb a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .rd-page-header .rd-breadcrumb a:hover {
-        text-decoration: underline;
-    }
-
-    /* Quick Summary Bar */
-    .rd-quick-summary {
-        background: white;
-        border-radius: var(--rd-radius-md);
-        padding: 16px 24px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--rd-shadow-sm);
-        border-left: 4px solid var(--rd-primary);
-    }
-
-    .rd-quick-summary-left {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-    }
-
-    .rd-quick-summary-item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .rd-quick-summary-item .label {
-        font-size: 11px;
-        color: var(--rd-text-muted);
-        text-transform: uppercase;
-    }
-
-    .rd-quick-summary-item .value {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--rd-text-dark);
-    }
-
-    .rd-quick-summary-item .value.primary { color: var(--rd-primary); }
-    .rd-quick-summary-item .value.success { color: var(--rd-success); }
-
-    /* Tab Content Animation */
-    .rd-tab-pane {
-        display: none;
-        animation: rdFadeIn 0.3s ease;
-    }
-
-    .rd-tab-pane.active {
-        display: block;
-    }
-
-    @keyframes rdFadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
     </style>
     <script src="assets/js/jquery-2.1.4.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -2755,196 +2568,125 @@
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: #2C3E50;">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
-                <i class="fa fa-leaf"></i>
-                <?php include "../lib/subtitel.php"; ?>
+<div class="ks-shell">
+
+    <!-- Topbar -->
+    <div class="ks-topbar">
+        <a class="ks-topbar-brand" href="index.php">
+            <i class="fa fa-leaf"></i>
+            <?php include "../lib/subtitel.php"; ?>
+        </a>
+        <div class="ks-topbar-info">
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Service</span>
+                <span class="val"><?= htmlspecialchars($no_service ?: 'BARU') ?></span>
+            </div>
+            <span class="ks-status-pill <?= htmlspecialchars($status_servis ?? 'datang') ?>">
+                <?= strtoupper($status_servis ?? 'datang') ?>
+            </span>
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">Pelanggan</span>
+                <span class="val"><?= htmlspecialchars($namapelanggan ?: '-') ?></span>
+            </div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Polisi</span>
+                <span class="val"><?= htmlspecialchars($no_polisi ?: '-') ?></span>
+            </div>
+        </div>
+        <div class="ks-topbar-right">
+            <div class="ks-total-live-wrap">
+                <span class="lbl">Total</span>
+                <span class="ks-total-live" id="ks-live-total">
+                    Rp <?= number_format($net ?? $tot ?? 0, 0, ',', '.') ?>
+                </span>
+            </div>
+            <a href="servis-reguler.php" class="ks-topbar-btn">
+                <i class="fa fa-arrow-left"></i> Kembali
             </a>
-
-            <div class="navbar-nav ml-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-toggle="dropdown">
-                        <img src="../<?php echo $foto_user; ?>" alt="User" class="navbar-user-photo">
-                        <span class="navbar-user-info">
-                            <small>Welcome,</small>
-                            <span class="navbar-user-name"><?php echo $_nama; ?></span>
-                        </span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="change_pwd.php">
-                            <i class="fa fa-cog"></i> Change Password
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="../logout.php">
-                            <i class="fa fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </div>
+            <div class="ks-user-badge">
+                <img src="../<?= $foto_user ?>" alt="User" class="ks-user-photo">
+                <span class="ks-user-name"><?= htmlspecialchars($_nama) ?></span>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <div class="rd-page-wrapper">
-        <!-- Page Header -->
-        <div class="rd-page-header">
-            <div>
-                <h1>
-                    <i class="fa fa-wrench"></i>
-                    Input Service Reguler
-                </h1>
-                <div class="rd-breadcrumb" style="margin-top: 8px;">
-                    <a href="index.php"><i class="fa fa-home"></i></a>
-                    <span>/</span>
-                    <a href="servis-reguler.php">Daftar Service</a>
-                    <span>/</span>
-                    <span>Input Service</span>
-                </div>
-            </div>
-            <div>
-                <a href="servis-reguler.php" class="rd-btn" style="background: rgba(255,255,255,0.2); color: white;">
-                    <i class="fa fa-arrow-left"></i> Kembali
-                </a>
-            </div>
-        </div>
+    <!-- 3-Column Form -->
+    <form method="POST" action="" enctype="multipart/form-data" id="formService">
+        <input type="hidden" name="txtnosrv" value="<?= htmlspecialchars($no_service) ?>">
 
-        <!-- Quick Summary Bar -->
-        <div class="rd-quick-summary">
-            <div class="rd-quick-summary-left">
-                <div class="rd-quick-summary-item">
-                    <span class="label">No. Service</span>
-                    <span class="value primary"><?= htmlspecialchars($no_service) ?: 'BARU' ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">Pelanggan</span>
-                    <span class="value"><?= htmlspecialchars($namapelanggan) ?: '-' ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">No. Polisi</span>
-                    <span class="value"><?= htmlspecialchars($no_polisi) ?: '-' ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">Status</span>
-                    <span class="rd-badge solid-<?= $status_servis == 'bayar' ? 'success' : ($status_servis == 'proses' ? 'warning' : 'info') ?>">
-                        <?= strtoupper($status_servis) ?>
-                    </span>
-                </div>
-            </div>
-            <div class="rd-quick-summary-right">
-                <div class="rd-quick-summary-item" style="text-align: right;">
-                    <span class="label">Total</span>
-                    <span class="value success" style="font-size: 20px;">
-                        Rp <?= number_format($tot, 0, ',', '.') ?>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Active Discount Banner -->
         <?php
-        // Display active discount banner if applicable
         if(function_exists('displayActiveDiscountBanner') && !empty($no_polisi)) {
             echo displayActiveDiscountBanner($koneksi, $no_polisi);
         }
         ?>
 
-        <!-- Main Form -->
-        <form method="POST" action="" enctype="multipart/form-data" id="formService">
-            <input type="hidden" name="txtnosrv" value="<?= htmlspecialchars($no_service) ?>">
+        <div class="ks-body">
 
-            <!-- Tab Navigation -->
-            <div class="rd-tabs-nav">
+            <!-- LEFT: Kendaraan + Keluhan + Mekanik -->
+            <div class="ks-left">
+                <?php include "_template/panel-kiri-kasir.php"; ?>
+            </div>
+
+            <!-- CENTER: 4 Tabs -->
+            <div class="ks-center">
                 <?php $tab_base_url = 'servis-input-reguler.php?snoserv=' . urlencode($no_service); ?>
-                <a class="rd-tab-btn <?= $active_tab == 'service-details' ? 'active' : '' ?>" data-target="service-details" href="<?= $tab_base_url ?>&tab=details">
-                    <i class="fa fa-info-circle"></i>
-                    Detail Service
-                </a>
-                <a class="rd-tab-btn <?= $active_tab == 'workorder-details' ? 'active' : '' ?>" data-target="workorder-details" href="<?= $tab_base_url ?>&tab=workorder">
-                    <i class="fa fa-clipboard-list"></i>
-                    Work Order
+                <div class="ks-tabs-nav">
+                    <a class="ks-tab-btn <?= $active_tab=='workorder-details'?'active':'' ?>"
+                       data-target="workorder-details" href="<?= $tab_base_url ?>&tab=workorder">
+                        <i class="fa fa-clipboard-list"></i> Work Order
+                        <?php $count_wo=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tbservis_workorder WHERE no_service='$no_service'"); if($r){$count_wo=mysqli_fetch_assoc($r)['c'];} if($count_wo>0): ?>
+                        <span class="ks-badge"><?= $count_wo ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='temuan-penawaran'?'active':'' ?>"
+                       data-target="temuan-penawaran" href="<?= $tab_base_url ?>&tab=temuan">
+                        <i class="fa fa-search-plus"></i> Temuan & Penawaran
+                        <?php $c_p=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tbservis_pending_items WHERE no_service='$no_service' AND status_approval='pending'"); if($r){$c_p=mysqli_fetch_assoc($r)['c'];} if($c_p>0): ?>
+                        <span class="ks-badge warning"><?= $c_p ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-items'?'active':'' ?>"
+                       data-target="service-items" href="<?= $tab_base_url ?>&tab=items">
+                        <i class="fa fa-box"></i> Suku Cadang
+                        <?php $c_b=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_barang WHERE no_service='$no_service'"); if($r){$c_b=mysqli_fetch_assoc($r)['c'];} if($c_b>0): ?>
+                        <span class="ks-badge"><?= $c_b ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-jasa'?'active':'' ?>"
+                       data-target="service-jasa" href="<?= $tab_base_url ?>&tab=jasa">
+                        <i class="fa fa-tools"></i> Jasa Service
+                        <?php $c_j=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_jasa WHERE no_service='$no_service'"); if($r){$c_j=mysqli_fetch_assoc($r)['c'];} if($c_j>0): ?>
+                        <span class="ks-badge"><?= $c_j ?></span><?php endif; ?>
+                    </a>
+                </div>
+                <div class="ks-tab-contents">
                     <?php
-                    $count_wo = 0;
-                    $sql_wo_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tbservis_workorder WHERE no_service='$no_service'");
-                    if($sql_wo_count) { $count_wo = mysqli_fetch_array($sql_wo_count)['total']; }
-                    if($count_wo > 0): ?>
-                    <span class="rd-badge"><?= $count_wo ?></span>
-                    <?php endif; ?>
-                </a>
-                <a class="rd-tab-btn <?= $active_tab == 'temuan-penawaran' ? 'active' : '' ?>" data-target="temuan-penawaran" href="<?= $tab_base_url ?>&tab=temuan">
-                    <i class="fa fa-search-plus"></i>
-                    Temuan & Penawaran
-                    <?php
-                    $count_pending = 0;
-                    $sql_pending = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tbservis_pending_items WHERE no_service='$no_service' AND status_approval='pending'");
-                    if($sql_pending) { $count_pending = mysqli_fetch_array($sql_pending)['total']; }
-                    if($count_pending > 0): ?>
-                    <span class="rd-badge warning"><?= $count_pending ?></span>
-                    <?php endif; ?>
-                </a>
-                <a class="rd-tab-btn <?= $active_tab == 'service-items' ? 'active' : '' ?>" data-target="service-items" href="<?= $tab_base_url ?>&tab=items">
-                    <i class="fa fa-box"></i>
-                    Item Barang
-                    <?php
-                    $count_brg = 0;
-                    $sql_brg_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tblservis_barang WHERE no_service='$no_service'");
-                    if($sql_brg_count) { $count_brg = mysqli_fetch_array($sql_brg_count)['total']; }
-                    if($count_brg > 0): ?>
-                    <span class="rd-badge"><?= $count_brg ?></span>
-                    <?php endif; ?>
-                </a>
-                <a class="rd-tab-btn <?= $active_tab == 'service-jasa' ? 'active' : '' ?>" data-target="service-jasa" href="<?= $tab_base_url ?>&tab=jasa">
-                    <i class="fa fa-tools"></i>
-                    Item Jasa
-                    <?php
-                    $count_jasa = 0;
-                    $sql_jasa_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tblservis_jasa WHERE no_service='$no_service'");
-                    if($sql_jasa_count) { $count_jasa = mysqli_fetch_array($sql_jasa_count)['total']; }
-                    if($count_jasa > 0): ?>
-                    <span class="rd-badge"><?= $count_jasa ?></span>
-                    <?php endif; ?>
-                </a>
-                <a class="rd-tab-btn <?= $active_tab == 'service-actions' ? 'active' : '' ?>" data-target="service-actions" href="<?= $tab_base_url ?>&tab=actions">
-                    <i class="fa fa-cash-register"></i>
-                    Pembayaran
-                </a>
+                    // Default active tab: workorder jika tidak dikenali
+                    $center_active = in_array($active_tab, ['workorder-details','temuan-penawaran','service-items','service-jasa'])
+                                     ? $active_tab : 'workorder-details';
+                    ?>
+                    <div id="workorder-details" class="ks-tab-pane <?= $center_active=='workorder-details'?'active':'' ?>">
+                        <?php include "_template/tab-workorder-redesign.php"; ?>
+                    </div>
+                    <div id="temuan-penawaran" class="ks-tab-pane <?= $center_active=='temuan-penawaran'?'active':'' ?>">
+                        <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
+                    </div>
+                    <div id="service-items" class="ks-tab-pane <?= $center_active=='service-items'?'active':'' ?>">
+                        <?php include "_template/tab-item-barang-redesign.php"; ?>
+                    </div>
+                    <div id="service-jasa" class="ks-tab-pane <?= $center_active=='service-jasa'?'active':'' ?>">
+                        <?php include "_template/tab-item-jasa-redesign.php"; ?>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tab Contents -->
-            <div class="rd-tab-contents">
-                <!-- Tab 1: Detail Service -->
-                <div id="service-details" class="rd-tab-pane <?= $active_tab == 'service-details' ? 'active' : '' ?>">
-                    <?php include "_template/tab-detail-service-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 2: Work Order -->
-                <div id="workorder-details" class="rd-tab-pane <?= $active_tab == 'workorder-details' ? 'active' : '' ?>">
-                    <?php include "_template/tab-workorder-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 3: Temuan & Penawaran -->
-                <div id="temuan-penawaran" class="rd-tab-pane <?= $active_tab == 'temuan-penawaran' ? 'active' : '' ?>">
-                    <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 4: Item Barang -->
-                <div id="service-items" class="rd-tab-pane <?= $active_tab == 'service-items' ? 'active' : '' ?>">
-                    <?php include "_template/tab-item-barang-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 5: Item Jasa -->
-                <div id="service-jasa" class="rd-tab-pane <?= $active_tab == 'service-jasa' ? 'active' : '' ?>">
-                    <?php include "_template/tab-item-jasa-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 6: Actions/Payment -->
-                <div id="service-actions" class="rd-tab-pane <?= $active_tab == 'service-actions' ? 'active' : '' ?>">
-                    <?php include "_template/tab-actions-redesign.php"; ?>
-                </div>
+            <!-- RIGHT: Ringkasan + Pembayaran -->
+            <div class="ks-right">
+                <?php include "_template/panel-kanan-kasir.php"; ?>
             </div>
-        </form>
-    </div>
+
+        </div>
+    </form>
+</div>
 
     <!-- Include Modals -->
     <?php
@@ -2981,17 +2723,23 @@
         }
 
         function initServiceTabs() {
-            document.querySelectorAll('.rd-tab-btn').forEach(function(button) {
-                button.addEventListener('click', function() {
+            document.querySelectorAll('.ks-tab-btn').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
                     var target = button.getAttribute('data-target');
                     window.switchServiceTab(target);
                 });
             });
 
+            // Sync tab button highlight ke pane yang PHP-render sebagai active
+            var activePane = document.querySelector('.ks-tab-pane.active');
+            var defaultTarget = activePane ? activePane.id : 'workorder-details';
+            window.switchServiceTab(defaultTarget);
+
             document.querySelectorAll('form').forEach(function(form) {
                 form.addEventListener('submit', function() {
-                    var activeButton = document.querySelector('.rd-tab-btn.active');
-                    var activeTarget = activeButton ? activeButton.getAttribute('data-target') : 'service-details';
+                    var activeButton = document.querySelector('.ks-tab-btn.active');
+                    var activeTarget = activeButton ? activeButton.getAttribute('data-target') : 'workorder-details';
                     ensureTabField(form, getTabParam(activeTarget));
                 });
             });
@@ -3013,11 +2761,11 @@
         }
 
         window.switchServiceTab = function(target) {
-            document.querySelectorAll('.rd-tab-btn').forEach(function(btn) {
+            document.querySelectorAll('.ks-tab-btn').forEach(function(btn) {
                 btn.classList.toggle('active', btn.getAttribute('data-target') === target);
             });
 
-            document.querySelectorAll('.rd-tab-pane').forEach(function(pane) {
+            document.querySelectorAll('.ks-tab-pane').forEach(function(pane) {
                 pane.classList.toggle('active', pane.id === target);
             });
 

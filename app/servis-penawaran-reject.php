@@ -30,18 +30,10 @@ if($penawaran_id == 0 || empty($no_service)) {
     exit;
 }
 
-// Normalisasi alasan
-$valid_alasan = ['customer_tidak_mau','stok_cabang_kosong','stok_supplier_kosong','harga_tidak_cocok','lainnya'];
+// Normalisasi alasan — harus sesuai ENUM kolom alasan_tolak di database
+$valid_alasan = ['customer_tidak_mau','stok_bengkel_kosong','stok_supplier_kosong','harga_tidak_cocok','lainnya'];
 if(!in_array($alasan_code, $valid_alasan, true)) {
-    // Backward compatibility mapping
-    $map = [
-        'stok_bengkel_kosong' => 'stok_cabang_kosong',
-        'stok_supplier_kosong' => 'stok_supplier_kosong',
-        'customer_tidak_mau' => 'customer_tidak_mau',
-        'harga_tidak_cocok' => 'harga_tidak_cocok',
-        'lainnya' => 'lainnya',
-    ];
-    $alasan_code = $map[$alasan_code] ?? 'lainnya';
+    $alasan_code = 'lainnya';
 }
 
 // Get penawaran data

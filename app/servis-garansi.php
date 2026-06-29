@@ -795,13 +795,13 @@
              echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if(!$('.alert-km-missing').length) {
-                         var warningMsg = '<div class=\"alert alert-danger alert-dismissible alert-km-missing\" style=\"margin: 10px 0;\">';
-                         warningMsg += '<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>';
-                         warningMsg += '<i class=\"icon fa fa-warning\"></i> <strong>PERHATIAN!</strong> ';
-                         warningMsg += 'Kepala Mekanik Harian untuk tanggal hari ini belum diinput. ';
-                         warningMsg += '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold; text-decoration:underline;\">Klik disini untuk input sekarang</a>';
+                         var warningMsg = '<div class=\"alert alert-danger alert-dismissible alert-km-missing\" style=\"margin:0 0 6px;font-size:11px;padding:6px 10px;border-radius:4px;\">';
+                         warningMsg += '<button type=\"button\" class=\"close\" data-dismiss=\"alert\" style=\"font-size:14px;line-height:1;\">&times;</button>';
+                         warningMsg += '<i class=\"fa fa-warning\"></i> <strong>KM Harian belum diinput!</strong> ';
+                         warningMsg += '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold;\">Input sekarang</a>';
                          warningMsg += '</div>';
-                         $('.page-content').prepend(warningMsg);
+                         var _cont = $('.ks-left')[0] || $('.page-content')[0] || document.body;
+                         $(_cont).prepend(warningMsg);
                     }
                 });
             </script>";
@@ -1095,271 +1095,213 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>Input Service Garansi - <?php include "../lib/titel.php"; ?></title>
-
-    <meta name="description" content="Input Service Garansi" />
+    <title>FIT MOTOR - Input Service Garansi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-
-    <!-- Bootstrap 4 & FontAwesome (Local files to avoid CDN blocking) -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
-    <!-- jQuery UI -->
     <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css" />
-
-    <!-- Redesign Styles -->
     <?php include "_template/_redesign_styles.php"; ?>
+    <?php include "_template/_kasir_3col_layout.php"; ?>
 
     <style>
-        /* Purple Theme for Warranty/Guarantee Service */
-        :root {
-            --warranty-primary: #9b59b6;
-            --warranty-primary-dark: #8e44ad;
-            --warranty-primary-light: rgba(155, 89, 182, 0.1);
-        }
-
-        body {
-            background: #f5f6fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
-        /* Header Section */
-        .warranty-header {
-            background: linear-gradient(135deg, var(--warranty-primary) 0%, var(--warranty-primary-dark) 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.2);
-        }
-
-        .warranty-header h3 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .warranty-header .badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .warranty-header .service-info {
-            margin-top: 12px;
-            display: flex;
-            gap: 24px;
-            font-size: 14px;
-            opacity: 0.95;
-        }
-
-        .warranty-header .service-info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Override tab colors to purple */
-        .rd-tab-btn.active {
-            background: var(--rd-bg-white);
-            color: var(--warranty-primary);
-        }
-
-        .rd-tab-btn:hover {
-            color: var(--warranty-primary);
-        }
-
-        .rd-tab-btn.active .rd-badge,
-        .rd-tab-btn:hover .rd-badge {
-            background: var(--warranty-primary-light);
-            color: var(--warranty-primary);
-        }
-
-        .rd-card.primary { border-left: 4px solid var(--warranty-primary); }
-        .rd-card-header h5 i { color: var(--warranty-primary); }
-        .rd-btn.primary { background: var(--warranty-primary); }
-        .rd-btn.primary:hover { background: var(--warranty-primary-dark); }
-        .rd-badge.primary { background: var(--warranty-primary-light); color: var(--warranty-primary); }
-        .rd-text-primary { color: var(--warranty-primary); }
-
-        /* Container */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Print styles */
-        @media print {
-            .rd-tabs-nav,
-            .rd-btn,
-            .warranty-header .badge {
-                display: none !important;
-            }
-        }
+        .ks-tab-btn.active { border-bottom-color: #27ae60 !important; color: #27ae60 !important; }
+        .ks-status-pill.garansi { background: rgba(39,174,96,.15); color: #27ae60; border-color: rgba(39,174,96,.3); }
+        .ks-btn-bayar { background: linear-gradient(135deg,#27ae60,#2ecc71) !important; }
+        .ks-garansi-input { background:#f0fff4; border:1px solid #c3e6cb; border-radius:8px; padding:10px; margin-bottom:6px; }
+        .ks-garansi-input label { font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:#27ae60; font-weight:700; display:block; margin-bottom:3px; }
+        .ks-garansi-input input, .ks-garansi-input textarea { width:100%; border:1px solid #c3e6cb; border-radius:4px; padding:5px 8px; font-size:12px; box-sizing:border-box; }
+        .ks-garansi-input textarea { resize:vertical; min-height:55px; }
     </style>
-
-    <!-- Scripts: Use local files directly to avoid CDN blocking issues -->
     <script src="assets/js/jquery-2.1.4.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/jquery-ui.custom.min.js"></script>
 </head>
-
+<?php
+// Variable aliases & defaults for ks-shell templates
+$tipe_servis           = 'GARANSI';
+$tahun_buat            = isset($vehicleRow) ? ($vehicleRow['tahun_buat'] ?? '') : '';
+$keluhan               = $keluhan ?? '';
+$no_pelanggan          = $kode_pelanggan ?? '';
+$metode_pembayaran     = $metode_pembayaran ?? 'Tunai';
+$auto_discount_percent = 0;
+$discount_amount       = 0;
+$total_barang = 0; $total_service = 0;
+if (!empty($no_service)) {
+    $__rb = mysqli_query($koneksi, "SELECT COALESCE(SUM(total),0) AS t FROM tblservis_barang WHERE no_service='".mysqli_real_escape_string($koneksi,$no_service)."'");
+    if ($__rb && ($__r = mysqli_fetch_assoc($__rb))) $total_barang = (float)$__r['t'];
+    $__rs = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_harga),0) AS t FROM tblservis_jasa WHERE no_service='".mysqli_real_escape_string($koneksi,$no_service)."'");
+    if ($__rs && ($__r = mysqli_fetch_assoc($__rs))) $total_service = (float)$__r['t'];
+}
+$tot = $total_barang + $total_service;
+$net = $tot;
+$bayar = 0; $kembalian = 0;
+$center_active = 'workorder-details';
+?>
 <body>
-    <div class="main-container">
-        <!-- Header Section -->
-        <div class="warranty-header">
-            <h3>
-                <i class="fa fa-shield"></i>
-                Input Service Garansi
-                <span class="badge">GARANSI</span>
-            </h3>
-            <?php if(!empty($no_service)): ?>
-            <div class="service-info">
-                <div class="service-info-item">
-                    <i class="fa fa-file-alt"></i>
-                    <strong>No. Service:</strong> <?php echo $no_service; ?>
-                </div>
-                <div class="service-info-item">
-                    <i class="fa fa-calendar"></i>
-                    <strong>Tanggal:</strong> <?php echo $tanggal; ?>
-                </div>
-                <div class="service-info-item">
-                    <i class="fa fa-clock"></i>
-                    <strong>Jam:</strong> <?php echo $jam; ?>
-                </div>
+<div class="ks-shell">
+
+    <!-- TOP BAR -->
+    <div class="ks-topbar">
+        <a href="index.php?pg=menu_servis01" class="ks-topbar-brand">
+            <i class="fa fa-motorcycle"></i> FIT MOTOR
+        </a>
+        <div class="ks-topbar-info">
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Service</span>
+                <span class="val"><?= htmlspecialchars($no_service ?: 'BARU') ?></span>
+            </div>
+            <div class="ks-topbar-divider"></div>
+            <span class="ks-status-pill garansi">GARANSI</span>
+            <?php if(!empty($namapelanggan)): ?>
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">Pelanggan</span>
+                <span class="val"><?= htmlspecialchars($namapelanggan) ?></span>
+            </div>
+            <?php endif; ?>
+            <?php if(!empty($no_polisi)): ?>
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Polisi</span>
+                <span class="val"><?= htmlspecialchars($no_polisi) ?></span>
             </div>
             <?php endif; ?>
         </div>
-
-        <!-- Previous Service Reference (Read-Only) - Only shown when ref_service is provided -->
-        <?php if(!empty($ref_service) && !empty($ref_service_data)): ?>
-            <?php include "_template/tab-previous-service-readonly.php"; ?>
-        <?php endif; ?>
-
-        <!-- Tab Navigation -->
-        <div class="rd-tabs-nav">
-            <button class="rd-tab-btn active" data-tab="detail">
-                <i class="fa fa-info-circle"></i>
-                Detail Service
-            </button>
-            <button class="rd-tab-btn" data-tab="workorder">
-                <i class="fa fa-tasks"></i>
-                Work Order
-            </button>
-            <button class="rd-tab-btn" data-tab="temuan">
-                <i class="fa fa-search"></i>
-                Temuan & Penawaran
-            </button>
-            <button class="rd-tab-btn" data-tab="service-items">
-                <i class="fa fa-boxes"></i>
-                Item Barang
-            </button>
-            <button class="rd-tab-btn" data-tab="service-jasa">
-                <i class="fa fa-tools"></i>
-                Item Jasa
-            </button>
-            <button class="rd-tab-btn" data-tab="actions">
-                <i class="fa fa-money-bill-wave"></i>
-                Actions/Pembayaran
-            </button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-            <!-- Tab 1: Detail Service -->
-            <div class="tab-pane active" id="detail">
-                <?php include "_template/tab-detail-service-redesign.php"; ?>
+        <div class="ks-topbar-right">
+            <div class="ks-total-live-wrap">
+                <span class="lbl">Total</span>
+                <span class="ks-total-live" id="ks-live-total">Rp <?= number_format($net,0,',','.') ?></span>
             </div>
-
-            <!-- Tab 2: Work Order -->
-            <div class="tab-pane" id="workorder">
-                <?php include "_template/tab-workorder-redesign.php"; ?>
-            </div>
-
-            <!-- Tab 3: Temuan & Penawaran -->
-            <div class="tab-pane" id="temuan">
-                <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
-            </div>
-
-            <!-- Tab 4: Item Barang -->
-            <div class="tab-pane" id="service-items">
-                <?php include "_template/tab-item-barang-redesign.php"; ?>
-            </div>
-
-            <!-- Tab 5: Item Jasa -->
-            <div class="tab-pane" id="service-jasa">
-                <?php include "_template/tab-item-jasa-redesign.php"; ?>
-            </div>
-
-            <!-- Tab 6: Actions/Pembayaran -->
-            <div class="tab-pane" id="actions">
-                <?php include "_template/tab-actions-redesign.php"; ?>
-            </div>
-        </div>
-
-        <!-- Back Button -->
-        <div class="mt-4 text-center">
-            <a href="index.php?pg=menu_servis01" class="rd-btn outline-neutral">
-                <i class="fa fa-arrow-left"></i>
-                Kembali ke Daftar Service
+            <a href="index.php?pg=menu_servis01" class="ks-topbar-btn">
+                <i class="fa fa-arrow-left"></i> Kembali
             </a>
+            <div class="ks-user-badge">
+                <img src="<?= htmlspecialchars($foto_user) ?>" class="ks-user-photo" onerror="this.src='file_upload/avatar.png'">
+                <span class="ks-user-name"><?= htmlspecialchars($_nama) ?></span>
+            </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <?php include "_template/modal-search-temuan.php"; ?>
-    <?php include "_template/modal-search-keluhan.php"; ?>
-    <?php include "_template/modal-tambah-keluhan-baru.php"; ?>
-    <?php include "_template/modal-input-barang-custom.php"; ?>
-    <?php include "_template/modal-fastmoves-part.php"; ?>
+    <form method="POST" action="" enctype="multipart/form-data" id="formService">
+        <input type="hidden" name="txtnosrv" value="<?= htmlspecialchars($no_service) ?>">
+        <input type="hidden" name="kode_pelanggan" value="<?= htmlspecialchars($kode_pelanggan) ?>">
+        <input type="hidden" name="no_polisi" value="<?= htmlspecialchars($no_polisi) ?>">
+        <div class="ks-body">
 
-    <!-- Tab Switching Script -->
-    <script>
-    $(document).ready(function() {
-        // Tab switching
-        $('.rd-tab-btn').click(function() {
-            const targetTab = $(this).data('tab');
+            <!-- LEFT PANEL -->
+            <div class="ks-left">
+                <!-- Garansi-specific: Tanggal, Jam, Keluhan -->
+                <div class="ks-garansi-input">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+                        <div>
+                            <label><i class="fa fa-calendar"></i> Tanggal</label>
+                            <input type="text" class="date-picker" id="id-date-picker-1" name="id-date-picker-1"
+                                   value="<?= htmlspecialchars($tanggal ?: date('d/m/Y')) ?>" placeholder="dd/mm/yyyy">
+                        </div>
+                        <div>
+                            <label><i class="fa fa-clock-o"></i> Jam</label>
+                            <input type="time" id="jam_service" name="jam_service"
+                                   value="<?= htmlspecialchars($jam ?: date('H:i')) ?>">
+                        </div>
+                    </div>
+                    <label><i class="fa fa-comment"></i> Keluhan Garansi</label>
+                    <textarea name="keluhan" placeholder="Deskripsi keluhan untuk service garansi..."><?= htmlspecialchars($keluhan) ?></textarea>
+                </div>
+                <?php if(!empty($ref_service) && !empty($ref_service_data)): ?>
+                <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:8px;font-size:11px;margin-bottom:4px;">
+                    <div style="font-weight:700;color:#f57c00;font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">
+                        <i class="fa fa-link"></i> Ref. Service Asli
+                    </div>
+                    <div style="font-weight:700;color:#333;"><?= htmlspecialchars($ref_service) ?></div>
+                    <?php if(!empty($ref_service_data['tanggal'])): ?>
+                    <div style="color:#777;">Tgl: <?= date('d/m/Y', strtotime($ref_service_data['tanggal'])) ?></div>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+                <?php include "_template/panel-kiri-kasir.php"; ?>
+            </div>
 
-            // Update active states
-            $('.rd-tab-btn').removeClass('active');
-            $(this).addClass('active');
+            <!-- CENTER: TABS -->
+            <div class="ks-center">
+                <div class="ks-tab-bar">
+                    <?php
+                    $__wc = 0;
+                    if(!empty($no_service)) {
+                        $__wq = mysqli_query($koneksi,"SELECT COUNT(*) AS c FROM tblservis_wo WHERE no_service='".mysqli_real_escape_string($koneksi,$no_service)."'");
+                        if($__wq) $__wc = (int)mysqli_fetch_assoc($__wq)['c'];
+                    }
+                    ?>
+                    <a class="ks-tab-btn active" data-target="workorder-details" href="#">
+                        <i class="fa fa-tasks"></i> Work Order
+                        <?php if($__wc > 0): ?><span class="ks-badge"><?= $__wc ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn" data-target="temuan-penawaran" href="#">
+                        <i class="fa fa-search"></i> Temuan & Penawaran
+                    </a>
+                    <a class="ks-tab-btn" data-target="service-items" href="#">
+                        <i class="fa fa-boxes"></i> Suku Cadang
+                    </a>
+                    <a class="ks-tab-btn" data-target="service-jasa" href="#">
+                        <i class="fa fa-tools"></i> Jasa Service
+                    </a>
+                </div>
+                <div class="ks-tab-contents">
+                    <div id="workorder-details" class="ks-tab-pane active">
+                        <?php include "_template/tab-workorder-redesign.php"; ?>
+                    </div>
+                    <div id="temuan-penawaran" class="ks-tab-pane">
+                        <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
+                    </div>
+                    <div id="service-items" class="ks-tab-pane">
+                        <?php include "_template/tab-item-barang-redesign.php"; ?>
+                    </div>
+                    <div id="service-jasa" class="ks-tab-pane">
+                        <?php include "_template/tab-item-jasa-redesign.php"; ?>
+                    </div>
+                </div>
+            </div>
 
-            // Show target tab
-            $('.tab-pane').removeClass('active');
-            $('#' + targetTab).addClass('active');
+            <!-- RIGHT PANEL -->
+            <div class="ks-right">
+                <?php include "_template/panel-kanan-kasir.php"; ?>
+            </div>
 
-            // Update URL without reload
-            const url = new URL(window.location);
-            url.searchParams.set('tab', targetTab);
-            window.history.pushState({}, '', url);
-        });
+        </div>
+    </form>
+</div>
 
-        // Handle URL tab parameter on load
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeTab = urlParams.get('tab');
+<!-- Modals -->
+<?php include "_template/modal-search-temuan.php"; ?>
+<?php include "_template/modal-search-keluhan.php"; ?>
+<?php include "_template/modal-tambah-keluhan-baru.php"; ?>
+<?php include "_template/modal-input-barang-custom.php"; ?>
+<?php include "_template/modal-fastmoves-part.php"; ?>
 
-        if (activeTab) {
-            $('.rd-tab-btn').removeClass('active');
-            $('.rd-tab-btn[data-tab="' + activeTab + '"]').addClass('active');
-
-            $('.tab-pane').removeClass('active');
-            $('#' + activeTab).addClass('active');
-        }
-
-        // Date picker initialization (only if jQuery UI datepicker is available)
-        if ($.fn.datepicker) {
-            $('.date-picker').datepicker({
-                dateFormat: 'dd/mm/yy',
-                changeMonth: true,
-                changeYear: true
-            });
-        }
+<script>
+$(document).ready(function() {
+    $('.ks-tab-btn').on('click', function(e) {
+        e.preventDefault();
+        var target = $(this).data('target');
+        $('.ks-tab-btn').removeClass('active');
+        $(this).addClass('active');
+        $('.ks-tab-pane').removeClass('active');
+        $('#' + target).addClass('active');
+        var url = new URL(window.location);
+        url.searchParams.set('tab', target);
+        window.history.pushState({}, '', url);
     });
-    </script>
+
+    // Handle URL tab param on load
+    var validTabs = ['workorder-details','temuan-penawaran','service-items','service-jasa'];
+    var activeTab = new URLSearchParams(window.location.search).get('tab');
+    if (activeTab && validTabs.indexOf(activeTab) !== -1) {
+        $('.ks-tab-btn[data-target="' + activeTab + '"]').trigger('click');
+    }
+
+    if ($.fn.datepicker) {
+        $('.date-picker').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+    }
+});
+</script>
 </body>
 </html>

@@ -1,0 +1,303 @@
+================================================================================
+  PLANNING IMPLEMENTASI - MODUL PENGADAAN ANTAR CABANG
+  Web Bengkel - FitMotor
+  Dibuat: 29 Juni 2026
+  Dasar: Hasil analisa database Access FitMotor (sudah berjalan)
+================================================================================
+
+CATATAN PENTING:
+Planning ini hanya mencakup hal-hal yang SUDAH TERJAWAB PASTI dari data Access.
+Fitur yang masih menunggu keputusan tim (approval, retur, ongkos kirim, dll)
+TIDAK dimasukkan dulu agar tidak salah bangun.
+
+
+================================================================================
+RINGKASAN JAWABAN YANG SUDAH PASTI (DASAR PLANNING INI)
+================================================================================
+
+  [PASTI] Q1  — Model PULL: Cabang yang request, pusat yang kirim
+  [PASTI] Q3  — Semua 4 cabang bisa request ke pusat
+  [PASTI] Q10 — Stok pusat berkurang saat proses penjualan ke cabang diinput
+  [PASTI] Q11 — Stok cabang bertambah saat cabang input penerimaan barang
+  [PASTI] Q13 — Harga transfer pakai HPP (harga modal/beli), bukan harga jual
+  [PASTI] Q18 — Pusat bisa lihat stok semua cabang (via GABUNG)
+  [PASTI] Q20 — Laporan konsolidasi stok semua cabang sudah ada di sistem lama
+  [PASTI] Q21 — Sistem saat ini masih di Access, sedang migrasi ke web
+  [PASTI] Q22 — 4 cabang aktif: Pesalakan, Pacul, Cikditiro, Trayeman
+  [PASTI] Q23 — Frekuensi tinggi: PACUL ~500 transaksi/tahun (hampir setiap hari)
+
+  [BELUM PASTI - SKIP DULU]
+  Q4  Approval → belum ada di Access, perlu keputusan tim
+  Q5  Siapa yang boleh order → belum ada di Access
+  Q6  Batas qty/nilai → belum ada di Access
+  Q7-9 Surat jalan & ekspedisi → belum tercatat digital
+  Q12 Selisih qty → belum ada mekanisme formal
+  Q14 Ongkos kirim → belum ada di data
+  Q15-17 Retur & pembatalan → belum ada di data
+
+
+================================================================================
+ALUR YANG AKAN DIBANGUN (BERDASARKAN KONDISI NYATA ACCESS)
+================================================================================
+
+  CABANG                          PUSAT
+  ------                          -----
+  1. Buat Permintaan (PS...)  -->  2. Lihat daftar permintaan masuk
+                                   3. Proses & input Penjualan ke Cabang
+                                      (stok pusat langsung berkurang)
+  5. Konfirmasi Terima        <--  4. Barang dikirim (manual/ekspedisi)
+  6. Input Penerimaan (BL...)
+     (stok cabang bertambah)
+
+  CATATAN PERBAIKAN vs SISTEM LAMA:
+  Sistem lama tidak punya langkah 4 (tracking pengiriman).
+  Sistem baru akan tambahkan status "Sedang Dikirim" agar ada rekam jejak.
+
+
+================================================================================
+FASE 1 -- FONDASI (Yang WAJIB ada dulu, tanpa ini tidak bisa jalan)
+================================================================================
+
+TARGET: Sistem bisa menggantikan proses yang sudah berjalan di Access.
+ESTIMASI: 2-3 minggu
+
+--------------------------------------------------------------------------------
+1.1 MASTER DATA CABANG
+--------------------------------------------------------------------------------
+Yang perlu ada:
+  - Daftar 4 cabang: Pesalakan (pusat), Pacul, Cikditiro, Trayeman
+  - Penanda mana yang berperan sebagai "pusat" (asal kirim)
+  - Setiap user terikat ke satu cabang
+
+Tabel yang dibutuhkan: tbcabang (sudah ada, perlu dicek kelengkapannya)
+
+--------------------------------------------------------------------------------
+1.2 FORM PERMINTAAN BARANG (dari Cabang ke Pusat)
+--------------------------------------------------------------------------------
+Yang perlu ada di form:
+  - Nomor permintaan otomatis (format: PS-TAHUN-CABANG-URUT)
+    contoh: PS-2026-PCL-001
+  - Tanggal permintaan
+  - Cabang pengirim (otomatis dari login)
+  - Daftar barang yang diminta: (kode barang | nama | qty yang diminta)
+  - Catatan tambahan (opsional)
+  - Status: DRAFT --> TERKIRIM
+
+Yang TIDAK perlu di fase ini (belum pasti):
+  - Approval (menunggu keputusan tim)
+  - Batas qty maksimal
+  - Ongkos kirim
+
+--------------------------------------------------------------------------------
+1.3 HALAMAN PUSAT -- KELOLA PERMINTAAN MASUK
+--------------------------------------------------------------------------------
+Yang perlu ada:
+  - Daftar semua permintaan dari semua cabang
+  - Filter: per cabang, per tanggal, per status
+  - Tombol "Proses" --> membuat transaksi penjualan ke cabang
+
+Saat pusat klik "Proses":
+  - Status permintaan berubah: TERKIRIM --> DIPROSES
+  - Stok pusat langsung berkurang (sesuai perilaku sistem Access saat ini)
+  - Nomor referensi penjualan dicatat di permintaan
+
+--------------------------------------------------------------------------------
+1.4 KONFIRMASI TERIMA (di Cabang)
+--------------------------------------------------------------------------------
+Yang perlu ada:
+  - Cabang melihat daftar barang "yang sedang dikirim ke saya"
+  - Tombol "Konfirmasi Terima"
+  - Input qty yang benar-benar diterima (boleh beda dari yang dipesan)
+  - Setelah konfirmasi: stok cabang bertambah
+
+Status akhir permintaan: SELESAI
+
+--------------------------------------------------------------------------------
+1.5 HARGA TRANSFER OTOMATIS
+--------------------------------------------------------------------------------
+Aturan yang sudah pasti dari data:
+  - Harga yang dipakai = HPP (harga modal/beli pusat)
+  - Bukan harga jual ke pelanggan
+  - Tidak ada markup antar cabang
+
+Implementasi:
+  - Saat pusat "proses" permintaan, sistem otomatis ambil HPP terbaru
+    dari master barang
+  - HPP ini yang tercatat sebagai nilai pembelian di cabang penerima
+
+
+================================================================================
+FASE 2 -- VISIBILITAS & LAPORAN (Setelah fase 1 selesai & berjalan)
+================================================================================
+
+TARGET: Pusat bisa pantau semua cabang dari satu layar.
+ESTIMASI: 1-2 minggu
+
+--------------------------------------------------------------------------------
+2.1 DASHBOARD PUSAT -- STOK SEMUA CABANG
+--------------------------------------------------------------------------------
+Yang perlu ada:
+  - Tabel: daftar barang vs stok di masing-masing cabang
+
+  Contoh tampilan:
+  Barang        | Pesalakan | Pacul | Cikditiro | Trayeman | TOTAL
+  Oli Shell 1L  |     50    |  12   |     8     |    5     |   75
+  Ban IRC 70/90 |     20    |   0   |     3     |    2     |   25
+
+  - Filter: per kategori barang, per nama barang
+  - Warna merah jika stok suatu cabang sudah nol/kritis
+
+  Dasar: Sistem lama sudah punya ini di FITMOTOR GABUNG,
+  tinggal dipindahkan ke web.
+
+--------------------------------------------------------------------------------
+2.2 RIWAYAT PENGADAAN ANTAR CABANG
+--------------------------------------------------------------------------------
+Yang perlu ada:
+  - Laporan semua transaksi antar cabang: dari cabang mana, barang apa,
+    qty berapa, tanggal kapan, nilai HPP berapa
+  - Filter: per cabang, per periode, per barang
+  - Bisa export ke Excel
+
+--------------------------------------------------------------------------------
+2.3 STATUS TRACKING PERMINTAAN
+--------------------------------------------------------------------------------
+Ini PERBAIKAN dari sistem lama (Access tidak punya ini):
+  - Status permintaan kelihatan jelas di layar:
+
+    DRAFT --> TERKIRIM KE PUSAT --> DIPROSES --> DALAM PERJALANAN --> SELESAI
+
+  - Cabang bisa pantau posisi pesanan mereka tanpa harus WA ke pusat
+  - Ini langsung mengurangi pertanyaan "barang saya sudah dikirim belum?"
+
+
+================================================================================
+FASE 3 -- PENAMBAHAN FITUR (Setelah tim jawab pertanyaan yang masih pending)
+================================================================================
+
+TARGET: Fitur lengkap sesuai kebutuhan operasional.
+ESTIMASI: Tergantung keputusan tim
+
+--------------------------------------------------------------------------------
+3.1 SISTEM APPROVAL (menunggu keputusan tim -- Q4)
+--------------------------------------------------------------------------------
+Jika tim memutuskan PERLU approval:
+  Alur tambahan:
+  TERKIRIM --> MENUNGGU APPROVAL --> (DISETUJUI / DITOLAK) --> DIPROSES
+
+Jika TIDAK perlu approval:
+  Langsung: TERKIRIM --> DIPROSES (seperti sistem Access sekarang)
+
+--------------------------------------------------------------------------------
+3.2 SURAT JALAN DIGITAL (menunggu keputusan tim -- Q7, Q8)
+--------------------------------------------------------------------------------
+Jika tim mau pakai surat jalan digital:
+  - Pusat bisa cetak/download surat jalan dari sistem
+  - Berisi: nomor permintaan, daftar barang, qty, tujuan cabang, tanggal kirim
+
+--------------------------------------------------------------------------------
+3.3 TERIMA SEBAGIAN / SELISIH QTY (menunggu keputusan -- Q12)
+--------------------------------------------------------------------------------
+Jika barang bisa diterima sebagian:
+  - Input qty actual yang diterima (boleh kurang dari yang dipesan)
+  - Sisa qty masuk status "menunggu kiriman berikutnya"
+  - Atau: sisa dianggap batal, harus buat permintaan baru
+
+--------------------------------------------------------------------------------
+3.4 RETUR BARANG KE PUSAT (menunggu keputusan -- Q15)
+--------------------------------------------------------------------------------
+Jika ada retur:
+  - Form retur: cabang buat permintaan retur
+  - Pusat konfirmasi terima retur
+  - Stok pusat bertambah, stok cabang berkurang
+
+
+================================================================================
+URUTAN PENGERJAAN YANG DISARANKAN
+================================================================================
+
+  MINGGU 1-2: Fase 1 (Fondasi -- sesuai kondisi nyata Access)
+  +-----------+----------------------------------------------------------+
+  | Hari 1-3  | Setup master data cabang, pastikan relasi user-cabang    |
+  | Hari 4-7  | Form permintaan barang (sisi cabang)                     |
+  | Hari 8-10 | Halaman kelola permintaan (sisi pusat) + update stok     |
+  | Hari 11-14| Konfirmasi terima + update stok cabang                   |
+  +-----------+----------------------------------------------------------+
+
+  MINGGU 3: Fase 2 (Visibilitas -- pindahkan fitur GABUNG ke web)
+  +-----------+----------------------------------------------------------+
+  | Hari 15-17| Dashboard stok semua cabang                              |
+  | Hari 18-20| Laporan riwayat pengadaan antar cabang                   |
+  | Hari 21   | Status tracking permintaan (DRAFT s/d SELESAI)           |
+  +-----------+----------------------------------------------------------+
+
+  MINGGU 4+: Fase 3 (Tambahan -- setelah tim jawab pertanyaan pending)
+  +-----------+----------------------------------------------------------+
+  | TBD       | Approval, surat jalan, retur, dll                        |
+  +-----------+----------------------------------------------------------+
+
+
+================================================================================
+PERTANYAAN TIM YANG MENENTUKAN FASE 3
+================================================================================
+
+  Ini 5 pertanyaan yang perlu dijawab sebelum fase 3 bisa dikerjakan:
+
+  NO  PERTANYAAN                                    DAMPAKNYA
+  --- --------------------------------------------- -------------------------
+  1   Perlu approval pusat sebelum barang dikirim?  Menentukan alur utama
+  2   Perlu surat jalan digital?                    Ada/tidaknya fitur cetak
+  3   Barang kurang dari pesanan, gimana?           Fitur partial receive
+  4   Ada retur barang ke pusat?                    Fitur retur
+  5   Ongkos kirim ditanggung siapa?                Kolom biaya di transaksi
+
+
+================================================================================
+CATATAN TEKNIS UNTUK DEVELOPER
+================================================================================
+
+  TABEL BARU YANG PERLU DIBUAT:
+
+  tblorder_antarcab_header
+    no_order          VARCHAR  -- format: PS + YY + 9 digit (sama Access)
+    kd_cabang_asal    VARCHAR  -- cabang yang request
+    kd_cabang_tujuan  VARCHAR  -- pusat (default Pesalakan)
+    tanggal_request   DATE
+    tanggal_proses    DATE     -- diisi saat pusat proses
+    tanggal_kirim     DATE     -- diisi saat pusat kirim (STATUS BARU)
+    tanggal_terima    DATE     -- diisi saat cabang konfirmasi
+    status            ENUM('draft','terkirim','diproses','dikirim','selesai')
+    no_penjualan      VARCHAR  -- referensi ke transaksi penjualan pusat
+    no_pembelian      VARCHAR  -- referensi ke transaksi pembelian cabang
+    catatan           TEXT
+    user_request      VARCHAR
+    user_proses       VARCHAR
+
+  tblorder_antarcab_detail
+    no_order          VARCHAR  -- FK ke header
+    no_baris          INT
+    no_item           VARCHAR  -- kode barang
+    qty_request       INT      -- yang diminta cabang
+    qty_kirim         INT      -- yang dikirim pusat (bisa beda)
+    qty_terima        INT      -- yang diterima cabang (bisa beda lagi)
+    harga_pokok       DECIMAL  -- HPP, diisi otomatis saat pusat proses
+    subtotal          DECIMAL
+
+  TABEL YANG SUDAH ADA & DIPAKAI:
+    tbcabang              --> data cabang (perlu cek kolom is_pusat)
+    tbstok                --> stok per cabang (update masuk/keluar)
+    tblpembelian_header   --> transaksi pembelian cabang (terima barang)
+    tblpenjualan_header   --> transaksi penjualan pusat (kirim barang)
+
+  NOMOR URUT PERMINTAAN:
+    Format sama dengan Access: PS + YY + 9 digit urut
+    Contoh: PS26000000001
+    Kode ini sudah ada di penerimaan_antarcab_proses.php -- tinggal dipakai.
+
+
+================================================================================
+  Dibuat oleh: Claude Code
+  Proyek: Web Bengkel FitMotor
+  Berlaku untuk: Modul Pengadaan Antar Cabang
+  Update terakhir: 29 Juni 2026
+================================================================================

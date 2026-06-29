@@ -46,6 +46,50 @@ if ($qHistory) {
         $historyRows[] = $row;
     }
 }
+
+// ── GABUNG direct-sync dataset registry ───────────────────────
+$gabungDatasets = [
+    ['rekap_konsumen',         'Rekap Kunjungan Konsumen',           'REKAP_KONSUMEN_DATA',                     'gabung_rekap_konsumen',        'CRM'],
+    ['rekap_kedatangan',       'Prediksi Kedatangan Berikutnya',     'REKAP_KONSUMEN_DATANGBERIKUTNYA_DATA',    'gabung_rekap_kedatangan',      'CRM'],
+    ['rekap_konsumen_wa',      'Rekap Konsumen + Nomor WA',          'REKAP_KONSUMEN_NOMOR_WA_DATA',            'gabung_rekap_konsumen_wa',     'CRM'],
+    ['nopolisi_domisili',      'Domisili No. Polisi per Cabang',     'NOPOLISI_DOMISILI_DATA',                  'gabung_nopolisi_domisili',     'CRM'],
+    ['pernah_jemputantar',     'Pernah Jemput Antar',                'PERNAH_JEMPUTANTAR_DATA',                 'gabung_pernah_jemputantar',    'CRM'],
+    ['rekap_peritem_terakhir', 'Rekap Item Terakhir Jual/Servis',    'REKAP_JUALSERVIS_PERITEM_TERAKHIR_DATA',  'gabung_rekap_peritem_terakhir','Analitik'],
+    ['rekonsil_antarcabang',   'Rekonsiliasi Jual-Beli Antar Cabang','REKONSIL_JUAL_BELI_ANTARCABANG_DATA',    'gabung_rekonsil_antarcabang',  'Analitik'],
+    ['hpp_acuan',              'Acuan HPP Pembelian',                'LABARUGI_ACUAN_HPP_PEMBELIAN_TEMP',       'gabung_hpp_acuan',             'Analitik'],
+    ['gabung_statistik_minggu','Statistik Item per Minggu',          'GABUNG_STATISTIK_ITEM_MINGGU_PIVOT',      'gabung_statistik_item_minggu', 'Analitik'],
+    ['tipemotor',              'Tipe Motor',                          'TIPEMOTOR',                               'tbtipemotor',                  'Master'],
+    ['bagi_hasil',             'Bagi Hasil',                          'BAGI_HASIL',                              'tbbagi_hasil',                 'Master'],
+    ['persen_insentif',        'Persentase Insentif',                 'PERSEN_INSENTIF',                         'tbpersen_insentif',            'Master'],
+    ['siklus',                 'Siklus per Cabang',                   'SIKLUS_{CABANG} (5 tabel)',               'tbsiklus',                     'Master'],
+    ['service_jemputantar',    'Service Jemput Antar',                'TBLService_JEMPUTANTAR_{CABANG}',         'tblservice_jemputantar',       'Transaksi'],
+    ['item_mutasi_header',     'Mutasi Masuk - Header',               'TBLItemMHeader_{CABANG}',                 'tblitem_mutasi_header',        'Transaksi'],
+    ['item_mutasi_detail',     'Mutasi Masuk - Detail',               'TBLItemMDetail_{CABANG}',                 'tblitem_mutasi_detail',        'Transaksi'],
+    ['item_koreksi_header',    'Koreksi Keluar - Header',             'TBLItemKHeader_{CABANG}',                 'tblitem_koreksi_header',       'Transaksi'],
+    ['item_koreksi_detail',    'Koreksi Keluar - Detail',             'TBLItemKDetail_{CABANG}',                 'tblitem_koreksi_detail',       'Transaksi'],
+];
+
+$gabungStatus = [];
+$qGabung = mysqli_query($koneksi,
+    "SELECT dataset_key,
+            MAX(finished_at) AS last_sync,
+            SUM(success_rows) AS total_rows,
+            SUBSTRING_INDEX(GROUP_CONCAT(status ORDER BY id DESC), ',', 1) AS last_status
+     FROM sync_gabung_log GROUP BY dataset_key"
+);
+if ($qGabung) {
+    while ($r = mysqli_fetch_assoc($qGabung)) {
+        $gabungStatus[$r['dataset_key']] = $r;
+    }
+}
+
+$gabungRowCounts = [];
+foreach ($gabungDatasets as $ds) {
+    $tbl = $ds[3];
+    if (isset($gabungRowCounts[$tbl])) continue;
+    $qc = mysqli_query($koneksi, "SELECT COUNT(*) AS c FROM `$tbl`");
+    $gabungRowCounts[$tbl] = $qc ? (int)mysqli_fetch_assoc($qc)['c'] : -1;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -366,6 +410,102 @@ python "E:\BENGKEL 2.0\migrate_nomor_wa.py" --dry</pre>
                                     <i class="fa fa-info-circle"></i>
                                     <strong>Setelah migrasi selesai</strong>, gunakan uploader di atas untuk sync incremental menggunakan dataset
                                     <code>Insentif Jual &amp; Servis</code>, <code>Harga Beli Per Item</code>, dan <code>Nomor WA Pelanggan</code>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ══════════════════════════════════════════════════════
+                         GABUNG DIRECT SYNC — FITMOTOR GABUNG.mdb
+                         ══════════════════════════════════════════════════════ -->
+                    <div class="widget-box" style="margin-bottom:20px;">
+                        <div class="widget-header" style="background:#1e5f74;color:#fff;padding:10px 15px;border-radius:4px 4px 0 0;">
+                            <h4 class="widget-title" style="color:#fff;margin:0;">
+                                <i class="fa fa-database"></i> GABUNG Direct Sync
+                                <small style="color:#a8d8ea;font-size:12px;margin-left:8px;">FITMOTOR GABUNG.mdb → MySQL</small>
+                            </h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="alert alert-info" style="margin-bottom:12px;">
+                                    <i class="fa fa-info-circle"></i>
+                                    Dataset ini disync langsung dari <code>E:\BENGKEL 2.0\FITMOTOR GABUNG.mdb</code> menggunakan VBScript.
+                                    Jalankan dari Windows Command Prompt:
+                                    <pre style="background:#1a1a2e;color:#e0e0e0;padding:10px;border-radius:4px;font-size:11px;margin:8px 0 0 0;">cd C:\laragon\www\web-bengkel\aplikasi\aplikasi
+
+cscript //NoLogo _sync_gabung_direct.vbs all
+<span style="color:#aaa;">' Atau per dataset:</span>
+cscript //NoLogo _sync_gabung_direct.vbs rekap_kedatangan
+cscript //NoLogo _sync_gabung_direct.vbs tipemotor</pre>
+                                </div>
+
+                                <?php
+                                $gabungGroups = array_unique(array_column($gabungDatasets, 4));
+                                foreach ($gabungGroups as $grp):
+                                    $groupItems = array_filter($gabungDatasets, fn($d) => $d[4] === $grp);
+                                    $grpColors = ['CRM'=>'#27ae60','Analitik'=>'#2980b9','Master'=>'#8e44ad','Transaksi'=>'#d35400'];
+                                    $grpColor  = $grpColors[$grp] ?? '#555';
+                                ?>
+                                <div style="margin-bottom:16px;">
+                                    <h5 style="color:<?= $grpColor ?>;border-bottom:2px solid <?= $grpColor ?>;padding-bottom:4px;margin-bottom:8px;">
+                                        <i class="fa fa-tag"></i> <?= htmlspecialchars($grp) ?>
+                                    </h5>
+                                    <table class="table table-condensed table-bordered" style="font-size:12px;margin:0;">
+                                        <thead style="background:#f5f5f5;">
+                                            <tr>
+                                                <th style="width:30px">#</th>
+                                                <th>Dataset</th>
+                                                <th>Sumber Access</th>
+                                                <th>Target MySQL</th>
+                                                <th class="text-center" style="width:100px">Baris MySQL</th>
+                                                <th class="text-center" style="width:80px">Status</th>
+                                                <th style="width:130px">Terakhir Sync</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php $idx = 1; foreach ($groupItems as $ds):
+                                            $dsKey   = $ds[0];
+                                            $dsLabel = $ds[1];
+                                            $dsSrc   = $ds[2];
+                                            $dsTbl   = $ds[3];
+                                            $rowCnt  = $gabungRowCounts[$dsTbl] ?? 0;
+                                            $st      = $gabungStatus[$dsKey] ?? null;
+                                            $lastSync = $st ? date('d/m/y H:i', strtotime($st['last_sync'])) : '—';
+                                            $lastSts  = $st['last_status'] ?? 'belum';
+                                            $stsClass = $lastSts === 'success' ? 'success' : ($lastSts === 'failed' ? 'danger' : 'default');
+                                        ?>
+                                        <tr>
+                                            <td class="text-muted"><?= $idx++ ?></td>
+                                            <td>
+                                                <strong><?= htmlspecialchars($dsLabel) ?></strong>
+                                                <br><code style="font-size:10px;color:#888;"><?= htmlspecialchars($dsKey) ?></code>
+                                            </td>
+                                            <td><code style="font-size:10px;"><?= htmlspecialchars($dsSrc) ?></code></td>
+                                            <td><code style="font-size:10px;"><?= htmlspecialchars($dsTbl) ?></code></td>
+                                            <td class="text-center">
+                                                <?php if ($rowCnt > 0): ?>
+                                                    <span class="label label-success"><?= number_format($rowCnt, 0, ',', '.') ?></span>
+                                                <?php else: ?>
+                                                    <span class="label label-default">0</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="label label-<?= $stsClass ?>"><?= htmlspecialchars($lastSts) ?></span>
+                                            </td>
+                                            <td class="text-muted" style="font-size:11px;"><?= $lastSync ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php endforeach; ?>
+
+                                <div class="alert alert-warning" style="margin-top:10px;margin-bottom:0;font-size:12px;">
+                                    <i class="fa fa-clock-o"></i>
+                                    <strong>Rekomendasi jadwal sync:</strong>
+                                    Dataset CRM &amp; Analitik (rekap_konsumen, rekap_kedatangan) — sync <strong>harian</strong>.
+                                    Master (tipemotor, siklus) — sync <strong>mingguan</strong>.
+                                    Transaksi (service_jemputantar, item_mutasi) — sync <strong>bulanan</strong>.
                                 </div>
                             </div>
                         </div>

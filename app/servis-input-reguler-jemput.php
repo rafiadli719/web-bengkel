@@ -36,6 +36,7 @@
 		include "_handler_temuan_penawaran.php";
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
+		include_once "helper-functions.php";
 
         if (!function_exists('normalizePostedInt')) {
             function normalizePostedInt($value, $default = 0)
@@ -51,27 +52,6 @@
                 return ($value === '' || $value === null) ? (int) $default : (int) $value;
             }
         }
-
-        // Ensure tbservis_pending_items exists (used by WO pending approval)
-        mysqli_query($koneksi, "CREATE TABLE IF NOT EXISTS tbservis_pending_items (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            no_service VARCHAR(50) NOT NULL,
-            wo_id INT NULL,
-            kode_item VARCHAR(50) NOT NULL,
-            nama_item VARCHAR(200) NOT NULL,
-            tipe ENUM('barang','jasa') NOT NULL,
-            quantity INT NOT NULL DEFAULT 1,
-            harga_satuan DECIMAL(18,2) NOT NULL DEFAULT 0,
-            total DECIMAL(18,2) NOT NULL DEFAULT 0,
-            waktu INT NOT NULL DEFAULT 0,
-            status_approval ENUM('pending','disetujui','ditolak') NOT NULL DEFAULT 'pending',
-            approved_by VARCHAR(50) NULL,
-            approved_at DATETIME NULL,
-            alasan_tolak VARCHAR(50) NULL,
-            keterangan_tolak VARCHAR(255) NULL,
-            created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
 		$cari_kd=mysqli_query($koneksi,"SELECT
                                         nama_user, password, user_akses, foto_user
@@ -1982,6 +1962,7 @@
         }
 
         // Calculate current totals from database
+        $tipe_servis = 'JEMPUT';
         $total_service = 0;
         $total_waktu = 0;
         $total_barang = 0;
@@ -2125,19 +2106,18 @@
                         return;
                     }
 
-                    var pageContent = document.querySelector('.page-content') || document.querySelector('.rd-page-wrapper');
+                    var pageContent = document.querySelector('.ks-left') || document.querySelector('.page-content') || document.querySelector('.rd-page-wrapper') || document.body;
                     if (!pageContent) {
                         return;
                     }
 
                     var warningWrapper = document.createElement('div');
                     warningWrapper.className = 'alert alert-danger alert-dismissible alert-km-missing';
-                    warningWrapper.style.margin = '10px 0';
+                    warningWrapper.style.cssText = 'margin:0 0 6px;font-size:11px;padding:6px 10px;border-radius:4px;';
                     warningWrapper.innerHTML =
-                        '<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>' +
-                        '<i class=\"icon fa fa-warning\"></i> <strong>PERHATIAN!</strong> ' +
-                        'Kepala Mekanik Harian untuk tanggal hari ini belum diinput. ' +
-                        '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold; text-decoration:underline;\">Klik disini untuk input sekarang</a>';
+                        '<button type=\"button\" class=\"close\" data-dismiss=\"alert\" style=\"font-size:14px;line-height:1;\">&times;</button>' +
+                        '<i class=\"fa fa-warning\"></i> <strong>KM Harian belum diinput!</strong> ' +
+                        '<a href=\"input_kepala_mekanik_harian.php\" style=\"font-weight:bold;\">Input sekarang</a>';
 
                     pageContent.insertBefore(warningWrapper, pageContent.firstChild);
                 });
@@ -2502,21 +2482,19 @@
             }
         }
 
-        // Update stock for items used in service
-        $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang
-                                        WHERE
-                                        no_service='$no_service'");
-        while ($tampil = mysqli_fetch_array($sql)) {
-            $no_item=$tampil['no_item'];
-            $qty=$tampil['quantity'];
-            mysqli_query($koneksi,"INSERT INTO tbstok
-                                (tipe, no_transaksi, no_item,
-                                tanggal, masuk, keluar, keterangan,
-                                kd_cabang)
-                                VALUES
-                                ('4','$no_service','$no_item',
-                                '$tanggal_srv','0','$qty',
-                                'Penjualan Service Jemput','$kd_cabang')");
+        // Update stock for items used in service — guard agar tidak double-insert
+        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+        $r_chk = mysqli_fetch_assoc($chk_stok);
+        if ((int)$r_chk['cnt'] === 0) {
+            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+            while ($tampil = mysqli_fetch_array($sql)) {
+                $no_item = $tampil['no_item'];
+                $qty     = (int)$tampil['quantity'];
+                mysqli_query($koneksi,"INSERT INTO tbstok
+                    (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                    VALUES
+                    ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
+            }
         }
 
         // ========== KIRIM WHATSAPP OTOMATIS ==========
@@ -2633,229 +2611,14 @@ if ((!isset($no_polisi) || empty($no_polisi)) && !empty($no_service) && isset($k
 
     <!-- Redesign Styles -->
     <?php include "_template/_redesign_styles.php"; ?>
+    <!-- Kasir 3-Column Layout -->
+    <?php include "_template/_kasir_3col_layout.php"; ?>
 
     <style>
-    /* Page-specific overrides - Jemput (Pickup) Mode - Orange/Amber Theme */
-    body {
-        background: #f4f6f9;
-        font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
-    }
-
-    .navbar {
-        min-height: 56px;
-        margin-bottom: 0;
-        border: 0;
-        border-radius: 0;
-        box-shadow: 0 2px 8px rgba(31, 45, 61, 0.12);
-    }
-
-    .navbar .container-fluid {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 56px;
-        padding: 0 16px;
-    }
-
-    .navbar .container-fluid::before,
-    .navbar .container-fluid::after {
-        content: none;
-        display: none;
-    }
-
-    .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        height: auto;
-        padding: 0;
-        color: #d8e6f3 !important;
-        font-size: 28px;
-        line-height: 1;
-    }
-
-    .navbar-brand i {
-        color: #2d7fd3;
-        font-size: 22px;
-    }
-
-    .navbar-nav {
-        margin: 0;
-        margin-left: auto;
-    }
-
-    .navbar .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-        color: #f3f7fb !important;
-    }
-
-    .navbar .nav-link:hover,
-    .navbar .nav-link:focus {
-        color: #ffffff !important;
-        text-decoration: none;
-    }
-
-    .navbar-user-photo {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 2px solid rgba(255,255,255,0.55);
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    .navbar-user-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        line-height: 1.15;
-        min-width: 0;
-    }
-
-    .navbar-user-info small {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-        opacity: .75;
-        margin-bottom: 2px;
-    }
-
-    .navbar-user-name {
-        font-size: 14px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .rd-page-wrapper {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .rd-page-header {
-        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-        color: white;
-        padding: 20px 24px;
-        border-radius: var(--rd-radius-lg);
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--rd-shadow-md);
-    }
-
-    .rd-page-header h1 {
-        margin: 0;
-        font-size: 22px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .rd-page-header .rd-breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        opacity: 0.9;
-    }
-
-    .rd-page-header .rd-breadcrumb a {
-        color: white;
-        text-decoration: none;
-    }
-
-    .rd-page-header .rd-breadcrumb a:hover {
-        text-decoration: underline;
-    }
-
-    /* Quick Summary Bar - Orange Theme */
-    .rd-quick-summary {
-        background: white;
-        border-radius: var(--rd-radius-md);
-        padding: 16px 24px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: var(--rd-shadow-sm);
-        border-left: 4px solid #e67e22;
-    }
-
-    .rd-quick-summary-left {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-    }
-
-    .rd-quick-summary-item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .rd-quick-summary-item .label {
-        font-size: 11px;
-        color: var(--rd-text-muted);
-        text-transform: uppercase;
-    }
-
-    .rd-quick-summary-item .value {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--rd-text-dark);
-    }
-
-    .rd-quick-summary-item .value.primary { color: #e67e22; }
-    .rd-quick-summary-item .value.warning { color: #e67e22; }
-
-    /* Tab Content Animation */
-    .rd-tab-pane {
-        display: none;
-        animation: rdFadeIn 0.3s ease;
-    }
-
-    .rd-tab-pane.active {
-        display: block;
-    }
-
-    @keyframes rdFadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Jemput Mode - Pickup Badge */
-    .rd-pickup-badge {
-        background: linear-gradient(135deg, #e67e22, #f39c12);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    /* Jemput Tab Nav Color Override */
-    .rd-tabs-nav .rd-tab-btn.active {
-        color: #e67e22;
-        border-bottom-color: #e67e22;
-    }
-
-    /* Override button colors for Jemput mode */
-    .rd-btn.warning {
-        background: linear-gradient(135deg, #e67e22, #f39c12);
-        color: white;
-    }
-
-    .rd-btn.warning:hover {
-        background: linear-gradient(135deg, #d35400, #e67e22);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
-    }
+    body { font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif; }
+    .ks-tab-btn.active { border-bottom-color: #e67e22 !important; color: #e67e22 !important; }
+    .ks-status-pill.jemput { background: linear-gradient(135deg, #e67e22, #f39c12); color: #fff; }
+    .ks-btn-bayar { background: linear-gradient(135deg, #e67e22, #f39c12) !important; }
     </style>
 
     <!-- Scripts loaded early so legacy inline handlers can safely use jQuery/$ -->
@@ -2865,214 +2628,137 @@ if ((!isset($no_polisi) || empty($no_polisi)) && !empty($no_service) && isset($k
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: #2C3E50;">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
-                <i class="fa fa-leaf"></i>
-                <?php include "../lib/subtitel.php"; ?>
+<div class="ks-shell">
+
+    <!-- Topbar -->
+    <div class="ks-topbar">
+        <a class="ks-topbar-brand" href="index.php">
+            <i class="fa fa-leaf"></i>
+            <?php include "../lib/subtitel.php"; ?>
+        </a>
+        <div class="ks-topbar-info">
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Service</span>
+                <span class="val"><?= htmlspecialchars($no_service ?: 'BARU') ?></span>
+            </div>
+            <span class="ks-status-pill jemput">
+                <i class="fa fa-truck-pickup"></i> JEMPUT
+            </span>
+            <div class="ks-topbar-divider"></div>
+            <div class="ks-topbar-item">
+                <span class="lbl">Pelanggan</span>
+                <span class="val"><?= htmlspecialchars($namapelanggan ?: '-') ?></span>
+            </div>
+            <div class="ks-topbar-item">
+                <span class="lbl">No. Polisi</span>
+                <span class="val"><?= htmlspecialchars($no_polisi ?: '-') ?></span>
+            </div>
+        </div>
+        <div class="ks-topbar-right">
+            <div class="ks-total-live-wrap">
+                <span class="lbl">Total</span>
+                <span class="ks-total-live" id="ks-live-total">
+                    Rp <?= number_format($net ?? $tot ?? 0, 0, ',', '.') ?>
+                </span>
+            </div>
+            <?php if(!empty($no_service)): ?>
+            <a href="servis-print.php?snoserv=<?= urlencode($no_service) ?>" class="ks-topbar-btn" target="_blank">
+                <i class="fa fa-print"></i> Print
             </a>
-
-            <div class="navbar-nav ml-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-toggle="dropdown">
-                        <img src="../<?php echo $foto_user; ?>" alt="User" class="navbar-user-photo">
-                        <span class="navbar-user-info">
-                            <small>Welcome,</small>
-                            <span class="navbar-user-name"><?php echo $_nama; ?></span>
-                        </span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="change_pwd.php">
-                            <i class="fa fa-cog"></i> Change Password
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="../logout.php">
-                            <i class="fa fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </div>
+            <?php endif; ?>
+            <a href="servis-reguler-jemput.php" class="ks-topbar-btn">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+            <div class="ks-user-badge">
+                <img src="../<?= $foto_user ?>" alt="User" class="ks-user-photo">
+                <span class="ks-user-name"><?= htmlspecialchars($_nama) ?></span>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <div class="rd-page-wrapper">
-        <!-- Page Header -->
-        <div class="rd-page-header">
-            <div>
-                <h1>
-                    <i class="fa fa-truck-pickup"></i>
-                    Input Service Jemput
-                    <span class="rd-pickup-badge">
-                        <i class="fa fa-motorcycle"></i> JEMPUT
-                    </span>
-                </h1>
-                <div class="rd-breadcrumb" style="margin-top: 8px;">
-                    <a href="index.php"><i class="fa fa-home"></i></a>
-                    <span>/</span>
-                    <a href="servis-reguler-jemput.php">Daftar Service Jemput</a>
-                    <span>/</span>
-                    <span>Input Service Jemput</span>
-                </div>
-            </div>
-            <div class="d-flex gap-2">
-                <?php if(!empty($no_service)): ?>
-                <a href="servis-print.php?snoserv=<?= urlencode($no_service) ?>" class="rd-btn success" target="_blank">
-                    <i class="fa fa-print"></i> Print
-                </a>
-                <?php endif; ?>
-                <a href="servis-reguler-jemput.php" class="rd-btn" style="background: rgba(255,255,255,0.2); color: white; margin-left: 8px;">
-                    <i class="fa fa-arrow-left"></i> Kembali
-                </a>
-            </div>
-        </div>
+    <!-- 3-Column Form -->
+    <form method="POST" action="" id="formServiceJemput" enctype="multipart/form-data">
+        <input type="hidden" name="txtnosrv" value="<?= htmlspecialchars($no_service) ?>">
+        <input type="hidden" name="current_tab" id="current_tab" value="<?= htmlspecialchars($active_tab) ?>">
 
-        <!-- Quick Summary Bar -->
-        <?php if(!empty($no_service)): ?>
-        <div class="rd-quick-summary">
-            <div class="rd-quick-summary-left">
-                <div class="rd-quick-summary-item">
-                    <span class="label">No. Service</span>
-                    <span class="value primary"><?= htmlspecialchars($no_service) ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">Pelanggan</span>
-                    <span class="value"><?= htmlspecialchars($namapelanggan) ?: '-' ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">No. Polisi</span>
-                    <span class="value"><?= htmlspecialchars($no_polisi) ?: '-' ?></span>
-                </div>
-                <div class="rd-quick-summary-item">
-                    <span class="label">Status</span>
-                    <span class="rd-badge solid-warning">
-                        <i class="fa fa-truck-pickup"></i> JEMPUT
-                    </span>
-                </div>
-            </div>
-            <div class="rd-quick-summary-right">
-                <div class="rd-quick-summary-item" style="text-align: right;">
-                    <span class="label">Total</span>
-                    <span class="value warning" style="font-size: 20px;">
-                        Rp <?= number_format($tot, 0, ',', '.') ?>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Active Discount Banner -->
         <?php
-        // Display active discount banner if applicable
         if(function_exists('displayActiveDiscountBanner') && !empty($no_polisi)) {
             echo displayActiveDiscountBanner($koneksi, $no_polisi);
         }
         ?>
 
-        <!-- Main Form -->
-        <form method="POST" action="" id="formServiceJemput" enctype="multipart/form-data">
-            <input type="hidden" name="txtnosrv" value="<?= htmlspecialchars($no_service) ?>">
-            <input type="hidden" name="current_tab" id="current_tab" value="<?= htmlspecialchars($active_tab) ?>">
+        <div class="ks-body">
 
-            <!-- Tab Navigation -->
-            <div class="rd-tabs-nav">
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'service-details' ? 'active' : '' ?>" data-target="service-details">
-                    <i class="fa fa-info-circle"></i>
-                    Detail Service
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'pickup-details' ? 'active' : '' ?>" data-target="pickup-details">
-                    <i class="fa fa-map-marked-alt"></i>
-                    Detail Jemput
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'workorder-details' ? 'active' : '' ?>" data-target="workorder-details">
-                    <i class="fa fa-clipboard-list"></i>
-                    Work Order
-                    <?php
-                    $count_wo = 0;
-                    if(!empty($no_service)) {
-                        $sql_wo_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tbservis_workorder WHERE no_service='$no_service'");
-                        if($sql_wo_count) { $count_wo = mysqli_fetch_array($sql_wo_count)['total']; }
-                    }
-                    if($count_wo > 0): ?>
-                    <span class="rd-badge"><?= $count_wo ?></span>
-                    <?php endif; ?>
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'temuan-penawaran' ? 'active' : '' ?>" data-target="temuan-penawaran">
-                    <i class="fa fa-search-plus"></i>
-                    Temuan & Penawaran
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'service-items' ? 'active' : '' ?>" data-target="service-items">
-                    <i class="fa fa-box"></i>
-                    Item Barang
-                    <?php
-                    $count_brg = 0;
-                    if(!empty($no_service)) {
-                        $sql_brg_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tblservis_barang WHERE no_service='$no_service'");
-                        if($sql_brg_count) { $count_brg = mysqli_fetch_array($sql_brg_count)['total']; }
-                    }
-                    if($count_brg > 0): ?>
-                    <span class="rd-badge"><?= $count_brg ?></span>
-                    <?php endif; ?>
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'service-jasa' ? 'active' : '' ?>" data-target="service-jasa">
-                    <i class="fa fa-tools"></i>
-                    Item Jasa
-                    <?php
-                    $count_jasa = 0;
-                    if(!empty($no_service)) {
-                        $sql_jasa_count = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tblservis_jasa WHERE no_service='$no_service'");
-                        if($sql_jasa_count) { $count_jasa = mysqli_fetch_array($sql_jasa_count)['total']; }
-                    }
-                    if($count_jasa > 0): ?>
-                    <span class="rd-badge"><?= $count_jasa ?></span>
-                    <?php endif; ?>
-                </button>
-                <button type="button" class="rd-tab-btn <?= $active_tab == 'service-actions' ? 'active' : '' ?>" data-target="service-actions">
-                    <i class="fa fa-cash-register"></i>
-                    Pembayaran
-                </button>
+            <!-- LEFT: Kendaraan + Keluhan + Mekanik -->
+            <div class="ks-left">
+                <?php include "_template/panel-kiri-kasir.php"; ?>
             </div>
 
-            <!-- Tab Contents -->
-            <div class="rd-tab-contents">
-                <!-- Tab 1: Detail Service -->
-                <div id="service-details" class="rd-tab-pane <?= $active_tab == 'service-details' ? 'active' : '' ?>">
-                    <?php include "_template/tab-detail-service-redesign.php"; ?>
+            <!-- CENTER: 5 Tabs (termasuk Detail Jemput) -->
+            <div class="ks-center">
+                <?php $tab_base_url = 'servis-input-reguler-jemput.php?snoserv=' . urlencode($no_service); ?>
+                <div class="ks-tabs-nav">
+                    <a class="ks-tab-btn <?= $active_tab=='pickup-details'?'active':'' ?>"
+                       data-target="pickup-details" href="<?= $tab_base_url ?>&tab=pickup">
+                        <i class="fa fa-map-marked-alt"></i> Detail Jemput
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='workorder-details'?'active':'' ?>"
+                       data-target="workorder-details" href="<?= $tab_base_url ?>&tab=workorder">
+                        <i class="fa fa-clipboard-list"></i> Work Order
+                        <?php $c_wo=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tbservis_workorder WHERE no_service='$no_service'"); if($r){$c_wo=mysqli_fetch_assoc($r)['c'];} if($c_wo>0): ?>
+                        <span class="ks-badge"><?= $c_wo ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='temuan-penawaran'?'active':'' ?>"
+                       data-target="temuan-penawaran" href="<?= $tab_base_url ?>&tab=temuan">
+                        <i class="fa fa-search-plus"></i> Temuan & Penawaran
+                        <?php $c_p=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tbservis_pending_items WHERE no_service='$no_service' AND status_approval='pending'"); if($r){$c_p=mysqli_fetch_assoc($r)['c'];} if($c_p>0): ?>
+                        <span class="ks-badge warning"><?= $c_p ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-items'?'active':'' ?>"
+                       data-target="service-items" href="<?= $tab_base_url ?>&tab=items">
+                        <i class="fa fa-box"></i> Suku Cadang
+                        <?php $c_b=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_barang WHERE no_service='$no_service'"); if($r){$c_b=mysqli_fetch_assoc($r)['c'];} if($c_b>0): ?>
+                        <span class="ks-badge"><?= $c_b ?></span><?php endif; ?>
+                    </a>
+                    <a class="ks-tab-btn <?= $active_tab=='service-jasa'?'active':'' ?>"
+                       data-target="service-jasa" href="<?= $tab_base_url ?>&tab=jasa">
+                        <i class="fa fa-tools"></i> Jasa Service
+                        <?php $c_j=0; $r=mysqli_query($koneksi,"SELECT COUNT(*) c FROM tblservis_jasa WHERE no_service='$no_service'"); if($r){$c_j=mysqli_fetch_assoc($r)['c'];} if($c_j>0): ?>
+                        <span class="ks-badge"><?= $c_j ?></span><?php endif; ?>
+                    </a>
                 </div>
-
-                <!-- Tab 2: Pickup Details -->
-                <div id="pickup-details" class="rd-tab-pane <?= $active_tab == 'pickup-details' ? 'active' : '' ?>">
-                    <?php include "_template/tab-pickup-details-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 3: Work Order -->
-                <div id="workorder-details" class="rd-tab-pane <?= $active_tab == 'workorder-details' ? 'active' : '' ?>">
-                    <?php include "_template/tab-workorder-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 4: Temuan & Penawaran -->
-                <div id="temuan-penawaran" class="rd-tab-pane <?= $active_tab == 'temuan-penawaran' ? 'active' : '' ?>">
-                    <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 5: Item Barang -->
-                <div id="service-items" class="rd-tab-pane <?= $active_tab == 'service-items' ? 'active' : '' ?>">
-                    <?php include "_template/tab-item-barang-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 6: Item Jasa -->
-                <div id="service-jasa" class="rd-tab-pane <?= $active_tab == 'service-jasa' ? 'active' : '' ?>">
-                    <?php include "_template/tab-item-jasa-redesign.php"; ?>
-                </div>
-
-                <!-- Tab 7: Pembayaran -->
-                <div id="service-actions" class="rd-tab-pane <?= $active_tab == 'service-actions' ? 'active' : '' ?>">
-                    <?php include "_template/tab-actions-redesign.php"; ?>
+                <div class="ks-tab-contents">
+                    <?php
+                    $center_active = in_array($active_tab, ['pickup-details','workorder-details','temuan-penawaran','service-items','service-jasa'])
+                                     ? $active_tab : 'pickup-details';
+                    ?>
+                    <div id="pickup-details" class="ks-tab-pane <?= $center_active=='pickup-details'?'active':'' ?>">
+                        <?php include "_template/tab-pickup-details-redesign.php"; ?>
+                    </div>
+                    <div id="workorder-details" class="ks-tab-pane <?= $center_active=='workorder-details'?'active':'' ?>">
+                        <?php include "_template/tab-workorder-redesign.php"; ?>
+                    </div>
+                    <div id="temuan-penawaran" class="ks-tab-pane <?= $center_active=='temuan-penawaran'?'active':'' ?>">
+                        <?php include "_template/tab-temuan-penawaran-redesign.php"; ?>
+                    </div>
+                    <div id="service-items" class="ks-tab-pane <?= $center_active=='service-items'?'active':'' ?>">
+                        <?php include "_template/tab-item-barang-redesign.php"; ?>
+                    </div>
+                    <div id="service-jasa" class="ks-tab-pane <?= $center_active=='service-jasa'?'active':'' ?>">
+                        <?php include "_template/tab-item-jasa-redesign.php"; ?>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
+
+            <!-- RIGHT: Ringkasan + Pembayaran -->
+            <div class="ks-right">
+                <?php include "_template/panel-kanan-kasir.php"; ?>
+            </div>
+
+        </div>
+    </form>
+</div>
 
     <!-- Include Modals -->
     <?php
@@ -3096,25 +2782,27 @@ if ((!isset($no_polisi) || empty($no_polisi)) && !empty($no_service) && isset($k
     <script>
     $(document).ready(function() {
         // Tab Navigation with state preservation
-        $('.rd-tab-btn').on('click', function() {
+        $('.ks-tab-btn').on('click', function(e) {
+            e.preventDefault();
             var target = $(this).data('target');
 
-            // Update active tab button
-            $('.rd-tab-btn').removeClass('active');
+            $('.ks-tab-btn').removeClass('active');
             $(this).addClass('active');
 
-            // Update active tab pane
-            $('.rd-tab-pane').removeClass('active');
+            $('.ks-tab-pane').removeClass('active');
             $('#' + target).addClass('active');
 
-            // Update hidden input for tab state preservation
             $('#current_tab').val(target);
 
-            // Update URL parameter without page reload
             var url = new URL(window.location);
             url.searchParams.set('tab', target);
             window.history.pushState({}, '', url);
         });
+
+        // Sync tab button highlight ke pane yang PHP-render sebagai active
+        var $activePane = $('.ks-tab-pane.active');
+        var defaultTarget = $activePane.length ? $activePane.attr('id') : 'detail-jemput';
+        $('.ks-tab-btn[data-target="' + defaultTarget + '"]').addClass('active');
 
         // Card body toggle
         window.toggleCardBody = function(header) {

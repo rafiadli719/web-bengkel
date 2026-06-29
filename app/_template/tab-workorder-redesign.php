@@ -89,40 +89,6 @@ $total_spk = $count_keluhan + $count_wo;
     </div>
 </div>
 
-<!-- Input Section - Keluhan -->
-<div class="rd-card warning">
-    <div class="rd-card-header collapsible" onclick="toggleCardBody(this)">
-        <h5><i class="fa fa-comment-alt"></i> Input Keluhan</h5>
-        <i class="fa fa-chevron-down rd-collapse-icon"></i>
-    </div>
-    <div class="rd-card-body">
-        <div class="rd-form-row" style="align-items: flex-end;">
-            <div class="rd-form-group" style="flex: 1;">
-                <label class="rd-label">Keluhan Pelanggan</label>
-                <div class="rd-input-group">
-                    <input type="hidden" name="kode_keluhan" id="kode_keluhan_v2" />
-                    <input type="text" name="txtkeluhan" id="txtkeluhan_v2" class="rd-input"
-                           placeholder="Ketik keluhan atau pilih dari master...">
-                    <button type="button" class="rd-btn outline-primary" onclick="$('#modal-search-keluhan').modal('show');">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="rd-form-group" style="flex: 0 0 auto;">
-                <button class="rd-btn warning" type="submit" name="btnaddkeluhan" id="btnaddkeluhan_v2" onclick="return validateKeluhanV2()">
-                    <i class="fa fa-plus"></i> Tambah Keluhan
-                </button>
-            </div>
-        </div>
-
-        <div style="margin-top: 12px;">
-            <button type="button" class="rd-btn sm outline-warning" onclick="openModalTambahKeluhanBaru()">
-                <i class="fa fa-plus-circle"></i> Keluhan Baru (Perlu Approval)
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- Input Section - Work Order -->
 <div class="rd-card info">
     <div class="rd-card-header collapsible" onclick="toggleCardBody(this)">

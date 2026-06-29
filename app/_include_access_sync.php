@@ -947,7 +947,7 @@ function accessSyncUpsertSupplier($koneksi, $row) {
     $tipePemasok = 'perusahaan';
     $lamaHariKirim = '0';
     $jangkaWaktuKredit = '0';
-    $sql = "INSERT INTO tblsupplier (nosupplier, namasupplier, tipe_pemasok, alamat, kota, propinsi, kodepost, negara, telephone, fax, namabank, noaccount, atasnama, kontakperson, email, note, saldoawal, pertanggal, jmlbayar, sisa, kd_cabang, lama_hari_kirim, jangka_waktu_kredit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tblsupplier (nosupplier, namasupplier, tipe_pemasok, alamat, kota, propinsi, kodepost, negara, telephone, fax, namabank, noaccount, atasnama, kontakperson, email, note, saldoawal, pertanggal, jmlbayar, sisa, kd_cabang, lama_hari_kirim, jangka_waktu_kredit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, 'sssssssssssssssssssssss',
         $defaults['no_supplier'], $defaults['nama_supplier'], $tipePemasok, $defaults['alamat'], $defaults['kota'], $defaults['propinsi'],
@@ -980,7 +980,7 @@ function accessSyncUpsertMekanik($koneksi, $row) {
 
     $kodePosisi = 'MK';
     $kodeLevel = 'MK-1';
-    $sql = "INSERT INTO tbuser_karyawan (kode_karyawan, nama_lengkap, kode_posisi, kode_level, kode_cabang, telp, alamat, spesialisasi) VALUES (?,?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tbuser_karyawan (kode_karyawan, nama_lengkap, kode_posisi, kode_level, kode_cabang, telp, alamat, spesialisasi) VALUES (?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, 'ssssssss', $row['no_mekanik'], $row['nama'], $kodePosisi, $kodeLevel, $row['kd_cabang'], $row['no_telepon'], $row['alamat'], $row['keahlian']);
     accessSyncExecuteStatementOrThrow($stmt);
@@ -1039,7 +1039,7 @@ function accessSyncUpsertItem($koneksi, $row) {
 
     $zero = '0';
     $empty = '';
-    $sql = "INSERT INTO tblitem (noitem, kodebarcode, namaitem, jenis, satuan, hargapokok, hargajual, hargajual2, hargajual3, hjqtyd2, hjqtyd3, hjqtys1, hjqtys2, totalpokok, quantity, stokmin, statusitem, supplier, supplier2, supplier3, statusproduk, gambar, note, rakbarang, jasawaktu, jasasatuanwaktu, jeniskomisi, komisiprosen, komisinominal, inv_idawal, inv_jmlawal, inv_hrgawal, inv_tglawal, stok_maks, kd_pabrik, kd_etalase, jenis_jasa) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tblitem (noitem, kodebarcode, namaitem, jenis, satuan, hargapokok, hargajual, hargajual2, hargajual3, hjqtyd2, hjqtyd3, hjqtys1, hjqtys2, totalpokok, quantity, stokmin, statusitem, supplier, supplier2, supplier3, statusproduk, gambar, note, rakbarang, jasawaktu, jasasatuanwaktu, jeniskomisi, komisiprosen, komisinominal, inv_idawal, inv_jmlawal, inv_hrgawal, inv_tglawal, stok_maks, kd_pabrik, kd_etalase, jenis_jasa) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, 'sssssssssssssssssssssssssssssssssssss',
         $defaults['no_item'], $defaults['kode_barcode'], $defaults['nama_item'], $defaults['jenis'], $defaults['satuan'],
@@ -1170,7 +1170,7 @@ function accessSyncUpsertPelanggan($koneksi, $row) {
     $perTanggal = date('Y-m-d');
     $tglLahir = '0001-01-01';
     $idPanggilan = '0';
-    $sql = "INSERT INTO tblpelanggan (nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tblpelanggan (nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, 'sssssssssssssssssssssss',
         $defaults['no_pelanggan'], $defaults['nama_pelanggan'], $defaults['alamat'], $defaults['kota'], $defaults['propinsi'],
@@ -1294,7 +1294,7 @@ function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {
     $defaultKodeJenis = '0';
     $defaultTahunRakit = '';
     $defaultKodeWarna = '0';
-    $sql = "INSERT INTO tblkendaraan
+    $sql = "INSERT IGNORE INTO tblkendaraan
                 (nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis,
                  tahun_buat, tahun_rakit, warna, kode_warna, note)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -1341,7 +1341,7 @@ function accessSyncApplyMemberPelanggan($koneksi, $row) {
     $perTanggal = date('Y-m-d');
     $tglLahir = '0001-01-01';
     $idPanggilan = '0';
-    $stmt = mysqli_prepare($koneksi, "INSERT INTO tblpelanggan (nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt = mysqli_prepare($koneksi, "INSERT IGNORE INTO tblpelanggan (nopelanggan, namapelanggan, alamat, kota, propinsi, kodepost, negara, telephone, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     mysqli_stmt_bind_param($stmt, 'sssssssssssssssssssssss',
         $row['no_pelanggan'], $row['no_pelanggan'], $empty, $empty, $empty, $empty, $empty, $empty, $empty, $empty, $empty, $zero, $empty, $empty, $groupCode,
         $patokan, $klat, $klong, $panggilan, $saldoAwal, $perTanggal, $tglLahir, $idPanggilan
@@ -1646,23 +1646,23 @@ function accessSyncUpsertServiceHistoryHeader($koneksi, $row) {
         'metode_pembayaran' => 'Tunai',
     ];
 
-    $existsStmt = mysqli_prepare($koneksi, "SELECT no_service FROM tblservice WHERE no_service = ? LIMIT 1");
-    mysqli_stmt_bind_param($existsStmt, 's', $noService);
+    $existsStmt = mysqli_prepare($koneksi, "SELECT no_service FROM tblservice WHERE no_service = ? AND kd_cabang = ? LIMIT 1");
+    mysqli_stmt_bind_param($existsStmt, 'ss', $noService, $kdCabang);
     mysqli_stmt_execute($existsStmt);
     $existsResult = mysqli_stmt_get_result($existsStmt);
     $found = mysqli_fetch_assoc($existsResult);
     mysqli_stmt_close($existsStmt);
 
     if ($found) {
-        $sql = "UPDATE tblservice SET tanggal=?, jam=?, no_pelanggan=?, no_polisi=?, status=?, kd_cabang=?, total=?, diskon_nom=?, ppn_nom=?, total_grand=?, bayar=?, total_waktu=?, keterangan=?, km_skr=?, mekanik1=?, mekanik2=?, mekanik3=?, mekanik4=?, biayaM1=?, biayaM2=?, biayaM3=?, biayaM4=?, km_berikut=?, subtotal_jasa=?, subtotal_item=?, subtotal=?, total_diskon=?, total_pajak=?, total_akhir=?, status_servis=?, metode_pembayaran=?, updated_at=NOW() WHERE no_service=?";
+        $sql = "UPDATE tblservice SET tanggal=?, jam=?, no_pelanggan=?, no_polisi=?, status=?, total=?, diskon_nom=?, ppn_nom=?, total_grand=?, bayar=?, total_waktu=?, keterangan=?, km_skr=?, mekanik1=?, mekanik2=?, mekanik3=?, mekanik4=?, biayaM1=?, biayaM2=?, biayaM3=?, biayaM4=?, km_berikut=?, subtotal_jasa=?, subtotal_item=?, subtotal=?, total_diskon=?, total_pajak=?, total_akhir=?, status_servis=?, metode_pembayaran=?, updated_at=NOW() WHERE no_service=? AND kd_cabang=?";
         $stmt = mysqli_prepare($koneksi, $sql);
         $params = [
-            $defaults['tanggal'], $defaults['jam'], $defaults['no_pelanggan'], $defaults['no_polisi'], $defaults['status'], $defaults['kd_cabang'],
+            $defaults['tanggal'], $defaults['jam'], $defaults['no_pelanggan'], $defaults['no_polisi'], $defaults['status'],
             (string) $defaults['total'], (string) $defaults['diskon_nom'], (string) $defaults['ppn_nom'], (string) $defaults['total_grand'], (string) $defaults['bayar'], (string) $defaults['total_waktu'],
             $defaults['keterangan'], (string) $defaults['km_skr'], $defaults['mekanik1'], $defaults['mekanik2'], $defaults['mekanik3'], $defaults['mekanik4'],
             (string) $defaults['biayaM1'], (string) $defaults['biayaM2'], (string) $defaults['biayaM3'], (string) $defaults['biayaM4'], (string) $defaults['km_berikut'],
             (string) $defaults['subtotal_jasa'], (string) $defaults['subtotal_item'], (string) $defaults['subtotal'], (string) $defaults['total_diskon'], (string) $defaults['total_pajak'],
-            (string) $defaults['total_akhir'], $defaults['status_servis'], $defaults['metode_pembayaran'], $noService
+            (string) $defaults['total_akhir'], $defaults['status_servis'], $defaults['metode_pembayaran'], $noService, $kdCabang
         ];
         mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
         accessSyncExecuteStatementOrThrow($stmt);
@@ -1670,7 +1670,7 @@ function accessSyncUpsertServiceHistoryHeader($koneksi, $row) {
         return 'updated';
     }
 
-    $sql = "INSERT INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, status, kd_cabang, id_user, total, diskon_nom, ppn_nom, total_grand, bayar, jenis_bayar, total_waktu, keterangan, km_skr, mekanik1, mekanik2, mekanik3, mekanik4, biayaM1, biayaM2, biayaM3, biayaM4, km_berikut, subtotal_jasa, subtotal_item, subtotal, total_diskon, total_pajak, total_akhir, status_servis, metode_pembayaran)
+    $sql = "INSERT IGNORE INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, status, kd_cabang, id_user, total, diskon_nom, ppn_nom, total_grand, bayar, jenis_bayar, total_waktu, keterangan, km_skr, mekanik1, mekanik2, mekanik3, mekanik4, biayaM1, biayaM2, biayaM3, biayaM4, km_berikut, subtotal_jasa, subtotal_item, subtotal, total_diskon, total_pajak, total_akhir, status_servis, metode_pembayaran)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
     $params = [
@@ -1702,8 +1702,9 @@ function accessSyncUpsertServiceHistoryBarang($koneksi, $row) {
     $potongan = (float) ($row['potongan'] ?? 0);
     $total = (float) ($row['total'] ?? 0);
 
-    $existsStmt = mysqli_prepare($koneksi, "SELECT id FROM tblservis_barang WHERE no_service = ? AND nobaris = ? AND no_item = ? LIMIT 1");
-    mysqli_stmt_bind_param($existsStmt, 'sis', $noService, $noBaris, $noItem);
+    $kdCabangBarang = accessSyncNormalizeCabangCode($row['kd_cabang'] ?? '');
+    $existsStmt = mysqli_prepare($koneksi, "SELECT id FROM tblservis_barang WHERE no_service = ? AND kd_cabang = ? AND nobaris = ? AND no_item = ? LIMIT 1");
+    mysqli_stmt_bind_param($existsStmt, 'ssis', $noService, $kdCabangBarang, $noBaris, $noItem);
     mysqli_stmt_execute($existsStmt);
     $existsResult = mysqli_stmt_get_result($existsStmt);
     $found = mysqli_fetch_assoc($existsResult);
@@ -1720,9 +1721,9 @@ function accessSyncUpsertServiceHistoryBarang($koneksi, $row) {
         return 'updated';
     }
 
-    $sql = "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total) VALUES (?,?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tblservis_barang (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total) VALUES (?,?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
-    $params = [$noService, (string) $noBaris, $noItem, (string) $quantity, (string) $qtyRetur, (string) $hargaJual, (string) $potongan, (string) $total];
+    $params = [$noService, $kdCabangBarang, (string) $noBaris, $noItem, (string) $quantity, (string) $qtyRetur, (string) $hargaJual, (string) $potongan, (string) $total];
     mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
@@ -1743,8 +1744,9 @@ function accessSyncUpsertServiceHistoryJasa($koneksi, $row) {
     $potongan = (float) ($row['potongan'] ?? 0);
     $total = (float) ($row['total'] ?? 0);
 
-    $existsStmt = mysqli_prepare($koneksi, "SELECT id FROM tblservis_jasa WHERE no_service = ? AND nobaris = ? AND no_item = ? LIMIT 1");
-    mysqli_stmt_bind_param($existsStmt, 'sis', $noService, $noBaris, $noItem);
+    $kdCabangJasa = accessSyncNormalizeCabangCode($row['kd_cabang'] ?? '');
+    $existsStmt = mysqli_prepare($koneksi, "SELECT id FROM tblservis_jasa WHERE no_service = ? AND kd_cabang = ? AND nobaris = ? AND no_item = ? LIMIT 1");
+    mysqli_stmt_bind_param($existsStmt, 'ssis', $noService, $kdCabangJasa, $noBaris, $noItem);
     mysqli_stmt_execute($existsStmt);
     $existsResult = mysqli_stmt_get_result($existsStmt);
     $found = mysqli_fetch_assoc($existsResult);
@@ -1761,9 +1763,9 @@ function accessSyncUpsertServiceHistoryJasa($koneksi, $row) {
         return 'updated';
     }
 
-    $sql = "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, waktu, harga, potongan, total) VALUES (?,?,?,?,?,?,?)";
+    $sql = "INSERT IGNORE INTO tblservis_jasa (no_service, kd_cabang, nobaris, no_item, waktu, harga, potongan, total) VALUES (?,?,?,?,?,?,?,?)";
     $stmt = mysqli_prepare($koneksi, $sql);
-    $params = [$noService, (string) $noBaris, $noItem, (string) $waktu, (string) $harga, (string) $potongan, (string) $total];
+    $params = [$noService, $kdCabangJasa, (string) $noBaris, $noItem, (string) $waktu, (string) $harga, (string) $potongan, (string) $total];
     mysqli_stmt_bind_param($stmt, str_repeat('s', count($params)), ...$params);
     accessSyncExecuteStatementOrThrow($stmt);
     mysqli_stmt_close($stmt);
@@ -1777,13 +1779,14 @@ function accessSyncReplaceServiceAdvisor($koneksi, $row) {
         return 'skipped';
     }
 
-    $deleteStmt = mysqli_prepare($koneksi, "DELETE FROM tblservice_advisor WHERE no_service = ?");
-    mysqli_stmt_bind_param($deleteStmt, 's', $noService);
+    $kdCabangAdv = accessSyncNormalizeCabangCode($row['kd_cabang'] ?? '');
+    $deleteStmt = mysqli_prepare($koneksi, "DELETE FROM tblservice_advisor WHERE no_service = ? AND kd_cabang = ?");
+    mysqli_stmt_bind_param($deleteStmt, 'ss', $noService, $kdCabangAdv);
     accessSyncExecuteStatementOrThrow($deleteStmt);
     mysqli_stmt_close($deleteStmt);
 
-    $insertStmt = mysqli_prepare($koneksi, "INSERT INTO tblservice_advisor (no_service, advisor) VALUES (?, ?)");
-    mysqli_stmt_bind_param($insertStmt, 'ss', $noService, $advisor);
+    $insertStmt = mysqli_prepare($koneksi, "INSERT INTO tblservice_advisor (no_service, kd_cabang, advisor) VALUES (?, ?, ?)");
+    mysqli_stmt_bind_param($insertStmt, 'sss', $noService, $kdCabangAdv, $advisor);
     accessSyncExecuteStatementOrThrow($insertStmt);
     mysqli_stmt_close($insertStmt);
     return 'replaced';

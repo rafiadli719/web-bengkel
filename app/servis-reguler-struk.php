@@ -1,7 +1,10 @@
 <?php
+    session_start();
+    if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
     include "../config/koneksi.php";
     include "_include_customer_vehicle_sync.php";
-	$no_service = $_GET['snoserv'];
+    include "helper-functions.php";
+    $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv'] ?? '');
 	$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
     
 // Data Perusahaan ===========
@@ -15,14 +18,15 @@
 // ===================
 
 // Data Transaksi Servis ==========       
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_serv, 
-                                        jam, no_pelanggan, no_polisi, 
-                                        total, 
-                                        diskon_persen, diskon_nom, 
-                                        ppn_persen, ppn_nom, 
-                                        total_grand, bayar, kembali 
-                                        FROM tblservice 
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_serv,
+                                        jam, no_pelanggan, no_polisi,
+                                        total,
+                                        diskon_persen, diskon_nom,
+                                        ppn_persen, ppn_nom,
+                                        total_grand, bayar, kembali,
+                                        mekanik1, mekanik2, mekanik3, mekanik4
+                                        FROM tblservice
                                         WHERE no_service='$no_service'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal=$tm_cari['tanggal_serv'];                
@@ -38,7 +42,10 @@
         $net=$tm_cari['total_grand'];
         $bayar=$tm_cari['bayar'];
         $kembali=$tm_cari['kembali'];
-                
+        $nama_mekanik = getMekanikNamaGabung($koneksi,
+            $tm_cari['mekanik1'], $tm_cari['mekanik2'],
+            $tm_cari['mekanik3'], $tm_cari['mekanik4']);
+
         $customerRow = fitmotorFindCustomerForService($koneksi, $kode_pelanggan, $no_polisi);
         $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi, $kode_pelanggan);
         $vehicleRow = $bundle['vehicle'] ?? [];
@@ -69,19 +76,19 @@
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_barang=$tm_cari['tot']; 
         
-        $query_jasa = mysqli_query($koneksi,"SELECT 
-                        id, no_item, waktu, harga, total, potongan 
-                    FROM 
-                        tblservis_jasa 
-                    WHERE 
-                        no_service='$no_service'");
-        
-        $query_barang = mysqli_query($koneksi,"SELECT 
-                        id, no_item, quantity, 
-                                                                        harga_jual, total, 
-                                                                        potongan FROM tblservis_barang 
-                    WHERE 
-                        no_service='$no_service'");
+        $query_jasa = mysqli_query($koneksi, "SELECT
+                        j.id, j.no_item, j.waktu, j.harga, j.total, j.potongan,
+                        COALESCE(wh.nama_wo, j.no_item) AS namaitem
+                    FROM tblservis_jasa j
+                    LEFT JOIN tbworkorderheader wh ON wh.kode_wo = j.no_item
+                    WHERE j.no_service='$no_service'");
+
+        $query_barang = mysqli_query($koneksi, "SELECT
+                        b.id, b.no_item, b.quantity, b.harga_jual, b.total, b.potongan,
+                        COALESCE(i.namaitem, b.no_item) AS namaitem
+                    FROM tblservis_barang b
+                    LEFT JOIN tblitem i ON i.noitem = b.no_item
+                    WHERE b.no_service='$no_service'");
                                                                         
     														
 	require_once("dompdf/autoload.inc.php");
@@ -158,10 +165,16 @@ div.page_break + div.page_break{
         <hr>
         <table style="margin: 0 0pt; width: 100%;">
             <tr>
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2"><b>No. Polisi</b></font></td> 			
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>                    
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.$no_polisi.'</b></font></td>                    
-            </tr>                        
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2"><b>No. Polisi</b></font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.$no_polisi.'</b></font></td>
+            </tr>
+            '.(!empty($nama_mekanik) ? '
+            <tr>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Mekanik</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_mekanik.'</font></td>
+            </tr>' : '').'
         </table>
         <br>
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
@@ -187,13 +200,8 @@ div.page_break + div.page_break{
             $no = 1;
             while($row = mysqli_fetch_array($query_jasa))
             {
-                $no_item=$row['no_item'];
-                $cari_kd=mysqli_query($koneksi,"SELECT nama_wo 
-                                                                                FROM tbworkorderheader 
-                                                                                WHERE kode_wo='$no_item'");			
-                                                $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $namaitem_tbl=$tm_cari['nama_wo'];
-                                                
+                $namaitem_tbl = $row['namaitem'];
+
         $html .= "<tr>
                 <td align=center><font size=2>".$no."</font></td>
                 <td><font size=2>".$row['no_item']."</font></td>
@@ -236,13 +244,8 @@ div.page_break + div.page_break{
             $no = 1;
             while($row = mysqli_fetch_array($query_barang))
             {
-                $no_item=$row['no_item'];
-                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                FROM tblitem 
-                                                WHERE noitem='$no_item'");			
-                $tm_cari=mysqli_fetch_array($cari_kd);
-                $namaitem_tbl=$tm_cari['namaitem'];
-                                                
+                $namaitem_tbl = $row['namaitem'];
+
         $html .= "<tr>
                 <td align=center><font size=2>".$no."</font></td>
                 <td><font size=2>".$row['no_item']."</font></td>

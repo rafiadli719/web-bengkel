@@ -79,6 +79,34 @@ function getTopKeluhan($koneksi, $limit = 10, $tgl_dari = null, $tgl_sampai = nu
     return $result;
 }
 
+// Resolve nomekanik → nama. Jika tidak ditemukan di master, tampilkan kode.
+// Ini menangani data lama Access (kode 001-083) yang nama aslinya tidak tersedia.
+function getMekanikNama($koneksi, $nomekanik) {
+    if (empty($nomekanik)) return '';
+    static $cache = [];
+    if (isset($cache[$nomekanik])) return $cache[$nomekanik];
+    $safe = mysqli_real_escape_string($koneksi, $nomekanik);
+    // Coba karyawan web app dulu (stored as nama_lengkap atau kode_karyawan)
+    $q = mysqli_query($koneksi, "SELECT nama_lengkap FROM tbuser_karyawan WHERE kode_karyawan='$safe' LIMIT 1");
+    if ($q && $row = mysqli_fetch_row($q)) { $cache[$nomekanik] = $row[0]; return $row[0]; }
+    // Fallback ke tblmekanik (data Access-synced, kode 001-083)
+    $q2 = mysqli_query($koneksi, "SELECT nama FROM tblmekanik WHERE nomekanik='$safe' LIMIT 1");
+    if ($q2 && $row2 = mysqli_fetch_row($q2)) { $cache[$nomekanik] = $row2[0]; return $row2[0]; }
+    $cache[$nomekanik] = $nomekanik;
+    return $nomekanik;
+}
+
+// Resolve array nomekanik → string nama gabungan (untuk tampilan di nota/histori)
+function getMekanikNamaGabung($koneksi, ...$kodes) {
+    $names = [];
+    foreach ($kodes as $k) {
+        if (!empty($k)) {
+            $names[] = getMekanikNama($koneksi, $k);
+        }
+    }
+    return implode(', ', $names);
+}
+
 // Function untuk get mekanik performance
 function getMekanikPerformance($koneksi, $tgl_dari = null, $tgl_sampai = null) {
     if(!$tgl_dari) $tgl_dari = date('Y-m-01');

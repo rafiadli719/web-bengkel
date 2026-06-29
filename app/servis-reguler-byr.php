@@ -576,8 +576,8 @@
                                         total_grand='$net', 
                                         bayar='$bayar', kembali='$kembalian',
                                         total_waktu='$total_waktu',
-                                        status_servis='selesai'
-                                        WHERE 
+                                        status_servis='bayar'
+                                        WHERE
                                         no_service='$no_service'");                                            
 
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang 
