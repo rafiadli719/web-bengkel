@@ -128,6 +128,33 @@ if($sql_jasa) {
                     <input type="text" id="add_total_jasa_v2" class="rd-input sm" value="Rp 0" readonly style="background: var(--rd-bg-light); font-weight: 600;">
                 </div>
             </div>
+            <!-- Part milik customer -->
+            <div class="rd-form-group" style="margin-top: 4px;">
+                <label class="rd-label" style="cursor: pointer; font-weight: normal;">
+                    <input type="checkbox" id="chk_part_cust" onchange="togglePartCust(this)" style="margin-right: 6px;">
+                    Part milik customer (bukan dari stok bengkel)
+                </label>
+            </div>
+            <div id="part_cust_form" style="display:none; background: #fff8e1; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+                <div style="font-size: 12px; color: #856404; margin-bottom: 8px;"><i class="fa fa-info-circle"></i> Info part customer akan dicatat di keterangan jasa</div>
+                <div class="rd-form-row">
+                    <div class="rd-form-group">
+                        <label class="rd-label">Nama Part</label>
+                        <input type="text" id="part_cust_nama" class="rd-input sm" placeholder="Contoh: Kampas Rem">
+                    </div>
+                    <div class="rd-form-group">
+                        <label class="rd-label">Merek</label>
+                        <input type="text" id="part_cust_merek" class="rd-input sm" placeholder="Contoh: Bendix">
+                    </div>
+                    <div class="rd-form-group" style="flex: 0 0 120px;">
+                        <label class="rd-label">Kondisi</label>
+                        <select id="part_cust_kondisi" class="rd-input sm">
+                            <option value="ORI">ORI</option>
+                            <option value="Imitasi">Imitasi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="rd-flex-end">
                 <button type="button" class="rd-btn success" onclick="tambahItemJasaV2()">
                     <i class="fa fa-plus"></i> Tambah ke Daftar
@@ -394,6 +421,15 @@ function pilihJasaV2(kode, nama, harga, waktu) {
     }, 1000);
 }
 
+// Toggle part customer form
+function togglePartCust(chk) {
+    $('#part_cust_form').toggle(chk.checked);
+    if (!chk.checked) {
+        $('#part_cust_nama, #part_cust_merek').val('');
+        $('#part_cust_kondisi').val('ORI');
+    }
+}
+
 // Add jasa
 function tambahItemJasaV2() {
     var kode = $('#add_kode_jasa_v2').val();
@@ -411,16 +447,28 @@ function tambahItemJasaV2() {
         return;
     }
 
+    // Build keterangan for part customer
+    var keterangan = '';
+    if ($('#chk_part_cust').is(':checked')) {
+        var pNama    = $.trim($('#part_cust_nama').val());
+        var pMerek   = $.trim($('#part_cust_merek').val());
+        var pKondisi = $('#part_cust_kondisi').val();
+        if (!pNama) { alert('Nama part harus diisi jika menggunakan part customer!'); return; }
+        keterangan = '[PART-CUST: ' + pNama + ' | ' + (pMerek || '-') + ' | ' + pKondisi + ']';
+    }
+
     // Submit via form - using btnaddsrv handler with correct field names
     var form = $('<form method="POST">' +
         '<input type="hidden" name="txtnosrv" value="<?= $no_service ?>">' +
         '<input type="hidden" name="btnaddsrv" value="1">' +
         '<input type="hidden" name="txtcarisrv">' +
         '<input type="hidden" name="txtpotsrv">' +
+        '<input type="hidden" name="keterangan_jasa">' +
         '<input type="hidden" name="tab" value="jasa">' +
         '</form>');
     form.find('[name="txtcarisrv"]').val(kode);
     form.find('[name="txtpotsrv"]').val($('#add_disc_jasa_v2').val() || 0);
+    form.find('[name="keterangan_jasa"]').val(keterangan);
     $('body').append(form);
     form.submit();
 }

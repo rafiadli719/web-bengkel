@@ -77,48 +77,72 @@ $metode_pembayaran = $metode_pembayaran ?? 'Tunai';
     </span>
 </div>
 
-<!-- Metode Pembayaran -->
+<!-- Multi-Payment (F1-C) -->
 <p class="ks-section-hdr" style="margin-top:4px;"><i class="fa fa-wallet"></i> Pembayaran</p>
-<select class="ks-metode-select" id="metode_pembayaran_v2" name="metode_pembayaran"
-        onchange="toggleBuktiV2()">
-    <option value="Tunai"         <?= $metode_pembayaran=='Tunai'?'selected':''         ?>>💵 Tunai</option>
-    <option value="Transfer Bank" <?= $metode_pembayaran=='Transfer Bank'?'selected':'' ?>>🏦 Transfer Bank</option>
-    <option value="QRIS"          <?= $metode_pembayaran=='QRIS'?'selected':''          ?>>📷 QRIS</option>
-    <option value="E-Wallet"      <?= $metode_pembayaran=='E-Wallet'?'selected':''      ?>>📱 E-Wallet</option>
-    <option value="Kartu Kredit"  <?= $metode_pembayaran=='Kartu Kredit'?'selected':''  ?>>💳 Kartu Kredit</option>
-    <option value="Kartu Debit"   <?= $metode_pembayaran=='Kartu Debit'?'selected':''   ?>>💳 Kartu Debit</option>
-</select>
+<input type="hidden" id="metode_pembayaran_v2" name="metode_pembayaran" value="Tunai">
 
-<!-- Bukti upload (tampil jika non-tunai) -->
+<!-- Tunai -->
+<div class="ks-pay-row" style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+    <span class="ks-pay-label" style="width:70px;font-size:11px;font-weight:600;color:#27ae60;"><i class="fa fa-money-bill-wave"></i> Tunai</span>
+    <div class="ks-inp-wrap" style="flex:1;display:flex;align-items:center;border:1px solid #ddd;border-radius:5px;overflow:hidden;">
+        <span class="rp-pre" style="padding:4px 6px;background:#f5f5f5;font-size:10px;color:#666;">Rp</span>
+        <input type="text" id="bayar_tunai_v2" name="bayar_tunai" value="0"
+               oninput="hitungMultiPayV2()" placeholder="0"
+               style="flex:1;border:none;padding:5px 6px;font-size:12px;text-align:right;outline:none;">
+    </div>
+</div>
+
+<!-- Transfer -->
+<div class="ks-pay-row" style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+    <span class="ks-pay-label" style="width:70px;font-size:11px;font-weight:600;color:#2980b9;"><i class="fa fa-university"></i> Transfer</span>
+    <div class="ks-inp-wrap" style="flex:1;display:flex;align-items:center;border:1px solid #ddd;border-radius:5px;overflow:hidden;">
+        <span class="rp-pre" style="padding:4px 6px;background:#f5f5f5;font-size:10px;color:#666;">Rp</span>
+        <input type="text" id="bayar_transfer_v2" name="bayar_transfer" value="0"
+               oninput="hitungMultiPayV2()" placeholder="0"
+               style="flex:1;border:none;padding:5px 6px;font-size:12px;text-align:right;outline:none;">
+    </div>
+</div>
+<div id="ref_transfer_group" style="display:none;padding:0 0 5px 76px;">
+    <input type="text" id="ref_transfer_v2" name="ref_transfer" placeholder="No. referensi transfer (opsional)"
+           style="width:100%;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:4px;">
+</div>
+
+<!-- QRIS -->
+<div class="ks-pay-row" style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+    <span class="ks-pay-label" style="width:70px;font-size:11px;font-weight:600;color:#8e44ad;"><i class="fa fa-qrcode"></i> QRIS</span>
+    <div class="ks-inp-wrap" style="flex:1;display:flex;align-items:center;border:1px solid #ddd;border-radius:5px;overflow:hidden;">
+        <span class="rp-pre" style="padding:4px 6px;background:#f5f5f5;font-size:10px;color:#666;">Rp</span>
+        <input type="text" id="bayar_qris_v2" name="bayar_qris" value="0"
+               oninput="hitungMultiPayV2()" placeholder="0"
+               style="flex:1;border:none;padding:5px 6px;font-size:12px;text-align:right;outline:none;">
+    </div>
+</div>
+
+<!-- Bukti upload (opsional, untuk transfer/QRIS) -->
 <div id="bukti_pembayaran_group_v2" style="display:none;">
     <div class="ks-bukti-group">
-        <label><i class="fa fa-paperclip"></i> Bukti Pembayaran</label>
+        <label><i class="fa fa-paperclip"></i> Bukti Pembayaran (opsional)</label>
         <input type="file" name="bukti_pembayaran" accept="image/*,.pdf"
                style="width:100%;font-size:11px;margin-top:4px;">
         <div style="font-size:10px;color:#92400e;margin-top:3px;">JPG/PNG/PDF — maks. 2MB</div>
     </div>
 </div>
 
-<!-- Jumlah Bayar + Kembalian -->
-<div class="ks-tunai-row">
-    <div class="ks-inp-group">
-        <label>Jumlah Bayar</label>
-        <div class="ks-inp-wrap">
-            <span class="rp-pre">Rp</span>
-            <input type="text" id="txtbayar_v2" name="txtbayar"
-                   value="<?= number_format($bayar,0,',','.') ?>"
-                   onkeyup="hitungKembalianV2()">
-        </div>
+<!-- Ringkasan sisa -->
+<div style="background:#f0f9f4;border:1px solid #c3e6cb;border-radius:6px;padding:7px 10px;margin:5px 0;font-size:12px;">
+    <div style="display:flex;justify-content:space-between;">
+        <span>Total Terbayar</span>
+        <span id="ks-terbayar-display" style="font-weight:600;color:#27ae60;">Rp 0</span>
     </div>
-    <div class="ks-inp-group">
-        <label>Kembalian</label>
-        <div class="ks-inp-wrap kembalian">
-            <span class="rp-pre">Rp</span>
-            <input type="text" id="txtkembalian_v2" name="txtkembalian"
-                   value="<?= number_format($kembalian,0,',','.') ?>" readonly>
-        </div>
+    <div style="display:flex;justify-content:space-between;margin-top:3px;">
+        <span id="ks-sisa-label">Sisa</span>
+        <span id="ks-sisa-display" style="font-weight:600;color:#e74c3c;">Rp <?= number_format($net,0,',','.') ?></span>
     </div>
 </div>
+
+<!-- Hidden fields untuk backward compat payment handler -->
+<input type="hidden" id="txtbayar_v2"     name="txtbayar"     value="0">
+<input type="hidden" id="txtkembalian_v2" name="txtkembalian" value="0">
 
 <!-- Tombol PROSES BAYAR -->
 <button type="submit" name="btnbayar" class="ks-btn-bayar"
@@ -143,16 +167,11 @@ $metode_pembayaran = $metode_pembayaran ?? 'Tunai';
 </div>
 
 <script>
-function toggleBuktiV2() {
-    var m = ($('#metode_pembayaran_v2').val()||'');
-    $('#bukti_pembayaran_group_v2').toggle(m !== 'Tunai');
-}
-
 function _ksFormat(n) { return Math.round(n).toLocaleString('id-ID'); }
-function _ksParse(s)  { if(!s) return 0; return parseInt(s.toString().replace(/\./g,'').replace(/,/g,''))||0; }
+function _ksParse(s)  { if(!s) return 0; return parseFloat(s.toString().replace(/\./g,'').replace(/,/g,'').replace(/[^0-9]/g,''))||0; }
 
 function hitungTotalV2() {
-    var sub   = _ksParse($('#txttotal_v2').val())   || 0;
+    var sub   = _ksParse($('#txttotal_v2').val())              || 0;
     var dPct  = parseFloat($('#txtpotfaktur_persen_v2').val()) || 0;
     var pPct  = parseFloat($('#txtpajak_persen_v2').val())     || 0;
     var dNom  = sub * dPct / 100;
@@ -167,15 +186,48 @@ function hitungTotalV2() {
     $('#ks-diskon-nom').text('-Rp ' + _ksFormat(dNom));
     $('#ks-ppn-nom').text('+Rp ' + _ksFormat(pNom));
     $('#ks-total-bayar-display').text('Rp ' + _ksFormat(net));
+    $('#ks-sisa-display').text('Rp ' + _ksFormat(net));
 
     var lv = document.getElementById('ks-live-total');
     if (lv) lv.textContent = 'Rp ' + _ksFormat(net);
+
+    hitungMultiPayV2();
 }
 
-function hitungKembalianV2() {
-    var net  = _ksParse($('#txtnet_v2').val())   || 0;
-    var bayar = _ksParse($('#txtbayar_v2').val()) || 0;
-    $('#txtkembalian_v2').val(_ksFormat(Math.max(0, bayar - net)));
+function hitungMultiPayV2() {
+    var net      = _ksParse($('#txtnet_v2').val()) || 0;
+    var tunai    = _ksParse($('#bayar_tunai_v2').val())    || 0;
+    var transfer = _ksParse($('#bayar_transfer_v2').val()) || 0;
+    var qris     = _ksParse($('#bayar_qris_v2').val())     || 0;
+    var total    = tunai + transfer + qris;
+    var sisa     = net - total;
+    var kembalian = Math.max(0, total - net);
+
+    $('#ks-terbayar-display').text('Rp ' + _ksFormat(total));
+    if (sisa > 0) {
+        $('#ks-sisa-display').text('Rp ' + _ksFormat(sisa)).css('color','#e74c3c');
+        $('#ks-sisa-label').text('Sisa');
+    } else {
+        $('#ks-sisa-display').text('Rp ' + _ksFormat(kembalian)).css('color','#2980b9');
+        $('#ks-sisa-label').text('Kembalian');
+    }
+
+    // Derive metode
+    var parts = [];
+    if (tunai > 0)    parts.push('Tunai');
+    if (transfer > 0) parts.push('Transfer Bank');
+    if (qris > 0)     parts.push('QRIS');
+    var metode = parts.length > 1 ? 'Mix' : (parts[0] || 'Tunai');
+    $('#metode_pembayaran_v2').val(metode);
+
+    // Hidden fields untuk handler lama
+    $('#txtbayar_v2').val(total);
+    $('#txtkembalian_v2').val(kembalian);
+
+    // Tampilkan bukti & ref transfer
+    var adaNonTunai = (transfer > 0 || qris > 0);
+    $('#bukti_pembayaran_group_v2').toggle(adaNonTunai);
+    $('#ref_transfer_group').toggle(transfer > 0);
 }
 
 function cancelServiceV2() {
@@ -189,7 +241,6 @@ function printEstimasiV2() {
 }
 
 $(document).ready(function() {
-    toggleBuktiV2();
     hitungTotalV2();
 });
 </script>

@@ -134,13 +134,32 @@
             $keluhan = $_POST['keluhan'] ?? '';
 
             $keluhan_esc = mysqli_real_escape_string($koneksi, $keluhan);
+            // F1-A: set garansi fields
+            $ref_original    = !empty($ref_service) ? mysqli_real_escape_string($koneksi, $ref_service) : '';
+            $tgl_expire      = '';
+            $mekanik_orig    = '';
+            $komisi_mode     = 'unknown';
+            if (!empty($ref_service_data)) {
+                $tgl_asal    = $ref_service_data['tanggal'] ?? '';
+                if ($tgl_asal) {
+                    $tgl_expire = date('Y-m-d', strtotime($tgl_asal . ' +7 days'));
+                }
+                // F1-B: derive komisi mode
+                $mekanik_orig = $ref_service_data['mekanik1'] ?? '';
+            }
+            $is_garansi_flag = !empty($ref_original) ? 1 : 0;
+
             $query_insert_service = "INSERT INTO tblservice (
                 no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user,
-                status, status_servis, status_jemput, keterangan, created_at
+                status, status_servis, status_jemput, keterangan,
+                is_garansi, ref_no_service_original, tanggal_garansi_expire,
+                mekanik_original, komisi_garansi_mode, created_at
             ) VALUES (
                 '$no_service', '$tanggal_service', '$jam_input', '$kode_pelanggan',
                 '$no_polisi', '$kd_cabang', '$id_user',
-                '1', 'datang', '0', '$keluhan_esc', NOW()
+                '1', 'datang', '0', '$keluhan_esc',
+                '$is_garansi_flag', '$ref_original', " . ($tgl_expire ? "'$tgl_expire'" : "NULL") . ",
+                '$mekanik_orig', '$komisi_mode', NOW()
             )";
 
             if(mysqli_query($koneksi, $query_insert_service)) {
@@ -303,6 +322,16 @@
             $mekanik4 = $_POST['cbomekanik4'] ?? '';
             $persen_mekanik4 = $_POST['txtpersen_mekanik4'] ?? 0;
 
+            // F1-B: Komisi garansi mode — bandingkan mekanik1 baru vs mekanik_original
+            $no_service_esc_mk = mysqli_real_escape_string($koneksi, $no_service);
+            $q_orig = mysqli_query($koneksi, "SELECT mekanik_original FROM tblservice WHERE no_service='$no_service_esc_mk' LIMIT 1");
+            $row_orig = mysqli_fetch_assoc($q_orig);
+            $mekanik_original_saved = $row_orig['mekanik_original'] ?? '';
+            $komisi_mode_baru = 'unknown';
+            if (!empty($mekanik_original_saved) && !empty($mekanik1)) {
+                $komisi_mode_baru = ($mekanik1 === $mekanik_original_saved) ? 'skip' : 'transfer';
+            }
+
             // Update mechanic data in tblservice - Fixed column names
             $update_mechanic = "UPDATE tblservice SET
                 kepala_mekanik1='$kepala_mekanik1',
@@ -317,6 +346,7 @@
                 persen_mekanik2='$persen_mekanik2',
                 persen_mekanik3='$persen_mekanik3',
                 persen_mekanik4='$persen_mekanik4',
+                komisi_garansi_mode='$komisi_mode_baru',
                 updated_at=NOW()
                 WHERE no_service='$no_service'";
 
@@ -328,6 +358,33 @@
             } else {
                 echo "<script>alert('Error update data mekanik: " . mysqli_error($koneksi) . "');</script>";
             }
+        }
+    }
+
+    // ========== HANDLER: HAPUS ITEM BARANG/JASA (GARANSI) ==========
+    if (!empty($no_service) && (isset($_GET['hapus_brg']) || isset($_GET['hapus_srv']))) {
+        $no_srv_esc  = mysqli_real_escape_string($koneksi, $no_service);
+        $chk_st      = mysqli_query($koneksi, "SELECT status_servis FROM tblservice WHERE no_service='$no_srv_esc' LIMIT 1");
+        $row_st      = mysqli_fetch_assoc($chk_st);
+        $sudah_tutup = $row_st && in_array($row_st['status_servis'], ['bayar', 'selesai']);
+
+        if (isset($_GET['hapus_brg'])) {
+            $id_hapus = (int)$_GET['hapus_brg'];
+            if ($sudah_tutup) {
+                echo "<script>alert('Item tidak bisa dihapus — servis sudah " . strtoupper($row_st['status_servis']) . ".');history.back();</script>"; exit;
+            }
+            mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE id=$id_hapus AND no_service='$no_srv_esc'");
+            header('Location: servis-garansi.php?snoserv=' . urlencode($no_service) . '&tab=service-items');
+            exit;
+        }
+        if (isset($_GET['hapus_srv'])) {
+            $id_hapus = (int)$_GET['hapus_srv'];
+            if ($sudah_tutup) {
+                echo "<script>alert('Jasa tidak bisa dihapus — servis sudah " . strtoupper($row_st['status_servis']) . ".');history.back();</script>"; exit;
+            }
+            mysqli_query($koneksi, "DELETE FROM tblservis_jasa WHERE id=$id_hapus AND no_service='$no_srv_esc'");
+            header('Location: servis-garansi.php?snoserv=' . urlencode($no_service) . '&tab=service-jasa');
+            exit;
         }
     }
 
@@ -501,6 +558,8 @@
             $nobaris_jasa_data = mysqli_fetch_array($q_nobaris_jasa);
             $nobaris_jasa = $nobaris_jasa_data['next_nobaris'] ?? 1;
 
+            $keterangan_jasa = mysqli_real_escape_string($koneksi, $_POST['keterangan_jasa'] ?? '');
+
             // Cek apakah kolom waktu tersedia
             $has_waktu = false;
             $chk = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
@@ -509,17 +568,17 @@
             if ($has_waktu) {
                 mysqli_query($koneksi, "INSERT INTO tblservis_jasa
                     (no_service, nobaris, no_item, harga, waktu, potongan, total,
-                     diskon_source, diskon_persen, diskon_nominal, id_promo)
+                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
                     VALUES
                     ('$no_service', '$nobaris_jasa', '$kdj', '$harga', '$waktu', '$diskon_persen', '$total',
-                     '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                     '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo, '$keterangan_jasa')");
             } else {
                 mysqli_query($koneksi, "INSERT INTO tblservis_jasa
                     (no_service, nobaris, no_item, harga, potongan, total,
-                     diskon_source, diskon_persen, diskon_nominal, id_promo)
+                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
                     VALUES
                     ('$no_service', '$nobaris_jasa', '$kdj', '$harga', '$diskon_persen', '$total',
-                     '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                     '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo, '$keterangan_jasa')");
             }
         }
         // Redirect back
@@ -926,6 +985,10 @@
 
             // Get payment data
             $metode_pembayaran = $_POST['metode_pembayaran'] ?? 'Tunai';
+            $bayar_tunai    = (float)str_replace(['.', ','], '', $_POST['bayar_tunai']    ?? '0');
+            $bayar_transfer = (float)str_replace(['.', ','], '', $_POST['bayar_transfer'] ?? '0');
+            $bayar_qris     = (float)str_replace(['.', ','], '', $_POST['bayar_qris']     ?? '0');
+            $ref_transfer   = mysqli_real_escape_string($koneksi, $_POST['ref_transfer']  ?? '');
             $txttotal_jasa = str_replace(['.', ','], '', $_POST['txttotal_jasa'] ?? '0');
             $txttotal_barang = str_replace(['.', ','], '', $_POST['txttotal_barang'] ?? '0');
 
@@ -1009,7 +1072,11 @@
                 persen_mekanik1 = '$persen_mekanik1',
                 persen_mekanik2 = '$persen_mekanik2',
                 persen_mekanik3 = '$persen_mekanik3',
-                persen_mekanik4 = '$persen_mekanik4'"
+                persen_mekanik4 = '$persen_mekanik4',
+                bayar_tunai = '$bayar_tunai',
+                bayar_transfer = '$bayar_transfer',
+                bayar_qris = '$bayar_qris',
+                ref_transfer = '$ref_transfer'"
                 . (!empty($bukti_pembayaran_path) ? ", bukti_pembayaran = '$bukti_pembayaran_path'" : "") . "
                 WHERE no_service = '$no_service'";
 

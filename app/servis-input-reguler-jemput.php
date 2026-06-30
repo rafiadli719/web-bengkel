@@ -549,6 +549,33 @@
         exit;
     }
 
+    // ========== HANDLER: HAPUS ITEM BARANG/JASA (JEMPUT) ==========
+    if (!empty($no_service) && (isset($_GET['hapus_brg']) || isset($_GET['hapus_srv']))) {
+        $no_srv_esc  = mysqli_real_escape_string($koneksi, $no_service);
+        $chk_st      = mysqli_query($koneksi, "SELECT status_servis FROM tblservice WHERE no_service='$no_srv_esc' LIMIT 1");
+        $row_st      = mysqli_fetch_assoc($chk_st);
+        $sudah_tutup = $row_st && in_array($row_st['status_servis'], ['bayar', 'selesai']);
+
+        if (isset($_GET['hapus_brg'])) {
+            $id_hapus = (int)$_GET['hapus_brg'];
+            if ($sudah_tutup) {
+                echo "<script>alert('Item tidak bisa dihapus — servis sudah " . strtoupper($row_st['status_servis']) . ".');history.back();</script>"; exit;
+            }
+            mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE id=$id_hapus AND no_service='$no_srv_esc'");
+            header('Location: servis-input-reguler-jemput.php?snoserv=' . urlencode($no_service) . '&tab=items');
+            exit;
+        }
+        if (isset($_GET['hapus_srv'])) {
+            $id_hapus = (int)$_GET['hapus_srv'];
+            if ($sudah_tutup) {
+                echo "<script>alert('Jasa tidak bisa dihapus — servis sudah " . strtoupper($row_st['status_servis']) . ".');history.back();</script>"; exit;
+            }
+            mysqli_query($koneksi, "DELETE FROM tblservis_jasa WHERE id=$id_hapus AND no_service='$no_srv_esc'");
+            header('Location: servis-input-reguler-jemput.php?snoserv=' . urlencode($no_service) . '&tab=jasa');
+            exit;
+        }
+    }
+
     // Handler untuk Tambah Item Barang
     if(isset($_POST['btnadd'])) {
         // Sanitize and validate input
@@ -841,11 +868,13 @@
                 $nobaris_data = mysqli_fetch_array($query_nobaris);
                 $next_nobaris = $nobaris_data['next_nobaris'] ?? 1;
 
+                $keterangan_jasa = mysqli_real_escape_string($koneksi, $_POST['keterangan_jasa'] ?? '');
+
                 // Insert to tblservis_jasa
                 mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                                        (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                        (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
                                         VALUES
-                                        ('$no_service', '$next_nobaris', '$txtcarisrv', '$harga', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', '$id_promo')");
+                                        ('$no_service', '$next_nobaris', '$txtcarisrv', '$harga', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', '$id_promo', '$keterangan_jasa')");
 
                 echo "<script>window.location='servis-input-reguler-jemput.php?snoserv=$no_service&kd=$txtcaribrg&kdjasa=&kdwo=$txtcariwo';</script>";
                 exit;
@@ -2266,7 +2295,14 @@
         $txtpotfaktur_nom= str_replace(['.', ','], '', $_POST['txtpotfaktur_nom'] ?? '0'); // Remove formatting
         $txtpajak_persen= $_POST['txtpajak_persen'] ?? 0;
         $metode_pembayaran= $_POST['metode_pembayaran'] ?? 'Tunai';
-        $txtbayar= str_replace(['.', ','], '', $_POST['txtbayar'] ?? '0'); // Remove formatting
+        $bayar_tunai    = (float)str_replace(['.', ','], '', $_POST['bayar_tunai']    ?? '0');
+        $bayar_transfer = (float)str_replace(['.', ','], '', $_POST['bayar_transfer'] ?? '0');
+        $bayar_qris     = (float)str_replace(['.', ','], '', $_POST['bayar_qris']     ?? '0');
+        $ref_transfer   = mysqli_real_escape_string($koneksi, $_POST['ref_transfer']  ?? '');
+        $txtbayar = $bayar_tunai + $bayar_transfer + $bayar_qris;
+        if ($txtbayar == 0) {
+            $txtbayar = (float)str_replace(['.', ','], '', $_POST['txtbayar'] ?? '0');
+        }
 
         // Handle bukti pembayaran upload
         $bukti_pembayaran_path = '';
@@ -2447,7 +2483,11 @@
                                 persen_mekanik4='$persen_mekanik4',
                                 metode_pembayaran='$metode_pembayaran',
                                 bayar='$txtbayar',
-                                kembali='$kembalian_pay'" .
+                                kembali='$kembalian_pay',
+                                bayar_tunai='$bayar_tunai',
+                                bayar_transfer='$bayar_transfer',
+                                bayar_qris='$bayar_qris',
+                                ref_transfer='$ref_transfer'" .
                                 (!empty($bukti_pembayaran_path) ? ", bukti_pembayaran='$bukti_pembayaran_path'" : "") . "
                                 WHERE
                                 no_service='$no_service'";

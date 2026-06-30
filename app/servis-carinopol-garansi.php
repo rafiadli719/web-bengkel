@@ -69,6 +69,7 @@ if(empty($_SESSION['_iduser'])){
     // Totals di-JOIN sekali, menghindari N+1 queries di loop
     $sql_query = "SELECT s.*, p.namapelanggan, v.merek, v.tipe, v.warna,
                          DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_trx,
+                         DATEDIFF(CURDATE(), s.tanggal) AS hari_berlalu,
                          COALESCE(sb.total_barang, 0) AS harga_brg,
                          COALESCE(sj.total_jasa, 0) AS harga_jasa,
                          COALESCE(sj.total_waktu, 0) AS totwaktu
@@ -310,6 +311,19 @@ if(empty($_SESSION['_iduser'])){
                                                 $harga_jasa   = $tampil['harga_jasa'];
                                                 $totwaktu     = $tampil['totwaktu'];
                                                 $harga_servis = $harga_brg + $harga_jasa;
+
+                                                // F1-A: Garansi eligibility check
+                                                $hari_berlalu = (int)($tampil['hari_berlalu'] ?? 0);
+                                                if ($hari_berlalu <= 7) {
+                                                    $garansi_status = 'ok';
+                                                    $garansi_badge = '<span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;">'.$hari_berlalu.' hari ✓</span>';
+                                                } elseif ($hari_berlalu <= 14) {
+                                                    $garansi_status = 'warning';
+                                                    $garansi_badge = '<span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;">'.$hari_berlalu.' hari ⚠</span>';
+                                                } else {
+                                                    $garansi_status = 'expired';
+                                                    $garansi_badge = '<span style="background:#f8d7da;color:#721c24;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;">'.$hari_berlalu.' hari ✗</span>';
+                                                }
                                                 
                                                 // Highlight search results
                                                 $row_class = '';
@@ -330,9 +344,24 @@ if(empty($_SESSION['_iduser'])){
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-default">
                                                         <li>
-                                                            <a href="servis-garansi.php?ref_service=<?php echo urlencode($tampil['no_service']); ?>&kd=&kdjasa=">
+                                                            <?php
+                                                            $garansi_url = 'servis-garansi.php?ref_service=' . urlencode($tampil['no_service']) . '&kd=&kdjasa=';
+                                                            if ($garansi_status === 'ok'):
+                                                            ?>
+                                                            <a href="<?= $garansi_url ?>">
                                                                 <i class="ace-icon fa fa-shield"></i> Buat Service Garansi
                                                             </a>
+                                                            <?php elseif ($garansi_status === 'warning'): ?>
+                                                            <a href="<?= $garansi_url ?>&garansi_override=warning"
+                                                               onclick="return confirm('PERINGATAN: Garansi sudah <?= $hari_berlalu ?> hari (melebihi 7 hari standar). Perlu alasan dan persetujuan Supervisor.\n\nLanjutkan quand même?')">
+                                                                <i class="ace-icon fa fa-exclamation-triangle" style="color:#ffc107;"></i> Buat Garansi (⚠ <?= $hari_berlalu ?> hari)
+                                                            </a>
+                                                            <?php else: ?>
+                                                            <a href="<?= $garansi_url ?>&garansi_override=expired"
+                                                               onclick="return confirm('PERINGATAN: Garansi sudah KADALUARSA (<?= $hari_berlalu ?> hari, melebihi 14 hari).\n\nHanya bisa dilanjutkan dengan persetujuan Supervisor.\n\nLanjutkan?')" style="color:#dc3545;">
+                                                                <i class="ace-icon fa fa-times-circle" style="color:#dc3545;"></i> Garansi Kadaluarsa (<?= $hari_berlalu ?> hari)
+                                                            </a>
+                                                            <?php endif; ?>
                                                         </li>
                                                         <li class="divider"></li>
                                                         <li>
@@ -347,7 +376,8 @@ if(empty($_SESSION['_iduser'])){
                                                 <strong><?php echo htmlspecialchars($tampil['no_service']); ?></strong>
                                             </td>
                                             <td>
-                                                <?php echo $tampil['tanggal_trx']; ?>
+                                                <?php echo $tampil['tanggal_trx']; ?><br>
+                                                <?= $garansi_badge ?>
                                             </td>
                                             <td>
                                                 <?php echo htmlspecialchars($tampil['jam']); ?>
