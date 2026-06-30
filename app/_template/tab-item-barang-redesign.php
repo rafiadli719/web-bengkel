@@ -123,6 +123,33 @@ if($sql_barang) {
                     <input type="text" id="add_total_barang_v2" class="rd-input sm" value="Rp 0" readonly style="background: var(--rd-bg-light); font-weight: 600;">
                 </div>
             </div>
+            <!-- Part milik customer (F1-E) -->
+            <div class="rd-form-group" style="margin-top: 4px;">
+                <label class="rd-label" style="cursor: pointer; font-weight: normal;">
+                    <input type="checkbox" id="chk_part_cust_brg" onchange="togglePartCustBrg(this)" style="margin-right: 6px;">
+                    Part milik customer (bukan dari stok bengkel)
+                </label>
+            </div>
+            <div id="part_cust_brg_form" style="display:none; background:#fff8e1; border:1px solid #ffc107; border-radius:6px; padding:12px; margin-bottom:8px;">
+                <div style="font-size:12px; color:#856404; margin-bottom:8px;"><i class="fa fa-info-circle"></i> Part customer — dicatat di suku cadang, tidak potong stok bengkel</div>
+                <div class="rd-form-row">
+                    <div class="rd-form-group">
+                        <label class="rd-label rd-required">Nama Part</label>
+                        <input type="text" id="pc_brg_nama" class="rd-input sm" placeholder="Contoh: Kampas Rem">
+                    </div>
+                    <div class="rd-form-group">
+                        <label class="rd-label">Merek</label>
+                        <input type="text" id="pc_brg_merek" class="rd-input sm" placeholder="Contoh: Bendix">
+                    </div>
+                    <div class="rd-form-group" style="flex: 0 0 120px;">
+                        <label class="rd-label">Kondisi</label>
+                        <select id="pc_brg_kondisi" class="rd-input sm">
+                            <option value="ORI">ORI</option>
+                            <option value="Imitasi">Imitasi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="rd-flex-end">
                 <button type="button" class="rd-btn success" onclick="tambahItemBarangV2()">
                     <i class="fa fa-plus"></i> Tambah ke Daftar
@@ -379,15 +406,63 @@ function pilihBarangV2(kode, nama, harga, stok) {
     }, 1000);
 }
 
+function togglePartCustBrg(chk) {
+    var isChecked = chk.checked;
+    $('#part_cust_brg_form').toggle(isChecked);
+    // Sembunyikan/tampilkan form cari barang normal
+    $('.rd-search-group, #search_results_barang_v2').toggle(!isChecked);
+    // Clear fields
+    if (!isChecked) {
+        $('#pc_brg_nama, #pc_brg_merek').val('');
+        $('#pc_brg_kondisi').val('ORI');
+    } else {
+        $('#add_kode_barang_v2').val('');
+        $('#add_nama_barang_v2').val('');
+    }
+}
+
 // Add item
 function tambahItemBarangV2() {
+    var isPartCust = $('#chk_part_cust_brg').is(':checked');
+
+    if (isPartCust) {
+        // Part customer mode
+        var pcNama    = $.trim($('#pc_brg_nama').val());
+        var pcMerek   = $.trim($('#pc_brg_merek').val());
+        var pcKondisi = $('#pc_brg_kondisi').val();
+        var pcHarga   = parseFloat($('#add_harga_barang_v2').val()) || 0;
+        var pcQty     = parseInt($('#add_qty_barang_v2').val()) || 1;
+
+        if (!pcNama) { alert('Nama part harus diisi!'); return; }
+
+        var form = $('<form method="POST">' +
+            '<input type="hidden" name="txtnosrv" value="<?= $no_service ?>">' +
+            '<input type="hidden" name="btnadd_partcust" value="1">' +
+            '<input type="hidden" name="pc_nama">' +
+            '<input type="hidden" name="pc_merek">' +
+            '<input type="hidden" name="pc_kondisi">' +
+            '<input type="hidden" name="pc_harga">' +
+            '<input type="hidden" name="pc_qty">' +
+            '<input type="hidden" name="tab" value="items">' +
+            '</form>');
+        form.find('[name="pc_nama"]').val(pcNama);
+        form.find('[name="pc_merek"]').val(pcMerek);
+        form.find('[name="pc_kondisi"]').val(pcKondisi);
+        form.find('[name="pc_harga"]').val(pcHarga);
+        form.find('[name="pc_qty"]').val(pcQty);
+        $('body').append(form);
+        form.submit();
+        return;
+    }
+
+    // Normal mode — dari stok bengkel
     var kode = $('#add_kode_barang_v2').val();
     var nama = $('#add_nama_barang_v2').val();
     var harga = $('#add_harga_barang_v2').val();
     var qty = $('#add_qty_barang_v2').val();
 
     if(!kode || !nama) {
-        // alert('Pilih barang terlebih dahulu!');
+        alert('Pilih barang terlebih dahulu!');
         return;
     }
 
@@ -396,7 +471,6 @@ function tambahItemBarangV2() {
         return;
     }
 
-    // Submit via form - using btnadd handler with correct field names
     var form = $('<form method="POST">' +
         '<input type="hidden" name="txtnosrv" value="<?= $no_service ?>">' +
         '<input type="hidden" name="btnadd" value="1">' +

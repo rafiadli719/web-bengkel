@@ -1221,6 +1221,31 @@
                 exit;
             }
 
+            // Tambah part milik customer (F1-E) — tidak potong stok
+            if (isset($_POST['btnadd_partcust'])) {
+                if (empty($no_service)) {
+                    echo "<script>alert('Harap simpan header service terlebih dahulu.');</script>";
+                } else {
+                    $pc_nama    = mysqli_real_escape_string($koneksi, trim($_POST['pc_nama']    ?? ''));
+                    $pc_merek   = mysqli_real_escape_string($koneksi, trim($_POST['pc_merek']   ?? ''));
+                    $pc_kondisi = mysqli_real_escape_string($koneksi, $_POST['pc_kondisi'] ?? 'ORI');
+                    $pc_harga   = (float)($_POST['pc_harga'] ?? 0);
+                    $pc_qty     = max(1, (int)($_POST['pc_qty'] ?? 1));
+                    $pc_total   = $pc_harga * $pc_qty;
+                    $pc_ket     = '[PART-CUST: ' . $pc_nama . ' | ' . ($pc_merek ?: '-') . ' | ' . $pc_kondisi . ']';
+                    if (!empty($pc_nama)) {
+                        mysqli_query($koneksi, "INSERT INTO tblservis_barang
+                            (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
+                             diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
+                            VALUES
+                            ('$no_service', 0, 'PART-CUST', $pc_qty, 0, $pc_harga, 0, $pc_total,
+                             'none', 0, 0, 0, '$pc_ket')");
+                    }
+                }
+                header('Location: servis-input-reguler.php?snoserv=' . urlencode($no_service) . '&tab=items#service-items');
+                exit;
+            }
+
             // Tambah item jasa ke SPK
             if (isset($_POST['btnaddsrv'])) {
                 $kdj = mysqli_real_escape_string($koneksi, $_POST['txtcarisrv'] ?? '');
