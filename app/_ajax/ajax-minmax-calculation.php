@@ -5,6 +5,7 @@
  */
 session_start();
 header('Content-Type: application/json');
+set_time_limit(300); // kalkulasi minmax bisa butuh waktu
 
 if (empty($_SESSION['_iduser'])) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -135,12 +136,15 @@ try {
                         m.stok_saat_ini,
                         m.min_stok,
                         m.max_stok,
+                        m.rop,
                         m.kategori,
-                        m.w1, m.w2, m.w3, m.w4, m.w5, m.w6, m.w7, m.w8, m.w9, m.w10, m.w11, m.w12,
+                        m.lead_time_hari,
+                        m.min_max_manual,
+                        m.last_sale_date,
                         m.total_transaksi_84hari,
                         ROUND(m.avg_interval_hari, 1) AS avg_interval_hari
                     FROM tblitem_minmax m
-                    LEFT JOIN tblitem i ON m.no_item = (i.noitem COLLATE utf8mb4_general_ci)
+                    LEFT JOIN tblitem i ON m.no_item = CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_general_ci
                     LEFT JOIN tbcabang c ON m.kd_cabang = c.kode_cabang
                     {$whereClause}
                     ORDER BY m.kd_cabang, m.no_item
@@ -161,6 +165,42 @@ try {
                 'data' => $items,
                 'total' => count($items)
             ]);
+            break;
+
+        case 'set_manual':
+            $noItem   = isset($_POST['no_item'])   ? $_POST['no_item']   : '';
+            $kdCabang = isset($_POST['kd_cabang']) ? $_POST['kd_cabang'] : '';
+            $minStok  = isset($_POST['min_stok'])  ? (int)$_POST['min_stok']  : 0;
+            $maxStok  = isset($_POST['max_stok'])  ? (int)$_POST['max_stok']  : 0;
+
+            if (empty($noItem) || empty($kdCabang)) {
+                echo json_encode(['success' => false, 'error' => 'no_item dan kd_cabang wajib diisi']);
+                exit;
+            }
+
+            $ok = $calculator->setManualMinMax($noItem, $kdCabang, $minStok, $maxStok);
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+
+        case 'reset_manual':
+            $noItem   = isset($_POST['no_item'])   ? $_POST['no_item']   : '';
+            $kdCabang = isset($_POST['kd_cabang']) ? $_POST['kd_cabang'] : '';
+
+            if (empty($noItem) || empty($kdCabang)) {
+                echo json_encode(['success' => false, 'error' => 'no_item dan kd_cabang wajib diisi']);
+                exit;
+            }
+
+            $ok = $calculator->resetManualMinMax($noItem, $kdCabang);
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+
+        case 'supplier_items':
+            $kdSupplier   = isset($_GET['kd_supplier'])  ? $_GET['kd_supplier']  : '';
+            $filterCabang = isset($_GET['kd_cabang'])    ? $_GET['kd_cabang']    : null;
+
+            $items = $calculator->getItemBySupplier($kdSupplier, $filterCabang);
+            echo json_encode(['success' => true, 'data' => $items]);
             break;
 
         default:

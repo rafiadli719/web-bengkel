@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 if(empty($_SESSION['_iduser'])){
     header("location:../index.php");
@@ -9,7 +10,8 @@ $kd_cabang = isset($_SESSION['_cabang']) ? $_SESSION['_cabang'] : '';
 include "../config/koneksi.php";
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 // User info
 $quser = mysqli_query($koneksi, "SELECT nama_user, user_akses, foto_user FROM tbuser WHERE id='".$id_user."'");
@@ -45,10 +47,29 @@ function generate_no_do($koneksi, $kd_cabang, $header_table){
 
 $no_po = get('no_po', '');
 $msg = '';
+$alamat_default = '';
 $po_h = null; $po_d = [];
 $pr_h = null; $pr_d = [];
 $do_list = [];
 $po_list = [];
+
+// Populate daftar PO yang masih ada sisa penerimaan
+$kd_cab_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
+$qpl = mysqli_query($koneksi, "
+    SELECT h.no_order, h.tanggal, h.no_supplier,
+           COALESCE(s.namasupplier, h.no_supplier) AS nama_supplier,
+           SUM(d.quantity) - SUM(d.qty_terima) AS sisa_qty,
+           (SELECT COUNT(*) FROM tbldelivery_order_header doh WHERE doh.no_po = h.no_order) AS jml_do
+    FROM tblorder_header h
+    JOIN tblorder_detail d ON d.no_order = h.no_order
+    LEFT JOIN tblsupplier s ON s.nosupplier = h.no_supplier
+    WHERE h.kd_cabang = '{$kd_cab_esc}' AND (h.tipe_trx = 'po' OR h.tipe_trx = '' OR h.tipe_trx IS NULL)
+    GROUP BY h.no_order, h.tanggal, h.no_supplier, s.namasupplier
+    HAVING sisa_qty > 0
+    ORDER BY h.tanggal DESC
+    LIMIT 20");
+if($qpl){ while($rpl = mysqli_fetch_assoc($qpl)) $po_list[] = $rpl; }
+
 $do_header_table = '';
 $do_detail_table = '';
 if(table_exists($koneksi, 'tbldelivery_order_header')){
@@ -80,6 +101,12 @@ if($no_po!=''){
                     'harga_pokok'=>(float)$r['harga_pokok']
                 ];
             }
+        }
+        // Auto-fill alamat dari tbcabang
+        $kd_cab_po = mysqli_real_escape_string($koneksi, $po_h['kd_cabang'] ?? $kd_cabang);
+        $qcab_addr = mysqli_query($koneksi, "SELECT nama_cabang, alamat_cabang FROM tbcabang WHERE kode_cabang='$kd_cab_po' LIMIT 1");
+        if($qcab_addr && $rcab = mysqli_fetch_assoc($qcab_addr)){
+            $alamat_default = $rcab['alamat_cabang'] ?: $rcab['nama_cabang'];
         }
         $po_no_pr = isset($po_h['no_pr']) ? trim($po_h['no_pr']) : '';
         if($po_no_pr !== ''){
@@ -355,7 +382,7 @@ $success_do = get('success_do','');
                                                         <td><?php echo $i; ?></td>
                                                         <td><?php echo htmlspecialchars($r['no_order']); ?></td>
                                                         <td><?php echo htmlspecialchars($r['tanggal']); ?></td>
-                                                        <td><?php echo htmlspecialchars($r['no_supplier']); ?></td>
+                                                        <td><?php echo htmlspecialchars($r['nama_supplier'] ?? $r['no_supplier']); ?></td>
                                                         <td class="text-right"><?php echo (int)$r['sisa_qty']; ?></td>
                                                         <td class="text-right"><?php echo (int)$r['jml_do']; ?></td>
                                                         <td>
@@ -370,17 +397,13 @@ $success_do = get('success_do','');
                             </div>
                             <?php } ?>
                             <?php if($po_h){ ?>
-                            <form method="post">
+                            <form method="post" id="form-do">
                                 <input type="hidden" name="no_po" value="<?php echo htmlspecialchars($po_h['no_order']); ?>" />
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label class="control-label">Supplier</label>
                                             <input type="text" class="form-control" name="no_supplier" value="<?php echo htmlspecialchars($po_h['no_supplier']); ?>" readonly />
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Alamat Kirim</label>
-                                            <input type="text" class="form-control" value="" placeholder="Klik 'Buat Penerimaan (DO)' untuk mengisi" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -477,12 +500,12 @@ $success_do = get('success_do','');
                                     </div>
                                 </div>
                                 <?php } ?>
-                                <div id="receive-collapse" class="collapse">
+                                <div id="receive-collapse" class="collapse in">
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label class="control-label">Alamat Kirim</label>
-                                            <input type="text" class="form-control" name="alamat_kirim" value="" placeholder="Alamat Penerimaan" />
+                                            <input type="text" class="form-control" name="alamat_kirim" value="<?php echo htmlspecialchars($alamat_default ?? ''); ?>" placeholder="Alamat Penerimaan" />
                                         </div>
                                     </div>
                                 </div>
@@ -528,5 +551,14 @@ $success_do = get('success_do','');
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/ace-elements.min.js"></script>
 <script src="assets/js/ace.min.js"></script>
+<script>
+$(function(){
+    $('#form-do').on('submit', function(){
+        var btn = $(this).find('button[name="btnreceive_do"]');
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+        setTimeout(function(){ btn.prop('disabled',false).html('<i class="fa fa-check"></i> Simpan & Terima'); }, 15000);
+    });
+});
+</script>
 </body>
 </html>

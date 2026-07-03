@@ -1,0 +1,545 @@
+================================================================================
+   PANDUAN ALUR INPUT PENGADAAN — WEB BENGKEL FITMOTOR
+   Versi: 2026-06-30
+================================================================================
+
+DAFTAR ISI
+----------
+  A. Gambaran Umum Modul Pengadaan
+  B. Alur 1 : PR (Purchase Request)
+  C. Alur 2 : PO (Pesanan Pembelian)
+  D. Alur 3 : DO (Delivery Order)
+  E. Alur 4 : Pembelian (Penerimaan Barang)
+  F. Alur 5 : Penjualan Spare Part
+  G. Alur 6 : Antar Cabang — PULL (Cabang Request ke Pusat)
+  H. Alur 7 : Antar Cabang — PUSH (Pusat Kirim ke Cabang)
+  I. Ringkasan Status & Dampak Stok
+  J. Tips & Catatan Penting
+
+
+================================================================================
+A. GAMBARAN UMUM
+================================================================================
+
+Modul pengadaan mengatur perjalanan barang dari kebutuhan sampai tersedia di
+tangan. Ada dua jalur utama:
+
+  JALUR PEMBELIAN DARI SUPPLIER
+  +---------+   +---------+   +----------+   +-------------+
+  |   PR    |-->|   PO    |-->|    DO    |-->|  Pembelian  |--> STOK NAIK
+  +---------+   +---------+   +----------+   +-------------+
+
+  JALUR ANTAR CABANG (PULL - Cabang Request)
+  +--------------+   +------------------+   +------------------+
+  | Cabang buat  |-->| Pusat proses     |-->| Cabang konfirmasi|--> STOK NAIK di Cabang
+  | permintaan   |   | & kirim          |   | terima           |    STOK TURUN di Pusat
+  +--------------+   +------------------+   +------------------+
+
+  JALUR ANTAR CABANG (PUSH - Pusat Inisiasi)
+  +--------------+   +------------------+
+  | Pusat buat   |-->| Cabang konfirmasi|--> STOK NAIK di Cabang
+  | & kirim      |   | terima           |    STOK TURUN di Pusat
+  +--------------+   +------------------+
+
+DOKUMEN YANG TIDAK MEMPENGARUHI STOK : PR, PO
+DOKUMEN YANG MEMPENGARUHI STOK       : Pembelian, Antar Cabang (saat kirim & terima)
+
+
+================================================================================
+B. ALUR 1 : PR (PURCHASE REQUEST)
+================================================================================
+
+Apa itu PR?
+-----------
+PR adalah dokumen permintaan pembelian barang dari internal. Dibuat oleh
+kepala toko / mekanik kepala / pengadaan untuk memberitahu pusat bahwa
+ada kebutuhan barang. PR TIDAK mengubah stok.
+
+Siapa yang membuat?
+-------------------
+  - User cabang (pengadaan, kepala toko)
+  - Bisa juga user pusat untuk kebutuhan pusat sendiri
+
+Langkah Input PR
+----------------
+  1. Buka menu : Pengadaan > Purchase Request
+                 (URL: pr_add.php)
+
+  2. Tampilan awal menampilkan DAFTAR PR yang sudah ada.
+     Filter berdasarkan: Status (draft/submitted/approved/closed) dan Tanggal.
+
+  3. Klik tombol [+ Buat PR Baru] untuk membuat permintaan baru.
+
+  4. Isi form:
+     - Tanggal PR    : otomatis hari ini, bisa diubah
+     - Requester     : nama yang mengajukan
+     - Keterangan    : alasan / kebutuhan (opsional)
+
+  5. Tambah item barang:
+     - Kode/Nama Barang : ketik kode atau nama, klik [Cari]
+     - Qty              : jumlah yang dibutuhkan
+     - Satuan           : otomatis terisi dari master barang
+     - Harga Estimasi   : estimasi harga (opsional, untuk persetujuan budget)
+     - Klik [+ Tambah] untuk setiap item
+
+  6. Klik [Simpan Draft] jika belum siap dikirim.
+     Klik [Submit / Ajukan] jika sudah siap untuk di-approve.
+
+Status PR
+---------
+  draft     = baru disimpan, belum diajukan
+  submitted = sudah diajukan, menunggu persetujuan
+  approved  = disetujui, siap dibuat PO
+  rejected  = ditolak, perlu revisi atau dibuat ulang
+  closed    = semua item sudah ter-PO seluruhnya (otomatis saat PO tersimpan)
+
+Tabel database : tblpurchase_request_header + tblpurchase_request_detail
+
+Format nomor  : PR[YYYY][MM][KODE_CABANG][urutan 5 digit]
+Contoh        : PR202511PST96243
+
+Catatan penting
+---------------
+  - Satu PR bisa menghasilkan lebih dari satu PO (misalnya supplier berbeda
+    untuk item berbeda, atau PO bertahap).
+  - PR otomatis ber-status "closed" ketika SEMUA item sudah qty_po >= qty_pr.
+  - PR yang sudah "closed" tidak bisa lagi dibuat PO-nya.
+
+
+================================================================================
+C. ALUR 2 : PO (PESANAN PEMBELIAN / PURCHASE ORDER)
+================================================================================
+
+Apa itu PO?
+-----------
+PO adalah dokumen resmi pesanan ke supplier. PO TIDAK mengubah stok. Stok
+baru berubah saat pembelian (penerimaan barang) selesai.
+
+Cara membuat PO
+---------------
+  CARA A - Dari daftar PR (Rekomendasi)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  1. Buka menu : Pengadaan > Purchase Request (pr_add.php)
+  2. Cari PR dengan status "submitted" atau "approved"
+  3. Klik tombol [Buat PO] di baris PR yang bersangkutan
+     --> Sistem akan membuka form PO dengan item otomatis terisi dari PR
+     --> URL: pesanan_pembelian_add.php?pr=[no_pr]
+
+  CARA B - Manual langsung
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  1. Buka menu : Pengadaan > Pesanan Pembelian > Tambah
+                 (URL: pesanan_pembelian_add.php)
+  2. Tidak ada prefill - semua item input manual
+
+Langkah Input PO (setelah form terbuka)
+----------------------------------------
+  Tab "Order Details" :
+  - No. Pesanan   : otomatis (format PO[YYYY][MM]...)
+  - Tanggal       : pilih tanggal pesanan
+  - Supplier      : pilih dari dropdown (WAJIB diisi)
+  - Keterangan    : catatan ke supplier (opsional)
+
+  Tab "Item Barang" :
+  - Jika dari PR : item sudah terisi otomatis (qty = sisa qty PR yang belum ter-PO)
+  - Tambah manual : ketik kode barang > [Cari] > isi Qty > [+]
+  - Hapus / Edit item : klik [Aksi] di kolom kiri tiap baris
+  - Sub Total ditampilkan di bawah tabel
+
+  Tab "Actions" :
+  - Klik [Simpan] untuk menyimpan PO
+  - Jika ada item melebihi sisa PR, sistem akan memberi peringatan
+  - Setelah disimpan --> otomatis pindah ke halaman cetak struk PO
+
+Setelah PO tersimpan
+--------------------
+  - Status PO : 0 (aktif / belum diproses)
+  - Kolom qty_po di PR-detail ter-update otomatis
+  - PR ber-status "closed" otomatis jika semua item sudah ter-PO penuh
+  - Struk PO bisa dicetak ulang dari menu Daftar PO
+
+Lihat / Cetak PO yang sudah ada
+--------------------------------
+  Menu : Pengadaan > Pesanan Pembelian (pesanan_pembelian.php)
+  Klik nomor PO > [Cetak] atau [Detail]
+
+Format nomor  : [prefix cabang][YYYY][MM]...
+Tabel database: tblorder_header + tblorder_detail
+
+
+================================================================================
+D. ALUR 3 : DO (DELIVERY ORDER)
+================================================================================
+
+Apa itu DO?
+-----------
+DO adalah dokumen pengiriman dari supplier. Dibuat ketika supplier sudah
+mengirim barang (atau akan mengirim). DO TIDAK mengubah stok - stok baru
+berubah di langkah "Penerimaan" (do_receive.php).
+
+Cara membuat DO dari PO
+-----------------------
+  1. Buka menu : Pengadaan > Delivery Order > Buat DO dari PO
+                 (URL: do_from_po.php)
+
+  2. Pilih No. PO dari dropdown atau input manual --> klik [Load]
+     --> Sistem menampilkan header PO dan daftar item
+
+  3. Isi form DO:
+     - No. DO         : otomatis (format DO[YYYY][MM][CABANG][5 digit])
+     - Tanggal DO     : tanggal dokumen dari supplier
+     - No. Surat Jalan: nomor surat jalan / invoice supplier (opsional)
+     - Estimasi Tiba  : perkiraan tanggal barang tiba (opsional)
+
+  4. Untuk setiap item, isi:
+     - Qty Kirim : jumlah yang dikirim supplier (bisa berbeda dari PO jika
+                   pengiriman bertahap)
+
+  5. Klik [Buat DO] --> DO tersimpan dengan status awal
+
+Status DO
+---------
+  created    = DO baru dibuat, belum dikonfirmasi
+  confirmed  = sudah dikonfirmasi, menunggu pengiriman
+  in_transit = barang sedang dalam perjalanan
+  arrived    = barang sudah tiba di gudang
+  received   = barang sudah diterima dan stok sudah diupdate
+
+Melihat daftar DO
+-----------------
+  Menu : Pengadaan > Delivery Order (do_list.php)
+  Filter: status, supplier, tanggal
+
+Tabel database: tbldelivery_order_header + tbldelivery_order_detail
+
+Format nomor  : DO[YYYY][MM][KODE_CABANG][urutan 5 digit]
+Contoh        : DO202506PST00001
+
+
+================================================================================
+E. ALUR 4 : PEMBELIAN (PENERIMAAN BARANG)
+================================================================================
+
+Apa itu Pembelian?
+------------------
+Pembelian adalah pencatatan resmi penerimaan barang dari supplier. Inilah
+langkah yang benar-benar MENAIKKAN STOK di database (tbstok tipe='2').
+
+Cara penerimaan dari DO
+-----------------------
+  1. Buka menu : Pengadaan > Delivery Order (do_list.php)
+  2. Cari DO dengan status "arrived" atau "in_transit"
+  3. Klik [Terima Barang] di baris DO yang bersangkutan
+     (URL: do_receive.php?no_do=[no_do])
+
+  4. Sistem menampilkan detail DO - periksa item dan qty.
+
+  5. Isi Qty Terima untuk setiap item:
+     - Qty Terima bisa SAMA atau KURANG dari Qty DO (jika ada selisih/retur)
+     - Catat selisih di kolom Keterangan
+
+  6. Klik [Konfirmasi Terima] --> stok langsung naik
+
+  ALTERNATIF - Dari menu Pembelian langsung
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Menu : Pengadaan > Pembelian (pembelian.php)
+         atau Pembelian Dari PO (pembelian_dari_po.php)
+
+Cara buat pembelian tanpa DO (langsung dari PO)
+-----------------------------------------------
+  1. Buka : pembelian_dari_po.php
+  2. Pilih PO yang sudah ada --> klik [Proses Pembelian]
+  3. Isi tanggal, faktur supplier, dan qty terima
+  4. Simpan --> stok naik
+
+Setelah pembelian tersimpan
+----------------------------
+  - Stok naik : tbstok (tipe='2', masuk=qty, kd_cabang=cabang penerima)
+  - Status DO  : berubah menjadi "received"
+  - Bisa cetak struk pembelian : pembelian_struk.php
+
+Laporan pembelian
+-----------------
+  Menu : Laporan > Laporan Pembelian (lap_pembelian.php)
+  Filter: tanggal, supplier, cabang (untuk pusat)
+
+Tabel database: tblpembelian_header + tblpembelian_detail
+
+
+================================================================================
+F. ALUR 5 : PENJUALAN SPARE PART
+================================================================================
+
+Apa itu Penjualan?
+------------------
+Penjualan spare part adalah transaksi penjualan barang ke customer (bukan
+servis). Ini MENURUNKAN STOK barang yang dijual.
+
+Ada dua sub-alur:
+
+  SUB-ALUR A - Penjualan Langsung (Walk-in)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  1. Buka menu : Penjualan > Penjualan Baru (penjualan_add.php)
+  2. Isi:
+     - Tanggal transaksi
+     - Nama pelanggan (opsional untuk penjualan tunai umum)
+  3. Tambah item:
+     - Ketik kode/nama barang --> [Cari]
+     - Isi qty, harga jual (bisa override jika user punya akses)
+     - Klik [+]
+  4. Pilih metode bayar --> klik [Simpan]
+  5. Cetak struk penjualan --> penjualan_struk.php
+
+  SUB-ALUR B - Dari Sales Order / Pesanan Penjualan (Pre-order)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  1. Buka menu : Penjualan > Pesanan Penjualan (pesanan_penjualan.php)
+  2. Buat SO terlebih dahulu (pesanan_penjualan_add.php):
+     - Pilih pelanggan, isi item dan qty pesanan
+     - Simpan --> SO tersimpan dengan status "pending"
+  3. Saat barang siap, buka SO tersebut --> klik [Proses Penjualan]
+     (URL: penjualan_dari_so.php)
+  4. Konfirmasi qty dan harga --> Simpan --> stok turun
+
+Retur Penjualan
+---------------
+  Jika ada barang retur dari customer:
+  1. Menu : Penjualan > Retur Penjualan (retur_penjualan.php)
+  2. Input nomor penjualan yang diretur
+  3. Pilih item dan qty yang dikembalikan
+  4. Approve retur --> stok naik kembali
+
+Laporan penjualan
+-----------------
+  Menu : Laporan > Laporan Penjualan (lap_penjualan.php)
+         Laporan Profit  (lap_profit_penjualan.php)
+  Filter: tanggal, item, cabang (untuk pusat)
+
+Tabel database: tblpenjualan_header + tblpenjualan_detail
+
+
+================================================================================
+G. ALUR 6 : ANTAR CABANG - PULL (CABANG REQUEST KE PUSAT)
+================================================================================
+
+Skenario
+--------
+Cabang kehabisan stok dan meminta kiriman barang dari pusat. Cabang yang
+MEMULAI permintaan (inisiasi dari bawah ke atas).
+
+Siapa yang bisa?
+----------------
+  - User cabang (non-pusat) bisa membuat permintaan
+  - User pusat memproses dan mengirim
+
+Langkah - Sisi CABANG (membuat permintaan)
+-------------------------------------------
+  1. Login sebagai user CABANG
+
+  2. Buka menu : Pengadaan > Antar Cabang (pengadaan_antarcab.php)
+
+  3. Klik [+ Permintaan Baru] (tombol di kanan atas)
+     (URL: pengadaan_antarcab_add.php)
+
+  4. Isi form:
+     - Tanggal request : otomatis hari ini
+     - Catatan         : keterangan kebutuhan (opsional)
+     - Tambah item     : kode barang, qty yang dibutuhkan, HPP estimasi
+     - Klik [+ Tambah] untuk tiap item
+
+  5. Klik [Kirim Permintaan]
+     --> Status menjadi "terkirim"
+     --> Pusat akan melihat permintaan di daftar antar cabang
+
+  CATATAN TEKNIS PULL:
+    kd_cabang_asal   = kode cabang yang meminta
+    kd_cabang_tujuan = kode PUSAT
+    jenis            = 'pull'
+
+Langkah - Sisi PUSAT (memproses dan mengirim)
+----------------------------------------------
+  1. Login sebagai user PUSAT
+
+  2. Buka menu : Pengadaan > Antar Cabang (pengadaan_antarcab.php)
+
+  3. Di daftar akan muncul permintaan PULL dari cabang dengan badge status
+     "Terkirim" (kuning). Klik [Detail] untuk melihat isi item.
+     (URL: pengadaan_antarcab_detail.php?no=[no_order])
+
+  4. Klik tombol [Proses Kirim]
+     (URL: pengadaan_antarcab_proses.php?no=[no_order])
+
+  5. Form konfirmasi pengiriman:
+     - Tanggal kirim      : isi tanggal pengiriman
+     - Qty Kirim per item : konfirmasi qty yang benar-benar dikirim
+                           (bisa berbeda dari qty request jika stok kurang)
+     - Catatan            : informasi ekspedisi, dsb.
+
+  6. Klik [Konfirmasi Kirim]
+     --> Status berubah menjadi "dikirim"
+     --> Stok PUSAT TURUN otomatis (tbstok tipe='3', keluar=qty kirim)
+
+Langkah - Sisi CABANG (menerima barang)
+----------------------------------------
+  1. Login kembali sebagai user CABANG
+
+  2. Buka menu : Pengadaan > Antar Cabang (pengadaan_antarcab.php)
+
+  3. Cari order dengan status "Dikirim" (biru). Klik [Konfirmasi Terima]
+     (URL: pengadaan_antarcab_terima.php?no=[no_order])
+
+  4. Periksa qty yang diterima. Jika sesuai, klik [Konfirmasi Terima]
+     --> Status berubah menjadi "selesai"
+     --> Stok CABANG NAIK otomatis (tbstok tipe='2', masuk=qty terima)
+
+Format nomor  : PA[YY][9 digit urutan]  contoh: PA2511000001
+Tabel database: tblorder_antarcab_header + tblorder_antarcab_detail
+
+
+================================================================================
+H. ALUR 7 : ANTAR CABANG - PUSH (PUSAT INISIASI KE CABANG)
+================================================================================
+
+Skenario
+--------
+Pusat mengirimkan barang ke cabang tanpa menunggu permintaan dari cabang.
+Biasanya untuk pengisian stok rutin atau distribusi barang baru.
+
+Siapa yang bisa?
+----------------
+  - HANYA user PUSAT yang bisa membuat PUSH
+  - User cabang hanya bisa menerima
+
+Langkah - Sisi PUSAT (membuat & mengirim)
+------------------------------------------
+  1. Login sebagai user PUSAT
+
+  2. Buka menu : Pengadaan > Antar Cabang (pengadaan_antarcab.php)
+
+  3. Klik tombol [Kirim ke Cabang (PUSH)]
+     (URL: pengadaan_antarcab_push.php)
+
+  4. Isi form:
+     - Tujuan Cabang   : pilih cabang penerima dari dropdown
+     - Tanggal kirim   : pilih tanggal pengiriman
+     - Catatan         : informasi pengiriman (opsional)
+     - Tambah item     : kode barang, qty kirim, HPP
+       --> HPP otomatis terisi dari master barang saat kode diketik
+     - Klik [+ Tambah] untuk tiap item
+
+  5. Klik [Kirim Sekarang]
+     --> Status langsung "dikirim" (tidak ada tahap "terkirim")
+     --> Stok PUSAT TURUN otomatis (tbstok tipe='3', keluar=qty)
+
+  CATATAN TEKNIS PUSH:
+    kd_cabang_asal   = kode PUSAT (pengirim)
+    kd_cabang_tujuan = kode cabang penerima
+    jenis            = 'push'
+
+Langkah - Sisi CABANG (menerima barang)
+----------------------------------------
+  1. Login sebagai user CABANG
+
+  2. Buka menu : Pengadaan > Antar Cabang (pengadaan_antarcab.php)
+     --> Order PUSH dari pusat akan muncul di daftar cabang
+
+  3. Cari order dengan status "Dikirim". Klik [Konfirmasi Terima]
+     (URL: pengadaan_antarcab_terima.php?no=[no_order])
+
+  4. Konfirmasi qty yang diterima --> klik [Konfirmasi Terima]
+     --> Status berubah menjadi "selesai"
+     --> Stok CABANG NAIK otomatis
+
+Perbedaan PULL vs PUSH
+-----------------------
+  Aspek             | PULL                        | PUSH
+  ------------------|-----------------------------|---------------------------------
+  Inisiator         | Cabang                      | Pusat
+  Status awal       | terkirim (cabang submit)    | dikirim (pusat langsung kirim)
+  Stok pusat turun  | Saat pusat klik Proses Kirim| Saat pusat klik Kirim Sekarang
+  Stok cabang naik  | Saat cabang konfirmasi terima| Sama
+  kd_cabang_asal    | kd cabang peminta           | kd pusat
+  kd_cabang_tujuan  | kd pusat                   | kd cabang penerima
+  Kolom jenis       | 'pull'                      | 'push'
+
+
+================================================================================
+I. RINGKASAN STATUS & DAMPAK STOK
+================================================================================
+
+DOKUMEN          | STATUS ALUR                              | DAMPAK STOK
+-----------------|------------------------------------------|------------------
+PR               | draft > submitted > approved > closed    | TIDAK ADA
+PO               | aktif (0) > selesai                      | TIDAK ADA
+DO               | created > confirmed > in_transit         | TIDAK ADA
+                 | > arrived > received                     | TIDAK ADA
+Pembelian        | tercatat saat konfirmasi terima          | NAIK (+)
+Penjualan        | tersimpan saat transaksi                 | TURUN (-)
+Antar Cab PULL   | terkirim > dikirim > selesai             | Pusat TURUN (-)
+                 |                                          | Cabang NAIK (+)
+Antar Cab PUSH   | dikirim > selesai                        | Pusat TURUN (-)
+                 |                                          | Cabang NAIK (+)
+
+KODE TIPE STOK (kolom tipe di tabel tbstok)
+--------------------------------------------
+  tipe='2' = masuk    (pembelian / terima antar cabang)
+  tipe='3' = keluar   (kirim antar cabang)
+  tipe='4' = keluar   (penjualan / penggunaan di servis)
+
+
+================================================================================
+J. TIPS & CATATAN PENTING
+================================================================================
+
+1. URUTAN YANG BENAR
+   - Selalu buat PR dulu jika ada kebutuhan terencana, jangan langsung PO.
+   - PO dari PR akan otomatis mengisi item - hemat waktu dan mencegah salah input.
+   - Jangan buat pembelian tanpa ada PO atau DO - akan sulit di-audit.
+
+2. PARTIAL DELIVERY (Pengiriman Bertahap)
+   - Satu PO bisa dipenuhi bertahap: satu PO bisa menghasilkan beberapa DO.
+   - Satu PR juga bisa dipenuhi oleh beberapa PO (multi-PO per PR).
+   - Sistem melacak sisa qty di PR (kolom qty_po) secara otomatis.
+   - Jika PR sudah "closed" maka tidak bisa dibuat PO baru dari PR tersebut.
+
+3. ANTAR CABANG - KAPAN PAKAI PULL vs PUSH?
+   - PULL = untuk kebutuhan MENDESAK atau tidak rutin, cabang yang tahu
+            kebutuhannya sendiri dan meminta ke pusat.
+   - PUSH = untuk distribusi rutin, stok opname, atau peluncuran produk baru
+            ke semua cabang sekaligus yang diputuskan pusat.
+
+4. STOK REAL-TIME
+   - Stok baru ter-update setelah konfirmasi terima (bukan saat PO/DO dibuat).
+   - Jika stok terlihat tidak berubah setelah pembelian, cek apakah
+     langkah konfirmasi terima sudah dilakukan.
+   - Untuk antar cabang: stok pusat turun SAAT proses kirim, stok cabang
+     naik SAAT cabang konfirmasi terima.
+
+5. HAK AKSES
+   - Pusat    : bisa lihat semua cabang, buat PUSH, proses PULL, lihat laporan
+                rekap semua cabang.
+   - Cabang   : hanya bisa lihat data cabangnya sendiri, buat PULL request,
+                tidak bisa membuat PUSH.
+
+6. NOMOR DOKUMEN OTOMATIS
+   - PR  : PR[YYYY][MM][CABANG][urutan]   contoh: PR202511PST96243
+   - PO  : format otomatis dari sistem
+   - DO  : DO[YYYY][MM][CABANG][5 digit]  contoh: DO202506PST00001
+   - AC  : PA[YY][9 digit]               contoh: PA2511000001
+
+7. CETAK DOKUMEN
+   - Struk PO    : pesanan_pembelian_cetak.php atau pesanan_pembelian_struk.php
+   - Struk Beli  : pembelian_struk.php
+   - Nota AC     : pengadaan_antarcab_print.php
+   - Semua bisa dibuka dari halaman detail masing-masing dokumen.
+
+8. LAPORAN YANG TERSEDIA
+   - Lap. Pembelian          : lap_pembelian.php
+   - Lap. Pesanan Pembelian  : lap_pesanan_pembelian.php
+   - Lap. Penjualan          : lap_penjualan.php
+   - Lap. Profit Penjualan   : lap_profit_penjualan.php
+   - Lap. Antar Cabang       : lap_antarcab.php
+   - Lap. Kirim Antar Cabang : lap_antarcab_kirim.php
+   - Lap. Terima Antar Cabang: lap_antarcab_terima.php
+
+================================================================================
+   Dibuat: 2026-06-30  |  Untuk referensi operasional staf FitMotor
+================================================================================

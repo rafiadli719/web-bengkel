@@ -46,6 +46,7 @@ while ($c = mysqli_fetch_assoc($qCabang)) {
 $calculator = new MinMaxCalculator($koneksi);
 $cabangStats = $calculator->getCabangStats();
 $itemsNeedOrder = $calculator->getItemPerluOrder(null, null, 50);
+$itemsPerSupplier = $calculator->getItemPerSupplier();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,10 +143,11 @@ $itemsNeedOrder = $calculator->getItemPerluOrder(null, null, 50);
 
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#tab-minmax" aria-controls="tab-minmax" role="tab" data-toggle="tab"><i class="fa fa-bar-chart"></i> MIN/MAX Stok</a></li>
-                        <li role="presentation"><a href="#tab-order" aria-controls="tab-order" role="tab" data-toggle="tab"><i class="fa fa-shopping-cart"></i> Item Perlu Order</a></li>
+                        <li role="presentation"><a href="#tab-order" aria-controls="tab-order" role="tab" data-toggle="tab"><i class="fa fa-warning"></i> Item Perlu Order</a></li>
+                        <li role="presentation"><a href="#tab-supplier" aria-controls="tab-supplier" role="tab" data-toggle="tab"><i class="fa fa-truck"></i> Order per Supplier</a></li>
                         <li role="presentation"><a href="#tab-pr" aria-controls="tab-pr" role="tab" data-toggle="tab"><i class="fa fa-file-text-o"></i> PR</a></li>
                         <li role="presentation"><a href="#tab-po" aria-controls="tab-po" role="tab" data-toggle="tab"><i class="fa fa-shopping-cart"></i> PO</a></li>
-                        <li role="presentation"><a href="#tab-do" aria-controls="tab-do" role="tab" data-toggle="tab"><i class="fa fa-truck"></i> DO</a></li>
+                        <li role="presentation"><a href="#tab-do" aria-controls="tab-do" role="tab" data-toggle="tab"><i class="fa fa-archive"></i> DO</a></li>
                     </ul>
                     <div class="tab-content" style="padding:15px; background:#fff; border:1px solid #ddd; border-top:none;">
 
@@ -288,7 +290,7 @@ $itemsNeedOrder = $calculator->getItemPerluOrder(null, null, 50);
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover" id="tblItemsOrder">
+                                <table class="table table-bordered table-striped table-hover table-condensed" id="tblItemsOrder">
                                     <thead>
                                         <tr>
                                             <th><input type="checkbox" id="checkAll"></th>
@@ -296,38 +298,123 @@ $itemsNeedOrder = $calculator->getItemPerluOrder(null, null, 50);
                                             <th>Nama Item</th>
                                             <th>Cabang</th>
                                             <th class="text-center">Stok</th>
+                                            <th class="text-center">ROP</th>
                                             <th class="text-center">MIN</th>
                                             <th class="text-center">MAX</th>
+                                            <th class="text-center">LT</th>
+                                            <th class="text-center">Avg/hr</th>
                                             <th class="text-center">Kat</th>
-                                            <th class="text-center">Kurang</th>
-                                            <th class="text-center">Saran Order</th>
-                                            <th>Status</th>
+                                            <th class="text-center">Saran</th>
+                                            <th>Last Sale</th>
+                                            <th>Status Stok</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbodyItemsOrder">
                                         <?php if (count($itemsNeedOrder) > 0): ?>
-                                            <?php foreach ($itemsNeedOrder as $item): ?>
-                                            <tr>
+                                            <?php foreach ($itemsNeedOrder as $item):
+                                                $rop = isset($item['rop']) ? (int)$item['rop'] : 0;
+                                                $stok = (float)$item['stok_saat_ini'];
+                                                $min  = (float)$item['min_stok'];
+                                                $lt   = isset($item['lead_time_hari']) ? (int)$item['lead_time_hari'] : 3;
+                                                $avgHari = isset($item['avg_interval_hari']) ? round(7/$item['avg_interval_hari'],1) : 0;
+                                                // badge stok
+                                                if ($stok <= $rop) {
+                                                    $stokClass = 'danger';
+                                                    $stokLabel = 'Titik Pesan';
+                                                } elseif ($stok <= $min) {
+                                                    $stokClass = 'warning';
+                                                    $stokLabel = 'Dibawah MIN';
+                                                } else {
+                                                    $stokClass = 'success';
+                                                    $stokLabel = 'Aman';
+                                                }
+                                                $lastSale = !empty($item['last_sale_date']) ? date('d/m/y', strtotime($item['last_sale_date'])) : '-';
+                                                $lastSaleClass = '';
+                                                if (!empty($item['last_sale_date'])) {
+                                                    $diffDays = (time() - strtotime($item['last_sale_date'])) / 86400;
+                                                    if ($diffDays > 60) $lastSaleClass = 'text-muted';
+                                                }
+                                                $isManual = !empty($item['min_max_manual']);
+                                            ?>
+                                            <tr data-item="<?php echo htmlspecialchars($item['no_item']); ?>" data-cabang="<?php echo htmlspecialchars($item['kd_cabang']); ?>">
                                                 <td><input type="checkbox" class="item-check" value="<?php echo htmlspecialchars($item['no_item'].'|'.$item['kd_cabang']); ?>"></td>
-                                                <td><?php echo htmlspecialchars($item['no_item']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_item']); ?></td>
-                                                <td><?php echo htmlspecialchars($item['nama_cabang'] ?: $item['kd_cabang']); ?></td>
-                                                <td class="text-center"><?php echo (int)$item['stok_saat_ini']; ?></td>
-                                                <td class="text-center"><?php echo (int)$item['min_stok']; ?></td>
-                                                <td class="text-center"><?php echo (int)$item['max_stok']; ?></td>
+                                                <td><small><?php echo htmlspecialchars($item['no_item']); ?></small></td>
+                                                <td><?php echo htmlspecialchars($item['nama_item']); ?>
+                                                    <?php if ($isManual): ?><span class="label label-info" title="Override manual">M</span><?php endif; ?>
+                                                </td>
+                                                <td><small><?php echo htmlspecialchars($item['nama_cabang'] ?: $item['kd_cabang']); ?></small></td>
+                                                <td class="text-center"><strong><?php echo (int)$stok; ?></strong></td>
+                                                <td class="text-center text-danger"><strong><?php echo $rop; ?></strong></td>
+                                                <td class="text-center mm-min" data-val="<?php echo (int)$min; ?>"><?php echo (int)$min; ?></td>
+                                                <td class="text-center mm-max" data-val="<?php echo (int)$item['max_stok']; ?>"><?php echo (int)$item['max_stok']; ?></td>
+                                                <td class="text-center"><small><?php echo $lt; ?>h</small></td>
+                                                <td class="text-center"><small><?php echo $avgHari; ?>/hr</small></td>
                                                 <td class="text-center"><span class="kategori-badge kategori-<?php echo $item['kategori']; ?>"><?php echo $item['kategori']; ?></span></td>
-                                                <td class="text-center status-warning"><?php echo (int)$item['qty_kurang']; ?></td>
                                                 <td class="text-center"><strong><?php echo (int)$item['qty_order_suggest']; ?></strong></td>
-                                                <td class="<?php echo $item['status_stok'] == 'URGENT' ? 'status-urgent' : 'status-warning'; ?>">
-                                                    <?php echo $item['status_stok']; ?>
+                                                <td class="<?php echo $lastSaleClass; ?>"><small><?php echo $lastSale; ?></small></td>
+                                                <td><span class="label label-<?php echo $stokClass; ?>"><?php echo $stokLabel; ?></span></td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-xs btn-default btn-edit-mm" title="Override MIN/MAX"><i class="fa fa-pencil"></i></button>
                                                 </td>
                                             </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="11" class="text-center text-muted">Tidak ada item yang perlu order saat ini</td></tr>
+                                            <tr><td colspan="15" class="text-center text-muted">Tidak ada item yang perlu order saat ini</td></tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB ORDER PER SUPPLIER (F3) -->
+                        <div role="tabpanel" class="tab-pane" id="tab-supplier">
+                            <p class="text-muted"><i class="fa fa-info-circle"></i> Item yang stok &lt; MIN, dikelompokkan per supplier utama. Klik baris untuk lihat detail item.</p>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                        <tr class="active">
+                                            <th>Supplier</th>
+                                            <th class="text-center">Jml Item</th>
+                                            <th class="text-right">Total Qty Kurang</th>
+                                            <th class="text-right">Est. Nilai</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (count($itemsPerSupplier) > 0): ?>
+                                            <?php foreach ($itemsPerSupplier as $sup): ?>
+                                            <tr>
+                                                <td><strong><?php echo htmlspecialchars($sup['nama_supplier']); ?></strong>
+                                                    <?php if ($sup['kd_supplier']): ?>
+                                                    <small class="text-muted">(<?php echo htmlspecialchars($sup['kd_supplier']); ?>)</small>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center"><span class="badge"><?php echo (int)$sup['jml_item']; ?></span></td>
+                                                <td class="text-right"><?php echo number_format((float)$sup['total_qty_kurang'], 0, ',', '.'); ?></td>
+                                                <td class="text-right">Rp <?php echo number_format((float)$sup['est_nilai'], 0, ',', '.'); ?></td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-xs btn-info btn-detail-supplier"
+                                                            data-supplier="<?php echo htmlspecialchars($sup['kd_supplier']); ?>"
+                                                            data-nama="<?php echo htmlspecialchars($sup['nama_supplier']); ?>">
+                                                        <i class="fa fa-list"></i> Detail
+                                                    </button>
+                                                    <a href="pr_add.php?supplier=<?php echo urlencode($sup['kd_supplier']); ?>" class="btn btn-xs btn-success">
+                                                        <i class="fa fa-plus"></i> Buat PR
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td colspan="5" class="text-center text-muted">Tidak ada item yang perlu order</td></tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Area detail supplier items -->
+                            <div id="supplierDetail" style="display:none; margin-top:15px;">
+                                <h4 id="supplierDetailTitle"><i class="fa fa-list"></i> Detail Item</h4>
+                                <div id="supplierDetailBody"></div>
                             </div>
                         </div>
 
@@ -447,6 +534,41 @@ $itemsNeedOrder = $calculator->getItemPerluOrder(null, null, 50);
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/ace-elements.min.js"></script>
 <script src="assets/js/ace.min.js"></script>
+<!-- Modal inline edit MIN/MAX -->
+<div class="modal fade" id="modalEditMM" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-pencil"></i> Override MIN/MAX</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="mmNoItem">
+                <input type="hidden" id="mmKdCabang">
+                <div class="form-group">
+                    <label>Item:</label>
+                    <p id="mmNamaItem" class="form-control-static text-info"></p>
+                </div>
+                <div class="form-group">
+                    <label>MIN Stok:</label>
+                    <input type="number" id="mmMin" class="form-control input-sm" min="0">
+                </div>
+                <div class="form-group">
+                    <label>MAX Stok:</label>
+                    <input type="number" id="mmMax" class="form-control input-sm" min="0">
+                </div>
+                <div class="alert alert-info" style="padding:8px; font-size:12px;">
+                    <i class="fa fa-info-circle"></i> Override manual tidak akan tertimpa saat "Hitung Ulang MIN/MAX". Klik <strong>Reset Auto</strong> untuk kembali ke kalkulasi otomatis.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" id="btnResetAuto"><i class="fa fa-undo"></i> Reset Auto</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btnSaveMM"><i class="fa fa-save"></i> Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     // Recalculate MIN/MAX
@@ -484,39 +606,44 @@ $(document).ready(function() {
         $.ajax({
             url: '_ajax/ajax-minmax-calculation.php',
             type: 'GET',
-            data: {
-                action: 'search_items',
-                kd_cabang: cabang,
-                kategori: kategori,
-                q: search
-            },
+            data: { action: 'search_items', kd_cabang: cabang, kategori: kategori, q: search },
             dataType: 'json',
             success: function(res) {
                 if (res.success) {
                     var html = '';
                     if (res.data.length > 0) {
                         res.data.forEach(function(item) {
-                            var qtyKurang = Math.max(0, item.min_stok - item.stok_saat_ini);
-                            var qtySuggest = Math.max(0, item.max_stok - item.stok_saat_ini);
-                            var status = item.stok_saat_ini < (item.min_stok / 2) ? 'URGENT' : (item.stok_saat_ini < item.min_stok ? 'WARNING' : 'OK');
-                            var statusClass = status == 'URGENT' ? 'status-urgent' : (status == 'WARNING' ? 'status-warning' : 'status-ok');
+                            var rop = parseInt(item.rop) || 0;
+                            var stok = parseInt(item.stok_saat_ini) || 0;
+                            var min = parseInt(item.min_stok) || 0;
+                            var qtySuggest = Math.max(0, item.max_stok - stok);
+                            var lt = item.lead_time_hari || 3;
+                            var stokLabel, stokClass;
+                            if (stok <= rop) { stokLabel='Titik Pesan'; stokClass='danger'; }
+                            else if (stok <= min) { stokLabel='Dibawah MIN'; stokClass='warning'; }
+                            else { stokLabel='Aman'; stokClass='success'; }
+                            var lastSale = item.last_sale_date ? item.last_sale_date : '-';
 
-                            html += '<tr>';
+                            html += '<tr data-item="'+item.no_item+'" data-cabang="'+item.kd_cabang+'">';
                             html += '<td><input type="checkbox" class="item-check" value="' + item.no_item + '|' + item.kd_cabang + '"></td>';
-                            html += '<td>' + item.no_item + '</td>';
-                            html += '<td>' + item.nama_item + '</td>';
-                            html += '<td>' + (item.nama_cabang || item.kd_cabang) + '</td>';
-                            html += '<td class="text-center">' + item.stok_saat_ini + '</td>';
-                            html += '<td class="text-center">' + item.min_stok + '</td>';
-                            html += '<td class="text-center">' + item.max_stok + '</td>';
-                            html += '<td class="text-center"><span class="kategori-badge kategori-' + item.kategori + '">' + item.kategori + '</span></td>';
-                            html += '<td class="text-center status-warning">' + qtyKurang + '</td>';
-                            html += '<td class="text-center"><strong>' + qtySuggest + '</strong></td>';
-                            html += '<td class="' + statusClass + '">' + status + '</td>';
+                            html += '<td><small>'+item.no_item+'</small></td>';
+                            html += '<td>'+item.nama_item+'</td>';
+                            html += '<td><small>'+(item.nama_cabang||item.kd_cabang)+'</small></td>';
+                            html += '<td class="text-center"><strong>'+stok+'</strong></td>';
+                            html += '<td class="text-center text-danger"><strong>'+rop+'</strong></td>';
+                            html += '<td class="text-center mm-min" data-val="'+min+'">'+min+'</td>';
+                            html += '<td class="text-center mm-max" data-val="'+item.max_stok+'">'+item.max_stok+'</td>';
+                            html += '<td class="text-center"><small>'+lt+'h</small></td>';
+                            html += '<td class="text-center"><small>'+(item.avg_interval_hari||0)+'</small></td>';
+                            html += '<td class="text-center"><span class="kategori-badge kategori-'+item.kategori+'">'+item.kategori+'</span></td>';
+                            html += '<td class="text-center"><strong>'+qtySuggest+'</strong></td>';
+                            html += '<td><small>'+lastSale+'</small></td>';
+                            html += '<td><span class="label label-'+stokClass+'">'+stokLabel+'</span></td>';
+                            html += '<td class="text-center"><button type="button" class="btn btn-xs btn-default btn-edit-mm" title="Override"><i class="fa fa-pencil"></i></button></td>';
                             html += '</tr>';
                         });
                     } else {
-                        html = '<tr><td colspan="11" class="text-center text-muted">Tidak ada item yang sesuai filter</td></tr>';
+                        html = '<tr><td colspan="15" class="text-center text-muted">Tidak ada item yang sesuai filter</td></tr>';
                     }
                     $('#tbodyItemsOrder').html(html);
                 }
@@ -527,6 +654,111 @@ $(document).ready(function() {
     // Check all
     $('#checkAll').change(function() {
         $('.item-check').prop('checked', $(this).is(':checked'));
+    });
+
+    // Inline edit MIN/MAX
+    $(document).on('click', '.btn-edit-mm', function() {
+        var tr = $(this).closest('tr');
+        var noItem = tr.data('item');
+        var kdCabang = tr.data('cabang');
+        var namaItem = tr.find('td:eq(2)').text().trim();
+        var minVal = tr.find('.mm-min').data('val');
+        var maxVal = tr.find('.mm-max').data('val');
+
+        $('#mmNoItem').val(noItem);
+        $('#mmKdCabang').val(kdCabang);
+        $('#mmNamaItem').text(namaItem);
+        $('#mmMin').val(minVal);
+        $('#mmMax').val(maxVal);
+        $('#modalEditMM').modal('show');
+    });
+
+    $('#btnSaveMM').click(function() {
+        var noItem = $('#mmNoItem').val();
+        var kdCabang = $('#mmKdCabang').val();
+        var min = parseInt($('#mmMin').val()) || 0;
+        var max = parseInt($('#mmMax').val()) || 0;
+        if (max < min) { alert('MAX harus >= MIN'); return; }
+
+        $.ajax({
+            url: '_ajax/ajax-minmax-calculation.php',
+            type: 'POST',
+            data: { action: 'set_manual', no_item: noItem, kd_cabang: kdCabang, min_stok: min, max_stok: max },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    $('#modalEditMM').modal('hide');
+                    // Update row inline tanpa reload
+                    var tr = $('#tbodyItemsOrder tr[data-item="'+noItem+'"][data-cabang="'+kdCabang+'"]');
+                    tr.find('.mm-min').text(min).data('val', min);
+                    tr.find('.mm-max').text(max).data('val', max);
+                    alert('MIN/MAX berhasil diupdate (manual)');
+                } else {
+                    alert('Error: ' + (res.error||'Gagal simpan'));
+                }
+            }
+        });
+    });
+
+    $('#btnResetAuto').click(function() {
+        var noItem = $('#mmNoItem').val();
+        var kdCabang = $('#mmKdCabang').val();
+        if (!confirm('Reset ke kalkulasi otomatis?')) return;
+
+        $.ajax({
+            url: '_ajax/ajax-minmax-calculation.php',
+            type: 'POST',
+            data: { action: 'reset_manual', no_item: noItem, kd_cabang: kdCabang },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    $('#modalEditMM').modal('hide');
+                    alert('Reset ke kalkulasi otomatis. Klik "Hitung Ulang MIN/MAX" untuk update nilai.');
+                } else {
+                    alert('Error: ' + (res.error||'Gagal reset'));
+                }
+            }
+        });
+    });
+
+    // Detail supplier items
+    $(document).on('click', '.btn-detail-supplier', function() {
+        var kdSupplier = $(this).data('supplier');
+        var namaSupplier = $(this).data('nama');
+
+        $.ajax({
+            url: '_ajax/ajax-minmax-calculation.php',
+            type: 'GET',
+            data: { action: 'supplier_items', kd_supplier: kdSupplier },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    $('#supplierDetailTitle').html('<i class="fa fa-list"></i> Detail Item — <strong>' + namaSupplier + '</strong>');
+                    var html = '<table class="table table-condensed table-bordered table-striped">';
+                    html += '<thead><tr><th>Kode</th><th>Nama Item</th><th class="text-center">Stok</th><th class="text-center">MIN</th><th class="text-center">MAX</th><th class="text-center">Kat</th><th class="text-center">Saran Order</th><th class="text-right">Est Nilai</th></tr></thead><tbody>';
+                    if (res.data.length > 0) {
+                        res.data.forEach(function(r) {
+                            html += '<tr>';
+                            html += '<td><small>'+r.no_item+'</small></td>';
+                            html += '<td>'+r.nama_item+'</td>';
+                            html += '<td class="text-center">'+r.stok_saat_ini+'</td>';
+                            html += '<td class="text-center">'+r.min_stok+'</td>';
+                            html += '<td class="text-center">'+r.max_stok+'</td>';
+                            html += '<td class="text-center"><span class="kategori-badge kategori-'+r.kategori+'">'+r.kategori+'</span></td>';
+                            html += '<td class="text-center"><strong>'+r.qty_order_suggest+'</strong></td>';
+                            html += '<td class="text-right">Rp '+Number(r.est_nilai).toLocaleString('id-ID')+'</td>';
+                            html += '</tr>';
+                        });
+                    } else {
+                        html += '<tr><td colspan="8" class="text-center text-muted">Tidak ada item</td></tr>';
+                    }
+                    html += '</tbody></table>';
+                    $('#supplierDetailBody').html(html);
+                    $('#supplierDetail').show();
+                    $('html, body').animate({ scrollTop: $('#supplierDetail').offset().top - 60 }, 400);
+                }
+            }
+        });
     });
 
     // Generate rencana order
@@ -542,7 +774,6 @@ $(document).ready(function() {
         }
 
         if (confirm('Buat rencana order untuk ' + selected.length + ' item?')) {
-            // TODO: Implement rencana order generation
             alert('Fitur dalam pengembangan');
         }
     });

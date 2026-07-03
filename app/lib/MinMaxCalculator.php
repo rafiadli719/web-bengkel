@@ -7,20 +7,21 @@
  * - Data 84 hari (12 minggu): W1-W12
  * - MIN Stok = MAX penjualan 1 minggu (tertinggi dari W1-W12)
  * - MAX Stok = MAX penjualan 2 minggu berturut-turut
+ * - ROP = (total_qty_84hari / 84) * lead_time_hari per item
  * - Kategori berdasarkan frekuensi transaksi:
  *   - A: Interval 1-3 hari (22-84 transaksi/84 hari)
  *   - B: Interval 4-12 hari (7-21 transaksi/84 hari)
  *   - C: Interval >12 hari (4-6 transaksi/84 hari)
  *   - D: Interval >30 hari atau tidak ada transaksi (0-3 transaksi/84 hari)
  *   - E: Non-Stock (tidak ada transaksi sama sekali)
- * - Lead time: 3 hari
+ * - Lead time: dari tblsupplier.lama_hari_kirim per item (default 3)
  */
 
 class MinMaxCalculator
 {
     private $koneksi;
     private $periodeHari = 84;
-    private $leadTimeHari = 3;
+    private $leadTimeHari = 3; // fallback jika supplier tidak ada lead time
 
     public function __construct($koneksi)
     {
@@ -102,48 +103,42 @@ class MinMaxCalculator
         $cabangCondition = $kdCabang ? "AND pm.kd_cabang = '" . mysqli_real_escape_string($this->koneksi, $kdCabang) . "'" : "";
 
         // Query untuk mendapatkan data mingguan per item per cabang
+        // Step 1: INSERT/UPDATE dari mingguan (tanpa subquery mahal)
         $sql = "INSERT INTO tblitem_minmax (
                     no_item, kd_cabang,
                     w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12,
-                    max_1w, max_2w, min_stok, max_stok,
+                    max_1w, max_2w, min_stok, max_stok, rop,
                     total_transaksi_84hari, avg_interval_hari, kategori,
-                    stok_saat_ini, lead_time_hari
+                    stok_saat_ini, lead_time_hari, supplier1, supplier2
                 )
                 SELECT
-                    pm.no_item,
-                    pm.kd_cabang,
-                    MAX(CASE WHEN rn = 1 THEN qty_jual ELSE 0 END) AS w1,
-                    MAX(CASE WHEN rn = 2 THEN qty_jual ELSE 0 END) AS w2,
-                    MAX(CASE WHEN rn = 3 THEN qty_jual ELSE 0 END) AS w3,
-                    MAX(CASE WHEN rn = 4 THEN qty_jual ELSE 0 END) AS w4,
-                    MAX(CASE WHEN rn = 5 THEN qty_jual ELSE 0 END) AS w5,
-                    MAX(CASE WHEN rn = 6 THEN qty_jual ELSE 0 END) AS w6,
-                    MAX(CASE WHEN rn = 7 THEN qty_jual ELSE 0 END) AS w7,
-                    MAX(CASE WHEN rn = 8 THEN qty_jual ELSE 0 END) AS w8,
-                    MAX(CASE WHEN rn = 9 THEN qty_jual ELSE 0 END) AS w9,
-                    MAX(CASE WHEN rn = 10 THEN qty_jual ELSE 0 END) AS w10,
-                    MAX(CASE WHEN rn = 11 THEN qty_jual ELSE 0 END) AS w11,
-                    MAX(CASE WHEN rn = 12 THEN qty_jual ELSE 0 END) AS w12,
+                    pm.no_item, pm.kd_cabang,
+                    MAX(CASE WHEN rn = 1 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 2 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 3 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 4 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 5 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 6 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 7 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 8 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 9 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 10 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 11 THEN qty_jual ELSE 0 END),
+                    MAX(CASE WHEN rn = 12 THEN qty_jual ELSE 0 END),
                     MAX(qty_jual) AS max_1w,
-                    0 AS max_2w,
-                    MAX(qty_jual) AS min_stok,
-                    0 AS max_stok,
-                    SUM(jml_transaksi) AS total_transaksi_84hari,
-                    CASE WHEN SUM(jml_transaksi) > 0 THEN 84.0 / SUM(jml_transaksi) ELSE 999 END AS avg_interval_hari,
+                    0, MAX(qty_jual), 0, 0,
+                    SUM(jml_transaksi),
+                    CASE WHEN SUM(jml_transaksi) > 0 THEN 84.0 / SUM(jml_transaksi) ELSE 999 END,
                     CASE
                         WHEN SUM(jml_transaksi) >= 22 THEN 'A'
                         WHEN SUM(jml_transaksi) >= 7 THEN 'B'
                         WHEN SUM(jml_transaksi) >= 4 THEN 'C'
                         WHEN SUM(jml_transaksi) >= 1 THEN 'D'
                         ELSE 'E'
-                    END AS kategori,
-                    COALESCE((SELECT SUM(masuk - keluar) FROM tbstok s
-                              WHERE CONVERT(s.no_item USING utf8mb4) COLLATE utf8mb4_general_ci = pm.no_item
-                              AND CONVERT(s.kd_cabang USING utf8mb4) COLLATE utf8mb4_general_ci = pm.kd_cabang), 0) AS stok_saat_ini,
-                    {$this->leadTimeHari} AS lead_time_hari
+                    END,
+                    0, {$this->leadTimeHari}, '', ''
                 FROM (
-                    SELECT
-                        no_item, kd_cabang, tahun, minggu, qty_jual, jml_transaksi,
+                    SELECT no_item, kd_cabang, tahun, minggu, qty_jual, jml_transaksi,
                         ROW_NUMBER() OVER (PARTITION BY no_item, kd_cabang ORDER BY tahun DESC, minggu DESC) AS rn
                     FROM tblpenjualan_mingguan
                     WHERE (tahun * 100 + minggu) >= {$yearWeekStart}
@@ -151,37 +146,71 @@ class MinMaxCalculator
                 WHERE pm.rn <= 12 {$cabangCondition}
                 GROUP BY pm.no_item, pm.kd_cabang
                 ON DUPLICATE KEY UPDATE
-                    w1 = VALUES(w1), w2 = VALUES(w2), w3 = VALUES(w3), w4 = VALUES(w4),
-                    w5 = VALUES(w5), w6 = VALUES(w6), w7 = VALUES(w7), w8 = VALUES(w8),
-                    w9 = VALUES(w9), w10 = VALUES(w10), w11 = VALUES(w11), w12 = VALUES(w12),
-                    max_1w = VALUES(max_1w),
-                    min_stok = VALUES(min_stok),
-                    total_transaksi_84hari = VALUES(total_transaksi_84hari),
-                    avg_interval_hari = VALUES(avg_interval_hari),
-                    kategori = VALUES(kategori),
-                    stok_saat_ini = VALUES(stok_saat_ini),
-                    updated_at = NOW()";
+                    w1=VALUES(w1), w2=VALUES(w2), w3=VALUES(w3), w4=VALUES(w4),
+                    w5=VALUES(w5), w6=VALUES(w6), w7=VALUES(w7), w8=VALUES(w8),
+                    w9=VALUES(w9), w10=VALUES(w10), w11=VALUES(w11), w12=VALUES(w12),
+                    max_1w=VALUES(max_1w),
+                    min_stok=IF(min_max_manual=1, min_stok, VALUES(min_stok)),
+                    total_transaksi_84hari=VALUES(total_transaksi_84hari),
+                    avg_interval_hari=VALUES(avg_interval_hari),
+                    kategori=VALUES(kategori),
+                    updated_at=NOW()";
 
         $result = mysqli_query($this->koneksi, $sql);
-
         if (!$result) {
-            return ['success' => false, 'error' => mysqli_error($this->koneksi)];
+            return ['success' => false, 'error' => 'step1: ' . mysqli_error($this->koneksi)];
         }
 
-        // Update MAX 2W (penjualan tertinggi 2 minggu berturut-turut)
-        $cabangConditionUpdate = $kdCabang ? "WHERE kd_cabang = '" . mysqli_real_escape_string($this->koneksi, $kdCabang) . "'" : "";
+        $cabangConditionUpdate = $kdCabang ? "AND m.kd_cabang = '" . mysqli_real_escape_string($this->koneksi, $kdCabang) . "'" : "";
 
+        // Step 2: Update stok_saat_ini dari tbstok (GROUP BY → JOIN)
+        $sqlStok = "UPDATE tblitem_minmax m
+                    JOIN (
+                        SELECT CONVERT(no_item USING utf8mb4) COLLATE utf8mb4_general_ci AS ni,
+                               CONVERT(kd_cabang USING utf8mb4) COLLATE utf8mb4_general_ci AS kc,
+                               SUM(masuk - keluar) AS stok_total
+                        FROM tbstok GROUP BY ni, kc
+                    ) s ON s.ni = m.no_item AND s.kc = m.kd_cabang
+                    SET m.stok_saat_ini = COALESCE(s.stok_total, 0)
+                    WHERE 1=1 {$cabangConditionUpdate}";
+        mysqli_query($this->koneksi, $sqlStok);
+
+        // Step 3: Update supplier + lead_time dari tblitem JOIN tblsupplier
+        $sqlSupplier = "UPDATE tblitem_minmax m
+                        JOIN tblitem it ON CONVERT(it.noitem USING utf8mb4) COLLATE utf8mb4_general_ci = m.no_item
+                        LEFT JOIN tblsupplier sp ON sp.nosupplier = it.supplier
+                        SET m.supplier1 = COALESCE(it.supplier, ''),
+                            m.supplier2 = COALESCE(it.supplier2, ''),
+                            m.lead_time_hari = COALESCE(NULLIF(sp.lama_hari_kirim, 0), {$this->leadTimeHari})
+                        WHERE 1=1 {$cabangConditionUpdate}";
+        mysqli_query($this->koneksi, $sqlSupplier);
+
+        // Step 4: Update last_sale_date via GROUP BY aggregation
+        $sqlLastSale = "UPDATE tblitem_minmax m
+                        JOIN (
+                            SELECT CONVERT(no_item USING utf8mb4) COLLATE utf8mb4_general_ci AS ni,
+                                   CONVERT(kd_cabang USING utf8mb4) COLLATE utf8mb4_general_ci AS kc,
+                                   MAX(tanggal) AS last_tgl
+                            FROM tbstok
+                            WHERE tipe IN ('3','4') AND keluar > 0
+                            GROUP BY ni, kc
+                        ) ls ON ls.ni = m.no_item AND ls.kc = m.kd_cabang
+                        SET m.last_sale_date = ls.last_tgl
+                        WHERE 1=1 {$cabangConditionUpdate}";
+        mysqli_query($this->koneksi, $sqlLastSale);
+
+        // Step 5: Update max_2w, max_stok, rop
         $sql = "UPDATE tblitem_minmax m
                 SET max_2w = GREATEST(
-                    w1 + w2, w2 + w3, w3 + w4, w4 + w5, w5 + w6,
-                    w6 + w7, w7 + w8, w8 + w9, w9 + w10, w10 + w11, w11 + w12
+                    w1+w2, w2+w3, w3+w4, w4+w5, w5+w6,
+                    w6+w7, w7+w8, w8+w9, w9+w10, w10+w11, w11+w12
                 ),
-                max_stok = GREATEST(
-                    w1 + w2, w2 + w3, w3 + w4, w4 + w5, w5 + w6,
-                    w6 + w7, w7 + w8, w8 + w9, w9 + w10, w10 + w11, w11 + w12
-                )
-                {$cabangConditionUpdate}";
-
+                max_stok = IF(min_max_manual=1, max_stok, GREATEST(
+                    w1+w2, w2+w3, w3+w4, w4+w5, w5+w6,
+                    w6+w7, w7+w8, w8+w9, w9+w10, w10+w11, w11+w12
+                )),
+                rop = ROUND((total_transaksi_84hari / 84.0) * lead_time_hari, 0)
+                WHERE 1=1 {$cabangConditionUpdate}";
         mysqli_query($this->koneksi, $sql);
 
         return ['success' => true];
@@ -226,7 +255,7 @@ class MinMaxCalculator
                     m.supplier2,
                     i.hargapokok
                 FROM tblitem_minmax m
-                LEFT JOIN tblitem i ON m.no_item = (i.noitem COLLATE utf8mb4_general_ci)
+                LEFT JOIN tblitem i ON m.no_item = CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_general_ci
                 LEFT JOIN tbcabang c ON m.kd_cabang = c.kode_cabang
                 WHERE {$whereClause}
                 ORDER BY
@@ -295,7 +324,7 @@ class MinMaxCalculator
                     i.hargapokok,
                     c.nama_cabang
                 FROM tblitem_minmax m
-                LEFT JOIN tblitem i ON m.no_item = (i.noitem COLLATE utf8mb4_general_ci)
+                LEFT JOIN tblitem i ON m.no_item = CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_general_ci
                 LEFT JOIN tbcabang c ON m.kd_cabang = c.kode_cabang
                 WHERE m.no_item = '{$escapedItem}' {$cabangCondition}
                 ORDER BY m.kd_cabang";
@@ -318,8 +347,8 @@ class MinMaxCalculator
     public function getCabangStats()
     {
         $sql = "SELECT
-                    c.kode_cabang,
-                    c.nama_cabang,
+                    m.kd_cabang AS kode_cabang,
+                    COALESCE(c.nama_cabang, m.kd_cabang) AS nama_cabang,
                     COUNT(DISTINCT m.no_item) AS total_item,
                     SUM(CASE WHEN m.stok_saat_ini < m.min_stok AND m.kategori != 'E' THEN 1 ELSE 0 END) AS jml_perlu_order,
                     SUM(CASE WHEN m.stok_saat_ini < ROUND(m.min_stok / 2, 0) AND m.kategori != 'E' THEN 1 ELSE 0 END) AS jml_urgent,
@@ -328,10 +357,10 @@ class MinMaxCalculator
                     SUM(CASE WHEN m.kategori = 'C' THEN 1 ELSE 0 END) AS kat_C,
                     SUM(CASE WHEN m.kategori = 'D' THEN 1 ELSE 0 END) AS kat_D,
                     SUM(CASE WHEN m.kategori = 'E' THEN 1 ELSE 0 END) AS kat_E
-                FROM tbcabang c
-                LEFT JOIN tblitem_minmax m ON c.kode_cabang = m.kd_cabang
-                GROUP BY c.kode_cabang, c.nama_cabang
-                ORDER BY c.nama_cabang";
+                FROM tblitem_minmax m
+                LEFT JOIN tbcabang c ON c.kode_cabang = m.kd_cabang
+                GROUP BY m.kd_cabang
+                ORDER BY m.kd_cabang";
 
         $result = mysqli_query($this->koneksi, $sql);
         $stats = [];
@@ -411,6 +440,104 @@ class MinMaxCalculator
         }
 
         return $saranTransfer;
+    }
+
+    /**
+     * Get item yang perlu order digroup per supplier (F3)
+     */
+    public function getItemPerSupplier($kdCabang = null)
+    {
+        $cabangCond = $kdCabang ? "AND m.kd_cabang = '" . mysqli_real_escape_string($this->koneksi, $kdCabang) . "'" : "";
+
+        $sql = "SELECT
+                    m.supplier1 AS kd_supplier,
+                    COALESCE(sp.namasupplier, m.supplier1, 'Tanpa Supplier') AS nama_supplier,
+                    COUNT(*) AS jml_item,
+                    SUM(GREATEST(0, m.min_stok - m.stok_saat_ini)) AS total_qty_kurang,
+                    SUM(GREATEST(0, m.min_stok - m.stok_saat_ini) * COALESCE(i.hargapokok, 0)) AS est_nilai
+                FROM tblitem_minmax m
+                LEFT JOIN tblsupplier sp ON sp.nosupplier = m.supplier1
+                LEFT JOIN tblitem i ON CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_general_ci = m.no_item
+                WHERE m.stok_saat_ini < m.min_stok
+                  AND m.kategori NOT IN ('E')
+                  {$cabangCond}
+                GROUP BY m.supplier1, sp.namasupplier
+                ORDER BY jml_item DESC";
+
+        $result = mysqli_query($this->koneksi, $sql);
+        $rows = [];
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) $rows[] = $row;
+        }
+        return $rows;
+    }
+
+    /**
+     * Get detail item perlu order untuk satu supplier
+     */
+    public function getItemBySupplier($kdSupplier, $kdCabang = null)
+    {
+        $kdSupplierEsc = mysqli_real_escape_string($this->koneksi, $kdSupplier);
+        $cabangCond = $kdCabang ? "AND m.kd_cabang = '" . mysqli_real_escape_string($this->koneksi, $kdCabang) . "'" : "";
+
+        $sql = "SELECT
+                    m.no_item,
+                    COALESCE(i.namaitem, m.no_item) AS nama_item,
+                    m.kd_cabang,
+                    m.stok_saat_ini,
+                    m.min_stok,
+                    m.max_stok,
+                    m.rop,
+                    m.kategori,
+                    GREATEST(0, m.min_stok - m.stok_saat_ini) AS qty_kurang,
+                    GREATEST(0, m.max_stok - m.stok_saat_ini) AS qty_order_suggest,
+                    i.hargapokok,
+                    GREATEST(0, m.max_stok - m.stok_saat_ini) * COALESCE(i.hargapokok, 0) AS est_nilai
+                FROM tblitem_minmax m
+                LEFT JOIN tblitem i ON CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_general_ci = m.no_item
+                WHERE m.supplier1 = '{$kdSupplierEsc}'
+                  AND m.stok_saat_ini < m.min_stok
+                  AND m.kategori NOT IN ('E')
+                  {$cabangCond}
+                ORDER BY m.kategori ASC, qty_kurang DESC";
+
+        $result = mysqli_query($this->koneksi, $sql);
+        $rows = [];
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) $rows[] = $row;
+        }
+        return $rows;
+    }
+
+    /**
+     * Override manual min/max untuk satu item (F2-A)
+     */
+    public function setManualMinMax($noItem, $kdCabang, $minStok, $maxStok)
+    {
+        $ni = mysqli_real_escape_string($this->koneksi, $noItem);
+        $kc = mysqli_real_escape_string($this->koneksi, $kdCabang);
+        $min = (int)$minStok;
+        $max = (int)$maxStok;
+
+        $sql = "UPDATE tblitem_minmax
+                SET min_stok = {$min}, max_stok = {$max}, min_max_manual = 1, updated_at = NOW()
+                WHERE no_item = '{$ni}' AND kd_cabang = '{$kc}'";
+
+        return mysqli_query($this->koneksi, $sql);
+    }
+
+    /**
+     * Reset override manual ke auto-kalkulasi
+     */
+    public function resetManualMinMax($noItem, $kdCabang)
+    {
+        $ni = mysqli_real_escape_string($this->koneksi, $noItem);
+        $kc = mysqli_real_escape_string($this->koneksi, $kdCabang);
+
+        $sql = "UPDATE tblitem_minmax SET min_max_manual = 0, updated_at = NOW()
+                WHERE no_item = '{$ni}' AND kd_cabang = '{$kc}'";
+
+        return mysqli_query($this->koneksi, $sql);
     }
 
     /**

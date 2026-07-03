@@ -580,17 +580,18 @@ if($no_pr!=''){
                                                         <td><?php echo htmlspecialchars($r['requester']); ?></td>
                                                         <td class="text-right"><?php echo (int)$r['jml_item']; ?></td>
                                                         <td class="text-right"><?php echo (int)$r['tot_qty']; ?></td>
-                                                        <td><span class="label <?php
+                                                        <td><?php
                                                             $st = $r['status_pr'];
-                                                            if($st=='draft') echo 'label-default';
-                                                            elseif($st=='submitted') echo 'label-info';
-                                                            elseif($st=='approved') echo 'label-success';
-                                                            elseif($st=='rejected') echo 'label-danger';
-                                                            else echo 'label-warning';
-                                                        ?>"><?php echo htmlspecialchars($st); ?></span></td>
+                                                            $st_cls = ['draft'=>'label-default','submitted'=>'label-info','approved'=>'label-success','rejected'=>'label-danger'];
+                                                            $st_lbl = ['draft'=>'Draf','submitted'=>'Diajukan','approved'=>'Disetujui','rejected'=>'Ditolak','closed'=>'Ditutup'];
+                                                            $cls = isset($st_cls[$st]) ? $st_cls[$st] : 'label-warning';
+                                                            $lbl = isset($st_lbl[$st]) ? $st_lbl[$st] : htmlspecialchars($st);
+                                                        ?><span class="label <?php echo $cls; ?>"><?php echo $lbl; ?></span></td>
                                                         <td>
                                                             <a class="btn btn-minier btn-primary" href="pr_add.php?no_pr=<?php echo urlencode($r['no_pr']); ?>"><i class="fa fa-edit"></i> Buka</a>
+                                                            <?php if($r['status_pr']=='approved'){ ?>
                                                             <a class="btn btn-minier btn-warning" href="pesanan_pembelian_add.php?pr=<?php echo urlencode($r['no_pr']); ?>"><i class="fa fa-shopping-cart"></i> Buat PO</a>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                 <?php } ?>
@@ -679,25 +680,69 @@ if($no_pr!=''){
                                         <?php if(isset($header['status_pr']) && $header['status_pr']=='draft'){ ?>
                                         <hr />
                                         <h5>Tambah Item</h5>
-                                        <form class="form-inline" method="post" action="pr_add.php?no_pr=<?php echo urlencode($no_pr); ?>">
+                                        <form class="form-inline" method="post" action="pr_add.php?no_pr=<?php echo urlencode($no_pr); ?>" id="form-tambah-item">
                                             <input type="hidden" name="no_pr" value="<?php echo htmlspecialchars($no_pr); ?>" />
-                                            <div class="form-group"><label>Kode Item</label>
-                                                <input type="text" name="no_item" class="form-control" placeholder="Kode Item" required />
+                                            <div class="form-group" style="position:relative;">
+                                                <label>Kode Item</label>
+                                                <input type="text" name="no_item" id="pr_no_item" class="form-control" placeholder="Ketik kode/nama..." autocomplete="off" required style="width:200px" />
+                                                <div id="pr_item_dropdown" style="display:none;position:absolute;top:100%;left:0;z-index:9999;background:#fff;border:1px solid #ccc;border-radius:4px;max-height:200px;overflow-y:auto;width:350px;box-shadow:0 3px 8px rgba(0,0,0,.15);"></div>
+                                            </div>
+                                            <div class="form-group"><label>Nama</label>
+                                                <input type="text" id="pr_nama_item" class="form-control" placeholder="(otomatis)" readonly style="width:160px;background:#f5f5f5" />
                                             </div>
                                             <div class="form-group"><label>Qty</label>
-                                                <input type="number" name="quantity" class="form-control" min="1" value="1" required />
+                                                <input type="number" name="quantity" class="form-control" min="1" value="1" required style="width:70px" />
                                             </div>
                                             <div class="form-group"><label>Satuan</label>
-                                                <input type="text" name="satuan" class="form-control" placeholder="Satuan" />
+                                                <input type="text" name="satuan" class="form-control" placeholder="pcs" style="width:70px" />
                                             </div>
                                             <div class="form-group"><label>Harga Est.</label>
-                                                <input type="number" step="0.01" name="harga_estimasi" class="form-control" value="0" />
+                                                <input type="number" step="1" name="harga_estimasi" id="pr_hpp" class="form-control" value="0" style="width:120px" />
                                             </div>
-                                            <div class="form-group" style="width:30%"><label>Keterangan</label>
+                                            <div class="form-group" style="width:25%"><label>Keterangan</label>
                                                 <input type="text" name="keterangan" class="form-control" style="width:100%" />
                                             </div>
                                             <button type="submit" name="btnadd_item" class="btn btn-primary"><i class="fa fa-plus"></i></button>
                                         </form>
+                                        <script>
+                                        (function(){
+                                            var inp = document.getElementById('pr_no_item');
+                                            var drop = document.getElementById('pr_item_dropdown');
+                                            var namaf = document.getElementById('pr_nama_item');
+                                            var hppf = document.getElementById('pr_hpp');
+                                            var timer;
+                                            inp.addEventListener('input', function(){
+                                                clearTimeout(timer);
+                                                var q = this.value.trim();
+                                                if(q.length < 2){ drop.style.display='none'; return; }
+                                                timer = setTimeout(function(){
+                                                    fetch('ajax_get_item_hpp.php?search=' + encodeURIComponent(q))
+                                                        .then(function(r){ return r.json(); })
+                                                        .then(function(data){
+                                                            if(!data.length){ drop.style.display='none'; return; }
+                                                            drop.innerHTML = '';
+                                                            data.forEach(function(it){
+                                                                var d = document.createElement('div');
+                                                                d.style.cssText = 'padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px;';
+                                                                d.innerHTML = '<strong>' + it.noitem + '</strong> &mdash; ' + it.namaitem;
+                                                                d.addEventListener('mouseover', function(){ this.style.background='#e8f4ff'; });
+                                                                d.addEventListener('mouseout', function(){ this.style.background=''; });
+                                                                d.addEventListener('mousedown', function(e){
+                                                                    e.preventDefault();
+                                                                    inp.value = it.noitem;
+                                                                    namaf.value = it.namaitem;
+                                                                    hppf.value = Math.round(it.hargapokok);
+                                                                    drop.style.display = 'none';
+                                                                });
+                                                                drop.appendChild(d);
+                                                            });
+                                                            drop.style.display = 'block';
+                                                        }).catch(function(){ drop.style.display='none'; });
+                                                }, 300);
+                                            });
+                                            inp.addEventListener('blur', function(){ setTimeout(function(){ drop.style.display='none'; }, 200); });
+                                        })();
+                                        </script>
                                         <hr />
                                         <h5>Import dari Excel (.xlsx / .csv)</h5>
                                         <form class="form-inline" method="post" enctype="multipart/form-data" action="pr_add.php?no_pr=<?php echo urlencode($no_pr); ?>">

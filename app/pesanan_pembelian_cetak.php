@@ -459,8 +459,16 @@
 </div>
 
 <div class="col-xs-12 col-sm-3 no-print">
+    <a href="do_from_po.php?no_po=<?php echo urlencode($nopesanan); ?>&autoload=1">
+    <button class="btn btn-success btn-block" type="button">
+        <i class="fa fa-truck"></i> Lanjut ke DO
+    </button>
+    </a>
+</div>
+
+<div class="col-xs-12 col-sm-3 no-print">
     <a href="pesanan_pembelian.php">
-    <button class="btn btn-primary btn-block" type="button">
+    <button class="btn btn-default btn-block" type="button">
         Tutup
     </button>
     </a>

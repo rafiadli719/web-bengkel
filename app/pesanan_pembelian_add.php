@@ -67,6 +67,7 @@
             if($draftCount===0){
                 $qpr = mysqli_query($koneksi, "SELECT d.no_item, d.quantity, d.qty_po FROM tblpurchase_request_detail d WHERE d.no_pr='$no_pr_esc'");
                 if($qpr){
+                    $baris_pr = 1;
                     while($row = mysqli_fetch_assoc($qpr)){
                         $no_item = mysqli_real_escape_string($koneksi, $row['no_item']);
                         $qty_remain = ((int)$row['quantity']) - ((int)$row['qty_po']);
@@ -75,7 +76,8 @@
                         $h = $qh ? mysqli_fetch_assoc($qh) : null;
                         $harga = ($h && isset($h['hargapokok'])) ? (float)$h['hargapokok'] : 0;
                         $subtotal = $harga * $qty_remain;
-                        mysqli_query($koneksi, "INSERT INTO tblorder_detail (no_order, no_item, harga_pokok, quantity, total, user, kd_cabang) VALUES ('', '$no_item', '$harga', '$qty_remain', '$subtotal', '$_nama', '$kd_cabang')");
+                        mysqli_query($koneksi, "INSERT INTO tblorder_detail (no_order, no_item, harga_pokok, quantity, qty_terima, total, user, kd_cabang, status_trx, nobaris) VALUES ('', '$no_item', '$harga', '$qty_remain', 0, '$subtotal', '$_nama', '$kd_cabang', '0', $baris_pr)");
+                        $baris_pr++;
                     }
                 }
                 // tandai sumber draft saat ini dari PR ini
@@ -157,14 +159,17 @@
                     //echo"<script>window.alert('Stok barang tidak mencukupi!');
                     //window.location=('pesanan_pembelian_add_rst.php?stgl=$tgl_pilih&ssup=$cbo_supplier');</script>";			                                
                     
-                    //else 
-                    mysqli_query($koneksi,"INSERT INTO tblorder_detail 
-                                            (no_order, no_item, harga_pokok, quantity, 
-                                            total, user, kd_cabang) 
-                                            VALUES 
+                    //else
+                    $res_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS nb FROM tblorder_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
+                    $nb_row = $res_nb ? mysqli_fetch_assoc($res_nb) : null;
+                    $next_baris = $nb_row ? (int)$nb_row['nb'] : 1;
+                    mysqli_query($koneksi,"INSERT INTO tblorder_detail
+                                            (no_order, no_item, harga_pokok, quantity, qty_terima,
+                                            total, user, kd_cabang, status_trx, nobaris)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$subtotal',
-                                            '$_nama','$kd_cabang')"); 
+                                            '$txtqty', 0, '$subtotal',
+                                            '$_nama','$kd_cabang','0', $next_baris)"); 
                 }
 
             // == Total dari Item Barang ==============
@@ -255,14 +260,17 @@
                 $data2 = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header WHERE no_order='$LastID'");
                 $cek2 = mysqli_num_rows($data2);
                 if($cek2 == 0 && $msg===''){
-                    $ok_header = mysqli_query($koneksi,"INSERT INTO tblorder_header 
-                                            (no_order, status, tanggal, no_pr, 
-                                            no_supplier, total_qty, total_order, 
-                                            user, kd_cabang) 
-                                            VALUES 
-                                            ('$LastID','0','$txttglpesan', '".mysqli_real_escape_string($koneksi,$no_pr)."',
-                                            '$cbosupplier','$tot_qty','$tot_money',
-                                            '$_nama','$kd_cabang')");
+                    $ok_header = mysqli_query($koneksi,"INSERT INTO tblorder_header
+                                            (no_order, status, tanggal, tglkirim, note,
+                                            no_pr, no_supplier, total_qty, total_terima,
+                                            total_order, user, Id_tabel, kd_cabang,
+                                            tipe_trx, no_penjualan)
+                                            VALUES
+                                            ('$LastID','0','$txttglpesan','$txttglpesan','',
+                                            '".mysqli_real_escape_string($koneksi,$no_pr)."',
+                                            '$cbosupplier','$tot_qty',0,
+                                            '$tot_money','$_nama','',
+                                            '$kd_cabang','po','')");
                     if(!$ok_header){
                         $msg = 'Gagal menyimpan header PO: '.mysqli_error($koneksi);
                     }

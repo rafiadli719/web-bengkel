@@ -25,11 +25,19 @@ $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_
 $filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : '';
 
 $kd_safe = mysqli_real_escape_string($koneksi, $kd_cabang);
+
+// Pastikan kolom jenis ada (auto-migration)
+$col_j = mysqli_query($koneksi,"SHOW COLUMNS FROM tblorder_antarcab_header LIKE 'jenis'");
+if(!$col_j || mysqli_num_rows($col_j)==0){
+    mysqli_query($koneksi,"ALTER TABLE tblorder_antarcab_header ADD COLUMN jenis VARCHAR(10) DEFAULT 'pull' AFTER status");
+}
+
 $where   = "1=1";
 if (!$is_pusat) {
-    $where .= " AND h.kd_cabang_asal = '$kd_safe'";
+    // Cabang melihat: PULL miliknya (kd_cabang_asal) ATAU PUSH untuk mereka (kd_cabang_tujuan)
+    $where .= " AND (h.kd_cabang_asal = '$kd_safe' OR (COALESCE(h.jenis,'pull')='push' AND h.kd_cabang_tujuan='$kd_safe'))";
 } elseif ($filter_cabang) {
-    $where .= " AND h.kd_cabang_asal = '$filter_cabang'";
+    $where .= " AND (h.kd_cabang_asal = '$filter_cabang' OR h.kd_cabang_tujuan = '$filter_cabang')";
 }
 if ($filter_status && $filter_status != 'semua') {
     $where .= " AND h.status = '$filter_status'";
@@ -132,12 +140,15 @@ $result = mysqli_query($koneksi, $sql);
                     </h1>
                 </div>
 
-                <?php if(isset($_GET['msg'])): $msg = $_GET['msg']; ?>
-                <div class="alert alert-<?php echo $msg=='ok'||$msg=='proses_ok'||$msg=='terima_ok'?'success':'danger'; ?> alert-dismissible">
+                <?php if(isset($_GET['msg'])): $msg = $_GET['msg'];
+                    $is_ok = in_array($msg,['ok','proses_ok','terima_ok','push_ok']);
+                ?>
+                <div class="alert alert-<?php echo $is_ok?'success':'danger'; ?> alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-                    <?php if($msg=='ok')       echo '<i class="fa fa-check"></i> Permintaan berhasil dibuat dan dikirim ke pusat.';
-                          elseif($msg=='proses_ok') echo '<i class="fa fa-check"></i> Permintaan berhasil diproses. Barang segera dikirim ke cabang.';
+                    <?php if($msg=='ok')        echo '<i class="fa fa-check"></i> Permintaan berhasil dibuat dan dikirim ke pusat.';
+                          elseif($msg=='proses_ok') echo '<i class="fa fa-check"></i> Barang segera dikirim ke cabang. Stok pusat sudah berkurang.';
                           elseif($msg=='terima_ok') echo '<i class="fa fa-check"></i> Penerimaan dikonfirmasi. Stok cabang sudah bertambah.';
+                          elseif($msg=='push_ok')   echo '<i class="fa fa-check"></i> Pengiriman (Push) berhasil disimpan. Stok pusat sudah berkurang.';
                           else echo '<i class="fa fa-times"></i> Terjadi kesalahan. Silakan coba lagi.'; ?>
                 </div>
                 <?php endif; ?>
@@ -181,6 +192,12 @@ $result = mysqli_query($koneksi, $sql);
                     <div class="col-xs-12 col-sm-4 text-right">
                         <a href="pengadaan_antarcab_add.php" class="btn btn-sm btn-success">
                             <i class="fa fa-plus"></i> Buat Permintaan Baru
+                        </a>
+                    </div>
+                    <?php else: ?>
+                    <div class="col-xs-12 col-sm-4 text-right">
+                        <a href="pengadaan_antarcab_push.php" class="btn btn-sm btn-warning">
+                            <i class="fa fa-truck"></i> Kirim ke Cabang (Inisiasi Pusat)
                         </a>
                     </div>
                     <?php endif; ?>
@@ -228,16 +245,22 @@ $result = mysqli_query($koneksi, $sql);
                                             ?>
                                         </td>
                                         <td><?php echo htmlspecialchars($row['user_request']); ?></td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="white-space:nowrap;">
+                                            <?php
+                                            $jns_row = (isset($row['jenis']) && $row['jenis']) ? $row['jenis'] : 'pull';
+                                            $can_terima = !$is_pusat && $st=='dikirim' &&
+                                                (($jns_row=='push' && $row['kd_cabang_tujuan']==$kd_cabang) ||
+                                                 ($jns_row!='push' && $row['kd_cabang_asal']==$kd_cabang));
+                                            $no_enc = urlencode($row['no_order']);
+                                            ?>
+                                            <a href="pengadaan_antarcab_detail.php?no=<?php echo $no_enc; ?>"
+                                               class="btn btn-xs btn-default"><i class="fa fa-eye"></i> Detail</a>
                                             <?php if($is_pusat && in_array($st,['terkirim','diproses'])): ?>
-                                                <a href="pengadaan_antarcab_proses.php?no=<?php echo urlencode($row['no_order']); ?>"
+                                                <a href="pengadaan_antarcab_proses.php?no=<?php echo $no_enc; ?>"
                                                    class="btn btn-xs btn-primary"><i class="fa fa-send"></i> Proses</a>
-                                            <?php elseif(!$is_pusat && $st=='dikirim' && $row['kd_cabang_asal']==$kd_cabang): ?>
-                                                <a href="pengadaan_antarcab_terima.php?no=<?php echo urlencode($row['no_order']); ?>"
+                                            <?php elseif($can_terima): ?>
+                                                <a href="pengadaan_antarcab_terima.php?no=<?php echo $no_enc; ?>"
                                                    class="btn btn-xs btn-success"><i class="fa fa-check"></i> Terima</a>
-                                            <?php else: ?>
-                                                <a href="pengadaan_antarcab_detail.php?no=<?php echo urlencode($row['no_order']); ?>"
-                                                   class="btn btn-xs btn-default"><i class="fa fa-eye"></i> Detail</a>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

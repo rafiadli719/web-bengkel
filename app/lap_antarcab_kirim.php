@@ -143,9 +143,9 @@ if(empty($_SESSION['_iduser'])){
                                                     <option value="">-- Semua --</option>
                                                     <?php
                                                     $q_cab = mysqli_query($koneksi, "SELECT kode_cabang, nama_cabang FROM tbcabang
-                                                                                      WHERE kode_cabang != '$kd_cabang' AND status='1'
+                                                                                      WHERE kode_cabang != '$kd_cabang'
                                                                                       ORDER BY nama_cabang");
-                                                    while($r_cab = mysqli_fetch_array($q_cab)){
+                                                    while($q_cab && $r_cab = mysqli_fetch_array($q_cab)){
                                                         $sel = ($r_cab['kode_cabang'] == $filter_cabang) ? 'selected' : '';
                                                         echo "<option value='{$r_cab['kode_cabang']}' $sel>{$r_cab['nama_cabang']}</option>";
                                                     }

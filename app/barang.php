@@ -382,11 +382,11 @@
                                               ORDER BY vci.noitem DESC 
                                               LIMIT ".$limitStart.",".$limit);                                      
                                           $no = $limitStart + 1;
-                                          
+
                                           // Pre-fetch stock data for all items to reduce queries
                                           $item_codes = [];
                                           $temp_results = [];
-                                          while($row = mysqli_fetch_array($SqlQuery)) {
+                                          while($SqlQuery && $row = mysqli_fetch_array($SqlQuery)) {
                                               $item_codes[] = "'" . mysqli_real_escape_string($koneksi, $row['noitem']) . "'";
                                               $temp_results[] = $row;
                                           }

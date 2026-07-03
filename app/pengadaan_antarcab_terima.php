@@ -21,16 +21,22 @@ $is_pusat    = ($tipe_cabang=='1' || strtolower($tipe_cabang)=='pusat');
 $no_order = isset($_GET['no']) ? mysqli_real_escape_string($koneksi, $_GET['no']) : '';
 if(!$no_order){ header("location:pengadaan_antarcab.php"); exit; }
 
-$qh = mysqli_query($koneksi,"SELECT h.*, ct.nama_cabang AS nama_tujuan, ca.nama_cabang AS nama_asal
+$qh = mysqli_query($koneksi,"SELECT h.*, COALESCE(h.jenis,'pull') AS jenis_order,
+    ct.nama_cabang AS nama_tujuan, ca.nama_cabang AS nama_asal
     FROM tblorder_antarcab_header h
     LEFT JOIN tbcabang ct ON ct.kode_cabang=h.kd_cabang_tujuan
     LEFT JOIN tbcabang ca ON ca.kode_cabang=h.kd_cabang_asal
     WHERE h.no_order='$no_order' LIMIT 1");
 if(!$qh || mysqli_num_rows($qh)==0){ header("location:pengadaan_antarcab.php"); exit; }
-$header = mysqli_fetch_assoc($qh);
+$header      = mysqli_fetch_assoc($qh);
+$jenis_order = $header['jenis_order'];
 
-// Hanya cabang asal yang boleh konfirmasi terima
-if(!$is_pusat && $header['kd_cabang_asal'] != $kd_cabang){ header("location:pengadaan_antarcab.php"); exit; }
+// PULL: penerima=kd_cabang_asal; PUSH: penerima=kd_cabang_tujuan
+if(!$is_pusat){
+    $is_recipient = ($jenis_order=='push' && $header['kd_cabang_tujuan']==$kd_cabang)
+                 || ($jenis_order!='push' && $header['kd_cabang_asal']==$kd_cabang);
+    if(!$is_recipient){ header("location:pengadaan_antarcab.php"); exit; }
+}
 if($header['status'] != 'dikirim'){ header("location:pengadaan_antarcab.php"); exit; }
 
 $qd      = mysqli_query($koneksi,"SELECT d.*, i.namaitem FROM tblorder_antarcab_detail d
@@ -61,7 +67,10 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnterima'])){
     if(!$error_msg){
         $col_check     = mysqli_query($koneksi,"SHOW COLUMNS FROM tbstok LIKE 'kd_cabang'");
         $has_kd_cabang = ($col_check && mysqli_num_rows($col_check)>0);
-        $kd_penerima   = mysqli_real_escape_string($koneksi, $header['kd_cabang_asal']);
+        // PUSH: stok masuk ke kd_cabang_tujuan (cabang penerima); PULL: ke kd_cabang_asal
+        $kd_penerima   = ($jenis_order=='push')
+            ? mysqli_real_escape_string($koneksi, $header['kd_cabang_tujuan'])
+            : mysqli_real_escape_string($koneksi, $header['kd_cabang_asal']);
 
         mysqli_begin_transaction($koneksi);
         try {
@@ -81,7 +90,9 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnterima'])){
 
                 if($qt > 0){
                     $no_safe = mysqli_real_escape_string($koneksi, $no_order);
-                    $ket     = mysqli_real_escape_string($koneksi, 'Penerimaan AC - Dari '.$header['nama_tujuan']);
+                    // PUSH: pengirim=nama_asal(pusat); PULL: pengirim=nama_tujuan(pusat)
+                    $nm_pengirim = ($jenis_order=='push') ? $header['nama_asal'] : $header['nama_tujuan'];
+                    $ket     = mysqli_real_escape_string($koneksi, 'Penerimaan AC - Dari '.$nm_pengirim);
                     if($has_kd_cabang){
                         $qs = mysqli_query($koneksi,"INSERT INTO tbstok (no_transaksi,no_item,tanggal,tipe,masuk,keluar,keterangan,kd_cabang)
                             VALUES ('$no_safe','$ni','$tgl_terima','2','$qt','0','$ket','$kd_penerima')");
@@ -187,7 +198,11 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnterima'])){
                         <table class="table table-bordered table-condensed">
                             <tr class="success"><th colspan="2"><i class="fa fa-truck"></i> Paket Dikirim ke <?php echo htmlspecialchars($nama_cabang); ?></th></tr>
                             <tr><td style="width:160px"><b>No. Permintaan</b></td><td><strong><?php echo htmlspecialchars($header['no_order']); ?></strong></td></tr>
-                            <tr><td><b>Dari (Pengirim)</b></td><td><?php echo htmlspecialchars($header['nama_tujuan']?:$header['kd_cabang_tujuan']); ?></td></tr>
+                            <tr><td><b>Dari (Pengirim)</b></td><td><?php
+                                $nm_kirim = ($jenis_order=='push') ? $header['nama_asal'] : $header['nama_tujuan'];
+                                $kd_kirim = ($jenis_order=='push') ? $header['kd_cabang_asal'] : $header['kd_cabang_tujuan'];
+                                echo htmlspecialchars($nm_kirim?:$kd_kirim);
+                            ?></td></tr>
                             <tr><td><b>Tgl. Dikirim</b></td><td><?php echo $header['tanggal_kirim'] ? date('d/m/Y',strtotime($header['tanggal_kirim'])) : '—'; ?></td></tr>
                             <tr><td><b>Diproses Oleh</b></td><td><?php echo htmlspecialchars($header['user_proses']?:'—'); ?></td></tr>
                             <?php if($header['catatan']): ?><tr><td><b>Catatan</b></td><td><?php echo htmlspecialchars($header['catatan']); ?></td></tr><?php endif; ?>
