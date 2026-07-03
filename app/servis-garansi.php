@@ -728,7 +728,25 @@
                                                         FROM tbworkorderdetail
                                                         WHERE kode_wo='$kode_wo'");
 
-                    while($detail = mysqli_fetch_array($detail_wo)) {
+                    // Expand baris tipe=3 (kombinasi WO) jadi baris jasa/barang milik WO anak (1 level).
+                    $detail_rows = array();
+                    while($detail_wo && ($detail = mysqli_fetch_array($detail_wo))) {
+                        if($detail['tipe'] == '3') {
+                            $kode_wo_anak = mysqli_real_escape_string($koneksi, $detail['kode_barang']);
+                            $q_anak = mysqli_query($koneksi,"SELECT kode_barang, tipe, harga, total, jumlah
+                                                             FROM tbworkorderdetail
+                                                             WHERE kode_wo='$kode_wo_anak' AND tipe IN ('1','2')");
+                            if($q_anak) {
+                                while($anak = mysqli_fetch_array($q_anak)) {
+                                    $detail_rows[] = $anak;
+                                }
+                            }
+                        } else {
+                            $detail_rows[] = $detail;
+                        }
+                    }
+
+                    foreach($detail_rows as $detail) {
                         if($detail['tipe'] == '1') {
                             // Jasa - Insert to tblservis_jasa
                             $waktu = 0;

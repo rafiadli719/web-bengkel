@@ -64,17 +64,23 @@
             $kode_wo = $_POST['kode_wo'];
             $nama_wo = $_POST['nama_wo'];
             $keterangan = $_POST['keterangan'];
-            
+
             // Hitung total waktu dan harga dari detail
             $total_waktu_calc = 0;
             $total_harga_calc = 0;
-            
+
             $detail_query = mysqli_query($koneksi,"SELECT * FROM tbworkorderdetail WHERE kode_wo='$kode_wo'");
             while($detail = mysqli_fetch_array($detail_query)) {
                 if($detail['tipe'] == '1') { // Jasa
                     $jasa_query = mysqli_query($koneksi,"SELECT waktu FROM tbworkorderheader WHERE kode_wo='{$detail['kode_barang']}'");
                     $jasa_data = mysqli_fetch_array($jasa_query);
                     $total_waktu_calc += ($jasa_data['waktu'] ?? 0);
+                } elseif($detail['tipe'] == '3') { // Kombinasi WO - ambil harga cached WO anak
+                    $wo_anak_query = mysqli_query($koneksi,"SELECT harga, waktu FROM tbworkorderheader WHERE kode_wo='{$detail['kode_barang']}'");
+                    $wo_anak_data = mysqli_fetch_array($wo_anak_query);
+                    $total_waktu_calc += ($wo_anak_data['waktu'] ?? 0);
+                    $total_harga_calc += ($wo_anak_data['harga'] ?? 0);
+                    continue;
                 }
                 $total_harga_calc += $detail['total'];
             }
@@ -121,15 +127,43 @@
             $kode_wo = $_POST['kode_wo'];
             $kode_barang = $_POST['kode_barang'];
             $jumlah = $_POST['jumlah'];
-            $harga_barang = $_POST['harga_barang'];
-            $total = $jumlah * $harga_barang;
-            
-            $insert_detail = mysqli_query($koneksi,"INSERT INTO tbworkorderdetail 
-                                                    (kode_wo, kode_barang, jumlah, satuan, diskon, status_diskon, tipe, harga, total) 
-                                                    VALUES 
-                                                    ('$kode_wo', '$kode_barang', '$jumlah', 'Pcs', '0', '0', '2', '$harga_barang', '$total')");
-            
+            $is_gratis = isset($_POST['is_gratis']) ? 1 : 0;
+            $harga_barang = $is_gratis ? 0 : $_POST['harga_barang'];
+            $total = $is_gratis ? 0 : ($jumlah * $harga_barang);
+
+            $insert_detail = mysqli_query($koneksi,"INSERT INTO tbworkorderdetail
+                                                    (kode_wo, kode_barang, jumlah, satuan, diskon, status_diskon, tipe, harga, total, is_gratis)
+                                                    VALUES
+                                                    ('$kode_wo', '$kode_barang', '$jumlah', 'Pcs', '0', '0', '2', '$harga_barang', '$total', '$is_gratis')");
+
             echo"<script>window.location=('workorder-input.php?mode=edit&kode=$kode_wo');</script>";
+        }
+
+        // Proses tambah kombinasi work order (tipe=3)
+        if(isset($_POST['btnaddkombinasi'])) {
+            $kode_wo = $_POST['kode_wo'];
+            $kode_wo_anak = $_POST['kode_wo_kombinasi'];
+
+            if($kode_wo_anak == $kode_wo) {
+                echo"<script>window.alert('Work Order tidak boleh mengombinasikan dirinya sendiri!');
+                window.location=('workorder-input.php?mode=edit&kode=$kode_wo');</script>";
+            } else {
+                // Guard 1-level: WO anak gak boleh sudah punya kombinasi WO sendiri
+                $chk_nested = mysqli_query($koneksi,"SELECT COUNT(*) as c FROM tbworkorderdetail WHERE kode_wo='$kode_wo_anak' AND tipe='3'");
+                $chk_nested_data = mysqli_fetch_array($chk_nested);
+
+                if($chk_nested_data['c'] > 0) {
+                    echo"<script>window.alert('Work Order tersebut sudah berisi kombinasi WO lain, tidak bisa dikombinasikan lagi (maksimal 1 level).');
+                    window.location=('workorder-input.php?mode=edit&kode=$kode_wo');</script>";
+                } else {
+                    $insert_detail = mysqli_query($koneksi,"INSERT INTO tbworkorderdetail
+                                                            (kode_wo, kode_barang, jumlah, satuan, diskon, status_diskon, tipe, harga, total, is_gratis)
+                                                            VALUES
+                                                            ('$kode_wo', '$kode_wo_anak', '1', 'Paket', '0', '0', '3', '0', '0', '0')");
+
+                    echo"<script>window.location=('workorder-input.php?mode=edit&kode=$kode_wo');</script>";
+                }
+            }
         }
 ?>
 
@@ -462,14 +496,61 @@
                                                     <div class="col-xs-6">
                                                         <div class="form-group">
                                                             <label>Harga</label>
-                                                            <input type="number" class="form-control" name="harga_barang" 
+                                                            <input type="number" class="form-control" name="harga_barang"
                                                                    id="harga_barang" placeholder="0" />
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" name="is_gratis" id="is_gratis" onchange="toggleGratis()" />
+                                                        Gratis (termasuk di harga jasa)
+                                                    </label>
+                                                </div>
                                                 <button type="submit" name="btnaddbarang" class="btn btn-success btn-block">
                                                     <i class="ace-icon fa fa-plus"></i>
                                                     Tambah Barang
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input Kombinasi Work Order -->
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title">Tambah Kombinasi Work Order</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <p class="text-muted">Gabungkan Work Order lain (paket lengkap) ke dalam WO ini. Maksimal 1 level (WO yang dipilih tidak boleh berisi kombinasi WO lain).</p>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <div class="form-group">
+                                                    <label>Kode WO</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="kode_wo_kombinasi" name="kode_wo_kombinasi" readonly />
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-info" onclick="openWoKombinasiPopup()">
+                                                                <i class="ace-icon fa fa-list"></i> Cari WO
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                                <div class="form-group">
+                                                    <label>Nama WO</label>
+                                                    <input type="text" class="form-control" id="nama_wo_kombinasi" readonly />
+                                                    <input type="hidden" id="harga_wo_kombinasi" />
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-2">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" name="btnaddkombinasi" class="btn btn-success btn-block">
+                                                    <i class="ace-icon fa fa-plus"></i>
+                                                    Tambah
                                                 </button>
                                             </div>
                                         </div>
@@ -561,11 +642,16 @@
                                                         <tr>
                                                             <td class="center"><?php echo $no; ?></td>
                                                             <td><?php echo $tampil['kode_barang']; ?></td>
-                                                            <td><?php echo $tampil['namaitem']; ?></td>
+                                                            <td>
+                                                                <?php echo $tampil['namaitem']; ?>
+                                                                <?php if($tampil['is_gratis'] == 1) { ?>
+                                                                <span class="label label-success">GRATIS</span>
+                                                                <?php } ?>
+                                                            </td>
                                                             <td class="center"><?php echo $tampil['jumlah']; ?></td>
                                                             <td class="right"><?php echo number_format($tampil['total'], 0, ',', '.'); ?></td>
                                                             <td class="center">
-                                                                <a href="workorder-detail-hapus.php?id=<?php echo $tampil['id']; ?>&kode=<?php echo $kode_wo; ?>" 
+                                                                <a href="workorder-detail-hapus.php?id=<?php echo $tampil['id']; ?>&kode=<?php echo $kode_wo; ?>"
                                                                    class="red" onclick="return confirm('Hapus item ini?')">
                                                                     <i class="ace-icon fa fa-trash-o"></i>
                                                                 </a>
@@ -584,11 +670,66 @@
 
                                         <div class="row">
                                             <div class="col-xs-12">
+                                                <h5 class="header orange">Kombinasi Work Order</h5>
+                                                <table class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr class="info">
+                                                            <th width="5%">No</th>
+                                                            <th width="15%">Kode WO</th>
+                                                            <th width="50%">Nama WO</th>
+                                                            <th width="20%">Harga (cached)</th>
+                                                            <th width="10%">Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        $no = 0;
+                                                        $total_kombinasi = 0;
+                                                        $sql = mysqli_query($koneksi,"SELECT d.*, w.nama_wo, w.harga as harga_wo
+                                                                                     FROM tbworkorderdetail d
+                                                                                     LEFT JOIN tbworkorderheader w ON d.kode_barang = w.kode_wo
+                                                                                     WHERE d.kode_wo='$kode_wo' AND d.tipe='3'
+                                                                                     ORDER BY d.id ASC");
+                                                        while($tampil = mysqli_fetch_array($sql)) {
+                                                            $no++;
+                                                            $total_kombinasi += $tampil['harga_wo'];
+                                                        ?>
+                                                        <tr>
+                                                            <td class="center"><?php echo $no; ?></td>
+                                                            <td><?php echo $tampil['kode_barang']; ?></td>
+                                                            <td><?php echo $tampil['nama_wo']; ?></td>
+                                                            <td class="right"><?php echo number_format($tampil['harga_wo'], 0, ',', '.'); ?></td>
+                                                            <td class="center">
+                                                                <a href="workorder-detail-hapus.php?id=<?php echo $tampil['id']; ?>&kode=<?php echo $kode_wo; ?>"
+                                                                   class="red" onclick="return confirm('Hapus kombinasi ini?')">
+                                                                    <i class="ace-icon fa fa-trash-o"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <?php } ?>
+                                                        <?php if($no == 0) { ?>
+                                                        <tr>
+                                                            <td colspan="5" class="center text-muted">Belum ada kombinasi WO</td>
+                                                        </tr>
+                                                        <?php } else { ?>
+                                                        <tr class="info">
+                                                            <td colspan="3" class="center"><b>TOTAL KOMBINASI</b></td>
+                                                            <td class="right"><b><?php echo number_format($total_kombinasi, 0, ',', '.'); ?></b></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-12">
                                                 <table class="table table-bordered">
                                                     <tr class="warning">
                                                         <td width="70%" class="center"><h4><b>GRAND TOTAL WORK ORDER</b></h4></td>
                                                         <td width="30%" class="right">
-                                                            <h4><b>Rp <?php echo number_format($total_jasa + $total_barang, 0, ',', '.'); ?></b></h4>
+                                                            <h4><b>Rp <?php echo number_format($total_jasa + $total_barang + $total_kombinasi, 0, ',', '.'); ?></b></h4>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -668,7 +809,24 @@
                 var popup = window.open('barang-search-popup.php', 'barangPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
                 popup.focus();
             }
-            
+
+            function openWoKombinasiPopup() {
+                var kodeWo = document.querySelector('input[name="kode_wo"]').value;
+                var popup = window.open('workorder-kombinasi-popup.php?exclude=' + encodeURIComponent(kodeWo), 'woKombinasiPopup', 'width=900,height=600,scrollbars=yes,resizable=yes');
+                popup.focus();
+            }
+
+            function toggleGratis() {
+                var chk = document.getElementById('is_gratis');
+                var harga = document.getElementById('harga_barang');
+                if(chk.checked) {
+                    harga.value = 0;
+                    harga.setAttribute('readonly', 'readonly');
+                } else {
+                    harga.removeAttribute('readonly');
+                }
+            }
+
             function cariJasa() {
                 var kode = document.getElementById('kode_jasa').value;
                 if(kode == '') {

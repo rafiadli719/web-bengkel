@@ -1036,7 +1036,7 @@
         $wo_id = mysqli_insert_id($koneksi);
 
         // Ambil detail WO
-        $detail_wo = mysqli_query($koneksi, "SELECT kode_barang, tipe, harga, total, jumlah
+        $detail_wo = mysqli_query($koneksi, "SELECT kode_barang, tipe, harga, total, jumlah, is_gratis
                                              FROM tbworkorderdetail
                                              WHERE kode_wo='$kode_wo'");
         $detail_count = ($detail_wo ? mysqli_num_rows($detail_wo) : 0);
@@ -1056,19 +1056,40 @@
             foreach ($variants as $v) { $in_list[] = "'" . mysqli_real_escape_string($koneksi, $v) . "'"; }
             $in_sql = implode(',', $in_list);
 
-            $detail_wo = mysqli_query($koneksi, "SELECT kode_barang, tipe, harga, total, jumlah
+            $detail_wo = mysqli_query($koneksi, "SELECT kode_barang, tipe, harga, total, jumlah, is_gratis
                                                  FROM tbworkorderdetail
                                                  WHERE kode_wo IN ($in_sql)");
             $detail_count = ($detail_wo ? mysqli_num_rows($detail_wo) : 0);
         }
 
-        $total_items_added = 0;
+        // Kumpulkan ke array PHP, expand baris tipe=3 (kombinasi WO) jadi baris jasa/barang milik WO anak.
+        $detail_rows = array();
         if ($detail_wo) {
             while ($detail = mysqli_fetch_array($detail_wo)) {
+                if ($detail['tipe'] == '3') {
+                    $kode_wo_anak = mysqli_real_escape_string($koneksi, $detail['kode_barang']);
+                    $q_anak = mysqli_query($koneksi, "SELECT kode_barang, tipe, harga, total, jumlah, is_gratis
+                                                     FROM tbworkorderdetail
+                                                     WHERE kode_wo='$kode_wo_anak' AND tipe IN ('1','2')");
+                    if ($q_anak) {
+                        while ($anak = mysqli_fetch_array($q_anak)) {
+                            $detail_rows[] = $anak;
+                        }
+                    }
+                } else {
+                    $detail_rows[] = $detail;
+                }
+            }
+        }
+
+        $total_items_added = 0;
+        if ($detail_wo) {
+            foreach ($detail_rows as $detail) {
                 $kode_item = $detail['kode_barang'];
                 $quantity = $detail['jumlah'];
-                $harga_satuan = $detail['harga'];
-                $total = $detail['total'];
+                $is_gratis = (isset($detail['is_gratis']) && $detail['is_gratis'] == 1) ? 1 : 0;
+                $harga_satuan = $is_gratis ? 0 : $detail['harga'];
+                $total = $is_gratis ? 0 : $detail['total'];
                 $waktu = 0; // default, dapat diisi saat approve jika perlu
 
                 // Nama item untuk display
@@ -1114,11 +1135,11 @@
 
                     $sql_insert_pending = "INSERT INTO tbservis_pending_items
                                            (no_service, wo_id, kode_item, nama_item, tipe, quantity,
-                                            harga_satuan, total, waktu, status_approval)
+                                            harga_satuan, total, waktu, status_approval, is_gratis)
                                            VALUES
                                            ('$no_service', $wo_id_value, '" . mysqli_real_escape_string($koneksi, $kode_item) . "', '$nama_item',
                                             '$tipe_item', '" . mysqli_real_escape_string($koneksi, $quantity) . "', '" . mysqli_real_escape_string($koneksi, $harga_satuan) . "', '" . mysqli_real_escape_string($koneksi, $total) . "',
-                                            '$waktu', 'pending')";
+                                            '$waktu', 'pending', '$is_gratis')";
 
                     $insert_result = mysqli_query($koneksi, $sql_insert_pending);
                     if ($insert_result) {
@@ -1134,16 +1155,10 @@
         mysqli_query($koneksi, "UPDATE tblservice SET km_skr='" . mysqli_real_escape_string($koneksi, $km_skr) . "', km_berikut='" . mysqli_real_escape_string($koneksi, $km_berikut) . "' WHERE no_service='$no_service'");
 
             // ====================================================================
-            // CONDITIONAL AUTO-APPROVE:
-            // DISABLED AS PER USER REQUEST for MANUAL INPUT
-            // Manual Input di Tab Workorder -> SELALU PENDING
+            // AUTO-APPROVE: Item Work Order langsung masuk ke tblservis_barang/jasa
+            // tanpa perlu approval manual di Tab Temuan & Penawaran.
             // ====================================================================
-            $should_auto_approve = false;
-            
-            // Cek session diskon - hanya auto-approve jika session valid DAN BUKAN manual input
-            // Asumsi: btnaddworkorder adalah manual input dari tab Work Order
-            // Jika logic auto-approve dibutuhkan untuk flow lain (misal dari booking), 
-            // perlu flag tambahan. Saat ini untuk btnaddworkorder kita paksa FALSE.
+            $should_auto_approve = true;
             
             if($should_auto_approve) {
             // AUTO-APPROVE: langsung masukkan semua pending item WO ke tblservis_barang/jasa dengan diskon

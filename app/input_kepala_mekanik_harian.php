@@ -83,6 +83,39 @@ if(empty($_SESSION['_iduser'])){
         }
     }
 
+    // ---- Tim Mekanik Hari Ini: dari fitmotor_prototype.masterkeys, dicocokkan ke tblmekanik ----
+    // Join by kode_cabang -> tbcabang.cabang_ref_kode (bukan tbcabang.kode_cabang, beda skema penomoran)
+    // lalu match nama ke tblmekanik untuk memastikan hanya staff dengan role mekanik yang muncul.
+    // GROUP BY nama: tblmekanik punya beberapa kode duplikat untuk nama yang sama (data quality lama),
+    // jadi diambil satu kode representatif (MIN) per nama supaya checklist tidak dobel.
+    $tim_mekanik_cabang = [];
+    $q_tim = mysqli_query($koneksi, "SELECT MIN(tm.nomekanik) AS kode_karyawan, mk.nama_karyawan AS nama
+                                      FROM fitmotor_prototype.masterkeys mk
+                                      INNER JOIN tbcabang c ON c.cabang_ref_kode = mk.kode_cabang
+                                      INNER JOIN tblmekanik tm ON LOWER(TRIM(tm.nama)) = LOWER(TRIM(mk.nama_karyawan))
+                                                               AND tm.status='aktif'
+                                      WHERE c.kode_cabang = '$kd_cabang'
+                                        AND mk.status_aktif = 1
+                                      GROUP BY mk.nama_karyawan
+                                      ORDER BY mk.nama_karyawan");
+    if ($q_tim) {
+        while ($row = mysqli_fetch_assoc($q_tim)) {
+            $tim_mekanik_cabang[] = $row;
+        }
+    }
+
+    // Mekanik yang sudah ditandai hadir untuk tanggal hari ini di cabang ini
+    $mekanik_hadir_hari_ini = [];
+    $q_hadir = mysqli_query($koneksi, "SELECT kode_karyawan FROM tb_kepala_mekanik_schedule
+                                        WHERE kode_cabang='$kd_cabang'
+                                          AND tanggal_kerja='$tanggal_hari_ini'
+                                          AND status_kehadiran='hadir'");
+    if ($q_hadir) {
+        while ($row = mysqli_fetch_assoc($q_hadir)) {
+            $mekanik_hadir_hari_ini[] = $row['kode_karyawan'];
+        }
+    }
+
     // Handle form submission
     if(isset($_POST['btnsimpan']) || isset($_POST['btnupdate'])) {
         $tanggal_kerja = mysqli_real_escape_string($koneksi, $_POST['tanggal_kerja']);
@@ -121,10 +154,25 @@ if(empty($_SESSION['_iduser'])){
 			$tipe_pesan = "success";
 			// Log activity
 			logActivity('SUCCESS', 'workorder', "Set Kepala Mekanik $tanggal_kerja: KM1=$kepala_mekanik_1, KM2=$kepala_mekanik_2");
-			
+
+			// Sync Tim Mekanik Hari Ini (checklist kehadiran) -> tb_kepala_mekanik_schedule
+			// Re-sync penuh per cabang+tanggal: hapus lalu insert ulang yang dicentang sebagai 'hadir'.
+			$tim_mekanik_post = $_POST['tim_mekanik'] ?? [];
+			mysqli_query($koneksi, "DELETE FROM tb_kepala_mekanik_schedule
+			                         WHERE kode_cabang='$kd_cabang' AND tanggal_kerja='$tanggal_kerja'");
+			if (is_array($tim_mekanik_post)) {
+				foreach ($tim_mekanik_post as $kode_mk) {
+					$kode_mk_safe = mysqli_real_escape_string($koneksi, $kode_mk);
+					mysqli_query($koneksi, "INSERT INTO tb_kepala_mekanik_schedule
+					                         (kode_karyawan, kode_cabang, tanggal_kerja, shift, status_kehadiran)
+					                         VALUES ('$kode_mk_safe', '$kd_cabang', '$tanggal_kerja', 'full', 'hadir')");
+				}
+			}
+			$mekanik_hadir_hari_ini = is_array($tim_mekanik_post) ? $tim_mekanik_post : [];
+
 			// Refresh data
-			$check_today = mysqli_query($koneksi, "SELECT * FROM tbl_kepala_mekanik_harian 
-			                                  WHERE kode_cabang='$kd_cabang' 
+			$check_today = mysqli_query($koneksi, "SELECT * FROM tbl_kepala_mekanik_harian
+			                                  WHERE kode_cabang='$kd_cabang'
 			                                  AND tanggal_kerja='$tanggal_hari_ini'");
 			$data_hari_ini = mysqli_fetch_array($check_today);
 			$sudah_input = mysqli_num_rows($check_today) > 0;
@@ -149,9 +197,9 @@ if(empty($_SESSION['_iduser'])){
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>Input Kepala Mekanik Harian - <?php echo $nama_cabang; ?></title>
+    <title>Daftar Tim Mekanik Hari Ini - <?php echo $nama_cabang; ?></title>
 
-    <meta name="description" content="Input Kepala Mekanik Harian" />
+    <meta name="description" content="Daftar Tim Mekanik Hari Ini" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
     <!-- bootstrap & fontawesome -->
@@ -326,7 +374,7 @@ if(empty($_SESSION['_iduser'])){
                         <li>
                             <a href="#">Servis</a>
                         </li>                            
-                        <li class="active">Input Kepala Mekanik Harian</li>
+                        <li class="active">Daftar Tim Mekanik Hari Ini</li>
                     </ul>
                 </div>
 
@@ -337,7 +385,7 @@ if(empty($_SESSION['_iduser'])){
                             <div class="col-md-8">
                                 <h2>
                                     <i class="ace-icon fa fa-calendar"></i>
-                                    Kepala Mekanik Hari Ini
+                                    Daftar Tim Mekanik Hari Ini
                                 </h2>
                                 <h4><?php echo $tanggal_display; ?> - <?php echo $nama_cabang; ?></h4>
                                 
@@ -463,6 +511,32 @@ if(empty($_SESSION['_iduser'])){
                                                         </span>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div class="kepala-mekanik-card">
+                                                <h5><i class="ace-icon fa fa-users orange"></i> Tim Mekanik Hari Ini</h5>
+                                                <?php if (empty($tim_mekanik_cabang)): ?>
+                                                <p class="text-muted"><small>Data tim mekanik cabang ini belum tersedia.</small></p>
+                                                <?php else: ?>
+                                                <div class="row">
+                                                    <?php foreach ($tim_mekanik_cabang as $tm): ?>
+                                                    <div class="col-sm-6">
+                                                        <label class="checkbox-inline">
+                                                            <input type="checkbox" name="tim_mekanik[]"
+                                                                   value="<?php echo htmlspecialchars($tm['kode_karyawan']); ?>"
+                                                                   <?php echo in_array($tm['kode_karyawan'], $mekanik_hadir_hari_ini) ? 'checked' : ''; ?> />
+                                                            <?php echo htmlspecialchars($tm['nama']); ?>
+                                                        </label>
+                                                    </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                                <span class="help-block">
+                                                    <small class="text-muted">
+                                                        <i class="ace-icon fa fa-info-circle"></i>
+                                                        Centang mekanik yang hadir/tugas hari ini. Dipakai untuk pilihan mekanik saat input servis.
+                                                    </small>
+                                                </span>
+                                                <?php endif; ?>
                                             </div>
 
                                             <div class="form-group">
