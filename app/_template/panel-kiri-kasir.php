@@ -478,8 +478,64 @@ function wireSliderGroup(group) {
             var v = clampPersen($(this).val());
             $(this).val(v); $slider.val(v); redistributePersen(group, idx);
         });
+        $text.on('click', function(){ openPersenPopup(group, idx); });
     });
 }
+
+// ---- Popup slider kelipatan 10 (mirip kontrol volume), muncul saat textbox persen diklik ----
+var $ksPersenPopup = null, _ksPersenPopupCtx = null;
+function ensurePersenPopup() {
+    if ($ksPersenPopup) return $ksPersenPopup;
+    $ksPersenPopup = $(
+        '<div id="ksPersenPopup" style="position:absolute;z-index:9999;display:none;background:#fff;'+
+        'border:1px solid #d1d9e0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.18);'+
+        'padding:10px 12px;width:180px;">'+
+          '<div id="ksPersenPopupLabel" style="font-size:13px;font-weight:700;color:#4a90d9;'+
+          'margin-bottom:6px;text-align:center;">0%</div>'+
+          '<input type="range" id="ksPersenPopupSlider" min="0" max="100" step="10" style="width:100%;">'+
+          '<div style="display:flex;justify-content:space-between;font-size:9px;color:#8a94a6;margin-top:2px;">'+
+          '<span>0</span><span>50</span><span>100</span></div>'+
+        '</div>'
+    ).appendTo('body');
+    $(document).on('mousedown touchstart', function(e){
+        if ($ksPersenPopup.is(':visible') &&
+            !$(e.target).closest('#ksPersenPopup').length &&
+            !$(e.target).hasClass('ks-persen-text')) {
+            closePersenPopup();
+        }
+    });
+    $(document).on('input', '#ksPersenPopupSlider', function(){
+        if (!_ksPersenPopupCtx) return;
+        var v = parseInt(this.value, 10);
+        $('#ksPersenPopupLabel').text(v+'%');
+        var ids = PERSEN_GROUPS[_ksPersenPopupCtx.group];
+        setPersenValue(ids[_ksPersenPopupCtx.idx], v);
+        redistributePersen(_ksPersenPopupCtx.group, _ksPersenPopupCtx.idx);
+    });
+    $(document).on('change', '#ksPersenPopupSlider', function(){ closePersenPopup(); });
+    $(document).on('keydown', function(e){ if (e.key === 'Escape') closePersenPopup(); });
+    return $ksPersenPopup;
+}
+function openPersenPopup(group, idx) {
+    var ids = PERSEN_GROUPS[group]; if (!ids) return;
+    var textId = ids[idx];
+    var $slider = $('#'+textId+'_slider');
+    if ($slider.prop('disabled')) return;
+    var $popup = ensurePersenPopup();
+    var $text = $('#'+textId);
+    var offset = $text.offset();
+    $popup.css({ top: offset.top + $text.outerHeight() + 4, left: offset.left });
+    var snapped = Math.round(clampPersen($text.val())/10)*10;
+    $('#ksPersenPopupSlider').val(snapped);
+    $('#ksPersenPopupLabel').text(snapped+'%');
+    _ksPersenPopupCtx = { group: group, idx: idx };
+    $popup.stop(true,true).fadeIn(120);
+}
+function closePersenPopup() {
+    if ($ksPersenPopup) $ksPersenPopup.stop(true,true).fadeOut(100);
+    _ksPersenPopupCtx = null;
+}
+
 $(function(){
     wireSliderGroup('km'); wireSliderGroup('admin'); wireSliderGroup('mekanik');
     <?php if ($_admin1_auto_filled): ?>
