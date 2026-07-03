@@ -453,10 +453,48 @@ html, body {
 }
 .ks-staff-row {
     display: grid;
-    grid-template-columns: 1fr 50px;
+    grid-template-columns: 1fr 60px;
     gap: 3px;
     align-items: center;
 }
+.ks-persen-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ks-persen-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: #d1d9e0;
+    outline: none;
+    cursor: pointer;
+    transition: background .15s;
+}
+.ks-persen-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+.ks-persen-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+.ks-persen-slider:active::-webkit-slider-thumb { transform: scale(1.15); }
+.ks-persen-slider:disabled { opacity: .35; cursor: not-allowed; }
+.ks-persen-slider:disabled::-webkit-slider-thumb { background: #b0b8c1; }
 .ks-staff-row select {
     font-size: 11px !important;
     padding: 3px 5px !important;

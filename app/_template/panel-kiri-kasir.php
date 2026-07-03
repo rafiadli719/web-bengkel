@@ -54,6 +54,35 @@ $opsi_kepala_mekanik  = buildServiceStaffOptions($koneksi, $kd_cabang, ['KM'], '
 $opsi_admin_service   = buildServiceStaffOptions($koneksi, $kd_cabang, ['CS','KSR','ADM']);
 $opsi_mekanik_service = buildServiceStaffOptions($koneksi, $kd_cabang, ['MK'], 'tblmekanik');
 
+// ---- Auto-fill Admin 1 dengan user login (servis baru saja, tidak override data existing) ----
+$_admin1_auto_filled = false;
+if (empty($admin1) && !empty($_SESSION['_nama_lengkap']) && in_array($_SESSION['_nama_lengkap'], $opsi_admin_service, true)) {
+    $admin1 = $_SESSION['_nama_lengkap'];
+    $_admin1_auto_filled = true;
+}
+
+// ---- Filter mekanik by Tim Mekanik Hari Ini (input_kepala_mekanik_harian.php) ----
+// Selalu pakai tanggal hari ini (bukan tanggal_srv/tanggal ticket dibuat) karena kehadiran
+// adalah konsep harian - mekanik bisa mengerjakan tiket lama di hari kerja manapun.
+// Kalau belum ada data kehadiran utk cabang+hari ini, biarkan daftar penuh (tidak blocking).
+$_tgl_tim_mekanik_safe = mysqli_real_escape_string($koneksi, date('Y-m-d'));
+$_kd_cabang_safe_tm    = mysqli_real_escape_string($koneksi, (string) $kd_cabang);
+$_hadir_mekanik_names  = [];
+$_q_hadir_mk = mysqli_query($koneksi, "SELECT tm.nama FROM tb_kepala_mekanik_schedule sch
+                                        INNER JOIN tblmekanik tm ON tm.nomekanik = sch.kode_karyawan
+                                        WHERE sch.kode_cabang='{$_kd_cabang_safe_tm}'
+                                          AND sch.tanggal_kerja='{$_tgl_tim_mekanik_safe}'
+                                          AND sch.status_kehadiran='hadir'");
+if ($_q_hadir_mk instanceof mysqli_result) {
+    while ($row = mysqli_fetch_assoc($_q_hadir_mk)) {
+        $n = trim((string)($row['nama'] ?? ''));
+        if ($n !== '') $_hadir_mekanik_names[$n] = $n;
+    }
+}
+if (!empty($_hadir_mekanik_names)) {
+    $opsi_mekanik_service = array_values(array_intersect($opsi_mekanik_service, $_hadir_mekanik_names));
+}
+
 // ---- Member info ----
 $_minfo = [];
 if (!empty($kode_pelanggan) && function_exists('getMemberCategoryInfo')) {
@@ -237,7 +266,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($kepala_mekanik1)&&$kepala_mekanik1==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_kepala1" id="txtpersen_kepala1_v2" value="<?= $persen_kepala1 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_kepala1_v2_slider" min="0" max="100" step="1" value="<?= $persen_kepala1 ?? 0 ?>" <?= empty($kepala_mekanik1) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_kepala1" id="txtpersen_kepala1_v2" value="<?= $persen_kepala1 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
         <div>
@@ -249,7 +281,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($kepala_mekanik2)&&$kepala_mekanik2==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_kepala2" id="txtpersen_kepala2_v2" value="<?= $persen_kepala2 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_kepala2_v2_slider" min="0" max="100" step="1" value="<?= $persen_kepala2 ?? 0 ?>" <?= empty($kepala_mekanik2) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_kepala2" id="txtpersen_kepala2_v2" value="<?= $persen_kepala2 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
     </div>
@@ -265,7 +300,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($admin1)&&$admin1==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_admin1" id="txtpersen_admin1_v2" value="<?= $persen_admin1 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_admin1_v2_slider" min="0" max="100" step="1" value="<?= $persen_admin1 ?? 0 ?>" <?= empty($admin1) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_admin1" id="txtpersen_admin1_v2" value="<?= $persen_admin1 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
         <div>
@@ -277,7 +315,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($admin2)&&$admin2==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_admin2" id="txtpersen_admin2_v2" value="<?= $persen_admin2 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_admin2_v2_slider" min="0" max="100" step="1" value="<?= $persen_admin2 ?? 0 ?>" <?= empty($admin2) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_admin2" id="txtpersen_admin2_v2" value="<?= $persen_admin2 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
     </div>
@@ -293,7 +334,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($mekanik1)&&$mekanik1==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_mekanik1" id="txtpersen_mekanik1_v2" value="<?= $persen_kerja1 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_mekanik1_v2_slider" min="0" max="100" step="1" value="<?= $persen_kerja1 ?? 0 ?>" <?= empty($mekanik1) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_mekanik1" id="txtpersen_mekanik1_v2" value="<?= $persen_kerja1 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
         <div>
@@ -305,7 +349,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($mekanik2)&&$mekanik2==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_mekanik2" id="txtpersen_mekanik2_v2" value="<?= $persen_kerja2 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_mekanik2_v2_slider" min="0" max="100" step="1" value="<?= $persen_kerja2 ?? 0 ?>" <?= empty($mekanik2) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_mekanik2" id="txtpersen_mekanik2_v2" value="<?= $persen_kerja2 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
         <div>
@@ -317,7 +364,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($mekanik3)&&$mekanik3==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_mekanik3" id="txtpersen_mekanik3_v2" value="<?= $persen_kerja3 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_mekanik3_v2_slider" min="0" max="100" step="1" value="<?= $persen_kerja3 ?? 0 ?>" <?= empty($mekanik3) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_mekanik3" id="txtpersen_mekanik3_v2" value="<?= $persen_kerja3 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
         <div>
@@ -329,7 +379,10 @@ if (!empty($no_service)) {
                     <option value="<?= htmlspecialchars($ns,ENT_QUOTES) ?>" <?= (isset($mekanik4)&&$mekanik4==$ns)?'selected':'' ?>><?= htmlspecialchars($ns) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="txtpersen_mekanik4" id="txtpersen_mekanik4_v2" value="<?= $persen_kerja4 ?? 0 ?>" min="0" max="100" title="%">
+                <div class="ks-persen-row">
+                    <input type="range" class="ks-persen-slider" id="txtpersen_mekanik4_v2_slider" min="0" max="100" step="1" value="<?= $persen_kerja4 ?? 0 ?>" <?= empty($mekanik4) ? 'disabled' : '' ?>>
+                    <input type="number" class="ks-persen-text" name="txtpersen_mekanik4" id="txtpersen_mekanik4_v2" value="<?= $persen_kerja4 ?? 0 ?>" min="0" max="100" title="%">
+                </div>
             </div>
         </div>
     </div>
@@ -373,13 +426,66 @@ function autoDistributePersenGroup(group) {
     var g = groups[group]; if (!g) return;
     var active = [];
     g.selects.forEach(function(id,i){ if(($('#'+id).val()||'')!=='') active.push(i); });
-    if (!active.length) { g.persens.forEach(function(id){ $('#'+id).val(0); }); return; }
+    g.persens.forEach(function(id,i){
+        var isActive = active.indexOf(i)!==-1;
+        $('#'+id+'_slider').prop('disabled', !isActive);
+    });
+    if (!active.length) { g.persens.forEach(function(id){ setPersenValue(id,0); }); return; }
     var per = Math.floor(100/active.length), rem = 100-(per*active.length);
     g.persens.forEach(function(id,i){
         var idx = active.indexOf(i);
-        $('#'+id).val(idx===-1 ? 0 : per+(idx===0?rem:0));
+        setPersenValue(id, idx===-1 ? 0 : per+(idx===0?rem:0));
     });
 }
+
+function setPersenValue(textId, val) {
+    $('#'+textId).val(val);
+    $('#'+textId+'_slider').val(val);
+}
+
+function clampPersen(v) {
+    v = parseFloat(v); if (isNaN(v)) v = 0;
+    return Math.max(0, Math.min(100, v));
+}
+
+var PERSEN_GROUPS = {
+    km:      ['txtpersen_kepala1_v2','txtpersen_kepala2_v2'],
+    admin:   ['txtpersen_admin1_v2','txtpersen_admin2_v2'],
+    mekanik: ['txtpersen_mekanik1_v2','txtpersen_mekanik2_v2','txtpersen_mekanik3_v2','txtpersen_mekanik4_v2']
+};
+
+function redistributePersen(group, changedIdx) {
+    var ids = PERSEN_GROUPS[group]; if (!ids) return;
+    var active = [];
+    ids.forEach(function(id,i){ if (!$('#'+id+'_slider').prop('disabled')) active.push(i); });
+    if (active.indexOf(changedIdx)===-1) return;
+    var changedVal = clampPersen($('#'+ids[changedIdx]).val());
+    setPersenValue(ids[changedIdx], changedVal);
+    var others = active.filter(function(i){ return i!==changedIdx; });
+    if (!others.length) return;
+    var remain = 100 - changedVal;
+    if (remain < 0) remain = 0;
+    var per = Math.floor(remain/others.length), rem = remain-(per*others.length);
+    others.forEach(function(i,k){ setPersenValue(ids[i], per+(k===0?rem:0)); });
+}
+
+function wireSliderGroup(group) {
+    var ids = PERSEN_GROUPS[group]; if (!ids) return;
+    ids.forEach(function(id, idx){
+        var $slider = $('#'+id+'_slider'), $text = $('#'+id);
+        $slider.on('input', function(){ $text.val(this.value); redistributePersen(group, idx); });
+        $text.on('input', function(){
+            var v = clampPersen($(this).val());
+            $(this).val(v); $slider.val(v); redistributePersen(group, idx);
+        });
+    });
+}
+$(function(){
+    wireSliderGroup('km'); wireSliderGroup('admin'); wireSliderGroup('mekanik');
+    <?php if ($_admin1_auto_filled): ?>
+    autoDistributePersenGroup('admin');
+    <?php endif; ?>
+});
 
 function validateMechanicPersen(e) {
     var km1=parseFloat($('#txtpersen_kepala1_v2').val())||0,
