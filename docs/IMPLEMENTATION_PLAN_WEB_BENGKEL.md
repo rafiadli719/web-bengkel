@@ -551,7 +551,28 @@ Owner (pak Novian) jawab poin 5 checklist FSD_PROMO soal "Program Cuci Motor Gra
 
 Ini jadi requirement inti untuk `docs/fsd/FSD_PROMO.md` yang akan dibuat di Task 4 — desain harus generic/rule-based via tabel master, bukan logic promo spesifik ditulis di PHP.
 
+### Commit backlog + Testing browser end-to-end (18 Jul 2026)
+
+**Commit backlog besar:** repo punya 218 file uncommitted menumpuk lintas banyak sesi (24 Jun–17 Jul), belum sempat di-commit. Digabung jadi 1 commit `b11f51d` (216 file, 22720 insertions) — sengaja skip file junk (docx/pdf meeting notes, archive/*.deb, __pycache__, screenshot).
+
+**Testing browser sebagai user awam** (login admin, jalur nyata Pembelian → PO → DO) menemukan **3 bug**, semua diperbaiki & di-commit (`da9ad18`):
+
+1. **Master Approval Bertingkat PO tampil kosong** — kolom `tb_master_approval_pembelian.kode_posisi` kebuat pakai collation default MySQL 8 (`utf8mb4_0900_ai_ci`, migrasi kemarin gak declare COLLATE eksplisit) vs `tb_master_posisi.kode_posisi` yang pakai `utf8mb4_general_ci` (konvensi lama). JOIN gagal "Illegal mix of collations" — silent, `mysqli_query` return false tanpa pesan error, user cuma lihat tabel kosong. **Fixed**: migrasi `db/migrations/2026-07-18_fix_collation_approval_pembelian.sql`.
+2. **SQL injection + reflected XSS di `pesanan_pembelian_cetak.php`** (app/ dan duplikat `_pengadaan/`) — halaman cetak nota yang TERNYATA dipakai di alur produksi nyata (auto-redirect setelah PO disimpan dari `pesanan_pembelian_add.php`), terlewat dari audit SQL injection 17 Juli karena beda nama file dari yang sudah difix (`pesanan_pembelian_add_print.php`). **Fixed**: prepared statement + `htmlspecialchars`, di kedua salinan.
+3. **KRITIS — approval bertingkat PO bisa di-bypass total**: PO baru default `status_approval='draft'`; `pesanan_pembelian_detail.php` treat draft/NULL/kosong sebagai "boleh lanjut" (sama seperti approved). Proses "ajukan approval" (ubah ke `pending`) OPSIONAL, harus staf klik manual. Tombol **"Lanjut ke DO"** (`do_from_po.php`, entry point utama alur normal) SAMA SEKALI GAK CEK `status_approval` — staf yang cuma ikut alur biasa (Input Manual → Simpan → Lanjut ke DO) lolos approval berapa pun nominalnya. Fitur yang ditandai "SELESAI" 17 Juli efektif gak jalan di jalur pemakaian normal.
+   - **Fix** (pilihan user: "Wajibkan approval otomatis"): PO baru yang total-nya masuk bracket approval aktif otomatis di-set `status_approval='pending'` saat disimpan (`pesanan_pembelian_add.php` + duplikat `_pengadaan/`). `do_from_po.php` ditambah gate: tolak lanjut ke DO kalau PO masuk bracket & status bukan `'approved'`.
+   - Diverifikasi via subprocess PHP CLI (include file produksi asli, mock session/POST) — blocked saat status draft dengan pesan jelas, lolos saat status approved. Data test dibersihkan, tidak ada sisa di DB live.
+
+**Pelajaran:** fitur "wajib approval" baru harus dicek di SEMUA entry point yang bisa nyampe ke aksi akhir (bukan cuma 1 halaman detail) — termasuk tombol shortcut/redirect otomatis, bukan cuma jalur yang dirancang developer.
+
+**Belum dikerjakan (lanjut sesi berikutnya):**
+- Task 4: sesi planning Promo Engine → `FSD_PROMO.md` (masih perlu tanya ulang Owner soal status Program Cuci Motor Gratis).
+- UX gap (bukan bug): gak ada halaman "daftar PO menunggu approval" — user harus tau no. PO manual buat buka halaman detail approve/reject.
+- Field "Level Approval (urutan angka)" vs "Urutan Pengecekan" di form Master Approval Bertingkat kelihatan duplikatif/bikin bingung user awam — belum diubah, cuma temuan UX.
+- Open Item: 5 label `status_klasifikasi` alarm harga beli (dari 7 total) masih perlu re-ekstraksi query Access asli.
+- Keputusan opsional: nasib `app/save_pesanan_pembelian_h.php` (orphaned, insert pre-existing broken) — hapus atau lengkapi, tunggu arahan user.
+
 ---
 
 *Dokumen ini diupdate setiap ada klarifikasi baru dari tim operasional.*  
-*Versi: 1.2 | 29 Juni 2026 (dibuat), 4 Juli 2026 (eksekusi F1-D/E/C + F2-C), 17 Juli 2026 (mulai FASE 4 — fix SQL injection PO 2/3, approval bertingkat & alarm harga beli belum mulai) | Tim IT Web Bengkel FIT MOTOR*
+*Versi: 1.3 | 29 Juni 2026 (dibuat), 4 Juli 2026 (eksekusi F1-D/E/C + F2-C), 17 Juli 2026 (mulai FASE 4 — fix SQL injection PO, approval bertingkat & alarm harga beli selesai), 18 Juli 2026 (commit backlog 218 file + 3 bug kritis ketemu & fixed dari testing browser: collation silent-fail, SQL injection cetak nota PO, approval bertingkat bisa di-bypass) | Tim IT Web Bengkel FIT MOTOR*
