@@ -164,10 +164,30 @@ if(isset($_POST['btnreceive_do'])){
     $tanggal_do = date('Y-m-d');
     $created_by = $_nama;
 
+    // Gate approval bertingkat: PO yang total-nya masuk bracket approval aktif
+    // wajib berstatus 'approved' dulu sebelum boleh lanjut ke penerimaan/DO.
+    $stmt_appr = mysqli_prepare($koneksi, "SELECT total_order, status_approval FROM tblorder_header WHERE no_order=?");
+    mysqli_stmt_bind_param($stmt_appr, "s", $no_po);
+    mysqli_stmt_execute($stmt_appr);
+    $r_appr = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_appr));
+    if($r_appr){
+        $total_po = (float)$r_appr['total_order'];
+        $status_appr = $r_appr['status_approval'];
+        $stmt_bracket = mysqli_prepare($koneksi, "SELECT id FROM tb_master_approval_pembelian WHERE aktif=1 AND batas_bawah<=? AND (batas_atas IS NULL OR batas_atas>=?) LIMIT 1");
+        mysqli_stmt_bind_param($stmt_bracket, "dd", $total_po, $total_po);
+        mysqli_stmt_execute($stmt_bracket);
+        $needs_approval = mysqli_num_rows(mysqli_stmt_get_result($stmt_bracket)) > 0;
+        if($needs_approval && $status_appr !== 'approved'){
+            $msg = 'PO ini nilainya masuk bracket approval bertingkat dan belum disetujui (status: '.htmlspecialchars($status_appr ?: 'belum diajukan').'). Ajukan & minta approval dulu di halaman Detail PO sebelum lanjut ke Delivery Order.';
+        }
+    }
+
     // Items
     $items = isset($_POST['items']) ? $_POST['items'] : [];
     $has_qty = false; foreach($items as $ni=>$it){ if(((int)$it['qty_terima'])>0){ $has_qty = true; break; }}
-    if(!$has_qty){
+    if($msg!==''){
+        // approval gate blocked above
+    } else if(!$has_qty){
         $msg = 'Qty terima belum diisi';
     } else {
         // Server-side validation: ensure qty_kirim/qty_terima <= sisa PO per item

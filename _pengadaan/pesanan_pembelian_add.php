@@ -175,16 +175,27 @@
                 if($cek > 0){
                     
                 } else {
-                    mysqli_query($koneksi,"INSERT INTO tblorder_header 
-                                            (no_order, status, tanggal, 
-                                            no_supplier, total_qty, total_order, 
-                                            user, kd_cabang) 
-                                            VALUES 
+                    mysqli_query($koneksi,"INSERT INTO tblorder_header
+                                            (no_order, status, tanggal,
+                                            no_supplier, total_qty, total_order,
+                                            user, kd_cabang)
+                                            VALUES
                                             ('$LastID','0','$txttglpesan',
                                             '$cbosupplier','$tot_qty','$txttotal_harga',
                                             '$_nama','$kd_cabang')");
 
-                    mysqli_query($koneksi,"UPDATE tblorder_detail 
+                    // Approval bertingkat: kalau total PO masuk bracket aktif, wajib approval dulu
+                    $stmt_bracket = mysqli_prepare($koneksi, "SELECT id FROM tb_master_approval_pembelian WHERE aktif=1 AND batas_bawah<=? AND (batas_atas IS NULL OR batas_atas>=?) LIMIT 1");
+                    $tot_harga_num = (float)$txttotal_harga;
+                    mysqli_stmt_bind_param($stmt_bracket, "dd", $tot_harga_num, $tot_harga_num);
+                    mysqli_stmt_execute($stmt_bracket);
+                    if(mysqli_num_rows(mysqli_stmt_get_result($stmt_bracket)) > 0){
+                        $stmt_pend = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='pending' WHERE no_order=?");
+                        mysqli_stmt_bind_param($stmt_pend, "s", $LastID);
+                        mysqli_stmt_execute($stmt_pend);
+                    }
+
+                    mysqli_query($koneksi,"UPDATE tblorder_detail
                                             SET 
                                             no_order='$LastID', status_trx='1' 
                                             WHERE 

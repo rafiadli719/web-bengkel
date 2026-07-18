@@ -29,13 +29,16 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$nopesanan=$_GET['nopesanan'];        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
-                                        no_supplier, note, payment_term, total_qty, total_order 
-                                        FROM tblorder_header 
-                                        WHERE no_order='$nopesanan'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
+		$nopesanan=$_GET['nopesanan'];
+		$stmt=mysqli_prepare($koneksi,"SELECT
+                                        DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx,
+                                        no_supplier, note, payment_term, total_qty, total_order
+                                        FROM tblorder_header
+                                        WHERE no_order=?");
+		mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+		mysqli_stmt_execute($stmt);
+		$cari_kd=mysqli_stmt_get_result($stmt);
+		$tm_cari=mysqli_fetch_array($cari_kd);
 		$tgl_pilih=$tm_cari['tanggal_trx'];
 		$cbo_supplier=$tm_cari['no_supplier'];
 		$total_qty=$tm_cari['total_qty'];
@@ -73,7 +76,10 @@
         }
 
         $total_beli = 0;
-        $qsum = mysqli_query($koneksi, "SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order='$nopesanan'");
+        $stmt=mysqli_prepare($koneksi,"SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order=?");
+        mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+        mysqli_stmt_execute($stmt);
+        $qsum = mysqli_stmt_get_result($stmt);
         while ($r = mysqli_fetch_array($qsum)) {
             $harga = (float)$r['harga_pokok'];
             if ($harga <= 0) {
@@ -344,7 +350,7 @@
                                                         <label class="col-sm-4 control-label no-padding-right" for="txtnopesanan"> No. Pesanan :</label>									
                                                         <div class="col-sm-7">
                                                             <input type="text" id="txtnopesanan" name="txtnopesanan" class="form-control" 
-                                                            value="<?php echo $nopesanan; ?>" readonly="true" />
+                                                            value="<?php echo htmlspecialchars($nopesanan, ENT_QUOTES); ?>" readonly="true" />
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
