@@ -4,10 +4,10 @@
 <div class="modal fade" id="modal-tambah-keluhan-baru" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">
-                    <i class="ace-icon fa fa-plus-circle"></i> 
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;border-left:4px solid #f59e0b;padding:16px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">&times;</button>
+                <h4 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;">
+                    <i class="ace-icon fa fa-plus-circle" style="color:#f59e0b;margin-right:6px;"></i>
                     Tambah Keluhan Baru (Perlu Approval Pusat)
                 </h4>
             </div>
@@ -338,17 +338,4 @@ if (typeof window.openModalTambahKeluhanBaru === 'undefined') {
     border-color: #a94442 !important;
 }
 
-#modal-tambah-keluhan-baru .modal-header.bg-warning {
-    background-color: #f0ad4e;
-    color: white;
-}
-
-#modal-tambah-keluhan-baru .modal-header.bg-warning .close {
-    color: white;
-    opacity: 0.8;
-}
-
-#modal-tambah-keluhan-baru .modal-header.bg-warning .close:hover {
-    opacity: 1;
-}
 </style>

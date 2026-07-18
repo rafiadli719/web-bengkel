@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Hasil Bongkar Sistem Lama (Access)</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: #222; }
+  h1 { font-size: 22px; color: #7a1f1f; border-bottom: 3px solid #7a1f1f; padding-bottom: 8px; }
+  h2 { font-size: 17px; color: #7a1f1f; margin-top: 28px; }
+  .cover { text-align: center; padding-top: 15%; }
+  .cover h1 { border: none; font-size: 26px; }
+  .cover p { color: #666; font-size: 13px; }
+  .box { background: #f2f6fb; border-left: 4px solid #1a4d8f; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-warning { background: #fff6e5; border-left: 4px solid #d98c00; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-ok { background: #e9f7ef; border-left: 4px solid #2e8b57; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #7a1f1f; color: white; }
+  .page-break { page-break-before: always; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Hasil Bongkar Sistem Lama<br>(Microsoft Access)</h1>
+  <p>Laporan versi sederhana &mdash; untuk Owner / Non-IT</p>
+  <p>3 Juli 2026</p>
+</div>
+
+<div class="page-break"></div>
+
+<h1>1. Apa yang Dilakukan?</h1>
+
+<p>Sebelum sistem lama (Microsoft Access) benar-benar ditinggalkan, kami "bongkar" isinya secara menyeluruh &mdash; ibarat buka mesin motor lama sebelum ganti ke motor baru, supaya semua kebiasaan/aturan yang sudah berjalan bertahun-tahun tidak hilang begitu saja saat pindah ke sistem web.</p>
+
+<p>Yang diperiksa: semua tabel data, semua rumus perhitungan yang tersembunyi di baliknya, semua tampilan layar (form), dan semua laporan yang biasa dipakai.</p>
+
+<h1>2. Temuan Paling Penting</h1>
+
+<h2>Temuan 1 &mdash; Ternyata Ada 5 "Toko Catatan" Terpisah</h2>
+<div class="box-warning">
+Selama ini, tiap cabang (Pusat, Cikditiro, Pacul, Pesalakan, Trayeman) punya <b>buku catatan pelanggan sendiri-sendiri</b>, tidak saling nyambung otomatis. Kalau ada pelanggan yang servis di 2 cabang berbeda, sistem lama menganggapnya sebagai <b>2 orang yang beda</b>.
+</div>
+<p>Ini penyebab utama kenapa banyak data pelanggan ganda muncul &mdash; bukan cuma salah ketik staf, tapi memang dari desain sistemnya begitu sejak awal.</p>
+
+<h2>Temuan 2 &mdash; Usaha Menyatukan Data Cabang Ternyata Tidak Lengkap</h2>
+<p>Sistem lama sebenarnya punya cara untuk menyatukan data dari 5 cabang itu, tapi setelah dicek langsung ke sumbernya: <b>cuma 2 dari 5 cabang</b> yang pernah dicoba disatukan. 3 cabang lainnya (Cikditiro, Trayeman, Pusat) <b>tidak pernah ikut diproses</b> sama sekali.</p>
+
+<h2>Temuan 3 &mdash; Ganti Nomor WA Bikin Sistem "Lupa"</h2>
+<div class="box-warning">
+Dicek langsung ke rumus aslinya: sistem lama mengenali pelanggan dengan mencocokkan <b>nama DAN nomor telepon sekaligus</b>. Begitu nomor HP pelanggan ganti, sistem tidak akan mengenalinya lagi sebagai orang yang sama. Ini <b>bukan dugaan, tapi terbukti langsung dari rumus asli</b>.
+</div>
+
+<h2>Temuan 4 &mdash; Cara Hitung Untung-Rugi Kemungkinan Beda dari Dugaan Awal</h2>
+<p>Awalnya kami kira sistem lama menghitung harga pokok barang pakai metode umum ("barang masuk duluan, keluar duluan"). Setelah dicek rumus aslinya, kemungkinan besar caranya <b>berbeda</b> &mdash; masih perlu 1 pengecekan lagi untuk memastikan, karena ini menyangkut akurasi laporan untung-rugi.</p>
+
+<h2>Temuan 5 &mdash; Sistem Diskon Member "Gold/Silver" Ternyata Tidak Aktif</h2>
+<div class="box-warning">
+Dicek langsung datanya: kategori member "GOLD" dan "SILVER" di sistem lama tercatat <b>diskonnya 0%</b>. Artinya kemungkinan besar sistem diskon member itu <b>tidak pernah benar-benar jalan otomatis</b> di sistem lama &mdash; kalau ada diskon buat member, kemungkinan itu keputusan manual staf, bukan otomatis dari sistem.
+</div>
+
+<h2>Temuan 6 &mdash; Ada Fitur "Kirim Kontak WA" yang Mungkin Terlupakan</h2>
+<p>Sistem lama punya fitur untuk mengunduh daftar kontak WA pelanggan (untuk broadcast/promosi manual). Fitur ini <b>belum ada padanannya</b> di sistem web yang baru &mdash; perlu dicek ke staf apakah fitur ini masih dipakai atau sudah tidak relevan.</p>
+
+<h1>3. Kesimpulan</h1>
+
+<div class="box-ok">
+<b>Yang perlu diingat owner:</b><br>
+1. Sistem lama sendiri <b>tidak pernah benar-benar rapi</b> dalam mengelola data pelanggan lintas cabang &mdash; jadi target sistem baru bukan cuma "samakan seperti sistem lama", tapi <b>memperbaiki</b> yang memang belum pernah beres.<br>
+2. Beberapa dugaan awal tim (soal cara hitung untung-rugi, soal sistem member) <b>sudah dikoreksi</b> setelah dicek langsung ke data asli &mdash; supaya sistem baru tidak salah asumsi.<br>
+3. Masih ada 1-2 hal yang perlu digali sekali lagi sebelum keputusan final diambil (terutama soal cara hitung untung-rugi).
+</div>
+
+</body>
+</html>

@@ -92,20 +92,20 @@
     // end ===========
 
         if($txtflt=='asc') {
-            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM tblpelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
+            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
-                                            count(*) as tot FROM tblpelanggan 
+                                            count(*) as tot FROM view_cari_pelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
             $tot=$tm_cari['tot'];				        
         } else {
-            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM tblpelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
+            $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
-                                            count(*) as tot FROM tblpelanggan 
+                                            count(*) as tot FROM view_cari_pelanggan 
                         WHERE ".$sql_cari." like '%".$txtkey."%'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
             $tot=$tm_cari['tot'];				                    
@@ -476,6 +476,7 @@
 		<script src="assets/js/buttons.print.min.js"></script>
 		<script src="assets/js/buttons.colVis.min.js"></script>
 		<script src="assets/js/dataTables.select.min.js"></script>
+		<?php include "includes/datatables-defaults.php"; ?>
 
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>

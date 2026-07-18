@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Rencana Fitur Baru - Pelanggan, Kendaraan, Membership, CRM</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: #222; }
+  h1 { font-size: 22px; color: #1f5c3f; border-bottom: 3px solid #1f5c3f; padding-bottom: 8px; }
+  h2 { font-size: 17px; color: #1f5c3f; margin-top: 28px; }
+  h3 { font-size: 14px; color: #333; margin-top: 16px; }
+  .cover { text-align: center; padding-top: 15%; }
+  .cover h1 { border: none; font-size: 26px; }
+  .cover p { color: #666; font-size: 13px; }
+  .box { background: #f2f6fb; border-left: 4px solid #1a4d8f; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-warning { background: #fff6e5; border-left: 4px solid #d98c00; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-ok { background: #e9f7ef; border-left: 4px solid #2e8b57; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #1f5c3f; color: white; }
+  .page-break { page-break-before: always; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .modul-badge { display: inline-block; background: #1f5c3f; color: white; padding: 2px 10px; border-radius: 12px; font-size: 11px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Rencana Fitur Baru<br>Pelanggan &middot; Kendaraan &middot; Membership &middot; CRM</h1>
+  <p>Laporan versi sederhana &mdash; untuk Owner / Non-IT</p>
+  <p>3 Juli 2026</p>
+</div>
+
+<div class="page-break"></div>
+
+<h1>Kenapa Perlu Rencana Tertulis Dulu?</h1>
+<p>Sebelum tim mulai coding, kami buat dulu "cetak biru" tertulis (namanya FSD) untuk tiap bagian sistem. Tujuannya: supaya semua pihak sepakat dulu soal aturan main-nya, sebelum uang dan waktu dihabiskan untuk membangun. Kalau ada yang salah arah, jauh lebih murah diperbaiki sekarang (di kertas) daripada nanti (di kode program).</p>
+
+<p>Ada 4 bagian besar yang sudah dirancang:</p>
+<ol>
+<li><b>Pelanggan (Customer)</b> &mdash; data inti siapa pelanggan kita</li>
+<li><b>Kendaraan</b> &mdash; data motor sebagai "barang milik" pelanggan</li>
+<li><b>Membership</b> &mdash; status Bronze/Silver/Gold/Platinum</li>
+<li><b>CRM</b> &mdash; layar rangkuman & sistem persetujuan untuk hal sensitif</li>
+</ol>
+
+<h1>Keputusan Dasar yang Sudah Disepakati</h1>
+<div class="box-ok">
+1. <b>Pelanggan adalah pusat dari segalanya.</b> Status member, riwayat, poin &mdash; semua nempel ke pelanggan, bukan ke motor.<br>
+2. <b>Motor adalah "barang milik" pelanggan.</b> 1 pelanggan boleh punya banyak motor.<br>
+3. <b>Kalau pelanggan statusnya Gold, semua motornya otomatis dapat diskon Gold</b> &mdash; tidak perlu daftar motor satu-satu.<br>
+4. <b>Motor boleh pindah tangan.</b> Riwayat servis motor tetap lengkap (buat kebutuhan servis), tapi pemilik baru cuma lihat riwayat sejak dia resmi jadi pemilik &mdash; tidak lihat data pemilik lama.
+</div>
+
+<div class="page-break"></div>
+
+<h1><span class="modul-badge">MODUL 1</span><br>Pelanggan</h1>
+
+<h2>Masalah yang Diselesaikan</h2>
+<p>Mencegah data pelanggan ganda, dan memastikan pelanggan tetap "dikenali" sistem walau ganti nama/WA/alamat.</p>
+
+<h2>Fitur-Fitur Utamanya</h2>
+<table>
+<tr><th>Fitur</th><th>Penjelasan Sederhana</th></tr>
+<tr><td>Cari sebelum bikin baru</td><td>Staf wajib mencari dulu (pakai nama/HP/plat motor) sebelum bisa bikin data pelanggan baru &mdash; supaya tidak asal bikin data baru padahal sudah ada.</td></tr>
+<tr><td>Riwayat kontak</td><td>Kalau pelanggan ganti nomor WA, nomor lama tetap "diingat" sistem, jadi pencarian pakai nomor lama tetap ketemu.</td></tr>
+<tr><td>Deteksi kembar otomatis</td><td>Sistem secara berkala mengecek sendiri, mencari kemungkinan data pelanggan yang sebenarnya orang yang sama.</td></tr>
+<tr><td>Gabung data pelanggan (Merge)</td><td>Kalau ketahuan 2 data itu orang yang sama, ada proses resmi untuk menggabungkan &mdash; <b>tidak bisa dilakukan sembarangan oleh kasir</b>, wajib disetujui atasan dulu.</td></tr>
+<tr><td>Bedakan "salah ketik" vs "data beneran berubah"</td><td>Kalau cuma typo nama, dibetulkan langsung tanpa proses ribet. Kalau memang pelanggan pindah rumah/ganti nama beneran, dicatat sebagai riwayat resmi.</td></tr>
+</table>
+
+<h2>Yang Tidak Diperbolehkan</h2>
+<ul>
+<li>Data pelanggan <b>tidak pernah dihapus permanen</b> dari sistem &mdash; paling banter ditandai "tidak aktif".</li>
+<li>Kasir/CS <b>tidak bisa</b> menggabungkan 2 data pelanggan sendirian tanpa persetujuan atasan.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1><span class="modul-badge">MODUL 2</span><br>Kendaraan</h1>
+
+<h2>Masalah yang Diselesaikan</h2>
+<p>Memastikan riwayat servis motor tidak hilang saat plat nomor ganti atau motor pindah tangan.</p>
+
+<h2>Fitur-Fitur Utamanya</h2>
+<table>
+<tr><th>Fitur</th><th>Penjelasan Sederhana</th></tr>
+<tr><td>Identitas motor permanen</td><td>Setiap motor punya "nomor identitas" internal yang tidak pernah berubah, terpisah dari plat nomornya. Jadi walau plat ganti, riwayat motor tetap nyambung.</td></tr>
+<tr><td>2 cara cari motor</td><td>Cara Normal (cari motor & pemilik saat ini saja) dan Cara Riwayat (cari sampai ke motor yang sudah ganti plat/pindah tangan) &mdash; dua-duanya tersedia sesuai kebutuhan.</td></tr>
+<tr><td>Betulkan salah ketik plat</td><td>Kalau cuma salah ketik nomor plat, dibetulkan langsung tanpa dianggap "ganti plat beneran".</td></tr>
+<tr><td>Ganti plat resmi</td><td>Kalau plat memang beneran ganti (bukan salah ketik), sistem mencatat sejarahnya, riwayat servis lama tetap tersambung ke motor yang sama.</td></tr>
+<tr><td>Pindah kepemilikan</td><td>Kalau motor dijual, ada proses resmi mencatat siapa pemilik baru. Sistem otomatis mengecek dulu &mdash; kalau masih ada tagihan servis yang belum lunas, proses pindah tangan <b>ditolak dulu</b> sampai beres.</td></tr>
+</table>
+
+<h2>Aturan Penting</h2>
+<div class="box">
+Pemilik motor yang <b>baru</b> hanya bisa lihat riwayat servis sejak dia resmi jadi pemilik. Data transaksi pemilik lama <b>tidak ikut kelihatan</b> ke pemilik baru &mdash; ini menjaga privasi pemilik lama.
+</div>
+
+<div class="page-break"></div>
+
+<h1><span class="modul-badge">MODUL 3</span><br>Membership</h1>
+
+<h2>Masalah yang Diselesaikan</h2>
+<p>Memastikan status Bronze/Silver/Gold/Platinum dihitung dengan adil dan tidak "hilang" gara-gara hal-hal yang seharusnya tidak berpengaruh.</p>
+
+<h2>Fitur-Fitur Utamanya</h2>
+<table>
+<tr><th>Fitur</th><th>Penjelasan Sederhana</th></tr>
+<tr><td>Hitung otomatis & langsung</td><td>Status member dihitung otomatis tiap kali ada transaksi selesai &mdash; tidak perlu proses manual "update" berkala seperti sistem lama.</td></tr>
+<tr><td>Status tidak turun sembarangan</td><td>Sekali naik ke tier tertentu, status tidak otomatis turun begitu saja setiap hari &mdash; kalau memang mau ada aturan reset, itu keputusan khusus yang perlu persetujuan Owner.</td></tr>
+<tr><td>Diskon otomatis ke semua motor</td><td>Begitu pelanggan naik jadi Gold, semua motornya langsung dapat diskon Gold tanpa perlu setting satu-satu.</td></tr>
+<tr><td>Gabung data pelanggan, status ikut yang tertinggi</td><td>Kalau 2 pelanggan digabung, status membernya ambil yang paling tinggi di antara keduanya &mdash; tidak pernah dirugikan.</td></tr>
+</table>
+
+<h2>Jawaban untuk Pertanyaan yang Sering Muncul</h2>
+<table>
+<tr><th>Pertanyaan</th><th>Jawaban</th></tr>
+<tr><td>Pelanggan Gold ganti nomor WA, statusnya hilang?</td><td><b>Tidak.</b> Status tetap Gold.</td></tr>
+<tr><td>Pelanggan Gold beli motor baru, motor barunya dapat diskon?</td><td><b>Ya, otomatis.</b></td></tr>
+<tr><td>Pelanggan Gold jual salah satu motornya, statusnya turun?</td><td><b>Tidak.</b> Status tetap Gold.</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<h1><span class="modul-badge">MODUL 4</span><br>CRM (Layar Rangkuman & Persetujuan)</h1>
+
+<h2>Masalah yang Diselesaikan</h2>
+<p>Memberi staf 1 layar untuk melihat semua info penting pelanggan sekaligus, dan memastikan hal-hal sensitif (gabung data, pindah kepemilikan) tidak bisa dilakukan sembarangan tanpa jejak yang jelas.</p>
+
+<h2>Fitur-Fitur Utamanya</h2>
+<table>
+<tr><th>Fitur</th><th>Penjelasan Sederhana</th></tr>
+<tr><td>Layar Rangkuman Pelanggan (Customer 360)</td><td>1 layar yang menampilkan: nama pelanggan, status member, semua motornya, riwayat kunjungan, dan total belanja &mdash; semua dalam satu tempat.</td></tr>
+<tr><td>Sistem Tiket Persetujuan</td><td>Untuk hal-hal sensitif (gabung data pelanggan, pindah kepemilikan motor), staf harus "mengajukan" dulu, lalu atasan yang menyetujui atau menolak &mdash; ada jejak siapa mengajukan, siapa menyetujui, kapan.</td></tr>
+<tr><td>Daftar kontak untuk promosi</td><td>Fitur untuk unduh daftar nomor WA pelanggan (untuk kirim promosi/pengingat servis manual) &mdash; menggantikan fitur serupa di sistem lama.</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<h1>Hal-Hal yang Masih Perlu Diputuskan Owner</h1>
+<p>Sebelum tim mulai membangun, ada beberapa pertanyaan yang jawabannya menentukan kebijakan bisnis, bukan urusan teknis. Ini yang paling penting untuk didiskusikan:</p>
+
+<table>
+<tr><th>Pertanyaan</th><th>Kenapa Penting</th></tr>
+<tr><td>Berapa lama batas waktu maksimal atasan harus menyetujui/menolak tiket sensitif?</td><td>Supaya proses tidak menggantung tanpa kepastian.</td></tr>
+<tr><td>Apakah status member memang seharusnya tidak pernah turun sama sekali, atau ada aturan reset tahunan?</td><td>Menentukan apakah perlu dibuat fitur "reset tahunan" sekarang atau nanti.</td></tr>
+<tr><td>Kategori "Bengkel" (diskon 5% untuk rekanan/internal) &mdash; masih dipakai atau tidak?</td><td>Menentukan apakah kategori ini perlu dipindahkan ke sistem baru.</td></tr>
+<tr><td>Siapa saja yang berhak menyetujui gabung data pelanggan / pindah kepemilikan motor?</td><td>Menentukan siapa yang dikasih akses "atasan" di sistem.</td></tr>
+<tr><td>Perlukah fitur kirim WA otomatis (bukan cuma unduh daftar kontak manual)?</td><td>Menentukan apakah perlu koneksi ke WhatsApp resmi sekarang atau nanti.</td></tr>
+</table>
+
+<div class="box-ok">
+<b>Kesimpulan:</b> keempat rencana ini sudah siap untuk direview. Setelah Owner menjawab pertanyaan-pertanyaan di atas, tim bisa langsung lanjut ke tahap pembangunan sistem dengan arah yang jelas &mdash; tanpa perlu bongkar ulang di tengah jalan.
+</div>
+
+</body>
+</html>

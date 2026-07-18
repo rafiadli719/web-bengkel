@@ -535,6 +535,7 @@
 		<script src="assets/js/buttons.print.min.js"></script>
 		<script src="assets/js/buttons.colVis.min.js"></script>
 		<script src="assets/js/dataTables.select.min.js"></script>
+		<?php include "includes/datatables-defaults.php"; ?>
 
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>

@@ -6,6 +6,7 @@ if (empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+require_once __DIR__ . '/_customer_identity.php';
 
 // Get form data
 $edit_mode = $_POST['edit_mode'] ?? '0';
@@ -62,13 +63,22 @@ if (isset($_FILES['txtfotorumah']) && $_FILES['txtfotorumah']['error'] == 0) {
 
 try {
     mysqli_autocommit($koneksi, false);
+
+    $customer_resolution = fitmotorResolveCustomerCodeByPhone($koneksi, $nowa);
+    if ($customer_resolution['status'] === 'ambiguous') {
+        throw new Exception('Nomor WA sudah terhubung ke lebih dari satu pelanggan. Rapikan merge pelanggan dulu sebelum tambah motor baru.');
+    }
+
+    $customer_code = $customer_resolution['status'] === 'existing'
+        ? $customer_resolution['code']
+        : fitmotorGenerateCustomerCode($koneksi);
     
     // Check if customer exists
     $customer_exists = false;
     if ($edit_mode == '1') {
         $original_phone = $_POST['original_phone'];
-        $check_customer = mysqli_prepare($koneksi, "SELECT nopelanggan FROM tblpelanggan WHERE telephone = ?");
-        mysqli_stmt_bind_param($check_customer, "s", $original_phone);
+        $check_customer = mysqli_prepare($koneksi, "SELECT nopelanggan FROM tblpelanggan WHERE nopelanggan = ?");
+        mysqli_stmt_bind_param($check_customer, "s", $customer_code);
         mysqli_stmt_execute($check_customer);
         $result = mysqli_stmt_get_result($check_customer);
         $customer_exists = mysqli_num_rows($result) > 0;
@@ -112,8 +122,8 @@ try {
             $types .= "s";
         }
         
-        $update_sql .= " WHERE telephone = ?";
-        $params[] = $_POST['original_phone'];
+        $update_sql .= " WHERE nopelanggan = ?";
+        $params[] = $customer_code;
         $types .= "s";
         
         $stmt = mysqli_prepare($koneksi, $update_sql);
@@ -135,9 +145,15 @@ try {
                                             (nopolisi, pemilik, alamat, kode_merek, kode_tipe, kode_jenis, kode_warna, tahun_buat) 
                                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
-            mysqli_stmt_bind_param($insert_vehicle, "sssiiiis", $nopol, $nama, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat);
+            mysqli_stmt_bind_param($insert_vehicle, "sssiiiis", $nopol, $customer_code, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat);
             mysqli_stmt_execute($insert_vehicle);
             mysqli_stmt_close($insert_vehicle);
+        } else {
+            $update_vehicle = mysqli_prepare($koneksi, "UPDATE tblkendaraan SET pemilik = ?, alamat = ?, kode_merek = ?, kode_tipe = ?, kode_jenis = ?, kode_warna = ?, tahun_buat = ? WHERE nopolisi = ?");
+            $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
+            mysqli_stmt_bind_param($update_vehicle, "ssiiiiss", $customer_code, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat, $nopol);
+            mysqli_stmt_execute($update_vehicle);
+            mysqli_stmt_close($update_vehicle);
         }
         
     } else {
@@ -153,7 +169,7 @@ try {
                                                 'Valid', ?, ?, ?)");
         
         mysqli_stmt_bind_param($insert_customer, "ssssssssiiiiissss", 
-                              $nopol, $nama, $alamat, $nowa, $patokan, $tgl_lahir_formatted, 
+                              $customer_code, $nama, $alamat, $nowa, $patokan, $tgl_lahir_formatted, 
                               $bulan_pajak, $tahun_pajak, $merek_id, $tipe_id, $jenis_id, $warna_id, 
                               $gender, $info_sumber, $google_maps, $foto_rumah);
         mysqli_stmt_execute($insert_customer);
@@ -164,7 +180,7 @@ try {
                                         (nopolisi, pemilik, alamat, kode_merek, kode_tipe, kode_jenis, kode_warna, tahun_buat) 
                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
-        mysqli_stmt_bind_param($insert_vehicle, "sssiiiis", $nopol, $nama, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat);
+        mysqli_stmt_bind_param($insert_vehicle, "sssiiiis", $nopol, $customer_code, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat);
         mysqli_stmt_execute($insert_vehicle);
         mysqli_stmt_close($insert_vehicle);
     }

@@ -24,12 +24,13 @@ if (!function_exists('rbac_permissions')) {
         if (empty($perms)) {
             $fallback = [
                 1 => ['all'],
-                2 => ['service_read','service_create','customer_read','customer_create','payment_read','payment_create'],
+                2 => ['service_read','service_create','customer_read','customer_create','payment_read','payment_create','issue_read'],
+                3 => ['payment_read','payment_create','issue_read'],
                 4 => ['service_read','service_update_progress','task_read','task_update'],
                 5 => ['purchase_read','purchase_create','inventory_read'],
-                6 => ['customer_read','customer_update','marketing_read'],
-                7 => ['report_read','dashboard_read'],
-                8 => ['finance_read','finance_create','report_read'],
+                6 => ['customer_read','customer_update','marketing_read','issue_read'],
+                7 => ['report_read','dashboard_read','issue_read','issue_approve_supervisor','issue_merge_customer_approve'],
+                8 => ['finance_read','finance_create','report_read','issue_read','issue_approve_finansial'],
                 9 => ['employee_read','employee_create','payroll_read'],
                 10 => ['service_read','service_update','team_assign','quality_check'],
             ];

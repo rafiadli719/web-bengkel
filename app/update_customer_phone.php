@@ -8,6 +8,7 @@ if (empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+require_once __DIR__ . '/_customer_identity.php';
 
 try {
     // Get parameters
@@ -54,17 +55,38 @@ try {
     // If no records updated in tblpelanggan, try to insert new record
     if ($affected1 == 0 && $affected2 == 0 && $owner_data) {
         $owner_name = $owner_data['pemilik'];
+        $customer_resolution = fitmotorResolveCustomerCodeByPhone($koneksi, $phone);
+        if ($customer_resolution['status'] === 'ambiguous') {
+            throw new Exception('Nomor WA terhubung ke lebih dari satu pelanggan. Rapikan merge pelanggan dulu sebelum update.');
+        }
+
+        $customer_code = $customer_resolution['status'] === 'existing'
+            ? $customer_resolution['code']
+            : fitmotorGenerateCustomerCode($koneksi);
+
+        if ($customer_resolution['status'] === 'existing') {
+            $link_vehicle = mysqli_prepare($koneksi, "UPDATE tblkendaraan SET pemilik = ? WHERE nopolisi = ?");
+            mysqli_stmt_bind_param($link_vehicle, "ss", $customer_code, $nopol);
+            mysqli_stmt_execute($link_vehicle);
+            mysqli_stmt_close($link_vehicle);
+        } else {
         $insert_pelanggan = mysqli_prepare($koneksi, 
             "INSERT INTO tblpelanggan (nopelanggan, namapelanggan, telephone, alamat, kota, propinsi, 
              kodepost, negara, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, 
              patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) 
              VALUES (?, ?, ?, '', '', '', '', '', '', 'WA', '', 0, 'C', '3', '001', '', '', '', '', 0, '0000-00-00', '0000-00-00', 0)");
-        mysqli_stmt_bind_param($insert_pelanggan, "sss", $nopol, $owner_name, $phone);
+        mysqli_stmt_bind_param($insert_pelanggan, "sss", $customer_code, $owner_name, $phone);
         $success3 = mysqli_stmt_execute($insert_pelanggan);
         mysqli_stmt_close($insert_pelanggan);
         
         if (!$success3) {
             throw new Exception("Gagal membuat record pelanggan baru: " . mysqli_error($koneksi));
+        }
+
+            $link_vehicle = mysqli_prepare($koneksi, "UPDATE tblkendaraan SET pemilik = ? WHERE nopolisi = ?");
+            mysqli_stmt_bind_param($link_vehicle, "ss", $customer_code, $nopol);
+            mysqli_stmt_execute($link_vehicle);
+            mysqli_stmt_close($link_vehicle);
         }
     }
     

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Masalah Data Pelanggan & Kendaraan</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: #222; }
+  h1 { font-size: 22px; color: #1a4d8f; border-bottom: 3px solid #1a4d8f; padding-bottom: 8px; }
+  h2 { font-size: 17px; color: #1a4d8f; margin-top: 28px; }
+  h3 { font-size: 14px; color: #333; margin-top: 18px; }
+  .cover { text-align: center; padding-top: 15%; }
+  .cover h1 { border: none; font-size: 26px; }
+  .cover p { color: #666; font-size: 13px; }
+  .box { background: #f2f6fb; border-left: 4px solid #1a4d8f; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-warning { background: #fff6e5; border-left: 4px solid #d98c00; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  .box-ok { background: #e9f7ef; border-left: 4px solid #2e8b57; padding: 10px 14px; margin: 12px 0; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #1a4d8f; color: white; }
+  .page-break { page-break-before: always; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Masalah Data Pelanggan & Kendaraan<br>di Sistem Bengkel</h1>
+  <p>Laporan versi sederhana &mdash; untuk Owner / Non-IT</p>
+  <p>3 Juli 2026</p>
+</div>
+
+<div class="page-break"></div>
+
+<h1>1. Apa Masalahnya?</h1>
+
+<p>Sistem komputer bengkel selama ini menyimpan data pelanggan dan data motor seperti dua buku catatan yang <b>terpisah dan tidak benar-benar nyambung satu sama lain</b>. Nama pemilik motor cuma ditulis sebagai teks di buku motor, bukan benar-benar "dikaitkan" ke data pelanggan.</p>
+
+<p>Akibatnya, muncul beberapa masalah nyata yang sudah kejadian di data kita sekarang:</p>
+
+<div class="box-warning">
+<b>Bukti nyata (bukan dugaan):</b> ada <b>43 data pelanggan</b> dengan nama "SUGENG, BPK", <b>35 data</b> dengan nama "YUSUF, BPK", dan puluhan lainnya &mdash; semuanya <b>tanpa nomor HP tersimpan</b>. Ini kemungkinan besar orang yang sama, tapi tercatat berkali-kali sebagai pelanggan berbeda.
+</div>
+
+<h1>2. Kenapa Ini Bisa Terjadi?</h1>
+
+<p>Bayangkan sistem pencatatan pelanggan itu seperti <b>KTP</b>. Idealnya, 1 orang = 1 KTP, seumur hidup, walau pindah rumah atau ganti nomor HP, KTP-nya tetap itu-itu saja (cuma datanya di-update).</p>
+
+<p>Masalahnya, sistem sekarang <b>tidak punya konsep "KTP" yang benar-benar kuat</b>. Kalau nomor HP pelanggan berubah, sistem bisa "lupa" bahwa itu orang yang sama, dan staf yang tidak menemukan datanya di pencarian akhirnya membuat data pelanggan baru.</p>
+
+<h1>3. Contoh Kasus yang Sering Terjadi</h1>
+
+<table>
+<tr><th>Kejadian</th><th>Apa yang Seharusnya Terjadi</th><th>Kondisi Sekarang</th></tr>
+<tr>
+  <td>Pelanggan ganti nomor WA</td>
+  <td>Sistem tetap tahu ini orang yang sama, riwayat servis tetap nyambung</td>
+  <td><b>Berisiko</b> &mdash; sistem bisa mengira ini pelanggan baru</td>
+</tr>
+<tr>
+  <td>Motor ganti plat nomor</td>
+  <td>Riwayat servis motor itu tetap utuh, tidak hilang</td>
+  <td><b>Berisiko</b> &mdash; riwayat bisa "terputus" seolah motor baru</td>
+</tr>
+<tr>
+  <td>Motor dijual ke orang lain</td>
+  <td>Riwayat servis motor tetap ada (buat kebutuhan servis), tapi pemilik baru tidak bisa lihat data transaksi pemilik lama</td>
+  <td><b>Belum ada aturan jelas</b> &mdash; data bisa tercampur</td>
+</tr>
+<tr>
+  <td>2 data pelanggan ternyata orang yang sama</td>
+  <td>Ada proses resmi untuk menggabungkan, riwayat transaksi tetap utuh</td>
+  <td><b>Belum ada proses ini sama sekali</b></td>
+</tr>
+</table>
+
+<h1>4. Solusinya Apa?</h1>
+
+<p>Rekomendasinya <b>bukan</b> membongkar total sistem yang sudah jalan (itu berisiko dan mahal). Rekomendasinya adalah <b>menambahkan "pengaman" baru</b> di sekitar data yang sudah ada, tanpa mengubah data lama.</p>
+
+<div class="box">
+<b>Analoginya begini:</b> data pelanggan yang sekarang itu ibarat "nama panggilan" &mdash; bisa berubah-ubah. Yang perlu ditambahkan adalah semacam "nomor KTP" yang permanen di belakang layar, supaya walau nama panggilan/kontak berubah, sistem tetap tahu itu orang yang sama.
+</div>
+
+<p>Untuk motor, konsepnya seperti <b>STNK berjalan</b> &mdash; setiap motor punya "identitas" sendiri yang tidak berubah walau plat nomor ganti atau pindah pemilik. Riwayat servisnya tetap menempel ke motornya, bukan ke plat nomornya.</p>
+
+<h2>Kenapa Cara Ini Aman?</h2>
+<ul>
+<li>Data yang sudah ada <b>tidak dihapus atau diubah</b> &mdash; cuma ditambah data pendukung baru.</li>
+<li>Laporan-laporan yang sudah jalan sekarang <b>tetap jalan seperti biasa</b>, tidak rusak.</li>
+<li>Bisa dikerjakan bertahap, tidak perlu "matikan sistem" untuk pindah sekaligus.</li>
+</ul>
+
+<h1>5. Masalah Lain yang Perlu Diantisipasi</h1>
+
+<p>Beberapa situasi lapangan yang juga perlu dipikirkan aturan mainnya:</p>
+<ul>
+<li>Motor milik perusahaan/rental yang dipakai gonta-ganti orang.</li>
+<li>1 nomor WA dipakai bareng-bareng sekeluarga (misal ayah dan anak pakai HP yang sama).</li>
+<li>Admin salah ketik nomor plat atau nomor HP saat input data.</li>
+<li>Transaksi yang kecatat ke pelanggan yang salah.</li>
+</ul>
+
+<p>Semua ini sudah dipetakan dan ada rencana penanganannya di dokumen "Rencana Fitur Baru".</p>
+
+<h1>6. Kesimpulan Singkat</h1>
+
+<div class="box-ok">
+<b>Yang perlu diingat owner:</b><br>
+1. Duplikat data pelanggan itu <b>sudah terjadi</b>, bukan cuma potensi risiko.<br>
+2. Solusinya menambah "pengaman" baru, bukan bongkar total &mdash; aman untuk operasional yang sedang berjalan.<br>
+3. Ke depan, data pelanggan jadi pusat semua &mdash; motor, status member, riwayat, semua nempel ke pelanggan, bukan ke motor.
+</div>
+
+</body>
+</html>

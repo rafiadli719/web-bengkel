@@ -17,7 +17,7 @@ if($row['status_retur'] != '0') {
     exit;
 }
 
-mysqli_query($koneksi, "UPDATE tblretur_penjualan_header SET status_retur='1' WHERE noretur='$noretur' AND kd_cabang='$kd_cabang'");
+mysqli_query($koneksi, "UPDATE tblretur_penjualan_header SET status_retur='1', status_refund='1', tanggal_refund=NOW() WHERE noretur='$noretur' AND kd_cabang='$kd_cabang'");
 header("location:retur_penjualan_detail.php?noretur=".urlencode($noretur)."&approved=1");
 exit;
 ?>

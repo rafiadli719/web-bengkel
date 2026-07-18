@@ -16,20 +16,29 @@
 }
 
 #modalEditTemuan .modal-header {
-    background: linear-gradient(135deg, #6C757D, #5A6268);
-    color: white;
-    border-radius: 6px 6px 0 0;
-    padding: 15px 20px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 5px 5px 0 0;
+    padding: 16px 20px;
 }
 
 #modalEditTemuan .modal-header .close {
-    color: white;
-    opacity: 0.9;
+    color: #9ca3af;
+    opacity: 1;
+    text-shadow: none;
+}
+#modalEditTemuan .modal-header .close:hover {
+    color: #374151;
 }
 
 #modalEditTemuan .modal-title {
-    font-size: 16px;
+    color: #1f2937;
+    font-size: 17px;
     font-weight: 600;
+}
+#modalEditTemuan .modal-title i {
+    color: #4f46e5;
+    margin-right: 6px;
 }
 
 #modalEditTemuan .modal-body {

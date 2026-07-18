@@ -2,6 +2,74 @@
 // File: helper-functions.php
 // Helper functions untuk sistem tracking keluhan dan manajemen service
 
+// F2-C: Diskon manual level-invoice (txtpotfaktur) butuh approval Supervisor/Manager sebelum bayar bisa diproses.
+// Diskon item-level via diskon_source (member/promo) TIDAK kena guard ini — sudah sesuai SOP otomatis.
+// Return true = boleh lanjut bayar. Return false = payment harus diblok (caller wajib exit).
+if (!function_exists('checkDiskonApproval')) {
+    function checkDiskonApproval($koneksi, $no_service, $persen_diskon, $nominal_diskon, $id_user, $kd_cabang) {
+        $persen_diskon = (float)$persen_diskon;
+        $nominal_diskon = (float)$nominal_diskon;
+        if ($persen_diskon <= 0 && $nominal_diskon <= 0) {
+            return true; // tidak ada diskon manual, tidak butuh approval
+        }
+        $ns = mysqli_real_escape_string($koneksi, $no_service);
+        $chk_approved = mysqli_query($koneksi, "SELECT id FROM tb_approval_diskon WHERE no_service='$ns' AND status='approved' ORDER BY id DESC LIMIT 1");
+        if ($chk_approved && mysqli_num_rows($chk_approved) > 0) {
+            return true; // sudah di-approve supervisor sebelumnya
+        }
+        $chk_pending = mysqli_query($koneksi, "SELECT id FROM tb_approval_diskon WHERE no_service='$ns' AND status='pending' LIMIT 1");
+        if ($chk_pending && mysqli_num_rows($chk_pending) > 0) {
+            return false; // masih pending, jangan buat request duplikat
+        }
+        // Kalau request terakhir untuk no_service ini sudah ditolak dengan nilai diskon yang sama persis,
+        // blok permanen tanpa bikin request baru otomatis (reject harus final, bukan bisa di-retry tanpa batas).
+        $chk_rejected = mysqli_query($koneksi, "SELECT persen_diskon, nominal_diskon FROM tb_approval_diskon WHERE no_service='$ns' AND status='rejected' ORDER BY id DESC LIMIT 1");
+        if ($chk_rejected && ($row_rej = mysqli_fetch_assoc($chk_rejected))) {
+            if (abs((float)$row_rej['persen_diskon'] - $persen_diskon) < 0.01 && abs((float)$row_rej['nominal_diskon'] - $nominal_diskon) < 0.01) {
+                return false; // diskon sama persis sudah ditolak, kasir wajib ubah nilai diskon buat request baru
+            }
+        }
+        $id_user_esc = mysqli_real_escape_string($koneksi, $id_user);
+        $kd_cabang_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
+        mysqli_query($koneksi, "INSERT INTO tb_approval_diskon
+            (no_service, jenis, nominal_diskon, persen_diskon, status, id_user_cs, tanggal_request, kd_cabang)
+            VALUES ('$ns', 'invoice', '$nominal_diskon', '$persen_diskon', 'pending', '$id_user_esc', NOW(), '$kd_cabang_esc')");
+        return false; // request baru dibuat, blok pembayaran sampai di-approve
+    }
+}
+
+// F2-A: DP/Down Payment servis mesin besar / part inden (Q9).
+// Jawaban klarifikasi #3 (2026-07-04, Mba Dian): DP masuk & offset tampil 2 baris terpisah di laporan.
+if (!function_exists('generateNoDP')) {
+    function generateNoDP($koneksi, $kd_cabang) {
+        $prefix = 'DP-' . date('Ymd') . '-';
+        $q = mysqli_query($koneksi, "SELECT no_dp FROM tb_dp_servis WHERE no_dp LIKE '{$prefix}%' ORDER BY no_dp DESC LIMIT 1");
+        $next = 1;
+        if ($q && ($row = mysqli_fetch_assoc($q))) {
+            $next = intval(substr($row['no_dp'], -4)) + 1;
+        }
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
+}
+
+// Total DP masih pending (belum di-offset/batal) untuk sebuah no_service.
+if (!function_exists('getDpPendingTotal')) {
+    function getDpPendingTotal($koneksi, $no_service) {
+        $ns = mysqli_real_escape_string($koneksi, $no_service);
+        $q = mysqli_query($koneksi, "SELECT COALESCE(SUM(jumlah_dp),0) AS total FROM tb_dp_servis WHERE no_service='$ns' AND status='pending'");
+        $row = $q ? mysqli_fetch_assoc($q) : null;
+        return $row ? (float)$row['total'] : 0.0;
+    }
+}
+
+// Tandai semua DP pending milik no_service sebagai offset (dipakai saat pelunasan).
+if (!function_exists('offsetDpPending')) {
+    function offsetDpPending($koneksi, $no_service) {
+        $ns = mysqli_real_escape_string($koneksi, $no_service);
+        mysqli_query($koneksi, "UPDATE tb_dp_servis SET status='offset', tanggal_offset=NOW() WHERE no_service='$ns' AND status='pending'");
+    }
+}
+
 // Function untuk get progress keluhan
 function getKeluhanProgress($koneksi, $keluhan_id) {
     $sql = mysqli_query($koneksi,"SELECT 
@@ -330,5 +398,80 @@ function backupKeluhanData($koneksi, $no_service) {
                            WHERE k.no_service = '$no_service'";
     
     return mysqli_query($koneksi, $backup_tracking_sql);
+}
+
+// Task 3: konversi nota Penjualan Umum jadi servis (Work Order).
+// Barang dari nota dibawa sebagai asal_barang='PENJUALAN' — sudah kepotong stok
+// saat nota disimpan, jadi harus exclude dari potong-stok servis (lihat query
+// pembayaran di servis-input-reguler.php/servis-garansi.php/servis-input-reguler-jemput.php).
+if (!function_exists('buatServisDariPenjualan')) {
+    function buatServisDariPenjualan($koneksi, $nopol, $notransaksi, $kd_cabang, $id_user) {
+        $nopol = trim($nopol);
+        $notransaksi_esc = mysqli_real_escape_string($koneksi, $notransaksi);
+
+        // Idempotent: kalau nota ini sudah pernah dikonversi, kembalikan servis yang sudah ada
+        $cek = mysqli_query($koneksi, "SELECT no_service FROM tblservice WHERE ref_no_penjualan_asal='$notransaksi_esc' LIMIT 1");
+        if ($cek && ($row = mysqli_fetch_assoc($cek))) {
+            return array('ok' => true, 'no_service' => $row['no_service']);
+        }
+
+        $stmtVehicle = mysqli_prepare($koneksi, "SELECT nopolisi FROM tblkendaraan WHERE nopolisi = ? LIMIT 1");
+        mysqli_stmt_bind_param($stmtVehicle, "s", $nopol);
+        mysqli_stmt_execute($stmtVehicle);
+        $vehicleResult = mysqli_stmt_get_result($stmtVehicle);
+        if (!$vehicleResult || mysqli_num_rows($vehicleResult) === 0) {
+            mysqli_stmt_close($stmtVehicle);
+            return array('ok' => false, 'message' => 'Data kendaraan tidak ditemukan.');
+        }
+        mysqli_stmt_close($stmtVehicle);
+
+        $stmtDuplicate = mysqli_prepare(
+            $koneksi,
+            "SELECT no_service FROM tblservice WHERE no_polisi = ? AND COALESCE(status_servis, '') NOT IN ('selesai', 'bayar', 'cancel') ORDER BY tanggal DESC, jam DESC LIMIT 1"
+        );
+        mysqli_stmt_bind_param($stmtDuplicate, "s", $nopol);
+        mysqli_stmt_execute($stmtDuplicate);
+        $duplicateResult = mysqli_stmt_get_result($stmtDuplicate);
+        if ($duplicateResult && ($duplicateRow = mysqli_fetch_assoc($duplicateResult))) {
+            mysqli_stmt_close($stmtDuplicate);
+            return array('ok' => false, 'message' => 'Masih ada servis aktif untuk nomor polisi ini.', 'no_service' => $duplicateRow['no_service']);
+        }
+        mysqli_stmt_close($stmtDuplicate);
+
+        include_once __DIR__ . '/function_servis.php';
+        date_default_timezone_set('Asia/Jakarta');
+        $tgl_skr = date('Y/m/d');
+        $waktu_skr = date('H:i');
+        $no_service = FormatNoTrans(OtomatisID());
+
+        $stmtInsert = mysqli_prepare(
+            $koneksi,
+            "INSERT INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user, status_servis, ref_no_penjualan_asal) VALUES (?, ?, ?, ?, ?, ?, ?, 'datang', ?)"
+        );
+        mysqli_stmt_bind_param($stmtInsert, "ssssssis", $no_service, $tgl_skr, $waktu_skr, $nopol, $nopol, $kd_cabang, $id_user, $notransaksi);
+        if (!mysqli_stmt_execute($stmtInsert)) {
+            mysqli_stmt_close($stmtInsert);
+            return array('ok' => false, 'message' => 'Gagal membuat servis: ' . mysqli_stmt_error($stmtInsert));
+        }
+        mysqli_stmt_close($stmtInsert);
+
+        $nobaris = 0;
+        $sqlItem = mysqli_query($koneksi, "SELECT no_item, quantity, harga_jual, potongan, total FROM tblpenjualan_detail WHERE no_transaksi='$notransaksi_esc'");
+        while ($item = mysqli_fetch_assoc($sqlItem)) {
+            $stmtItem = mysqli_prepare(
+                $koneksi,
+                "INSERT INTO tblservis_barang
+                    (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
+                     diskon_source, diskon_persen, diskon_nominal, id_promo, asal_barang)
+                 VALUES (?, ?, ?, ?, 0, ?, ?, ?, 'none', 0, 0, 0, 'PENJUALAN')"
+            );
+            mysqli_stmt_bind_param($stmtItem, "sisdddd", $no_service, $nobaris, $item['no_item'], $item['quantity'], $item['harga_jual'], $item['potongan'], $item['total']);
+            mysqli_stmt_execute($stmtItem);
+            mysqli_stmt_close($stmtItem);
+            $nobaris++;
+        }
+
+        return array('ok' => true, 'no_service' => $no_service);
+    }
 }
 ?>

@@ -12,6 +12,36 @@ return [
         'permission' => 'dashboard_read'
     ],
     [
+        'title' => 'Lapor Masalah',
+        'url' => 'issue_add.php',
+        'icon' => 'fa-exclamation-triangle',
+        'permission' => 'issue_read'
+    ],
+    [
+        'title' => 'Approve Merge Pelanggan',
+        'url' => 'customer_merge_approve.php',
+        'icon' => 'fa-compress',
+        'permission' => 'issue_approve_supervisor'
+    ],
+    [
+        'title' => 'Deteksi Duplikat Pelanggan',
+        'url' => 'admin_deteksi_pelanggan_dobel.php',
+        'icon' => 'fa-users',
+        'permission' => 'issue_approve_supervisor'
+    ],
+    [
+        'title' => 'Pindah Kepemilikan Motor',
+        'url' => 'kendaraan_pindah_tangan.php',
+        'icon' => 'fa-exchange',
+        'permission' => 'service_create'
+    ],
+    [
+        'title' => 'Approve Pindah Kepemilikan',
+        'url' => 'kendaraan_pindah_tangan_approve.php',
+        'icon' => 'fa-check-square-o',
+        'permission' => 'issue_approve_supervisor'
+    ],
+    [
         'title' => 'Data Master',
         'icon' => 'fa-cog',
         'permission' => 'master_read',
@@ -173,6 +203,7 @@ return [
             ['title' => 'Dashboard MIN/MAX', 'url' => 'procurement_dashboard.php', 'icon' => 'fa-dashboard', 'permission' => 'procurement_dashboard_read'],
             ['title' => 'Rencana Order', 'url' => 'rencana_order.php', 'icon' => 'fa-calendar-check-o', 'permission' => 'rencana_order_read'],
             ['title' => 'Purchase Request (PR)', 'url' => 'pr_add.php', 'permission' => 'pr_read'],
+            ['title' => 'Cek Stok Minimal (Auto-Draft PR)', 'url' => 'pr_auto_draft.php', 'icon' => 'fa-magic', 'permission' => 'pr_read'],
             [
                 'title' => 'Pesanan Pembelian (PO)',
                 'icon' => 'fa-caret-right',
@@ -181,6 +212,7 @@ return [
                     ['title' => 'Daftar PO', 'url' => 'pesanan_pembelian.php', 'permission' => 'pesanan_pembelian_read'],
                     ['title' => 'Input Manual', 'url' => 'pesanan_pembelian_add.php', 'permission' => 'pesanan_pembelian_add_read'],
                     ['title' => 'Upload Excel', 'url' => 'pesanan_pembelian_upload.php', 'permission' => 'pesanan_pembelian_upload_read'],
+                    ['title' => 'Master Approval Bertingkat', 'url' => 'master-approval-pembelian.php', 'icon' => 'fa-sitemap', 'permission' => 'pesanan_pembelian_read'],
                 ]
             ],
             ['title' => 'Delivery Order (DO)', 'url' => 'do_from_po.php', 'permission' => 'do_read'],
@@ -197,6 +229,7 @@ return [
             ],
             ['title' => 'Retur Pembelian', 'url' => 'retur_pembelian.php', 'icon' => 'fa-undo', 'permission' => 'pembelian_read'],
             ['title' => 'Pembayaran Hutang', 'url' => 'pmby_hutang.php', 'permission' => 'pmby_hutang_read'],
+            ['title' => 'Alarm Harga Beli', 'url' => 'alarm-harga-beli.php', 'icon' => 'fa-bell', 'permission' => 'pembelian_read'],
         ]
     ],
     [
@@ -294,7 +327,7 @@ return [
                 'permission' => 'servis_garansi_read',
                 'submenu' => [
                     ['title' => 'Input Servis', 'url' => 'servis-carinopol-garansi.php', 'permission' => 'input_servis_garansi_read'],
-                    ['title' => 'Lihat Data', 'url' => 'servis-garansi.php', 'permission' => 'lihat_servis_garansi_read'],
+                    ['title' => 'Lihat Data', 'url' => 'servis-reguler.php?filter=garansi', 'permission' => 'lihat_servis_garansi_read'],
                 ]
             ],
             [
@@ -306,6 +339,9 @@ return [
                     ['title' => 'Tracking Keluhan', 'url' => 'report-tracking-keluhan.php', 'permission' => 'tracking_keluhan_read'],
                 ]
             ],
+            ['title' => 'Approval Diskon', 'url' => 'approval-diskon.php', 'icon' => 'fa-caret-right', 'permission' => 'diskon_approval_approve'],
+            ['title' => 'Laporan DP Servis', 'url' => 'laporan-dp.php', 'icon' => 'fa-caret-right', 'permission' => 'servis_menu_read'],
+            ['title' => 'Retur Servis', 'url' => 'retur_servis.php', 'icon' => 'fa-undo', 'permission' => 'servis_menu_read'],
         ]
     ],
     [

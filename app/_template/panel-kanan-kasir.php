@@ -1,7 +1,7 @@
 <?php
 /**
  * Panel Kanan Kasir — Ringkasan Biaya + Pembayaran + Tombol Aksi
- * Included by: servis-input-reguler.php, servis-input-reguler-jemput.php, servis-input-garansi.php
+ * Included by: servis-input-reguler.php, servis-input-reguler-jemput.php, servis-garansi.php
  */
 $total_service       = $total_service       ?? 0;
 $total_barang        = $total_barang        ?? 0;
@@ -15,7 +15,34 @@ if (!$auto_discount_percent && !empty($no_pelanggan) && function_exists('getDisk
     $auto_discount_percent = getDiskonPelanggan($koneksi, $no_pelanggan);
 }
 $metode_pembayaran = $metode_pembayaran ?? 'Tunai';
+$boleh_dp = $boleh_dp ?? 0;
+$dp_pending_list = $dp_pending_list ?? [];
+$dp_pending_total = $dp_pending_total ?? 0;
 ?>
+
+<!-- F2-A: Servis Mesin Besar / Part Inden — buka opsi DP (Q9) -->
+<div class="ks-dp-toggle" style="background:#fff8e6;border:1px solid #f1d38a;border-radius:6px;padding:7px 10px;margin-bottom:8px;font-size:12px;">
+    <label style="display:flex;align-items:center;gap:6px;margin:0;cursor:pointer;">
+        <input type="checkbox" id="chk_boleh_dp" <?= $boleh_dp ? 'checked' : '' ?>
+               onchange="toggleBolehDp(this.checked)">
+        <span>Servis Mesin Besar / Part Inden (bisa DP)</span>
+    </label>
+    <?php if (!empty($no_service)): ?>
+    <div id="dp-section" style="margin-top:6px; <?= $boleh_dp ? '' : 'display:none;' ?>">
+        <?php if (!empty($dp_pending_list)): ?>
+            <?php foreach ($dp_pending_list as $dp): ?>
+            <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:4px;padding:4px 6px;margin-bottom:4px;">
+                <span><?= htmlspecialchars($dp['no_dp']) ?> — Rp <?= number_format($dp['jumlah_dp'],0,',','.') ?></span>
+                <button type="button" class="ks-btn-action danger" style="padding:2px 6px;font-size:10px;" onclick="batalkanDp('<?= htmlspecialchars($dp['no_dp']) ?>')">Batalkan</button>
+            </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        <button type="button" class="ks-btn-action info" style="width:100%;margin-top:2px;" onclick="bukaCatatDp()">
+            <i class="fa fa-hand-holding-usd"></i> Catat DP
+        </button>
+    </div>
+    <?php endif; ?>
+</div>
 
 <!-- Ringkasan Biaya -->
 <p class="ks-section-hdr"><i class="fa fa-receipt"></i> Ringkasan Biaya</p>
@@ -68,12 +95,20 @@ $metode_pembayaran = $metode_pembayaran ?? 'Tunai';
 <input type="hidden" id="txtpotfaktur_nom_v2" name="txtpotfaktur_nom" value="<?= number_format($discount_amount,0,',','.') ?>">
 <input type="hidden" id="txtpajak_nom_v2"     name="txtpajak_nom"     value="0">
 <input type="hidden" id="txtnet_v2"           name="txtnet"           value="<?= number_format($net,0,',','.') ?>">
+<input type="hidden" id="dp_pending_total_v2" value="<?= number_format($dp_pending_total,0,',','.') ?>">
+
+<?php if ($dp_pending_total > 0): ?>
+<div class="ks-diskon-row" style="color:#2980b9;">
+    <span class="dr-label">Sudah DP</span>
+    <span class="dr-val">-Rp <?= number_format($dp_pending_total,0,',','.') ?></span>
+</div>
+<?php endif; ?>
 
 <!-- Total Bayar Box -->
 <div class="ks-total-bayar-box">
-    <span class="ks-total-bayar-label">Total Bayar</span>
+    <span class="ks-total-bayar-label">Total Bayar<?= $dp_pending_total > 0 ? ' (setelah DP)' : '' ?></span>
     <span class="ks-total-bayar-val" id="ks-total-bayar-display">
-        Rp <?= number_format($net,0,',','.') ?>
+        Rp <?= number_format(max(0, $net - $dp_pending_total),0,',','.') ?>
     </span>
 </div>
 
@@ -183,10 +218,13 @@ function hitungTotalV2() {
     $('#txtpajak_nom_v2').val(_ksFormat(pNom));
     $('#txtnet_v2').val(_ksFormat(net));
 
+    var dpPending = _ksParse($('#dp_pending_total_v2').val()) || 0;
+    var netSetelahDp = Math.max(0, net - dpPending);
+
     $('#ks-diskon-nom').text('-Rp ' + _ksFormat(dNom));
     $('#ks-ppn-nom').text('+Rp ' + _ksFormat(pNom));
-    $('#ks-total-bayar-display').text('Rp ' + _ksFormat(net));
-    $('#ks-sisa-display').text('Rp ' + _ksFormat(net));
+    $('#ks-total-bayar-display').text('Rp ' + _ksFormat(netSetelahDp));
+    $('#ks-sisa-display').text('Rp ' + _ksFormat(netSetelahDp));
 
     var lv = document.getElementById('ks-live-total');
     if (lv) lv.textContent = 'Rp ' + _ksFormat(net);
@@ -196,12 +234,14 @@ function hitungTotalV2() {
 
 function hitungMultiPayV2() {
     var net      = _ksParse($('#txtnet_v2').val()) || 0;
+    var dpPending = _ksParse($('#dp_pending_total_v2').val()) || 0;
+    var netSetelahDp = Math.max(0, net - dpPending);
     var tunai    = _ksParse($('#bayar_tunai_v2').val())    || 0;
     var transfer = _ksParse($('#bayar_transfer_v2').val()) || 0;
     var qris     = _ksParse($('#bayar_qris_v2').val())     || 0;
     var total    = tunai + transfer + qris;
-    var sisa     = net - total;
-    var kembalian = Math.max(0, total - net);
+    var sisa     = netSetelahDp - total;
+    var kembalian = Math.max(0, total - netSetelahDp);
 
     $('#ks-terbayar-display').text('Rp ' + _ksFormat(total));
     if (sisa > 0) {
@@ -237,7 +277,51 @@ function cancelServiceV2() {
 }
 
 function printEstimasiV2() {
-    window.open('servis-estimasi-pdf.php?no=<?= addslashes($no_service ?? '') ?>','_blank');
+    window.open('servis-estimasi-pdf.php?no_service=<?= addslashes($no_service ?? '') ?>','_blank');
+}
+
+// F2-A: Toggle servis mesin besar / part inden (Q9)
+function toggleBolehDp(checked) {
+    $.post('_ajax/ajax-toggle-boleh-dp.php', {
+        no_service: '<?= addslashes($no_service ?? '') ?>',
+        boleh_dp: checked ? 1 : 0
+    }, function(res) {
+        if (res.success) {
+            $('#dp-section').toggle(!!checked);
+        } else {
+            alert(res.message || 'Gagal update penanda servis besar');
+        }
+    }, 'json');
+}
+
+function bukaCatatDp() {
+    var nominal = prompt('Nominal DP (minimal 50% dari total berjalan):');
+    if (nominal === null) return;
+    var jumlah = parseFloat(nominal.toString().replace(/\./g,'').replace(/,/g,'').replace(/[^0-9]/g,'')) || 0;
+    if (jumlah <= 0) { alert('Nominal DP tidak valid'); return; }
+    $.post('_ajax/ajax-catat-dp.php', {
+        no_service: '<?= addslashes($no_service ?? '') ?>',
+        jumlah_dp: jumlah
+    }, function(res) {
+        if (res.success) {
+            alert('DP tercatat: ' + res.no_dp + ' — Rp ' + _ksFormat(res.jumlah_dp));
+            window.location.reload();
+        } else {
+            alert(res.message || 'Gagal catat DP');
+        }
+    }, 'json');
+}
+
+function batalkanDp(noDp) {
+    if (!confirm('Batalkan DP ' + noDp + '? DP dikembalikan penuh ke customer.')) return;
+    $.post('_ajax/ajax-batal-dp.php', { no_dp: noDp }, function(res) {
+        if (res.success) {
+            alert(res.message);
+            window.location.reload();
+        } else {
+            alert(res.message || 'Gagal batalkan DP');
+        }
+    }, 'json');
 }
 
 $(document).ready(function() {

@@ -2,10 +2,10 @@
 <div class="modal fade" id="modalInputCustom" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">
-                    <i class="ace-icon fa fa-cube white"></i>
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">&times;</button>
+                <h4 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;">
+                    <i class="ace-icon fa fa-cube" style="color:#4f46e5;margin-right:6px;"></i>
                     Pilih / Input Barang Custom
                 </h4>
             </div>

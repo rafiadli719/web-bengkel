@@ -330,12 +330,15 @@
 															</thead>
 															<tbody>
 																<?php
+																$is_admin_antrian = ($lvl_akses == '1');
+																$svc_cabang_cond = $is_admin_antrian ? '' : " AND s.kd_cabang = '$kd_cabang'";
+																$where_cabang_antrian = $is_admin_antrian ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = a.no_service AND sx.kd_cabang = '$kd_cabang')";
 																$query_antrian_terbaru = mysqli_query($koneksi, "
 						SELECT a.*, p.namapelanggan, s.no_polisi, s.tipe_service, s.status_servis, s.jam AS jam_service
 						FROM tb_antrian_servis a
-						LEFT JOIN tblservice s ON a.no_service = s.no_service
+						LEFT JOIN tblservice s ON a.no_service = s.no_service$svc_cabang_cond
 						LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-						WHERE a.tanggal = '$tgl_hari_ini'
+						WHERE a.tanggal = '$tgl_hari_ini'$where_cabang_antrian
 						ORDER BY a.created_at DESC
 						LIMIT 10
 					");

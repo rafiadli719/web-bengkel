@@ -585,7 +585,7 @@ function cancelServiceV2() {
 
 // Print estimasi
 function printEstimasiV2() {
-    window.open('servis-estimasi-pdf.php?no=<?= $no_service ?>', '_blank');
+    window.open('servis-estimasi-pdf.php?no_service=<?= $no_service ?>', '_blank');
 }
 
 // Simpan data mekanik & KM via AJAX (tanpa full form submit)

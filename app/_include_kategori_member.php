@@ -22,7 +22,7 @@
 function getKategoriMemberPelanggan($koneksi, $no_pelanggan) {
     $no_pelanggan = mysqli_real_escape_string($koneksi, $no_pelanggan);
     
-    $query = "SELECT 
+    $query = "SELECT
                 s.status_member,
                 s.diskon_persen,
                 s.total_transaksi,
@@ -32,18 +32,20 @@ function getKategoriMemberPelanggan($koneksi, $no_pelanggan) {
                 s.lama_tidak_datang,
                 m.benefit,
                 m.min_nominal,
-                m.max_nominal
+                m.max_nominal,
+                m.masa_garansi_hari,
+                m.masa_garansi_maks_hari
             FROM statistik_pelanggan s
             LEFT JOIN tbmaster_kategori_member m ON s.status_member = m.status_member
             WHERE s.no_pelanggan = '$no_pelanggan'
             LIMIT 1";
-    
+
     $result = mysqli_query($koneksi, $query);
-    
+
     if ($result && mysqli_num_rows($result) > 0) {
         return mysqli_fetch_assoc($result);
     }
-    
+
     // Jika belum ada statistik, return default Bronze
     return [
         'status_member' => 'Bronze',
@@ -55,7 +57,25 @@ function getKategoriMemberPelanggan($koneksi, $no_pelanggan) {
         'lama_tidak_datang' => null,
         'benefit' => 'Pelanggan baru',
         'min_nominal' => 0,
-        'max_nominal' => 1999999.99
+        'max_nominal' => 1999999.99,
+        'masa_garansi_hari' => 0,
+        'masa_garansi_maks_hari' => 7
+    ];
+}
+
+/**
+ * F1-A: Get masa garansi (hari) pelanggan berdasarkan tier member, dinamis dari
+ * tbmaster_kategori_member (editable, bukan hardcode). Jawaban klarifikasi A3 (2026-07-04).
+ *
+ * @param mysqli $koneksi Database connection
+ * @param string $no_pelanggan Nomor pelanggan
+ * @return array ['standar' => int hari batas hijau, 'maks' => int hari batas kuning/expired]
+ */
+function getMasaGaransiHari($koneksi, $no_pelanggan) {
+    $info = getKategoriMemberPelanggan($koneksi, $no_pelanggan);
+    return [
+        'standar' => isset($info['masa_garansi_hari']) ? (int)$info['masa_garansi_hari'] : 7,
+        'maks' => isset($info['masa_garansi_maks_hari']) ? (int)$info['masa_garansi_maks_hari'] : 14,
     ];
 }
 

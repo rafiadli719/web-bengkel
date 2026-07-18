@@ -1,7 +1,7 @@
 <?php
 /**
  * Panel Kiri Kasir — Info Kendaraan + Keluhan Aktif + Mekanik
- * Included by: servis-input-reguler.php, servis-input-reguler-jemput.php, servis-input-garansi.php
+ * Included by: servis-input-reguler.php, servis-input-reguler-jemput.php, servis-garansi.php
  */
 
 // ---- Kepala Mekanik Harian ----
@@ -97,6 +97,13 @@ if (!empty($no_service)) {
                                   ORDER BY id ASC");
     if ($q) { while ($r = mysqli_fetch_assoc($q)) $_kel_list[] = $r; }
 }
+
+// ---- Task 3: referensi nota Penjualan asal (kalau servis ini hasil konversi nota) ----
+$_ref_penjualan = '';
+if (!empty($no_service)) {
+    $q_ref = mysqli_query($koneksi, "SELECT ref_no_penjualan_asal FROM tblservice WHERE no_service='" . mysqli_real_escape_string($koneksi,$no_service) . "'");
+    if ($q_ref && ($r_ref = mysqli_fetch_assoc($q_ref))) { $_ref_penjualan = $r_ref['ref_no_penjualan_asal'] ?? ''; }
+}
 ?>
 
 <!-- Nopol -->
@@ -152,6 +159,16 @@ if (!empty($no_service)) {
     </button>
     <?php endif; ?>
 </div>
+
+<?php if(!empty($_ref_penjualan)): ?>
+<div style="background:#fff3cd;border:1px solid #ffe08a;border-radius:4px;padding:5px 8px;margin-bottom:6px;font-size:11px;">
+    <i class="fa fa-link" style="color:#8a6d3b;"></i>
+    Servis dari Nota Penjualan
+    <a href="penjualan_detail.php?nopesanan=<?= urlencode($_ref_penjualan) ?>" style="font-weight:700;color:#8a6d3b;text-decoration:underline;">
+        <?= htmlspecialchars($_ref_penjualan) ?>
+    </a>
+</div>
+<?php endif; ?>
 
 <!-- Service Info -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;padding:4px 0;font-size:11px;">
@@ -256,7 +273,7 @@ if (!empty($no_service)) {
 <!-- Mekanik Assignment -->
 <div class="ks-mekanik-block">
     <span class="ks-mekanik-group-hdr">Kepala Mekanik</span>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:3px;">
         <div>
             <div class="ks-staff-label">KM 1</div>
             <div class="ks-staff-row">
@@ -290,7 +307,7 @@ if (!empty($no_service)) {
     </div>
 
     <span class="ks-mekanik-group-hdr">Admin / Kasir</span>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:3px;">
         <div>
             <div class="ks-staff-label">Admin 1</div>
             <div class="ks-staff-row">
@@ -324,7 +341,7 @@ if (!empty($no_service)) {
     </div>
 
     <span class="ks-mekanik-group-hdr">Mekanik</span>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:3px;">
         <div>
             <div class="ks-staff-label">MK 1</div>
             <div class="ks-staff-row">
@@ -594,7 +611,7 @@ function saveMechanicDataV2() {
 }
 
 function printEstimasiV2() {
-    window.open('servis-estimasi-pdf.php?no=<?= addslashes($no_service ?? '') ?>','_blank');
+    window.open('servis-estimasi-pdf.php?no_service=<?= addslashes($no_service ?? '') ?>','_blank');
 }
 
 if (typeof window.validateKeluhanV2 !== 'function') {

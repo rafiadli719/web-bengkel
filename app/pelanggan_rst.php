@@ -364,11 +364,16 @@
                         <div class="space space-8"></div>  
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
-                                <a href="pelanggan_add.php">
-                                    <button class="btn btn-success btn-warning" type="button">
-                                    Tambah Pelanggan
-                                    </button>
-                                </a>
+                                <button class="btn btn-success btn-warning" type="button" onclick="konfirmasiTambahPelanggan()">
+                                Tambah Pelanggan
+                                </button>
+                                <script>
+                                function konfirmasiTambahPelanggan() {
+                                    if (confirm('Sudah dicari dulu dan pelanggan ini benar belum terdaftar?\n\nKlik OK kalau sudah yakin, atau Cancel untuk kembali mencari dulu.')) {
+                                        window.location.href = 'pelanggan_add.php';
+                                    }
+                                }
+                                </script>
 							</div>
 						</div>
                         <div class="space space-8"></div>

@@ -38,11 +38,14 @@
                     return $satukan;
                 }
                 
-        $tgl_pilih_dari_eng=date('Y/m/d');
-        $tgl_pilih_sampai_eng=date('Y/m/d');
+        include_once "includes/report-default-range.php";
+        $_default_range = app_report_default_range($koneksi, 'view_pembayaran_hutang', 'tanggal');
 
-        $tgl_pilih_dari=date('d/m/Y');
-        $tgl_pilih_sampai=date('d/m/Y');
+        $tgl_pilih_dari_eng=$_default_range['from_ymd_slash'];
+        $tgl_pilih_sampai_eng=$_default_range['to_ymd_slash'];
+
+        $tgl_pilih_dari=$_default_range['from_dmy'];
+        $tgl_pilih_sampai=$_default_range['to_dmy'];
         $cbo_supplier="";
 
     // ---- SQL Detail -----

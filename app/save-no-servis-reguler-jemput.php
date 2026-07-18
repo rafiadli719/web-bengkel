@@ -17,6 +17,7 @@ if ($nopol === '') {
 
 include "../config/koneksi.php";
 include "function_servis.php";
+require_once __DIR__ . '/_include_customer_vehicle_sync.php';
 
 date_default_timezone_set('Asia/Jakarta');
 $tgl_skr = date('Y/m/d');
@@ -50,11 +51,18 @@ if ($duplicateResult && ($duplicateRow = mysqli_fetch_assoc($duplicateResult))) 
 mysqli_stmt_close($stmtDuplicate);
 
 $lastID = FormatNoTrans(OtomatisID());
+$bundle = fitmotorGetCustomerVehicleBundle($koneksi, $nopol);
+$customerCode = trim((string)($bundle['mapped_customer_code'] ?? ''));
+if ($customerCode === '') {
+    echo "<script>window.alert('Data pelanggan untuk nomor polisi ini belum valid. Rapikan relasi pelanggan-kendaraan dulu.');window.location=('servis-carinopol.php');</script>";
+    exit;
+}
+
 $stmtInsert = mysqli_prepare(
     $koneksi,
     "INSERT INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, status_jemput, status_servis, kd_cabang, id_user) VALUES (?, ?, ?, ?, ?, '1', 'datang', ?, ?)"
 );
-mysqli_stmt_bind_param($stmtInsert, "ssssssi", $lastID, $tgl_skr, $waktu_skr, $nopol, $nopol, $kd_cabang, $id_user);
+mysqli_stmt_bind_param($stmtInsert, "ssssssi", $lastID, $tgl_skr, $waktu_skr, $customerCode, $nopol, $kd_cabang, $id_user);
 if (!mysqli_stmt_execute($stmtInsert)) {
     mysqli_stmt_close($stmtInsert);
     echo "<script>window.alert('Gagal membuat service jemput.');window.location=('servis-carinopol.php');</script>";

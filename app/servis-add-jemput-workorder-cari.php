@@ -298,6 +298,7 @@
 		<script src="assets/js/jquery.dataTables.bootstrap.min.js"></script>
 		<script src="assets/js/dataTables.tableTools.min.js"></script>
 		<script src="assets/js/dataTables.colVis.min.js"></script>
+		<?php include "includes/datatables-defaults.php"; ?>
 
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>

@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-06-25T09:28:45",
+  "mdbPath": "E:\\BENGKEL 2.0\\FITMOTOR GABUNG.MDB",
+  "mysqlDatabase": "fitmotor_gabung",
+  "counts": {
+    "accessTablesAll": 181,
+    "accessTablesUser": 169,
+    "accessQueriesAll": 253,
+    "mysqlObjects": 42,
+    "mysqlViews": 2,
+    "crystalReports": 0,
+    "priorityMismatches": 399
+  },
+  "note": "Detail lengkap ada di Markdown audit dan SQL migration output."
+}

@@ -1185,7 +1185,20 @@ function accessSyncUpsertPelanggan($koneksi, $row) {
 }
 
 function accessSyncResolveNoPelangganFromNama($koneksi, $namaPelanggan, $telephone) {
+    if (!function_exists('fitmotorResolveCustomerCodeByPhone')) {
+        require_once __DIR__ . '/_customer_identity.php';
+    }
+
     $namaPelanggan = trim((string)$namaPelanggan);
+    $tel = trim((string)$telephone);
+
+    if ($tel !== '') {
+        $phoneResolution = fitmotorResolveCustomerCodeByPhone($koneksi, $tel);
+        if ($phoneResolution['status'] === 'existing') {
+            return $phoneResolution['code'];
+        }
+    }
+
     if ($namaPelanggan === '') return '';
 
     // Cari berdasarkan nama pelanggan (case-insensitive)
@@ -1202,25 +1215,7 @@ function accessSyncResolveNoPelangganFromNama($koneksi, $namaPelanggan, $telepho
         }
     }
 
-    // Cari juga berdasarkan telephone jika nama tidak ketemu
-    $tel = trim((string)$telephone);
-    if ($tel !== '') {
-        $stmt2 = mysqli_prepare($koneksi,
-            "SELECT nopelanggan FROM tblpelanggan WHERE telephone = ? LIMIT 1");
-        if ($stmt2) {
-            mysqli_stmt_bind_param($stmt2, 's', $tel);
-            mysqli_stmt_execute($stmt2);
-            $result2 = mysqli_stmt_get_result($stmt2);
-            $found2  = mysqli_fetch_assoc($result2);
-            mysqli_stmt_close($stmt2);
-            if ($found2 && !empty($found2['nopelanggan'])) {
-                return $found2['nopelanggan'];
-            }
-        }
-    }
-
-    // Belum ada — generate kode baru format KND-{ymd}-{hash5}
-    return 'KND-' . date('ymd') . '-' . strtoupper(substr(md5($namaPelanggan . $telephone), 0, 5));
+    return fitmotorGenerateCustomerCode($koneksi);
 }
 
 function accessSyncUpsertKendaraanPelanggan($koneksi, $row) {

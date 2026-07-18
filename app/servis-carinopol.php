@@ -483,7 +483,7 @@
                                                 </div><!-- /.btn-group -->
                                             </td>
                                             <td><strong><?php echo htmlspecialchars($tampil['nopolisi']); ?></strong></td>
-                                            <td><?php echo htmlspecialchars($tampil['pemilik']); ?></td>
+                                            <td><?php echo $tampil['pemilik'] !== '' && $tampil['pemilik'] !== null ? htmlspecialchars($tampil['pemilik']) : '<span class="text-muted"><em>Data belum lengkap</em></span>'; ?></td>
                                             <td class="center"><?php echo htmlspecialchars($tampil['tipe']); ?></td>
                                             <td class="center"><?php echo htmlspecialchars($tampil['jenis']); ?></td>
                                             <td>
@@ -632,6 +632,7 @@
 		<script src="assets/js/buttons.print.min.js"></script>
 		<script src="assets/js/buttons.colVis.min.js"></script>
 		<script src="assets/js/dataTables.select.min.js"></script>
+		<?php include "includes/datatables-defaults.php"; ?>
 
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>
@@ -984,10 +985,14 @@
 												<span class="help-block">
 													<small>Pastikan nomor WA ini aktif untuk komunikasi servis</small>
 												</span>
+												<div id="phoneValidationError" class="alert alert-danger" style="display:none;margin-top:10px;">
+													<i class="ace-icon fa fa-exclamation-triangle"></i>
+													<span id="phoneValidationErrorText"></span>
+												</div>
 											</div>
 										</div>
 									</div>
-									
+
 									<div class="alert alert-warning">
 										<i class="ace-icon fa fa-exclamation-triangle"></i>
 										<strong>Penting:</strong> Nomor WA akan digunakan untuk komunikasi progress servis. 
@@ -1029,22 +1034,30 @@
 				});
 			}
 
+			// Show inline validation error inside the phone modal (replaces blocking alert()).
+			function showPhoneValidationError(msg) {
+				$('#phoneValidationErrorText').text(msg);
+				$('#phoneValidationError').show();
+			}
+
 			// Check Phone Changes Function
 			function checkPhoneChanges(nopol, serviceType) {
 				var newPhone = $('#newPhoneNumber').val().trim();
 				var originalPhone = $('#newPhoneNumber').data('original') || '';
-				
+
+				$('#phoneValidationError').hide();
+
 				// Basic validation first
 				if (!newPhone) {
-					alert('Nomor WA harus diisi!');
+					showPhoneValidationError('Nomor WA harus diisi!');
 					$('#newPhoneNumber').focus();
 					return;
 				}
-				
+
 				// Basic phone validation
 				var phonePattern = /^(\+62|62|0)[0-9]{9,13}$/;
 				if (!phonePattern.test(newPhone)) {
-					alert('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
+					showPhoneValidationError('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
 					$('#newPhoneNumber').focus().select();
 					return;
 				}
@@ -1183,15 +1196,15 @@
 				
 				// Validate phone number
 				if (!newPhone) {
-					alert('Nomor WA harus diisi!');
+					showPhoneValidationError('Nomor WA harus diisi!');
 					$('#newPhoneNumber').focus();
 					return;
 				}
-				
+
 				// Basic phone validation
 				var phonePattern = /^(\+62|62|0)[0-9]{9,13}$/;
 				if (!phonePattern.test(newPhone)) {
-					alert('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
+					showPhoneValidationError('Format nomor WA tidak valid! Gunakan format: 08xxx atau +628xxx');
 					$('#newPhoneNumber').focus().select();
 					return;
 				}

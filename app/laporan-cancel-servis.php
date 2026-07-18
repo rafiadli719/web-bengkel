@@ -25,8 +25,10 @@ $tm_cab = mysqli_fetch_array($cari_cab);
 $tipe_cabang = $tm_cab['tipe_cabang'] ?? '';
 
 // Get filter parameters
-$tanggal_dari    = $_GET['tgl_dari'] ?? date('Y-m-01');
-$tanggal_sampai  = $_GET['tgl_sampai'] ?? date('Y-m-d');
+include_once "includes/report-default-range.php";
+$_default_range = app_report_default_range($koneksi, 'view_laporan_cancel_servis', 'tanggal_cancel');
+$tanggal_dari    = $_GET['tgl_dari'] ?? $_default_range['from_ymd'];
+$tanggal_sampai  = $_GET['tgl_sampai'] ?? $_default_range['to_ymd'];
 $kategori_filter = $_GET['kategori'] ?? '';
 $kd_cabang_safe  = mysqli_real_escape_string($koneksi, $kd_cabang);
 $tgl_dari_safe   = mysqli_real_escape_string($koneksi, $tanggal_dari);

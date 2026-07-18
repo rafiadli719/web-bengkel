@@ -881,10 +881,10 @@ function renderModalStatistikPelanggan($koneksi, $no_pelanggan) {
     <div class="modal fade" id="modalStatistikPelanggan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" style="width: 90%; max-width: 1000px;">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
-                    <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.8;">&times;</button>
-                    <h4 class="modal-title">
-                        <i class="fa fa-user-circle"></i> Statistik Pelanggan Lengkap
+                <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                    <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">&times;</button>
+                    <h4 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;">
+                        <i class="fa fa-user-circle" style="color:#4f46e5;margin-right:6px;"></i> Statistik Pelanggan Lengkap
                     </h4>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">

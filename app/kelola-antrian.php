@@ -112,6 +112,12 @@ if(empty($_SESSION['_iduser'])){
     // Build WHERE clause
     $where_clauses = ["a.tanggal='$filter_tanggal'"];
 
+    $is_admin_antrian = rbac_has('all');
+    $svc_cabang_cond_antrian = $is_admin_antrian ? '' : " AND s.kd_cabang = '$kd_cabang'";
+    if (!$is_admin_antrian) {
+        $where_clauses[] = "EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = a.no_service AND sx.kd_cabang = '$kd_cabang')";
+    }
+
     if($filter_status != 'all') {
         $where_clauses[] = "a.status_antrian='$filter_status'";
     }
@@ -145,7 +151,7 @@ if(empty($_SESSION['_iduser'])){
                 k.tipe as tipe_motor,
                 k.warna
               FROM tb_antrian_servis a
-              LEFT JOIN tblservice s ON a.no_service = s.no_service
+              LEFT JOIN tblservice s ON a.no_service = s.no_service$svc_cabang_cond_antrian
               LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
               LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
               $where_sql

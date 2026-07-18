@@ -453,12 +453,17 @@ if(empty($_SESSION['_iduser'])){
                                                 </div>
                                             </div>
 
+                                            <div id="form-validation-error" class="alert alert-danger" style="display:none;">
+                                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                                <span id="form-validation-error-text"></span>
+                                            </div>
+
                                             <div class="kepala-mekanik-card">
                                                 <h5><i class="ace-icon fa fa-user blue"></i> Kepala Mekanik 1 (Utama)</h5>
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label no-padding-right">Nama</label>
                                                     <div class="col-sm-9">
-                                                        <select name="kepala_mekanik_1" class="form-control select2" required>
+                                                        <select name="kepala_mekanik_1" id="kepala_mekanik_1" class="form-control select2">
                                                             <option value=""></option>
                                                             <?php 
                                                             if ($master_kepala && mysqli_num_rows($master_kepala) > 0) {
@@ -689,10 +694,26 @@ if(empty($_SESSION['_iduser'])){
             $('select[name="kepala_mekanik_1"], select[name="kepala_mekanik_2"]').on('change', function() {
                 var km1 = $('select[name="kepala_mekanik_1"]').val();
                 var km2 = $('select[name="kepala_mekanik_2"]').val();
-                
+
+                $('#form-validation-error').hide();
+
                 if (km1 && km2 && km1 === km2) {
-                    alert('Kepala Mekanik 1 dan 2 tidak boleh sama!');
+                    $('#form-validation-error-text').text('Kepala Mekanik 1 dan 2 tidak boleh sama.');
+                    $('#form-validation-error').show();
                     $(this).val('').trigger('change');
+                }
+            });
+
+            // Explicit inline validation on submit (select2 hides the native <select>,
+            // so HTML5 `required` never shows its validation bubble on it).
+            $('form.form-horizontal').on('submit', function(e) {
+                var km1 = $('#kepala_mekanik_1').val();
+                if (!km1) {
+                    e.preventDefault();
+                    $('#form-validation-error-text').text('Kepala Mekanik 1 wajib diisi.');
+                    $('#form-validation-error').show();
+                    $('html, body').animate({ scrollTop: $('#form-validation-error').offset().top - 100 }, 300);
+                    $('#kepala_mekanik_1').select2('open');
                 }
             });
         });

@@ -3,9 +3,9 @@
 <div class="modal fade" id="modal-search-keluhan" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><i class="fa fa-search"></i> Pilih Keluhan dari Master</h4>
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">&times;</button>
+                <h4 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;"><i class="fa fa-search" style="color:#4f46e5;margin-right:6px;"></i> Pilih Keluhan dari Master</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -100,9 +100,9 @@
 <div class="modal fade" id="modal-preview-proses" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><i class="fa fa-cogs"></i> Preview Proses Pengerjaan</h4>
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">&times;</button>
+                <h4 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;"><i class="fa fa-cogs" style="color:#4f46e5;margin-right:6px;"></i> Preview Proses Pengerjaan</h4>
             </div>
             <div class="modal-body" id="preview-proses-content">
                 <!-- Content will be loaded -->

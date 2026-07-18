@@ -425,6 +425,13 @@ if(empty($_SESSION['_iduser'])){
                                                                 <i class="ace-icon fa fa-print"></i> Print Invoice
                                                             </a>
                                                         </li>
+                                                        <?php if ($status_servis === 'bayar'): ?>
+                                                        <li>
+                                                            <a href="retur_servis_add.php?no_service=<?php echo urlencode($tampil['no_service']); ?>">
+                                                                <i class="ace-icon fa fa-undo"></i> Retur Servis
+                                                            </a>
+                                                        </li>
+                                                        <?php endif; ?>
                                                         <li class="divider"></li>
                                                         <li>
                                                             <a href="#" onclick="confirmDelete('<?php echo $tampil['no_service']; ?>')" class="text-danger">

@@ -37,12 +37,16 @@ if(empty($_SESSION['_iduser'])){
     
     // Ambil semua statistik antrian hari ini dalam 1 query
     $tanggal_hari_ini = date('Y-m-d');
+    $is_admin_dash = ($lvl_akses == '1');
+    $svc_cabang_cond_dash = $is_admin_dash ? '' : " AND s.kd_cabang = '$kd_cabang'";
+    $exists_cabang_stats = $is_admin_dash ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = tb_antrian_servis.no_service AND sx.kd_cabang = '$kd_cabang')";
+    $exists_cabang_dash = $is_admin_dash ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = a.no_service AND sx.kd_cabang = '$kd_cabang')";
     $result_stats = mysqli_query($koneksi, "SELECT
         COUNT(*) as total_antrian,
         SUM(CASE WHEN status_antrian='diproses' THEN 1 ELSE 0 END) as total_diproses,
         SUM(CASE WHEN status_antrian='selesai' THEN 1 ELSE 0 END) as total_selesai,
         SUM(CASE WHEN status_antrian='menunggu' THEN 1 ELSE 0 END) as total_menunggu
-        FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini'");
+        FROM tb_antrian_servis WHERE tanggal = '$tanggal_hari_ini'$exists_cabang_stats");
     $stats = mysqli_fetch_array($result_stats);
     $total_antrian_hari_ini = (int)$stats['total_antrian'];
     $total_antrian_diproses  = (int)$stats['total_diproses'];
@@ -52,9 +56,9 @@ if(empty($_SESSION['_iduser'])){
     // Ambil data antrian terbaru
     $query_antrian_terbaru = "SELECT a.*, s.no_polisi, s.no_pelanggan, p.namapelanggan 
                                FROM tb_antrian_servis a 
-                               LEFT JOIN tblservice s ON a.no_service = s.no_service 
+                               LEFT JOIN tblservice s ON a.no_service = s.no_service $svc_cabang_cond_dash
                                LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan 
-                               WHERE a.tanggal = '$tanggal_hari_ini' 
+                               WHERE a.tanggal = '$tanggal_hari_ini' $exists_cabang_dash
                                ORDER BY a.created_at DESC 
                                LIMIT 10";
     $result_antrian_terbaru = mysqli_query($koneksi, $query_antrian_terbaru);
@@ -63,10 +67,10 @@ if(empty($_SESSION['_iduser'])){
     $query_mekanik_bekerja = "SELECT pm.*, a.no_antrian, s.no_polisi, p.namapelanggan, pm.nama_mekanik
                               FROM tb_progress_mekanik pm 
                               LEFT JOIN tb_antrian_servis a ON pm.no_service = a.no_service 
-                              LEFT JOIN tblservice s ON pm.no_service = s.no_service 
+                              LEFT JOIN tblservice s ON pm.no_service = s.no_service $svc_cabang_cond_dash
                               LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan 
                               WHERE pm.status_kerja = 'bekerja' 
-                              AND a.tanggal = '$tanggal_hari_ini' 
+                              AND a.tanggal = '$tanggal_hari_ini' $exists_cabang_dash
                               ORDER BY pm.updated_at DESC";
     $result_mekanik_bekerja = mysqli_query($koneksi, $query_mekanik_bekerja);
 }

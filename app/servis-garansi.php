@@ -8,6 +8,7 @@
         $kd_cabang=$_SESSION['_cabang'];
 		include "../config/koneksi.php";
 		include_once "../lib/rbac.php";
+		include_once "helper-functions.php";
 		rbac_require_any(array('lihat_servis_garansi_read','servis_garansi_read','servis_menu_read','service_read'));
 		include "_include_customer_vehicle_sync.php";
 		include "_include_statistik_pelanggan.php";
@@ -40,7 +41,7 @@
 		$lvl_akses=$tm_cari['user_akses'];
 		$foto_user=$tm_cari['foto_user'];
 		if($foto_user=='') {
-			$foto_user="file_upload/avatar.png";
+			$foto_user="assets/images/avatars/avatar.png";
 		}
 
 		// Set username session if not exists to prevent login redirect
@@ -89,11 +90,24 @@
         $q_ref = mysqli_query($koneksi, "SELECT * FROM tblservice WHERE no_service='$ref_service_escaped'");
         if($q_ref && mysqli_num_rows($q_ref) > 0) {
             $ref_service_data = mysqli_fetch_assoc($q_ref);
-            
+
             // If this is a new warranty (no existing no_service), pre-fill customer & vehicle data
             if(empty($no_service)) {
                 $kode_pelanggan = $ref_service_data['no_pelanggan'] ?? '';
                 $no_polisi = $ref_service_data['no_polisi'] ?? '';
+            }
+        }
+    } elseif (!empty($no_service)) {
+        // Buka ulang garansi yang sudah dibuat: ref_service tidak ada di URL,
+        // ambil dari kolom ref_no_service_original yang tersimpan di tblservice.
+        $ns_esc = mysqli_real_escape_string($koneksi, $no_service);
+        $q_self = mysqli_query($koneksi, "SELECT ref_no_service_original FROM tblservice WHERE no_service='$ns_esc'");
+        if ($q_self && ($row_self = mysqli_fetch_assoc($q_self)) && !empty($row_self['ref_no_service_original'])) {
+            $ref_service = $row_self['ref_no_service_original'];
+            $ref_service_escaped = mysqli_real_escape_string($koneksi, $ref_service);
+            $q_ref = mysqli_query($koneksi, "SELECT * FROM tblservice WHERE no_service='$ref_service_escaped'");
+            if ($q_ref && mysqli_num_rows($q_ref) > 0) {
+                $ref_service_data = mysqli_fetch_assoc($q_ref);
             }
         }
     }
@@ -142,7 +156,14 @@
             if (!empty($ref_service_data)) {
                 $tgl_asal    = $ref_service_data['tanggal'] ?? '';
                 if ($tgl_asal) {
-                    $tgl_expire = date('Y-m-d', strtotime($tgl_asal . ' +7 days'));
+                    // F1-A: masa garansi dinamis per tier member (jawaban A3, 2026-07-04),
+                    // bukan flat 7 hari. Lihat tbmaster_kategori_member.masa_garansi_hari.
+                    $masa_garansi_standar = 7;
+                    if (function_exists('getMasaGaransiHari') && !empty($ref_service_data['no_pelanggan'])) {
+                        $mg = getMasaGaransiHari($koneksi, $ref_service_data['no_pelanggan']);
+                        $masa_garansi_standar = $mg['standar'];
+                    }
+                    $tgl_expire = date('Y-m-d', strtotime($tgl_asal . " +{$masa_garansi_standar} days"));
                 }
                 // F1-B: derive komisi mode
                 $mekanik_orig = $ref_service_data['mekanik1'] ?? '';
@@ -492,10 +513,10 @@
             if (!empty($pc_nama)) {
                 mysqli_query($koneksi, "INSERT INTO tblservis_barang
                     (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
-                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
+                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan, asal_barang)
                     VALUES
                     ('$no_service_esc_pc', 0, 'PART-CUST', $pc_qty, 0, $pc_harga, 0, $pc_total,
-                     'none', 0, 0, 0, '$pc_ket')");
+                     'none', 0, 0, 0, '$pc_ket', 'PART-CUST')");
             }
         }
         header('Location: servis-garansi.php?snoserv=' . urlencode($no_service) . '&tab=items#service-items');
@@ -1039,6 +1060,13 @@
             $diskon_member = floatval($_POST['txtdiskon_member'] ?? 0);
             $pot_tambahan_persen = floatval($_POST['txtpotfaktur_persen'] ?? 0);
             $total_diskon_persen = $diskon_member + $pot_tambahan_persen;
+            $txtpotfaktur_nom_garansi = str_replace(['.', ','], '', $_POST['txtpotfaktur_nom'] ?? '0');
+
+            // F2-C: diskon manual level-invoice butuh approval Supervisor/Manager
+            if (function_exists('checkDiskonApproval') && !checkDiskonApproval($koneksi, $no_service, $pot_tambahan_persen, $txtpotfaktur_nom_garansi, $id_user, $kd_cabang)) {
+                echo "<script>window.alert('Diskon manual di luar SOP butuh approval Supervisor/Manager sebelum pembayaran bisa diproses. Request approval sudah dikirim.'); window.location='servis-garansi.php?snoserv=" . urlencode($no_service) . "&tab=actions';</script>";
+                exit;
+            }
 
             // Calculate Totals
             $subtotal = $txttotal_jasa + $txttotal_barang;
@@ -1051,7 +1079,11 @@
             $total_akhir = ($subtotal - $diskon_nominal) + $ppn_nominal;
 
             $jumlah_bayar = str_replace(['.', ','], '', $_POST['txtbayar'] ?? '0');
-            $kembalian = $jumlah_bayar - $total_akhir;
+
+            // F2-A: DP pending mengurangi sisa yang wajib dibayar sekarang (Q9)
+            $dp_pending_total_pay = function_exists('getDpPendingTotal') ? getDpPendingTotal($koneksi, $no_service) : 0;
+            $total_akhir_required = max(0, $total_akhir - $dp_pending_total_pay);
+            $kembalian = $jumlah_bayar - $total_akhir_required;
 
             $bukti_pembayaran_path = '';
             if($metode_pembayaran != 'Tunai' && isset($_FILES['bukti_pembayaran']) && $_FILES['bukti_pembayaran']['error'] == 0) {
@@ -1072,7 +1104,7 @@
             }
 
              // Validate payment amount (allow 0 for full warranty)
-            if($jumlah_bayar < $total_akhir && $total_akhir > 0) {
+            if($jumlah_bayar < $total_akhir_required && $total_akhir_required > 0) {
                  echo "<script>alert('Jumlah pembayaran kurang!'); window.history.back();</script>";
                  exit;
             }
@@ -1124,6 +1156,10 @@
                 WHERE no_service = '$no_service'";
 
             if(mysqli_query($koneksi, $update_payment)) {
+                // F2-A: tandai DP pending sebagai offset setelah pelunasan (Q9)
+                if (function_exists('offsetDpPending')) {
+                    offsetDpPending($koneksi, $no_service);
+                }
                 // 🆕 AUTO-UPDATE STATISTIK PELANGGAN, MEMBER TIER & HISTORY SERVICE
                 $get_customer = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
                 if ($get_customer && $customer_row = mysqli_fetch_assoc($get_customer)) {
@@ -1144,6 +1180,22 @@
                         } else {
                             error_log("⚠️ [GARANSI] Function updateStatistikPelangganAfterPayment not found for service: $no_service");
                         }
+                    }
+                }
+
+                // Update stock for items used in warranty service — guard agar tidak double-insert
+                // Barang bukan asal stok bengkel (PART-CUST milik customer, atau dari nota Penjualan yg sudah kepotong stok) — exclude dari kartu stok
+                $chk_stok_garansi = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+                $r_chk_garansi = mysqli_fetch_assoc($chk_stok_garansi);
+                if ((int)$r_chk_garansi['cnt'] === 0) {
+                    $sql_garansi = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE no_service='$no_service' AND asal_barang='SERVIS'");
+                    while ($tampil_garansi = mysqli_fetch_array($sql_garansi)) {
+                        $no_item_garansi = $tampil_garansi['no_item'];
+                        $qty_garansi = (int)$tampil_garansi['quantity'];
+                        mysqli_query($koneksi, "INSERT INTO tbstok
+                            (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
+                            VALUES
+                            ('4','$no_service','$no_item_garansi', CURDATE(),'0','$qty_garansi','Servis Garansi','$kd_cabang')");
                     }
                 }
 
@@ -1246,6 +1298,23 @@ $tot = $total_barang + $total_service;
 $net = $tot;
 $bayar = 0; $kembalian = 0;
 $center_active = 'workorder-details';
+
+// F2-A: Penanda servis mesin besar / part inden + DP pending (Q9)
+$boleh_dp = 0;
+$dp_pending_list = [];
+$dp_pending_total = 0;
+if (!empty($no_service)) {
+    $ns_dp = mysqli_real_escape_string($koneksi, $no_service);
+    $r_bdp = mysqli_query($koneksi, "SELECT boleh_dp FROM tblservice WHERE no_service='$ns_dp'");
+    if ($r_bdp && ($row_bdp = mysqli_fetch_assoc($r_bdp))) { $boleh_dp = (int)$row_bdp['boleh_dp']; }
+    $r_dp = mysqli_query($koneksi, "SELECT no_dp, jumlah_dp FROM tb_dp_servis WHERE no_service='$ns_dp' AND status='pending' ORDER BY id DESC");
+    if ($r_dp) {
+        while ($row_dp = mysqli_fetch_assoc($r_dp)) {
+            $dp_pending_list[] = $row_dp;
+            $dp_pending_total += (float)$row_dp['jumlah_dp'];
+        }
+    }
+}
 ?>
 <body>
 <div class="ks-shell">
@@ -1286,7 +1355,7 @@ $center_active = 'workorder-details';
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
             <div class="ks-user-badge">
-                <img src="<?= htmlspecialchars($foto_user) ?>" class="ks-user-photo" onerror="this.src='file_upload/avatar.png'">
+                <img src="<?= htmlspecialchars($foto_user) ?>" class="ks-user-photo" onerror="this.onerror=null;this.src='assets/images/avatars/avatar.png'">
                 <span class="ks-user-name"><?= htmlspecialchars($_nama) ?></span>
             </div>
         </div>
@@ -1354,6 +1423,11 @@ $center_active = 'workorder-details';
                     <a class="ks-tab-btn" data-target="service-jasa" href="#">
                         <i class="fa fa-tools"></i> Jasa Service
                     </a>
+                    <?php if (!empty($ref_service)): ?>
+                    <a class="ks-tab-btn" data-target="riwayat-servis-asal" href="#">
+                        <i class="fa fa-history"></i> Riwayat Servis Asal
+                    </a>
+                    <?php endif; ?>
                 </div>
                 <div class="ks-tab-contents">
                     <div id="workorder-details" class="ks-tab-pane active">
@@ -1368,6 +1442,11 @@ $center_active = 'workorder-details';
                     <div id="service-jasa" class="ks-tab-pane">
                         <?php include "_template/tab-item-jasa-redesign.php"; ?>
                     </div>
+                    <?php if (!empty($ref_service)): ?>
+                    <div id="riwayat-servis-asal" class="ks-tab-pane">
+                        <?php include "_template/tab-riwayat-servis-asal-redesign.php"; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -1381,11 +1460,23 @@ $center_active = 'workorder-details';
 </div>
 
 <!-- Modals -->
-<?php include "_template/modal-search-temuan.php"; ?>
-<?php include "_template/modal-search-keluhan.php"; ?>
-<?php include "_template/modal-tambah-keluhan-baru.php"; ?>
-<?php include "_template/modal-input-barang-custom.php"; ?>
-<?php include "_template/modal-fastmoves-part.php"; ?>
+<?php
+$template_dir = __DIR__ . DIRECTORY_SEPARATOR . '_template' . DIRECTORY_SEPARATOR;
+if(file_exists($template_dir . "modal-search-temuan.php")) include $template_dir . "modal-search-temuan.php";
+if(file_exists($template_dir . "modal-search-keluhan.php")) include $template_dir . "modal-search-keluhan.php";
+if(file_exists($template_dir . "modal-fastmoves-v2.php")) include $template_dir . "modal-fastmoves-v2.php";
+if(file_exists($template_dir . "modal-fastmoves-part.php")) include $template_dir . "modal-fastmoves-part.php";
+if(file_exists($template_dir . "modal-tambah-keluhan-baru.php")) include $template_dir . "modal-tambah-keluhan-baru.php";
+if(file_exists($template_dir . "modal-input-barang-custom.php")) include $template_dir . "modal-input-barang-custom.php";
+if(file_exists($template_dir . "_modal_riwayat_kendaraan.php")) include $template_dir . "_modal_riwayat_kendaraan.php";
+if(file_exists($template_dir . "_modal_update_status_keluhan.php")) include $template_dir . "_modal_update_status_keluhan.php";
+if(file_exists($template_dir . "_modal_cancel_service.php")) include $template_dir . "_modal_cancel_service.php";
+
+// Modal Statistik Pelanggan
+if(!empty($kode_pelanggan) && function_exists('renderModalStatistikPelanggan')) {
+    echo renderModalStatistikPelanggan($koneksi, $kode_pelanggan);
+}
+?>
 
 <script>
 $(document).ready(function() {
@@ -1402,7 +1493,7 @@ $(document).ready(function() {
     });
 
     // Handle URL tab param on load
-    var validTabs = ['workorder-details','temuan-penawaran','service-items','service-jasa'];
+    var validTabs = ['workorder-details','temuan-penawaran','service-items','service-jasa','riwayat-servis-asal'];
     var activeTab = new URLSearchParams(window.location.search).get('tab');
     if (activeTab && validTabs.indexOf(activeTab) !== -1) {
         $('.ks-tab-btn[data-target="' + activeTab + '"]').trigger('click');

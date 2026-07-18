@@ -66,16 +66,21 @@
 		$namapelanggan=$tm_cari['namapelanggan'];
         $alamat=$tm_cari['alamat'];
 
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        sum(qty_order) as tot_order, 
-                                        sum(quantity) as tot_beli 
-                                        FROM 
-                                        tblpenjualan_detail 
-                                        WHERE 
-                                        no_transaksi='$nobl'");			
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        sum(qty_order) as tot_order,
+                                        sum(quantity) as tot_beli
+                                        FROM
+                                        tblpenjualan_detail
+                                        WHERE
+                                        no_transaksi='$nobl'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$tot_order=$tm_cari['tot_order'];				        
-        $tot_beli=$tm_cari['tot_beli'];        
+		$tot_order=$tm_cari['tot_order'];
+        $tot_beli=$tm_cari['tot_beli'];
+
+        // Task 3: cek apakah nota ini sudah pernah dikonversi jadi servis
+        $nobl_esc = mysqli_real_escape_string($koneksi, $nobl);
+        $cek_servis = mysqli_query($koneksi, "SELECT no_service FROM tblservice WHERE ref_no_penjualan_asal='$nobl_esc' LIMIT 1");
+        $servis_terkait = mysqli_fetch_assoc($cek_servis);
 ?>
 
 <!DOCTYPE html>
@@ -384,6 +389,19 @@
                                     <i class="ace-icon fa fa-save icon-on-right bigger-110"></i>
                                     &nbsp;Tutup
                                 </button>
+                            </div>
+                            <div class="col-xs-12 col-sm-4">
+                                <?php if ($servis_terkait): ?>
+                                <a href="servis-input-router.php?snoserv=<?php echo urlencode($servis_terkait['no_service']); ?>" class="btn btn-info btn-block">
+                                    <i class="ace-icon fa fa-wrench icon-on-right bigger-110"></i>
+                                    &nbsp;Sudah Dibuat Servis: <?php echo htmlspecialchars($servis_terkait['no_service']); ?>
+                                </a>
+                                <?php else: ?>
+                                <a href="penjualan_buat_servis.php?notransaksi=<?php echo urlencode($nobl); ?>" class="btn btn-warning btn-block">
+                                    <i class="ace-icon fa fa-wrench icon-on-right bigger-110"></i>
+                                    &nbsp;Buat Servis dari Nota Ini
+                                </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                         

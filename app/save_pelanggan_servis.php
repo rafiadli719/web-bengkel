@@ -6,6 +6,7 @@ if (empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+require_once __DIR__ . '/_customer_identity.php';
 
 // Ambil data dari form
 $namapelanggan = trim($_POST['txtnama'] ?? '');
@@ -18,7 +19,8 @@ $kota = trim($_POST['cbokota'] ?? '');
 $kecamatan = trim($_POST['cbokecamatan'] ?? '');
 $alamat_detail = trim($_POST['txtalamatdetail'] ?? '');
 $patokan = trim($_POST['txtpatokan'] ?? '');
-$nopelanggan = strtoupper(trim($_POST['txtnopol'] ?? '')); // No polisi
+$nopol = strtoupper(trim($_POST['txtnopol'] ?? ''));
+$nopelanggan = '';
 $bl_pajak = $_POST['cbobulanpajak'] ?? '';
 $th_pajak = $_POST['txtthnpajak'] ?? '';
 $merek_id = $_POST['cbomerek'] ?? '';
@@ -53,7 +55,7 @@ if (isset($_FILES['fotorumah']) && $_FILES['fotorumah']['error'] == 0) {
     }
 
     $file_extension = pathinfo($_FILES['fotorumah']['name'], PATHINFO_EXTENSION);
-    $foto_rumah = 'rumah_' . strtoupper(str_replace(' ', '_', $nopelanggan)) . '_' . time() . '.' . $file_extension;
+    $foto_rumah = 'rumah_' . strtoupper(str_replace(' ', '_', $nopol)) . '_' . time() . '.' . $file_extension;
     $upload_path = $upload_dir . $foto_rumah;
 
     if (!move_uploaded_file($_FILES['fotorumah']['tmp_name'], $upload_path)) {
@@ -66,7 +68,7 @@ if (isset($_FILES['fotorumah']) && $_FILES['fotorumah']['error'] == 0) {
 
 // Validasi input wajib
 if (empty($namapelanggan) || empty($gender) || empty($tgl_lahir) || empty($valid_tgl_lahir) ||
-    empty($alamat_detail) || empty($provinsi) || empty($kota) || empty($kecamatan) || empty($nopelanggan) || empty($bl_pajak) ||
+    empty($alamat_detail) || empty($provinsi) || empty($kota) || empty($kecamatan) || empty($nopol) || empty($bl_pajak) ||
     empty($th_pajak) || empty($merek_id) || empty($tipe_id) || empty($jenis_id) || empty($warna_id) || empty($informasi_sumber)) {
     header("location:pelanggan_add_servis.php?error=" . urlencode("Semua field wajib diisi kecuali patokan dan nomor WA"));
     exit;
@@ -108,21 +110,19 @@ try {
     exit;
 }
 
-// Cek apakah nomor polisi sudah ada di tblpelanggan
-$stmt = mysqli_prepare($koneksi, "SELECT nopelanggan FROM tblpelanggan WHERE nopelanggan = ?");
-mysqli_stmt_bind_param($stmt, "s", $nopelanggan);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_store_result($stmt);
-if (mysqli_stmt_num_rows($stmt) > 0) {
-    mysqli_stmt_close($stmt);
-    header("location:pelanggan_add_servis.php?error=" . urlencode("Nomor polisi sudah terdaftar"));
+$customer_resolution = fitmotorResolveCustomerCodeByPhone($koneksi, $no_wa);
+if ($customer_resolution['status'] === 'ambiguous') {
+    header("location:pelanggan_add_servis.php?error=" . urlencode("Nomor WA terhubung ke lebih dari satu pelanggan. Rapikan merge pelanggan dulu sebelum tambah motor baru."));
     exit;
 }
-mysqli_stmt_close($stmt);
+
+$nopelanggan = $customer_resolution['status'] === 'existing'
+    ? $customer_resolution['code']
+    : fitmotorGenerateCustomerCode($koneksi);
 
 // Cek apakah nomor polisi sudah ada di tblkendaraan
 $stmt = mysqli_prepare($koneksi, "SELECT nopolisi FROM tblkendaraan WHERE nopolisi = ?");
-mysqli_stmt_bind_param($stmt, "s", $nopelanggan);
+mysqli_stmt_bind_param($stmt, "s", $nopol);
 mysqli_stmt_execute($stmt);
 mysqli_stmt_store_result($stmt);
 if (mysqli_stmt_num_rows($stmt) > 0) {
@@ -158,28 +158,44 @@ $id_panggilan = 0;
 
 // Simpan data pelanggan ke tblpelanggan
 // Perbaikan: menggunakan jenis_id bukan jenis yang tidak ada di tabel
-$query = "INSERT INTO tblpelanggan (
-    nopelanggan, namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, kota, patokan,
-    telephone, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id,
-    propinsi, kodepost, negara, fax, kontakperson, note, potongan, tipepot,
-    lavelharga, kgrup, klat, klong, panggilan, saldoawal, pertanggal, id_panggilan, informasi_sumber,
-    google_maps, foto_rumah
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = mysqli_prepare($koneksi, $query);
-if ($stmt === false) {
-    mysqli_rollback($koneksi);
-    header("location:pelanggan_add_servis.php?error=" . urlencode("Gagal menyiapkan query pelanggan: " . mysqli_error($koneksi)));
-    exit;
-}
+if ($customer_resolution['status'] === 'existing') {
+    $query = "UPDATE tblpelanggan SET namapelanggan = ?, gender = ?, tgllahir = ?, valid_tgl_lahir = ?, alamat = ?, kota = ?, patokan = ?, telephone = ?, bl_pajak = ?, th_pajak = ?, merek_id = ?, tipe_id = ?, jenis_id = ?, warna_id = ?, propinsi = ?, informasi_sumber = ?, google_maps = ?, foto_rumah = COALESCE(NULLIF(?, ''), foto_rumah) WHERE nopelanggan = ?";
+    $stmt = mysqli_prepare($koneksi, $query);
+    if ($stmt === false) {
+        mysqli_rollback($koneksi);
+        header("location:pelanggan_add_servis.php?error=" . urlencode("Gagal menyiapkan query update pelanggan: " . mysqli_error($koneksi)));
+        exit;
+    }
 
-mysqli_stmt_bind_param($stmt, "sssssssssssiiiissssssdssssssdsisss",
-    $nopelanggan, $namapelanggan, $gender, $tgl_lahir, $valid_tgl_lahir,
-    $alamat_lengkap, $kota, $patokan, $no_wa, $bl_pajak, $th_pajak,
-    $merek_id, $tipe_id, $jenis_id, $warna_id,
-    $propinsi, $kodepost, $negara, $fax, $kontakperson, $note,
-    $potongan, $tipepot, $lavelharga, $kgrup, $klat, $klong,
-    $panggilan, $saldoawal, $pertanggal, $id_panggilan, $informasi_sumber,
-    $google_maps, $foto_rumah);
+    mysqli_stmt_bind_param($stmt, "ssssssssssiiiisssss",
+        $namapelanggan, $gender, $tgl_lahir, $valid_tgl_lahir,
+        $alamat_lengkap, $kota, $patokan, $no_wa, $bl_pajak, $th_pajak,
+        $merek_id, $tipe_id, $jenis_id, $warna_id,
+        $propinsi, $informasi_sumber, $google_maps, $foto_rumah, $nopelanggan);
+} else {
+    $query = "INSERT INTO tblpelanggan (
+        nopelanggan, namapelanggan, gender, tgllahir, valid_tgl_lahir, alamat, kota, patokan,
+        telephone, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id,
+        propinsi, kodepost, negara, fax, kontakperson, note, potongan, tipepot,
+        lavelharga, kgrup, klat, klong, panggilan, saldoawal, pertanggal, id_panggilan, informasi_sumber,
+        google_maps, foto_rumah
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($koneksi, $query);
+    if ($stmt === false) {
+        mysqli_rollback($koneksi);
+        header("location:pelanggan_add_servis.php?error=" . urlencode("Gagal menyiapkan query pelanggan: " . mysqli_error($koneksi)));
+        exit;
+    }
+
+    mysqli_stmt_bind_param($stmt, "sssssssssssiiiissssssdssssssdsisss",
+        $nopelanggan, $namapelanggan, $gender, $tgl_lahir, $valid_tgl_lahir,
+        $alamat_lengkap, $kota, $patokan, $no_wa, $bl_pajak, $th_pajak,
+        $merek_id, $tipe_id, $jenis_id, $warna_id,
+        $propinsi, $kodepost, $negara, $fax, $kontakperson, $note,
+        $potongan, $tipepot, $lavelharga, $kgrup, $klat, $klong,
+        $panggilan, $saldoawal, $pertanggal, $id_panggilan, $informasi_sumber,
+        $google_maps, $foto_rumah);
+}
 
 if (!mysqli_stmt_execute($stmt)) {
     mysqli_rollback($koneksi);
@@ -242,7 +258,7 @@ if ($stmt) {
 }
 
 // Data default untuk kolom tblkendaraan
-$pemilik = $namapelanggan;
+$pemilik = $nopelanggan;
 $alamat_kendaraan = $alamat_lengkap;
 $tahun_buat = $th_pajak; // Asumsi tahun pajak sebagai tahun buat
 $tahun_rakit = $th_pajak;
@@ -264,7 +280,7 @@ if ($stmt_kendaraan === false) {
 }
 
 mysqli_stmt_bind_param($stmt_kendaraan, "sssisisissssssss", 
-    $nopelanggan, $pemilik, $alamat_kendaraan, $merek_id, $tipe, $tipe_id, 
+    $nopol, $pemilik, $alamat_kendaraan, $merek_id, $tipe, $tipe_id, 
     $jenis, $jenis_id, $tahun_buat, $tahun_rakit, $silinder, $warna, 
     $warna_id, $no_rangka, $no_mesin, $note_kendaraan);
 
@@ -277,6 +293,20 @@ mysqli_stmt_close($stmt_kendaraan);
 
 // Commit transaksi
 mysqli_commit($koneksi);
+
+// Task 3: kalau pelanggan baru ini dibuat dari alur "Buat Servis dari Nota Penjualan",
+// langsung konversi nota jadi servis alih-alih redirect ke input servis kosong.
+$notransaksi = trim($_POST['notransaksi'] ?? '');
+if ($notransaksi !== '') {
+    include "helper-functions.php";
+    $hasil = buatServisDariPenjualan($koneksi, $nopelanggan, $notransaksi, $kd_cabang, $id_user);
+    if ($hasil['ok']) {
+        header("location:servis-input-router.php?snoserv=" . urlencode($hasil['no_service']) . "&tab=items");
+    } else {
+        header("location:penjualan_buat_servis.php?notransaksi=" . urlencode($notransaksi) . "&error=" . urlencode($hasil['message']));
+    }
+    exit;
+}
 
 // Redirect berdasarkan pilihan jenis servis
 if ($jenis_servis === 'jemput_antar') {

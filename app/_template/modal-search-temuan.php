@@ -2,11 +2,11 @@
 <div class="modal fade" id="modalSearchTemuan" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="fa fa-search"></i> Cari Temuan
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                <h5 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;margin:0;">
+                    <i class="fa fa-search" style="color:#4f46e5;margin-right:6px;"></i> Cari Temuan
                 </h5>
-                <button type="button" class="close text-white" data-dismiss="modal">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">
                     <span>&times;</span>
                 </button>
             </div>
@@ -105,11 +105,11 @@
 <div class="modal fade" id="modalInputManualTemuan" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">
-                    <i class="fa fa-edit"></i> Input Temuan Manual
+            <div class="modal-header" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 20px;">
+                <h5 class="modal-title" style="color:#1f2937;font-size:17px;font-weight:600;margin:0;">
+                    <i class="fa fa-edit" style="color:#4f46e5;margin-right:6px;"></i> Input Temuan Manual
                 </h5>
-                <button type="button" class="close text-white" data-dismiss="modal">
+                <button type="button" class="close" data-dismiss="modal" style="color:#9ca3af;opacity:1;text-shadow:none;">
                     <span>&times;</span>
                 </button>
             </div>

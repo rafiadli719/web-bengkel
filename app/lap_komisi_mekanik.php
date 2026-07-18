@@ -8,10 +8,12 @@ include_once "../lib/rbac.php";
 rbac_require_any(['laporan_menu_read', 'lap_servis_read']);
 include "helper-functions.php";
 
-$tgl_dari   = $_POST['tgl_dari']   ?? date('Y-m-01');
-$tgl_sampai = $_POST['tgl_sampai'] ?? date('Y-m-d');
+include_once "includes/report-default-range.php";
+$_default_range = app_report_default_range($koneksi, 'tblservice', 'tanggal', "status_servis='bayar'");
+$tgl_dari   = $_POST['tgl_dari']   ?? $_default_range['from_ymd'];
+$tgl_sampai = $_POST['tgl_sampai'] ?? $_default_range['to_ymd'];
 $filter_mk  = $_POST['filter_mk']  ?? '';
-$show       = isset($_POST['btnCari']);
+$show       = true;
 
 $tgl_dari_esc   = mysqli_real_escape_string($koneksi, $tgl_dari);
 $tgl_sampai_esc = mysqli_real_escape_string($koneksi, $tgl_sampai);

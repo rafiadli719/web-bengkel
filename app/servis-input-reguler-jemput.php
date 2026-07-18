@@ -766,10 +766,10 @@
             if (!empty($pc_nama)) {
                 mysqli_query($koneksi, "INSERT INTO tblservis_barang
                     (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
-                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
+                     diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan, asal_barang)
                     VALUES
                     ('$no_service_pc', 0, 'PART-CUST', $pc_qty, 0, $pc_harga, 0, $pc_total,
-                     'none', 0, 0, 0, '$pc_ket')");
+                     'none', 0, 0, 0, '$pc_ket', 'PART-CUST')");
             }
         }
         echo "<script>history.back();</script>";
@@ -2063,6 +2063,23 @@
         $bayar = $net;
         $kembalian = $bayar - $net;
 
+        // F2-A: Penanda servis mesin besar / part inden + DP pending (Q9)
+        $boleh_dp = 0;
+        $dp_pending_list = [];
+        $dp_pending_total = 0;
+        if (!empty($no_service)) {
+            $ns_dp = mysqli_real_escape_string($koneksi, $no_service);
+            $r_bdp = mysqli_query($koneksi, "SELECT boleh_dp FROM tblservice WHERE no_service='$ns_dp'");
+            if ($r_bdp && ($row_bdp = mysqli_fetch_assoc($r_bdp))) { $boleh_dp = (int)$row_bdp['boleh_dp']; }
+            $r_dp = mysqli_query($koneksi, "SELECT no_dp, jumlah_dp FROM tb_dp_servis WHERE no_service='$ns_dp' AND status='pending' ORDER BY id DESC");
+            if ($r_dp) {
+                while ($row_dp = mysqli_fetch_assoc($r_dp)) {
+                    $dp_pending_list[] = $row_dp;
+                    $dp_pending_total += (float)$row_dp['jumlah_dp'];
+                }
+            }
+        }
+
         // Initialize mechanic variables
         $kepala_mekanik1 = "";
         $persen_kepala1 = 0;
@@ -2463,13 +2480,23 @@
         // Exclusive discount: use member discount if available, else manual invoice discount
         $diskon_plus_nominal = $tot_pay * ($total_diskon_persen / 100);
 
+        // F2-C: diskon manual level-invoice butuh approval Supervisor/Manager
+        if (function_exists('checkDiskonApproval') && !checkDiskonApproval($koneksi, $no_service, $txtpotfaktur_persen, $txtpotfaktur_nom, $id_user, $kd_cabang)) {
+            echo "<script>window.alert('Diskon manual di luar SOP butuh approval Supervisor/Manager sebelum pembayaran bisa diproses. Request approval sudah dikirim.'); window.location='servis-input-reguler-jemput.php?snoserv=" . urlencode($no_service) . "&tab=actions';</script>";
+            exit;
+        }
+
         $ppn=($tot_pay - $diskon_plus_nominal)*($txtpajak_persen/100);
         $net_pay=$tot_pay-$diskon_plus_nominal+$ppn;
-        $kembalian_pay=$txtbayar-$net_pay;
+
+        // F2-A: DP pending mengurangi sisa yang wajib dibayar sekarang (Q9)
+        $dp_pending_total_pay = function_exists('getDpPendingTotal') ? getDpPendingTotal($koneksi, $no_service) : 0;
+        $net_pay_required = max(0, $net_pay - $dp_pending_total_pay);
+        $kembalian_pay=$txtbayar-$net_pay_required;
 
         // Validate payment amount
-        if($txtbayar < $net_pay) {
-            echo"<script>window.alert('Jumlah pembayaran tidak mencukupi! Total: Rp " . number_format($net_pay, 0, ',', '.') . ", Bayar: Rp " . number_format($txtbayar, 0, ',', '.') . "');
+        if($txtbayar < $net_pay_required) {
+            echo"<script>window.alert('Jumlah pembayaran tidak mencukupi! Total: Rp " . number_format($net_pay_required, 0, ',', '.') . ", Bayar: Rp " . number_format($txtbayar, 0, ',', '.') . "');
             window.history.back();</script>";
             exit;
         }
@@ -2535,6 +2562,11 @@
             die("Error Update Service: " . mysqli_error($koneksi));
         }
 
+        // F2-A: tandai DP pending sebagai offset setelah pelunasan (Q9)
+        if (function_exists('offsetDpPending')) {
+            offsetDpPending($koneksi, $no_service);
+        }
+
         // Update antrian to selesai
         mysqli_query($koneksi, "UPDATE tb_antrian_servis 
                                 SET status_antrian='selesai', 
@@ -2565,7 +2597,8 @@
         $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
         $r_chk = mysqli_fetch_assoc($chk_stok);
         if ((int)$r_chk['cnt'] === 0) {
-            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
+            // Barang bukan asal stok bengkel (PART-CUST milik customer, atau dari nota Penjualan yg sudah kepotong stok) — exclude dari kartu stok
+            $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service' AND asal_barang='SERVIS'");
             while ($tampil = mysqli_fetch_array($sql)) {
                 $no_item = $tampil['no_item'];
                 $qty     = (int)$tampil['quantity'];

@@ -38,11 +38,14 @@
                     return $satukan;
                 }
                 
-        $tgl_pilih_dari_eng=date('Y/m/d');
-        $tgl_pilih_sampai_eng=date('Y/m/d');
+        include_once "includes/report-default-range.php";
+        $_default_range = app_report_default_range($koneksi, 'tblkas_keluar_masuk', 'tanggal', "jenis='Keluar'");
 
-        $tgl_pilih_dari=date('d/m/Y');
-        $tgl_pilih_sampai=date('d/m/Y');
+        $tgl_pilih_dari_eng=$_default_range['from_ymd'];
+        $tgl_pilih_sampai_eng=$_default_range['to_ymd'];
+
+        $tgl_pilih_dari=$_default_range['from_dmy'];
+        $tgl_pilih_sampai=$_default_range['to_dmy'];
 
     // ---- SQL Detail -----
         $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 

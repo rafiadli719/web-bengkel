@@ -288,6 +288,9 @@
                                     Approval PO
                                 </div>
                                 <div class="well" style="padding:10px;">
+                                    <?php if(!empty($_GET['err'])){ ?>
+                                        <div class="alert alert-danger"><?php echo htmlspecialchars($_GET['err']); ?></div>
+                                    <?php } ?>
                                     <p>Status Approval: <strong><?php echo htmlspecialchars($status_approval); ?></strong></p>
                                     <?php if($status_approval == 'approved'){ ?>
                                         <p>Disetujui oleh: <?php echo htmlspecialchars($approved_by); ?> pada <?php echo htmlspecialchars($approved_date); ?></p>

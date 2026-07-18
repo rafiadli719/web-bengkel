@@ -145,8 +145,17 @@ class WhatsAppAutomation {
         $message .= "• Tanggal: {$tanggal}\n";
         $message .= "• Total: Rp {$total}\n";
         $message .= "• Status Member: *{$member}*\n\n";
+        // F1-A: masa garansi dinamis per tier member (jawaban A3, 2026-07-04),
+        // bukan flat 30 hari — sebelumnya menyesatkan customer.
+        $masa_garansi = 7;
+        $member_esc = mysqli_real_escape_string($this->koneksi, $member);
+        $q_mg = mysqli_query($this->koneksi, "SELECT masa_garansi_hari FROM tbmaster_kategori_member WHERE status_member='$member_esc' LIMIT 1");
+        if ($q_mg && ($row_mg = mysqli_fetch_assoc($q_mg)) && isset($row_mg['masa_garansi_hari'])) {
+            $masa_garansi = (int)$row_mg['masa_garansi_hari'];
+        }
+
         $message .= "✅ *Garansi Service:*\n";
-        $message .= "Service Anda bergaransi 30 hari atau 1000 KM (mana yang tercapai lebih dulu)\n\n";
+        $message .= "Service Anda bergaransi {$masa_garansi} hari untuk tier member {$member}\n\n";
         $message .= "📅 *Reminder Service Berikutnya:*\n";
         $message .= "Estimasi: {$estimasi}\n";
         $message .= "Kami akan mengingatkan Anda saat waktunya service!\n\n";

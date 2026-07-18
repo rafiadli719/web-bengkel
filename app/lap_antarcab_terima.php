@@ -33,8 +33,10 @@ if(empty($_SESSION['_iduser'])){
 
     // Filter
     $filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : '';
-    $filter_tgl_dari = isset($_GET['tgl_dari']) ? $_GET['tgl_dari'] : date('Y-m-01');
-    $filter_tgl_sampai = isset($_GET['tgl_sampai']) ? $_GET['tgl_sampai'] : date('Y-m-d');
+    include_once "includes/report-default-range.php";
+    $_default_range = app_report_default_range($koneksi, 'tblorder_antarcab_header', 'tanggal', "status IN ('draft','dikirim','diterima','selesai')");
+    $filter_tgl_dari = isset($_GET['tgl_dari']) ? $_GET['tgl_dari'] : $_default_range['from_ymd'];
+    $filter_tgl_sampai = isset($_GET['tgl_sampai']) ? $_GET['tgl_sampai'] : $_default_range['to_ymd'];
 ?>
 
 <!DOCTYPE html>

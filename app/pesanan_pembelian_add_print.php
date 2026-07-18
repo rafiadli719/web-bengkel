@@ -33,32 +33,44 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nopesanan=$_GET['nopesanan'];        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        tanggal, no_supplier, user 
-                                        FROM tblorder_header 
-                                        WHERE no_order='$nopesanan'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
+		$nopesanan=$_GET['nopesanan'];
+		$stmt=mysqli_prepare($koneksi,"SELECT
+                                        tanggal, no_supplier, user
+                                        FROM tblorder_header
+                                        WHERE no_order=?");
+		mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+		mysqli_stmt_execute($stmt);
+		$cari_kd=mysqli_stmt_get_result($stmt);
+		$tm_cari=mysqli_fetch_array($cari_kd);
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_supplier'];
 		$user_order=$tm_cari['user'];
+		mysqli_stmt_close($stmt);
 
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        namasupplier, alamat 
-                                        FROM tblsupplier 
-                                        WHERE nosupplier='$no_supplier'");			
+		$stmt=mysqli_prepare($koneksi,"SELECT
+                                        namasupplier, alamat
+                                        FROM tblsupplier
+                                        WHERE nosupplier=?");
+		mysqli_stmt_bind_param($stmt,"s",$no_supplier);
+		mysqli_stmt_execute($stmt);
+		$cari_kd=mysqli_stmt_get_result($stmt);
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$namasupplier=$tm_cari['namasupplier'];				        
+		$namasupplier=$tm_cari['namasupplier'];
         $alamat=$tm_cari['alamat'];
-        
-        $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot, 
+        mysqli_stmt_close($stmt);
+
+        $stmt=mysqli_prepare($koneksi,"SELECT sum(total) as tot,
                                         sum(quantity) as tot_order
-                                        FROM tblorder_detail 
-                                        WHERE 
-                                        no_order='$nopesanan'");			
+                                        FROM tblorder_detail
+                                        WHERE
+                                        no_order=?");
+        mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+        mysqli_stmt_execute($stmt);
+        $cari_kd=mysqli_stmt_get_result($stmt);
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];
         $tot_order=$tm_cari['tot_order'];
+        mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -280,18 +292,25 @@
                                     <tbody>
                                         <?php 
                                             $no = 0 ;
-                                            $sql = mysqli_query($koneksi,"SELECT 
-                                                                        id, no_item, quantity, harga_pokok, total 
-                                                                        FROM tblorder_detail 
-                                                                        WHERE no_order='$nopesanan' and user='$user_order'");
+                                            $stmt = mysqli_prepare($koneksi,"SELECT
+                                                                        id, no_item, quantity, harga_pokok, total
+                                                                        FROM tblorder_detail
+                                                                        WHERE no_order=? and user=?");
+                                            mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$user_order);
+                                            mysqli_stmt_execute($stmt);
+                                            $sql = mysqli_stmt_get_result($stmt);
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];
-                                                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                                                FROM tblitem 
-                                                                                WHERE noitem='$no_item'");			
+                                                $stmt2=mysqli_prepare($koneksi,"SELECT namaitem
+                                                                                FROM tblitem
+                                                                                WHERE noitem=?");
+                                                mysqli_stmt_bind_param($stmt2,"s",$no_item);
+                                                mysqli_stmt_execute($stmt2);
+                                                $cari_kd=mysqli_stmt_get_result($stmt2);
                                                 $tm_cari=mysqli_fetch_array($cari_kd);
-                                                $namaitem_tbl=$tm_cari['namaitem'];				 
+                                                $namaitem_tbl=$tm_cari['namaitem'];
+                                                mysqli_stmt_close($stmt2);
                                         ?>
                                         <tr>
                                             <td class="center"><?php echo $no ?></td>
@@ -303,6 +322,7 @@
                                         </tr>
                                     <?php
                                         }
+                                        mysqli_stmt_close($stmt);
                                     ?>
                                         <tr>
                                             <td colspan="3" bgcolor="gainsboro" align="right">Jml. Pesanan:</td>

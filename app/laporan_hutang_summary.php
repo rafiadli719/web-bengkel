@@ -30,8 +30,10 @@
     // --------------------
 
         // Date filter
-        $tgl_dari = isset($_POST['tgl_dari']) ? $_POST['tgl_dari'] : date('01/m/Y');
-        $tgl_sampai = isset($_POST['tgl_sampai']) ? $_POST['tgl_sampai'] : date('d/m/Y');
+        include_once "includes/report-default-range.php";
+        $_default_range = app_report_default_range($koneksi, 'tblpembelian_header', 'tanggal', "carabayar='Kredit'");
+        $tgl_dari = isset($_POST['tgl_dari']) ? $_POST['tgl_dari'] : $_default_range['from_dmy'];
+        $tgl_sampai = isset($_POST['tgl_sampai']) ? $_POST['tgl_sampai'] : $_default_range['to_dmy'];
         
         function ubahformatTgl($tanggal) {
             $pisah = explode('/',$tanggal);

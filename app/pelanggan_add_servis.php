@@ -201,6 +201,7 @@ $tgl_pilih = date('d/m/Y');
                         <div class="alert alert-danger"><?php echo htmlspecialchars(urldecode($_GET['error'])); ?></div>
                     <?php endif; ?>
                     <form class="form-horizontal" action="save_pelanggan_servis.php" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="notransaksi" value="<?php echo htmlspecialchars($_GET['notransaksi'] ?? ''); ?>" />
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="widget-box">

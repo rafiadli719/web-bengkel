@@ -463,7 +463,7 @@ if (isset($_POST['btnjadwalkan'])) {
                                                     <div class="input-group">
                                                         <input type="text" class="form-control" id="txtnopol" name="txtnopol" value="<?php echo htmlspecialchars($no_polisi); ?>" placeholder="Nomor polisi kendaraan..." required readonly>
                                                         <span class="input-group-btn">
-                                                            <button type="button" class="btn btn-info" onclick="window.open('popup-cari-kendaraan.php','popup','width=800,height=600')">
+                                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalCariKendaraan">
                                                                 <i class="ace-icon fa fa-search"></i> Cari
                                                             </button>
                                                         </span>
@@ -706,6 +706,37 @@ if (isset($_POST['btnjadwalkan'])) {
         </div>
     </div>
 
+    <!-- Modal Cari Kendaraan (inline, replaces old popup window) -->
+    <div class="modal fade" id="modalCariKendaraan" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="ace-icon fa fa-search"></i> Cari Kendaraan</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="txtCariKendaraanModal"
+                               placeholder="No. Polisi, Nama Pemilik, atau No. Telepon..." autocomplete="off">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="btnCariKendaraanModal">
+                                <i class="ace-icon fa fa-search"></i> Cari
+                            </button>
+                        </span>
+                    </div>
+                    <div id="hasilCariKendaraanModal" style="margin-top:15px;max-height:350px;overflow-y:auto;">
+                        <p class="text-muted text-center">Masukkan kata kunci pencarian.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="ace-icon fa fa-times"></i> Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="assets/js/jquery-2.1.4.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
@@ -713,6 +744,57 @@ if (isset($_POST['btnjadwalkan'])) {
     <script src="assets/js/ace.min.js"></script>
 
     <script>
+        // Cari Kendaraan modal (replaces old window.open popup — was blocked silently by browsers,
+        // leaving No. Polisi empty and the service scheduled with no customer selected)
+        jQuery(function($) {
+            function jalankanPencarianKendaraan() {
+                var q = $('#txtCariKendaraanModal').val().trim();
+                if (!q) {
+                    $('#hasilCariKendaraanModal').html('<p class="text-muted text-center">Masukkan kata kunci pencarian.</p>');
+                    return;
+                }
+                $('#hasilCariKendaraanModal').html('<p class="text-center"><i class="ace-icon fa fa-spinner fa-spin"></i> Mencari...</p>');
+                $.ajax({
+                    url: '_ajax/ajax-cari-kendaraan-list.php',
+                    type: 'POST',
+                    data: { txtsearch: q },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (!response.success || !response.data.length) {
+                            $('#hasilCariKendaraanModal').html('<p class="text-muted text-center">Tidak ada kendaraan ditemukan.</p>');
+                            return;
+                        }
+                        var html = '';
+                        response.data.forEach(function(d) {
+                            html += '<div class="vehicle-row" style="padding:8px 10px;border-bottom:1px solid #eee;cursor:pointer;" ' +
+                                    'onclick="pilihKendaraanModal(\'' + d.nopolisi.replace(/'/g, "\\'") + '\')">' +
+                                    '<strong>' + $('<div>').text(d.nopolisi).html() + '</strong> — ' + $('<div>').text(d.pemilik || '-').html() +
+                                    '<div class="text-muted"><small>' + $('<div>').text((d.merek || '') + ' ' + (d.tipe || '')).html() + '</small></div>' +
+                                    '</div>';
+                        });
+                        $('#hasilCariKendaraanModal').html(html);
+                    },
+                    error: function() {
+                        $('#hasilCariKendaraanModal').html('<p class="text-danger text-center">Gagal memuat data, coba lagi.</p>');
+                    }
+                });
+            }
+
+            $('#btnCariKendaraanModal').on('click', jalankanPencarianKendaraan);
+            $('#txtCariKendaraanModal').on('keypress', function(e) {
+                if (e.which === 13) { jalankanPencarianKendaraan(); }
+            });
+            $('#modalCariKendaraan').on('shown.bs.modal', function() {
+                $('#txtCariKendaraanModal').val('').focus();
+                $('#hasilCariKendaraanModal').html('<p class="text-muted text-center">Masukkan kata kunci pencarian.</p>');
+            });
+        });
+
+        function pilihKendaraanModal(nopol) {
+            setKendaraan(nopol);
+            $('#modalCariKendaraan').modal('hide');
+        }
+
         // Image preview
         document.getElementById('foto_patokan').addEventListener('change', function(e) {
             const file = e.target.files[0];

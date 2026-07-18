@@ -452,7 +452,7 @@ function escapeHtml(text) {
 // Open search jasa popup (full page servis-add-jasa-cari.php)
 function openSearchJasaPopup() {
     var keyword = $('#search_jasa_v2').val().trim();
-    var url = 'servis-add-jasa-cari.php?snoserv=<?= $no_service ?>&_key=' + encodeURIComponent(keyword) + '&_cari=&_urut=kode_wo&_flt=asc&_tab=jasa&_from=reguler';
+    var url = 'servis-add-jasa-cari.php?snoserv=<?= $no_service ?>&_key=' + encodeURIComponent(keyword) + '&_cari=&_urut=51&_flt=asc&_tab=jasa&_from=reguler';
     window.location.href = url;
 }
 </script>

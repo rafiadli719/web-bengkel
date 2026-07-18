@@ -39,14 +39,17 @@
                     return $satukan;
                 }
                 
-        $tgl_pilih_dari_eng=date('Y/m/d');
-        $tgl_pilih_sampai_eng=date('Y/m/d');
+        include_once "includes/report-default-range.php";
+        $_default_range = app_report_default_range($koneksi, 'view_service', 'tanggal', "status_servis IN ('bayar','selesai')");
 
-        $tgl_pilih_dari=date('d/m/Y');
-        $tgl_pilih_sampai=date('d/m/Y');
+        $tgl_pilih_dari_eng=$_default_range['from_ymd'];
+        $tgl_pilih_sampai_eng=$_default_range['to_ymd'];
+
+        $tgl_pilih_dari=$_default_range['from_dmy'];
+        $tgl_pilih_sampai=$_default_range['to_dmy'];
         $nopelanggan="";
-        $tglmulai = date('Y-m-d');
-        $tglselesai = date('Y-m-d');
+        $tglmulai = $_default_range['from_ymd'];
+        $tglselesai = $_default_range['to_ymd'];
 
     // ---- SQL Detail -----
         $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
@@ -55,15 +58,17 @@
                             WHERE
                             (vs.tanggal>='$tgl_pilih_dari_eng' AND
                             vs.tanggal<='$tgl_pilih_sampai_eng')
+                            AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
 
-    // ---- SQL Total Data -----                            
-        $cari_kd=mysqli_query($koneksi,"SELECT 
-                                        count(*) as tot 
-                                        FROM view_service 
-                                        WHERE 
-                                        (tanggal>='$tgl_pilih_dari_eng' AND 
-                                        tanggal<='$tgl_pilih_sampai_eng')");			
+    // ---- SQL Total Data -----
+        $cari_kd=mysqli_query($koneksi,"SELECT
+                                        count(*) as tot
+                                        FROM view_service
+                                        WHERE
+                                        (tanggal>='$tgl_pilih_dari_eng' AND
+                                        tanggal<='$tgl_pilih_sampai_eng')
+                                        AND status_servis IN ('bayar','selesai')");
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];  
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";             
@@ -84,6 +89,7 @@
                             WHERE
                             (vs.tanggal>='$tglmulai' AND
                             vs.tanggal<='$tglselesai')
+                            AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
 
             // ---- SQL Total Data -----
@@ -92,7 +98,8 @@
                                                 FROM view_service
                                                 WHERE
                                                 (tanggal>='$tglmulai' AND
-                                                tanggal<='$tglselesai')");
+                                                tanggal<='$tglselesai')
+                                                AND status_servis IN ('bayar','selesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];
                 $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
@@ -106,6 +113,7 @@
                             WHERE
                             (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
                             (vs.no_pelanggan LIKE '%$nopelanggan_esc%' OR vs.namapelanggan LIKE '%$nopelanggan_esc%')
+                            AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
 
             // ---- SQL Total Data -----
@@ -113,7 +121,8 @@
                                                 FROM view_service
                                                 WHERE
                                                 (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
-                                                (no_pelanggan LIKE '%$nopelanggan_esc%' OR namapelanggan LIKE '%$nopelanggan_esc%')");
+                                                (no_pelanggan LIKE '%$nopelanggan_esc%' OR namapelanggan LIKE '%$nopelanggan_esc%')
+                                                AND status_servis IN ('bayar','selesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];
                 $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
@@ -335,9 +344,11 @@
                                             <td bgcolor="gainsboro" width="8%"><b>No. Polisi</b></td>
                                             <td bgcolor="gainsboro" width="17%"><b>Nama Pelanggan</b></td>
                                             <td bgcolor="gainsboro" width="16%"><b>Mekanik</b></td>
-                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Barang</b></td>
-                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Jasa Service</b></td>
-                                            <td bgcolor="gainsboro" width="14%" align="right"><b>Total</b></td>
+                                            <td bgcolor="gainsboro" width="10%" align="right"><b>Barang</b></td>
+                                            <td bgcolor="gainsboro" width="10%" align="right"><b>Jasa Service</b></td>
+                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Total</b></td>
+                                            <td bgcolor="gainsboro" width="8%" align="right"><b>Retur</b></td>
+                                            <td bgcolor="gainsboro" width="12%" align="right"><b>Total Akhir (Net)</b></td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -355,6 +366,8 @@
                                         $tot_brg=0;
                                         $tot_jasa=0;
                                         $tot_jual=0;
+                                        $tot_retur=0;
+                                        $tot_net=0;
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             $no++;
@@ -368,6 +381,11 @@
 
                                             $harga_servis=$harga_brg+$harga_jasa;
                                             $tot_jual=$tot_jual+$harga_servis;
+
+                                            $retur_row = (float)($tampil['total_retur'] ?? 0);
+                                            $net_row = (float)($tampil['total_akhir'] ?? 0) - $retur_row;
+                                            $tot_retur = $tot_retur + $retur_row;
+                                            $tot_net = $tot_net + $net_row;
                                     ?>
                                         <tr>
                                             <td class="center"><?php echo $no; ?></td>
@@ -378,7 +396,9 @@
                                             <td><?php echo htmlspecialchars(getMekanikNamaGabung($koneksi, $tampil['mekanik1'], $tampil['mekanik2'], $tampil['mekanik3'], $tampil['mekanik4'])); ?></td>
                                             <td align="right"><?php echo number_format($harga_brg,0)?></td>
                                             <td align="right"><?php echo number_format($harga_jasa,0)?></td>
-                                            <td align="right"><?php echo number_format($harga_servis,0)?></td>															                                                                                                                
+                                            <td align="right"><?php echo number_format($harga_servis,0)?></td>
+                                            <td align="right"><?php echo number_format($retur_row,0)?></td>
+                                            <td align="right"><?php echo number_format($net_row,0)?></td>
                                         </tr>
 
                                     <?php
@@ -386,12 +406,14 @@
                                     ?>
 
                                         <tr>
-                                            <td colspan="6" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>														
+                                            <td colspan="6" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>
                                             <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_brg,0)?></b></td>
-                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jasa,0)?></b></td>                                            
-                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jual,0)?></b></td>                                                                                        
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jasa,0)?></b></td>
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jual,0)?></b></td>
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_retur,0)?></b></td>
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_net,0)?></b></td>
                                         </tr>
-                                    </tbody>                                    
+                                    </tbody>
                                 </table>
                             </div>
                         </div> 

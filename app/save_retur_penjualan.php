@@ -13,9 +13,14 @@ include "function_retur.php";
 $id_user    = $_SESSION['_iduser'];
 $kd_cabang  = $_SESSION['_cabang'];
 
-$nopenjualan = isset($_POST['nopenjualan']) ? mysqli_real_escape_string($koneksi, $_POST['nopenjualan']) : '';
-$note        = isset($_POST['note'])        ? mysqli_real_escape_string($koneksi, $_POST['note'])        : '';
-$user_input  = isset($_POST['user_input'])  ? mysqli_real_escape_string($koneksi, $_POST['user_input'])  : '';
+$nopenjualan       = isset($_POST['nopenjualan'])       ? mysqli_real_escape_string($koneksi, $_POST['nopenjualan'])       : '';
+$note              = isset($_POST['note'])              ? mysqli_real_escape_string($koneksi, $_POST['note'])              : '';
+$user_input        = isset($_POST['user_input'])        ? mysqli_real_escape_string($koneksi, $_POST['user_input'])        : '';
+$cara_bayar_refund = isset($_POST['cara_bayar_refund']) ? mysqli_real_escape_string($koneksi, $_POST['cara_bayar_refund']) : '';
+
+if($cara_bayar_refund == '') {
+    header("location:retur_penjualan_add.php?nopenjualan=".urlencode($nopenjualan)."&err=".urlencode("Cara Bayar Refund harus dipilih")); exit;
+}
 
 $item_kode   = isset($_POST['item_kode'])   ? $_POST['item_kode']   : [];
 $item_qty    = isset($_POST['item_qty'])    ? $_POST['item_qty']    : [];
@@ -49,11 +54,11 @@ for($i = 0; $i < $item_count; $i++) {
 mysqli_begin_transaction($koneksi);
 try {
     $sql_h = "INSERT INTO tblretur_penjualan_header
-              (noretur, nopembelian, tanggal, note, total_qty_retur, total_retur, diskon, total_diskon, pajak, total_pajak, total_akhir, user, kd_cabang, status_retur)
+              (noretur, nopembelian, tanggal, note, cara_bayar_refund, total_qty_retur, total_retur, diskon, total_diskon, pajak, total_pajak, total_akhir, user, kd_cabang, status_retur, status_refund)
               VALUES
-              ('$no_retur','$nopenjualan','$tanggal','$note',
+              ('$no_retur','$nopenjualan','$tanggal','$note','$cara_bayar_refund',
                $total_qty, $total_nilai, 0, 0, 0, 0, $total_nilai,
-               '$user_input','$kd_cabang','0')";
+               '$user_input','$kd_cabang','0','0')";
     if(!mysqli_query($koneksi, $sql_h)) throw new Exception("Gagal simpan header: ".mysqli_error($koneksi));
 
     for($i = 0; $i < $item_count; $i++) {

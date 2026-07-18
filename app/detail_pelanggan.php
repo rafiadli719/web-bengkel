@@ -75,39 +75,85 @@ if(empty($_SESSION['_iduser'])){
     }
     
     $pelanggan = mysqli_fetch_array($result_pelanggan);
+
+    // Cek apakah modul kepemilikan kendaraan baru sudah aktif
+    $has_kepemilikan_kendaraan = false;
+    $q_table_check = mysqli_query($koneksi, "SHOW TABLES LIKE 'kepemilikan_kendaraan'");
+    if($q_table_check && mysqli_num_rows($q_table_check) > 0) {
+        $has_kepemilikan_kendaraan = true;
+    }
     
-    // Get riwayat kendaraan berdasarkan mapping service terbaru atau legacy exact match
-    $query_kendaraan = "SELECT DISTINCT
-                            k.*
-                        FROM tblkendaraan k
-                        LEFT JOIN (
-                            SELECT
-                                ts.no_polisi,
-                                SUBSTRING_INDEX(GROUP_CONCAT(ts.no_pelanggan ORDER BY ts.tanggal DESC, ts.jam DESC, ts.no_service DESC SEPARATOR '||'), '||', 1) AS no_pelanggan_map
-                            FROM tblservice ts
-                            WHERE ts.no_pelanggan IS NOT NULL
-                              AND ts.no_pelanggan <> ''
-                            GROUP BY ts.no_polisi
-                        ) map ON map.no_polisi = k.nopolisi
-                        WHERE map.no_pelanggan_map = '$nopelanggan'
-                           OR k.nopolisi = '$nopelanggan'
-                           OR UPPER(TRIM(k.pemilik)) = UPPER(TRIM('{$nopelanggan}'))
-                        ORDER BY k.nopolisi";
+    // Get kendaraan customer-facing
+    // Jika tabel kepemilikan_kendaraan sudah ada, pakai sumber kebenaran baru.
+    // Ini penting agar customer baru TIDAK otomatis melihat kendaraan/riwayat milik owner lama di luar periode kepemilikannya.
+    if($has_kepemilikan_kendaraan) {
+        $query_kendaraan = "SELECT DISTINCT
+                                k.*,
+                                kk.tanggal_mulai AS tanggal_mulai_kepemilikan,
+                                kk.tanggal_akhir AS tanggal_akhir_kepemilikan,
+                                kk.is_current,
+                                kk.sumber AS sumber_kepemilikan
+                            FROM tblkendaraan k
+                            JOIN kepemilikan_kendaraan kk ON kk.id_kendaraan = k.id_kendaraan
+                            WHERE kk.nopelanggan = '$nopelanggan'
+                            ORDER BY COALESCE(kk.tanggal_akhir, '9999-12-31') DESC, kk.tanggal_mulai DESC, k.nopolisi";
+    } else {
+        // Fallback legacy lama
+        $query_kendaraan = "SELECT DISTINCT
+                                k.*
+                            FROM tblkendaraan k
+                            LEFT JOIN (
+                                SELECT
+                                    ts.no_polisi,
+                                    SUBSTRING_INDEX(GROUP_CONCAT(ts.no_pelanggan ORDER BY ts.tanggal DESC, ts.jam DESC, ts.no_service DESC SEPARATOR '||'), '||', 1) AS no_pelanggan_map
+                                FROM tblservice ts
+                                WHERE ts.no_pelanggan IS NOT NULL
+                                  AND ts.no_pelanggan <> ''
+                                GROUP BY ts.no_polisi
+                            ) map ON map.no_polisi = k.nopolisi
+                            WHERE map.no_pelanggan_map = '$nopelanggan'
+                               OR k.nopolisi = '$nopelanggan'
+                               OR UPPER(TRIM(k.pemilik)) = UPPER(TRIM('{$nopelanggan}'))
+                            ORDER BY k.nopolisi";
+    }
     $result_kendaraan = mysqli_query($koneksi, $query_kendaraan);
     
-    // Get riwayat service
-    $query_service = "SELECT 
-                        s.*,
-                        DATE_FORMAT(s.tanggal, '%d/%m/%Y') as tanggal_format,
-                        k.jenis,
-                        k.tipe,
-                        pm.merek
-                      FROM tblservice s
-                      LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
-                      LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
-                      WHERE s.no_pelanggan = '$nopelanggan'
-                      ORDER BY s.tanggal DESC
-                      LIMIT 20";
+    // Get riwayat service customer-facing
+    // Rule baru: jika kepemilikan_kendaraan aktif, tampilkan hanya servis pada periode kepemilikan customer tersebut.
+    if($has_kepemilikan_kendaraan) {
+        $query_service = "SELECT 
+                            s.*,
+                            DATE_FORMAT(s.tanggal, '%d/%m/%Y') as tanggal_format,
+                            k.jenis,
+                            k.tipe,
+                            pm.merek,
+                            kk.tanggal_mulai AS ownership_start,
+                            kk.tanggal_akhir AS ownership_end
+                          FROM tblservice s
+                          LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
+                          LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
+                          LEFT JOIN kepemilikan_kendaraan kk 
+                                 ON kk.id_kendaraan = k.id_kendaraan
+                                AND kk.nopelanggan = '$nopelanggan'
+                                AND s.tanggal >= kk.tanggal_mulai
+                                AND (kk.tanggal_akhir IS NULL OR s.tanggal <= kk.tanggal_akhir)
+                          WHERE kk.id IS NOT NULL
+                          ORDER BY s.tanggal DESC, s.jam DESC, s.no_service DESC
+                          LIMIT 20";
+    } else {
+        $query_service = "SELECT 
+                            s.*,
+                            DATE_FORMAT(s.tanggal, '%d/%m/%Y') as tanggal_format,
+                            k.jenis,
+                            k.tipe,
+                            pm.merek
+                          FROM tblservice s
+                          LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
+                          LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
+                          WHERE s.no_pelanggan = '$nopelanggan'
+                          ORDER BY s.tanggal DESC
+                          LIMIT 20";
+    }
     $result_service = mysqli_query($koneksi, $query_service);
     
     // Get riwayat kedatangan

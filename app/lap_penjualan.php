@@ -38,11 +38,15 @@
                     return $satukan;
                 }
                 
-        $tgl_pilih_dari_eng=date('Y/m/d');
-        $tgl_pilih_sampai_eng=date('Y/m/d');
+        include_once "includes/report-default-range.php";
 
-        $tgl_pilih_dari=date('d/m/Y');
-        $tgl_pilih_sampai=date('d/m/Y');
+        $_default_range = app_report_default_range($koneksi, 'view_penjualan_header', 'tanggal');
+
+        $tgl_pilih_dari_eng=$_default_range['from_ymd'];
+        $tgl_pilih_sampai_eng=$_default_range['to_ymd'];
+
+        $tgl_pilih_dari=$_default_range['from_dmy'];
+        $tgl_pilih_sampai=$_default_range['to_dmy'];
         $nopelanggan="";
 
     // ---- SQL Detail -----
@@ -50,7 +54,7 @@
                             FROM view_penjualan_header 
                             WHERE 
                             (tanggal>='$tgl_pilih_dari_eng' AND 
-                            tanggal<='$tgl_pilih_sampai_eng') 
+                            tanggal<='$tgl_pilih_sampai_eng')
                             ORDER BY tanggal, notransaksi";    
 
     // ---- SQL Total Data -----                            
@@ -78,7 +82,7 @@
                             FROM view_penjualan_header 
                                     WHERE 
                                     (tanggal>='$tglmulai' AND 
-                                    tanggal<='$tglselesai') 
+                                    tanggal<='$tglselesai')
                                     ORDER BY tanggal, notransaksi";      
 
             // ---- SQL Total Data -----                            
@@ -98,8 +102,8 @@
                                     WHERE 
                                     (tanggal>='$tglmulai' AND 
                                     tanggal<='$tglselesai') AND 
-                                    (no_pelanggan like '%".$nopelanggan."%') OR 
-                                    (namapelanggan like '%".$nopelanggan."%')  
+                                    ((no_pelanggan like '%".$nopelanggan."%') OR 
+                                    (namapelanggan like '%".$nopelanggan."%'))  
                                     ORDER BY tanggal, notransaksi";                   
 
             // ---- SQL Total Data -----                            
@@ -109,8 +113,8 @@
                                                 WHERE 
                                                 (tanggal>='$tglmulai' AND 
                                                 tanggal<='$tglselesai') AND 
-                                                (no_pelanggan like '%".$nopelanggan."%') OR 
-                                    (namapelanggan like '%".$nopelanggan."%')");			
+                                                ((no_pelanggan like '%".$nopelanggan."%') OR 
+                                    (namapelanggan like '%".$nopelanggan."%'))");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];  
                 $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";                
@@ -340,44 +344,50 @@
                                             <td bgcolor="gainsboro" width="10%" align="right"><b>Total Jual</b></td>
                                             <td bgcolor="gainsboro" width="5%" align="right"><b>Diskon</b></td>
                                             <td bgcolor="gainsboro" width="5%" align="right"><b>Pajak</b></td>
-                                            <td bgcolor="gainsboro" width="10%" align="right"><b>Total Akhir</b></td>
+                                            <td bgcolor="gainsboro" width="8%" align="right"><b>Retur</b></td>
+                                            <td bgcolor="gainsboro" width="10%" align="right"><b>Total Akhir (Net)</b></td>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php 
+                                    <?php
                                         $no = 0 ;
                                         $tot_qty_order=0;
                                         $tot_qty=0;
                                         $tot_jual=0;
+                                        $tot_retur=0;
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             $no++;
                                             $no_sales=$tampil['no_sales'];
-                                            
-		$cari_kd=mysqli_query($koneksi,"SELECT namasales FROM tblsales WHERE nosales='$no_sales'");			
+
+		$cari_kd=mysqli_query($koneksi,"SELECT namasales FROM tblsales WHERE nosales='$no_sales'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$namasales=$tm_cari['namasales'];				        
-                                            
+		$namasales=$tm_cari['namasales'];
+
+                                            $retur_row = (float)($tampil['total_retur'] ?? 0);
+                                            $net_row = (float)$tampil['total_akhir'] - $retur_row;
                                             $tot_qty_order=$tot_qty_order+$tampil['total_qty_order'];
                                             $tot_qty=$tot_qty+$tampil['total_qty'];
-                                            $tot_jual=$tot_jual+$tampil['total_akhir'];
+                                            $tot_retur=$tot_retur+$retur_row;
+                                            $tot_jual=$tot_jual+$net_row;
                                     ?>
                                         <tr>
-                                            <td class="center"><?php echo $no; ?></td>														
-                                            <td class="center"><?php echo $tampil['notransaksi']?></td>														
-                                            <td class="center"><?php echo $tampil['tanggal_trx']?></td>				
-                                            <td class="center"><?php echo $tampil['carabayar']?></td>				   
-                                            <td class="center"><?php echo $tampil['no_order']?></td>														                                                                                                                
-                                            <td class="center"><?php echo $tampil['tanggal_order']?></td>														                                                                                                                                                                                                                 
-                                            <td><?php echo $tampil['no_pelanggan']?></td>														
-                                            <td><?php echo $tampil['namapelanggan']?></td>														                                                        
-                                            <td><?php echo $namasales; ?></td>														                                                        										                                                        
+                                            <td class="center"><?php echo $no; ?></td>
+                                            <td class="center"><?php echo $tampil['notransaksi']?></td>
+                                            <td class="center"><?php echo $tampil['tanggal_trx']?></td>
+                                            <td class="center"><?php echo $tampil['carabayar']?></td>
+                                            <td class="center"><?php echo $tampil['no_order']?></td>
+                                            <td class="center"><?php echo $tampil['tanggal_order']?></td>
+                                            <td><?php echo $tampil['no_pelanggan']?></td>
+                                            <td><?php echo $tampil['namapelanggan']?></td>
+                                            <td><?php echo $namasales; ?></td>
                                             <td align="right"><?php echo $tampil['total_qty_order']?></td>
-<td align="right"><?php echo $tampil['total_qty']?></td>                                                                                                                                                                            
+<td align="right"><?php echo $tampil['total_qty']?></td>
                                             <td align="right"><?php echo number_format($tampil['total_jual'],0)?></td>
                                             <td align="right"><?php echo number_format($tampil['total_diskon'],0)?></td>
                                             <td align="right"><?php echo number_format($tampil['total_pajak'],0)?></td>
-                                            <td align="right"><?php echo number_format($tampil['total_akhir'],0)?></td>															                                                                                                                
+                                            <td align="right"><?php echo number_format($retur_row,0)?></td>
+                                            <td align="right"><?php echo number_format($net_row,0)?></td>
                                         </tr>
 
                                     <?php
@@ -385,13 +395,14 @@
                                     ?>
 
                                         <tr>
-                                            <td colspan="9" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>														
+                                            <td colspan="9" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>
                                             <td align="right" bgcolor="gainsboro"><b><?php echo $tot_qty_order; ?></b></td>
-                                            <td align="right" bgcolor="gainsboro"><b><?php echo $tot_qty; ?></b></td>                                            
-                                            <td colspan="3" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>														
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo $tot_qty; ?></b></td>
+                                            <td colspan="2" align="right" bgcolor="gainsboro"><b>Total : &nbsp;</b></td>
+                                            <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_retur,0)?></b></td>
                                             <td align="right" bgcolor="gainsboro"><b><?php echo number_format($tot_jual,0)?></b></td>
                                         </tr>
-                                    </tbody>                                    
+                                    </tbody>
                                 </table>
                             </div>
                         </div> 

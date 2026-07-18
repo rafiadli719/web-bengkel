@@ -8,6 +8,7 @@ if(empty($_SESSION['_iduser'])){
     $kd_cabang=$_SESSION['_cabang'];		                	
     include "../config/koneksi.php";
     include_once "../lib/rbac.php";
+    include "_include_kategori_member.php"; // F1-A: masa garansi dinamis per tier member
     rbac_require_any(array('input_servis_garansi_read','servis_garansi_read','servis_menu_read','service_create','service_update'));
     
     // User data
@@ -67,12 +68,16 @@ if(empty($_SESSION['_iduser'])){
     
     // Main query - Only show completed services (status 3 or 4) for warranty
     // Totals di-JOIN sekali, menghindari N+1 queries di loop
+    // F1-A: masa garansi dinamis per tier member pelanggan (jawaban A3, 2026-07-04),
+    // di-JOIN sekali di sini juga supaya tidak N+1 di loop tampilan.
     $sql_query = "SELECT s.*, p.namapelanggan, v.merek, v.tipe, v.warna,
                          DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_trx,
                          DATEDIFF(CURDATE(), s.tanggal) AS hari_berlalu,
                          COALESCE(sb.total_barang, 0) AS harga_brg,
                          COALESCE(sj.total_jasa, 0) AS harga_jasa,
-                         COALESCE(sj.total_waktu, 0) AS totwaktu
+                         COALESCE(sj.total_waktu, 0) AS totwaktu,
+                         COALESCE(mkm.masa_garansi_hari, 7) AS masa_garansi_hari,
+                         COALESCE(mkm.masa_garansi_maks_hari, 14) AS masa_garansi_maks_hari
                   FROM tblservice s
                   LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
                   LEFT JOIN view_cari_kendaraan v ON s.no_polisi = v.nopolisi
@@ -80,6 +85,8 @@ if(empty($_SESSION['_iduser'])){
                              FROM tblservis_barang GROUP BY no_service) sb ON sb.no_service = s.no_service
                   LEFT JOIN (SELECT no_service, SUM(total) AS total_jasa, SUM(waktu) AS total_waktu
                              FROM tblservis_jasa GROUP BY no_service) sj ON sj.no_service = s.no_service
+                  LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = s.no_pelanggan
+                  LEFT JOIN tbmaster_kategori_member mkm ON mkm.status_member = COALESCE(sp.status_member, 'Bronze')
                   $where_clause
                   " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status_servis IN ('bayar', 'selesai')
                   ORDER BY s.tanggal DESC, s.jam DESC
@@ -312,12 +319,14 @@ if(empty($_SESSION['_iduser'])){
                                                 $totwaktu     = $tampil['totwaktu'];
                                                 $harga_servis = $harga_brg + $harga_jasa;
 
-                                                // F1-A: Garansi eligibility check
+                                                // F1-A: Garansi eligibility check — masa garansi dinamis per tier member (A3, 2026-07-04)
                                                 $hari_berlalu = (int)($tampil['hari_berlalu'] ?? 0);
-                                                if ($hari_berlalu <= 7) {
+                                                $masa_garansi_standar = (int)($tampil['masa_garansi_hari'] ?? 7);
+                                                $masa_garansi_maks = (int)($tampil['masa_garansi_maks_hari'] ?? 14);
+                                                if ($hari_berlalu <= $masa_garansi_standar) {
                                                     $garansi_status = 'ok';
                                                     $garansi_badge = '<span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;">'.$hari_berlalu.' hari ✓</span>';
-                                                } elseif ($hari_berlalu <= 14) {
+                                                } elseif ($hari_berlalu <= $masa_garansi_maks) {
                                                     $garansi_status = 'warning';
                                                     $garansi_badge = '<span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;">'.$hari_berlalu.' hari ⚠</span>';
                                                 } else {
@@ -353,12 +362,12 @@ if(empty($_SESSION['_iduser'])){
                                                             </a>
                                                             <?php elseif ($garansi_status === 'warning'): ?>
                                                             <a href="<?= $garansi_url ?>&garansi_override=warning"
-                                                               onclick="return confirm('PERINGATAN: Garansi sudah <?= $hari_berlalu ?> hari (melebihi 7 hari standar). Perlu alasan dan persetujuan Supervisor.\n\nLanjutkan quand même?')">
+                                                               onclick="return confirm('PERINGATAN: Garansi sudah <?= $hari_berlalu ?> hari (melebihi <?= $masa_garansi_standar ?> hari standar untuk tier member ini). Perlu alasan dan persetujuan Supervisor.\n\nLanjutkan?')">
                                                                 <i class="ace-icon fa fa-exclamation-triangle" style="color:#ffc107;"></i> Buat Garansi (⚠ <?= $hari_berlalu ?> hari)
                                                             </a>
                                                             <?php else: ?>
                                                             <a href="<?= $garansi_url ?>&garansi_override=expired"
-                                                               onclick="return confirm('PERINGATAN: Garansi sudah KADALUARSA (<?= $hari_berlalu ?> hari, melebihi 14 hari).\n\nHanya bisa dilanjutkan dengan persetujuan Supervisor.\n\nLanjutkan?')" style="color:#dc3545;">
+                                                               onclick="return confirm('PERINGATAN: Garansi sudah KADALUARSA (<?= $hari_berlalu ?> hari, melebihi <?= $masa_garansi_maks ?> hari maksimal untuk tier member ini).\n\nHanya bisa dilanjutkan dengan persetujuan Supervisor.\n\nLanjutkan?')" style="color:#dc3545;">
                                                                 <i class="ace-icon fa fa-times-circle" style="color:#dc3545;"></i> Garansi Kadaluarsa (<?= $hari_berlalu ?> hari)
                                                             </a>
                                                             <?php endif; ?>

@@ -14,18 +14,27 @@ $response = array();
 
 try {
     $tgl_hari_ini = date('Y-m-d');
+    $id_user = $_SESSION['_iduser'];
+    $kd_cabang = $_SESSION['_cabang'] ?? '';
+    $cari_lvl = mysqli_query($koneksi, "SELECT user_akses FROM tbuser WHERE id='$id_user'");
+    $tm_lvl = mysqli_fetch_array($cari_lvl);
+    $lvl_akses = $tm_lvl ? $tm_lvl['user_akses'] : '';
+    $is_admin_ajax = ($lvl_akses == '1');
+    $exists_cabang_tas = $is_admin_ajax ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = tb_antrian_servis.no_service AND sx.kd_cabang = '$kd_cabang')";
+    $exists_cabang_a = $is_admin_ajax ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = a.no_service AND sx.kd_cabang = '$kd_cabang')";
+    $svc_cabang_cond_ajax = $is_admin_ajax ? '' : " AND s.kd_cabang = '$kd_cabang'";
     
     // Ambil statistik antrian servis hari ini
-    $query_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini'");
+    $query_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini'$exists_cabang_tas");
     $total_antrian = mysqli_fetch_array($query_total)['total'];
     
-    $query_menunggu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'menunggu'");
+    $query_menunggu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'menunggu'$exists_cabang_tas");
     $antrian_menunggu = mysqli_fetch_array($query_menunggu)['total'];
     
-    $query_diproses = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'diproses'");
+    $query_diproses = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'diproses'$exists_cabang_tas");
     $antrian_diproses = mysqli_fetch_array($query_diproses)['total'];
     
-    $query_selesai = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'selesai'");
+    $query_selesai = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tgl_hari_ini' AND status_antrian = 'selesai'$exists_cabang_tas");
     $antrian_selesai = mysqli_fetch_array($query_selesai)['total'];
     
     // Ambil daftar antrian terbaru
@@ -33,9 +42,9 @@ try {
     $query_antrian_terbaru = mysqli_query($koneksi, "
         SELECT a.*, p.namapelanggan, s.no_polisi 
         FROM tb_antrian_servis a 
-        LEFT JOIN tblservice s ON a.no_service = s.no_service 
+        LEFT JOIN tblservice s ON a.no_service = s.no_service $svc_cabang_cond_ajax
         LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-        WHERE a.tanggal = '$tgl_hari_ini' 
+        WHERE a.tanggal = '$tgl_hari_ini' $exists_cabang_a
         ORDER BY a.created_at DESC 
         LIMIT 10
     ");
@@ -59,7 +68,7 @@ try {
         SELECT p.*, a.no_antrian, a.no_service, p.nama_mekanik
         FROM tb_progress_mekanik p
         JOIN tb_antrian_servis a ON p.no_service = a.no_service
-        WHERE a.tanggal = '$tgl_hari_ini' 
+        WHERE a.tanggal = '$tgl_hari_ini' $exists_cabang_a
         AND p.status_kerja = 'bekerja'
         ORDER BY p.jam_mulai DESC
         LIMIT 5

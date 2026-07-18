@@ -168,11 +168,21 @@ if(empty($_SESSION['_iduser'])){
                                                             <label><strong>Keterangan / Catatan:</strong></label>
                                                             <input type="text" name="note" class="form-control" placeholder="Opsional" maxlength="50" />
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label><strong>Cara Bayar Refund:</strong> <span class="text-danger">*</span></label>
+                                                            <select name="cara_bayar_refund" id="sel_cara_bayar_refund" class="form-control" required>
+                                                                <option value="">-- Pilih --</option>
+                                                                <option value="Tunai">Tunai</option>
+                                                                <option value="Transfer">Transfer</option>
+                                                                <option value="Kredit">Kredit</option>
+                                                            </select>
+                                                            <span class="help-block">Uang yang dikembalikan ke customer sebesar Total Nilai Retur.</span>
+                                                        </div>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-4 col-sm-offset-3">
                                                         <table class="table table-condensed" style="margin-top:20px;">
                                                             <tr><td><strong>Total Qty Retur:</strong></td><td align="right" id="lbl_total_qty"><strong>0</strong></td></tr>
-                                                            <tr><td><strong>Total Nilai Retur:</strong></td><td align="right" id="lbl_total_nilai"><strong>0</strong></td></tr>
+                                                            <tr><td><strong>Total Nilai Retur (Refund):</strong></td><td align="right" id="lbl_total_nilai"><strong>0</strong></td></tr>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -242,6 +252,7 @@ if(empty($_SESSION['_iduser'])){
             jenisGlobal=data.jenis;
             $('#lbl_nopenjualan').text(data.nopenjualan); $('#lbl_pelanggan').text(data.namapelanggan); $('#lbl_carabayar').text(data.carabayar);
             $('#hid_nopenjualan').val(data.nopenjualan); $('#info-penjualan').show();
+            if($('#sel_cara_bayar_refund option[value="'+data.carabayar+'"]').length){ $('#sel_cara_bayar_refund').val(data.carabayar); }
             if(data.items.length==0){$('#msg_error').text('Tidak ada item yang bisa diretur.').show();$('#tbl-items-container').hide();return;}
             var html='';
             for(var i=0;i<data.items.length;i++){
@@ -267,6 +278,7 @@ if(empty($_SESSION['_iduser'])){
     $('#form-retur').on('submit',function(e){
         if($('#hid_nopenjualan').val()==''){e.preventDefault();alert('Load items penjualan terlebih dahulu.');return;}
         if($('.chk-item:checked').length==0){e.preventDefault();alert('Centang minimal 1 item yang akan diretur.');return;}
+        if($('#sel_cara_bayar_refund').val()==''){e.preventDefault();alert('Pilih Cara Bayar Refund terlebih dahulu.');return;}
         $('.chk-item').each(function(){
             var row=$(this).closest('tr'), enabled=$(this).prop('checked');
             row.find('input[name="item_qty[]"],input[name="item_kode[]"],input[name="item_harga[]"],input[name="item_alasan[]"]').prop('disabled',!enabled);

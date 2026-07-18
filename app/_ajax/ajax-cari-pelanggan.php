@@ -29,14 +29,14 @@ try {
               ORDER BY
                 CASE WHEN p.nopelanggan = ? THEN 0 ELSE 1 END,
                 CASE WHEN p.namapelanggan = ? THEN 0 ELSE 1 END,
-                p.namapelanggan ASC
-              LIMIT 1";
+                p.namapelanggan ASC";
     $stmt = mysqli_prepare($koneksi, $query);
     mysqli_stmt_bind_param($stmt, 'sssss', $like, $like, $like, $kode_pelanggan, $kode_pelanggan);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    
-    if($result && mysqli_num_rows($result) > 0) {
+    $jumlah_kecocokan = $result ? mysqli_num_rows($result) : 0;
+
+    if($jumlah_kecocokan > 0) {
         $pelanggan = mysqli_fetch_array($result);
         echo json_encode(array(
             'success' => true,
@@ -47,7 +47,9 @@ try {
             'kgrup' => $pelanggan['kgrup'],
             'grup' => $pelanggan['grup'],
             'status_member' => $pelanggan['status_member'] ?: fitmotorMapGrupNameToTier($pelanggan['grup']),
-            'diskon_persen' => $pelanggan['diskon_persen'] ?? 0
+            'diskon_persen' => $pelanggan['diskon_persen'] ?? 0,
+            'jumlah_kecocokan' => $jumlah_kecocokan,
+            'ada_kemungkinan_lain' => $jumlah_kecocokan > 1
         ));
     } else {
         echo json_encode(array('success' => false, 'message' => 'Pelanggan tidak ditemukan'));

@@ -167,7 +167,14 @@ if(empty($_SESSION['_iduser'])){
                                             <div class="col-xs-12 col-sm-4 col-sm-offset-2">
                                                 <table class="table table-condensed table-bordered">
                                                     <tr><td><strong>Total Qty</strong></td><td align="right"><?php echo number_format($h['total_qty_retur'],0,',','.'); ?></td></tr>
-                                                    <tr><td><strong>Total Nilai Retur</strong></td><td align="right"><strong><?php echo number_format($h['total_akhir'],0,',','.'); ?></strong></td></tr>
+                                                    <tr><td><strong>Total Nilai Retur (Refund)</strong></td><td align="right"><strong><?php echo number_format($h['total_akhir'],0,',','.'); ?></strong></td></tr>
+                                                    <tr><td><strong>Cara Bayar Refund</strong></td><td align="right"><?php echo htmlspecialchars($h['cara_bayar_refund'] ?: '-'); ?></td></tr>
+                                                    <tr><td><strong>Status Refund</strong></td><td align="right">
+                                                        <?php echo ($h['status_refund']=='1') ? '<span class="label label-success">Sudah Dikembalikan</span>' : '<span class="label label-default">Belum Dikembalikan</span>'; ?>
+                                                    </td></tr>
+                                                    <?php if(!empty($h['tanggal_refund'])): ?>
+                                                    <tr><td><strong>Tgl Refund</strong></td><td align="right"><?php echo date('d/m/Y H:i', strtotime($h['tanggal_refund'])); ?></td></tr>
+                                                    <?php endif; ?>
                                                 </table>
                                             </div>
                                         </div>

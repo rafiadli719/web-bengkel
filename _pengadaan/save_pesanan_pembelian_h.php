@@ -18,9 +18,12 @@
     include "function_pesanan_pembelian.php";
     $LastID=FormatNoTrans(OtomatisID());	
         
-    mysqli_query($koneksi,"INSERT INTO tblorder_header 
-                            (no_order, tanggal, no_supplier, user) 
-                            VALUES 
-                            ('$LastID','$txttglpesan','$cbosupplier','$txtuser')");
-    echo"<script>window.location=('pesanan_pembelian_add_next.php?nopesanan=$LastID');</script>";        
+    $stmt = mysqli_prepare($koneksi, "INSERT INTO tblorder_header
+                            (no_order, tanggal, no_supplier, user)
+                            VALUES
+                            (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "ssss", $LastID, $txttglpesan, $cbosupplier, $txtuser);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    echo"<script>window.location=('pesanan_pembelian_add_next.php?nopesanan=".rawurlencode($LastID)."');</script>";
 ?>

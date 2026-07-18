@@ -24,10 +24,12 @@
             return $pisah[2].'-'.$pisah[1].'-'.$pisah[0];
         }
 
-        $tgl_pilih_dari    = date('d/m/Y');
-        $tgl_pilih_sampai  = date('d/m/Y');
-        $tgl_dari_eng      = date('Y-m-d');
-        $tgl_sampai_eng    = date('Y-m-d');
+        include_once "includes/report-default-range.php";
+        $_default_range = app_report_default_range($koneksi, 'tblretur_penjualan_header', 'tanggal', "kd_cabang='$kd_cabang'");
+        $tgl_pilih_dari    = $_default_range['from_dmy'];
+        $tgl_pilih_sampai  = $_default_range['to_dmy'];
+        $tgl_dari_eng      = $_default_range['from_ymd'];
+        $tgl_sampai_eng    = $_default_range['to_ymd'];
         $cbo_pelanggan     = '';
         $sum_total         = 0;
         $sum_qty           = 0;

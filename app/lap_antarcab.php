@@ -18,8 +18,10 @@ $nama_cabang = $tm_cab['nama_cabang'];
 $tipe_cabang = $tm_cab['tipe_cabang'];
 $is_pusat    = ($tipe_cabang=='1' || strtolower($tipe_cabang)=='pusat');
 
-$tgl_dari   = isset($_GET['tgl_dari'])   ? mysqli_real_escape_string($koneksi, $_GET['tgl_dari'])   : date('Y-m-01');
-$tgl_sampai = isset($_GET['tgl_sampai']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_sampai']) : date('Y-m-d');
+include_once "includes/report-default-range.php";
+$_default_range = app_report_default_range($koneksi, 'tblorder_antarcab_header', 'tanggal_request');
+$tgl_dari   = isset($_GET['tgl_dari'])   ? mysqli_real_escape_string($koneksi, $_GET['tgl_dari'])   : $_default_range['from_ymd'];
+$tgl_sampai = isset($_GET['tgl_sampai']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_sampai']) : $_default_range['to_ymd'];
 $f_status   = isset($_GET['f_status'])   ? mysqli_real_escape_string($koneksi, $_GET['f_status'])   : 'semua';
 $f_cabang   = isset($_GET['f_cabang'])   ? mysqli_real_escape_string($koneksi, $_GET['f_cabang'])   : '';
 $f_jenis    = isset($_GET['f_jenis'])    ? mysqli_real_escape_string($koneksi, $_GET['f_jenis'])    : 'semua';
