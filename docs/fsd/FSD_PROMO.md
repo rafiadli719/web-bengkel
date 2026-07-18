@@ -1,8 +1,8 @@
 # Functional Specification Document — Modul Promo Engine
 
-**Versi:** 1.0 Draft
+**Versi:** 1.1 Draft (revisi cakupan cabang + syarat kelayakan)
 **Tanggal:** 2026-07-18
-**Status:** Menunggu approval
+**Status:** Disetujui untuk implementasi
 **Referensi:** `docs/PROMPT_CLAUDE_CODE_PLANNING_PROMO_ENGINE.md`, `FSD_SERVIS.md` §9 & §12#1 (superseded oleh dokumen ini), `FSD_PENGADAAN_INVENTORY.md` §5.2/§7.1/§11.1 (pola desain rujukan), `FSD_MEMBERSHIP.md` §5/FR-03, `FSD_CRM.md` §5.1
 
 **Decision yang mengikat dokumen ini** (Owner, Pak Novian, 16 Juli 2026 + konfirmasi sesi 18 Juli 2026):
@@ -15,8 +15,14 @@
 - Scope promo: **global semua cabang**, tidak ada promo khusus per cabang.
 - Pendekatan implementasi: **extend skema existing** (`master_diskon_periode`), bukan rebuild dari nol.
 
+**Revisi 1.1 (18 Juli 2026, lanjutan sesi sama) — koreksi & tambahan scope:**
+- **Koreksi fakta:** setelah dicek langsung ke database live, `master_diskon_periode` ternyata **kosong (0 baris)** — data "awal taun" id=1 yang dirujuk di draft 1.0 cuma ada di file dump `tools/sql/fitmotor_dbbengkel.sql` (snapshot lama/beda environment), bukan di database live. **Tidak ada migrasi data yang perlu dijaga** — seluruh perubahan skema di bawah aman dieksekusi langsung tanpa risiko kehilangan data.
+- **Koreksi fakta:** skema live `master_diskon_periode` sudah berbeda dari dump file — sudah punya kolom `kd_cabang VARCHAR(10) NULL` dan `keterangan TEXT` yang tidak tercatat di dump manapun. Kolom `target_id` juga TEXT (bukan VARCHAR(50) seperti dugaan awal di draft 1.0).
+- **Tambahan scope (permintaan Owner setelah baca draft 1.0):** promo perlu **editable per cabang** (bukan cuma global — reverse dari keputusan sesi brainstorming awal), dan perlu **syarat kelayakan promo** (kategori member, minimum total servis, jumlah kunjungan, pernah beli paket workorder tertentu) — bukan cuma "target item/jasa mana yang didiskon" seperti draft 1.0, tapi juga "customer/transaksi mana yang berhak". Lihat §5.3, FR-08, FR-09.
+- Keputusan tambahan yang dikonfirmasi: kombinasi banyak syarat dalam 1 promo pakai **mode AND/OR yang dipilih admin per-promo** (bukan salah satu dipaksa). Syarat "jumlah kunjungan" dihitung dari **rolling N hari custom per promo** (mirip logic lama `servis_poin_cuci`, tapi sekarang parameternya di master data, bukan hardcode 5 hari).
+
 **Peringatan penting dari hasil investigasi (baca sebelum lanjut):**
-1. **`master_diskon_periode` sudah LIVE di production, sudah dipakai (1 data asli), dan sudah terhubung ke 3 alur transaksi servis** (`servis-input-reguler.php`, `servis-input-reguler-jemput.php`, `servis-garansi.php` via `diskon_source='promo'` + kolom `id_promo` di `tblservis_barang`/`tblservis_jasa`/`tbservis_workorder`) — **tapi modul ini tidak pernah terdokumentasi di FSD manapun sebelum sesi ini.** Dokumen ini bukan desain dari nol, melainkan formalisasi + perluasan sistem yang sudah berjalan diam-diam.
+1. **`master_diskon_periode` sudah LIVE di production (skema live, meski datanya kosong) dan sudah terhubung ke 3 alur transaksi servis** (`servis-input-reguler.php`, `servis-input-reguler-jemput.php`, `servis-garansi.php` via `diskon_source='promo'` + kolom `id_promo` di `tblservis_barang`/`tblservis_jasa`/`tbservis_workorder`) — **tapi modul ini tidak pernah terdokumentasi di FSD manapun sebelum sesi ini.** Dokumen ini bukan desain dari nol, melainkan formalisasi + perluasan sistem yang sudah berjalan diam-diam.
 2. **`servis_poin_cuci` dan `servis_voucher_cuci`** (desain lama di `FSD_SERVIS.md` §9, mekanisme akumulasi poin 5-hari-rolling untuk voucher cuci gratis) **CONFIRMED tidak pernah dibangun** — nol jejak di kode maupun schema database manapun (`fitmotor_dbbengkel.sql`, `_FIXED_V5/V6/V7.sql`). Desain itu **di-supersede total** oleh Promo Engine ini. **Jangan ada development di masa depan yang mengacu/coding ke tabel `servis_poin_cuci`/`servis_voucher_cuci` — anggap tidak pernah ada.** `FSD_SERVIS.md` §9 dan §12#1 harus dianggap dokumen mati, menunggu housekeeping (dicoret/diberi catatan superseded) di luar scope sesi ini.
 
 ---
@@ -99,7 +105,40 @@ Index: `(id_promo)`, `(target_type, target_id)` — dipakai untuk query matching
 
 Konsisten dengan pola audit trail project ini (`member_tier_history`, `alarm_harga_beli`).
 
-**Migrasi data existing:** 1 baris `master_diskon_periode` id=1 ("awal taun", `target_type='workorder'`, `target_id='WO0005'`, `target_nama='PAKET SERVIS LENGKAP'`) dipindah utuh jadi 1 baris di `master_diskon_periode_target` (`id_promo=1, target_type='workorder', target_id='WO0005', target_nama='PAKET SERVIS LENGKAP'`). Header id=1 dapat default `stackable=0`, `boleh_gabung_diskon_member=0` (paling konservatif, tidak mengubah perilaku lama yang memang cuma ambil 1 promo tanpa gabung apa pun). Tidak ada baris `promo_usage_log` yang bisa direkonstruksi retroaktif untuk histori pemakaian promo id=1 sebelum sesi ini — dicatat sebagai keterbatasan migrasi, bukan blocker.
+**Migrasi data existing:** tidak ada — tabel live kosong (lihat Revisi 1.1). Kolom lama `target_type`/`target_id`/`target_nama`/`kd_cabang` di header langsung di-drop tanpa proses pemindahan data.
+
+### 5.3 Tabel Baru — Cabang Scope & Syarat Kelayakan (Revisi 1.1)
+
+**`master_diskon_periode` — tambahan kolom lain (selain `stackable`/`boleh_gabung_diskon_member` di §5.2):**
+
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `mode_syarat` | ENUM('AND','OR') DEFAULT 'AND' | Cara kombinasi banyak syarat kelayakan dalam 1 promo (§5.3 tabel syarat). AND = semua syarat harus terpenuhi, OR = salah satu cukup. Dipilih admin per-promo saat create. |
+
+Kolom lama `kd_cabang` (single, live) **di-drop**, digantikan tabel junction `master_diskon_periode_cabang` di bawah — supaya 1 promo bisa berlaku di banyak cabang spesifik, bukan cuma 1 atau semua.
+
+**Tabel baru: `master_diskon_periode_cabang`**
+
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | INT PK AUTO_INCREMENT | |
+| `id_promo` | INT FK → `master_diskon_periode.id_promo` | |
+| `kd_cabang` | VARCHAR(10) FK → `tbcabang.kode_cabang` | |
+
+**Aturan cabang:** kalau 1 promo **tidak punya baris apa pun** di tabel ini, artinya berlaku **semua cabang** (default, konsisten dengan draft 1.0 sebelum revisi ini). Kalau punya 1+ baris, promo **hanya** berlaku di cabang-cabang yang terdaftar.
+
+**Tabel baru: `master_diskon_periode_syarat`**
+
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | INT PK AUTO_INCREMENT | |
+| `id_promo` | INT FK → `master_diskon_periode.id_promo` | |
+| `jenis_syarat` | ENUM('kategori_member','minimum_total_servis','jumlah_kunjungan','paket_workorder') | |
+| `operator` | ENUM('=','>=','<=','IN') | Operator pembanding. `kategori_member`/`paket_workorder` pakai `IN` (bisa banyak nilai); `minimum_total_servis`/`jumlah_kunjungan` pakai `>=` pada umumnya. |
+| `nilai` | VARCHAR(200) | Nilai pembanding — untuk `kategori_member`: nama kategori (mis. `Gold`) atau list dipisah koma kalau `IN`; untuk `minimum_total_servis`: nominal rupiah; untuk `jumlah_kunjungan`: angka kunjungan minimum; untuk `paket_workorder`: `kode_wo`. |
+| `rolling_hari` | INT NULL | **Hanya dipakai kalau `jenis_syarat='jumlah_kunjungan'`** — hitung kunjungan customer dalam N hari terakhir dari tanggal transaksi berjalan. NULL untuk jenis syarat lain. |
+
+**Kalau 1 promo tidak punya baris apa pun di tabel syarat** → tidak ada syarat kelayakan customer, promo berlaku ke siapa saja yang transaksinya match target (perilaku sama seperti draft 1.0, backward-compatible).
 
 ## 6. Functional Requirements
 
@@ -122,11 +161,18 @@ Saat servis/jasa/barang diinput di 3 handler existing (`servis-input-reguler.php
 Hanya Owner dan Admin Pusat yang bisa create/update/nonaktifkan promo. Kepala Cabang dan staf cabang lain read-only (transaksi otomatis kena promo, tidak bisa mengubah master).
 
 ### FR-07 — Migrasi Data Existing
-Data promo id=1 ("awal taun") dipindah ke skema baru tanpa kehilangan informasi, sesuai §5.2.
+Tidak berlaku — tabel live kosong, tidak ada data untuk dipindah (lihat Revisi 1.1).
+
+### FR-08 — Cabang Scope
+Promo tanpa baris di `master_diskon_periode_cabang` berlaku semua cabang. Promo dengan 1+ baris hanya berlaku di cabang yang terdaftar. Matching promo saat transaksi (FR-05) wajib filter berdasar `kd_cabang` sesi transaksi berjalan.
+
+### FR-09 — Syarat Kelayakan Promo
+Promo bisa punya 0 atau banyak baris syarat kelayakan (`master_diskon_periode_syarat`). 0 baris = berlaku semua customer. 1+ baris dievaluasi sesuai `mode_syarat` (AND = semua harus lolos, OR = salah satu cukup) sebelum promo dianggap eligible untuk customer/transaksi tersebut. Evaluasi `jumlah_kunjungan` pakai window rolling `rolling_hari` dari tanggal transaksi berjalan, mundur ke belakang, hitung jumlah `no_service` unik customer tersebut di rentang itu.
 
 ## 7. Business Rules Konsolidasi
 
-- Promo berlaku **global semua cabang** — tidak ada kolom `kd_cabang`, tidak ada promo khusus 1 cabang.
+- Promo **default global semua cabang**, tapi bisa di-scope ke cabang tertentu lewat `master_diskon_periode_cabang` (§5.3, FR-08) — revisi dari keputusan awal "global saja".
+- Syarat kelayakan (§5.3, FR-09) dievaluasi **sebelum** matching target (FR-05/FR-01) — urutan cek per promo: (1) tanggal aktif, (2) cabang cocok, (3) syarat kelayakan customer terpenuhi (AND/OR), (4) target item/jasa match. Kalau salah satu gagal, promo itu tidak eligible, lanjut cek promo berikutnya.
 - **Validasi saat create/update promo:** sistem **menolak simpan** promo baru dengan `stackable=0` kalau rentang tanggalnya overlap dengan promo lain yang aktif dan menyasar target (item/jasa) yang sama — mencegah admin membuat konfigurasi ambigu dari awal, bukan menyelesaikannya saat runtime.
 - Urutan stacking default: `created_at` ASC (promo lama duluan). Kalau `created_at` identik (kasus langka, dibuat di detik yang sama), tie-break pakai `id_promo` ASC.
 - DELETE fisik promo (`btn_hapus` di `master-diskon-periode.php`) **berisiko** begitu `promo_usage_log` mulai terisi (FK constraint / histori hilang). Rekomendasi: ganti jadi soft-delete (`status_aktif=0` permanen, tombol UI diganti "Nonaktifkan" bukan "Hapus") — **perubahan ini perlu approval eksplisit sebelum diimplementasikan** karena mengubah perilaku tombol existing yang sudah dipakai user (lihat Open Item #5).
@@ -196,6 +242,8 @@ Data promo id=1 ("awal taun") dipindah ke skema baru tanpa kehilangan informasi,
 | 2 | **`servis_poin_cuci`/`servis_voucher_cuci` confirmed dead**, di-supersede oleh dokumen ini — perlu housekeeping `FSD_SERVIS.md` §9/§12#1 (beri catatan superseded) di sesi terpisah. | Mencegah developer masa depan coding ke tabel yang tidak pernah ada berdasarkan FSD lama yang belum diberi catatan. |
 | 3 | Tie-break stacking kalau 2+ promo dibuat di `created_at` identik — dokumen ini asumsikan fallback `id_promo` ASC. | Kasus langka, tapi perlu Owner tahu default-nya biar tidak mengejutkan kalau kejadian. |
 | 4 | **Asumsi FR-03**: kalau `boleh_gabung_diskon_member=0`, sistem pilih potongan **terbesar** (promo vs diskon member) — bukan otomatis menangkan salah satu. Owner belum eksplisit mengonfirmasi aturan tie-break ini, baru asumsi desain sesi ini. | Kalau ternyata Owner mau aturan berbeda (mis. diskon member selalu menang kalau tidak boleh gabung), FR-03 perlu direvisi sebelum implementasi. |
+| 8 | **`paket_workorder` sebagai syarat kelayakan** butuh definisi eksak: apakah artinya "customer PERNAH beli WO ini di transaksi lampau" (cek histori `tbservis_workorder`), atau "WO ini ada di transaksi YANG SEDANG BERJALAN" (cek keranjang saat ini)? Draft ini asumsikan makna pertama (histori lampau) karena lebih konsisten dengan syarat kelayakan lain (member/total servis/kunjungan yang semuanya berbasis histori) — perlu konfirmasi Owner kalau maksudnya beda. | Salah asumsi bikin syarat ini gak pernah ke-trigger atau ke-trigger di kondisi yang salah. |
+| 9 | **Query `jumlah_kunjungan` rolling N hari** perlu didefinisikan basis hitungnya: kunjungan ke cabang manapun (lintas cabang), atau hanya cabang tempat transaksi berjalan (relevan kalau promo di-scope ke cabang tertentu, FR-08)? | Menentukan JOIN/filter query eligibility — beda hasil kalau customer sering pindah cabang. |
 | 5 | **Ganti tombol "Hapus" promo jadi soft-delete** (`status_aktif=0` permanen) begitu `promo_usage_log` mulai terisi, supaya histori tidak hilang. Ini mengubah perilaku tombol existing yang sudah dipakai user. | Perubahan perilaku UI/data existing — perlu approval eksplisit sebelum dikerjakan, bukan keputusan teknis sepihak. |
 | 6 | **`target_type='workorder'`** dipertahankan di tabel target baru untuk kompatibilitas data lama (`WO0005`). Apakah ke depan promo untuk paket kombinasi WO tetap direpresentasikan sebagai 1 target `workorder`, atau dipecah jadi target jasa+barang individual mengikuti definisi ketat Owner ("item dan/atau jasa" saja)? | Menentukan apakah `workorder` tetap valid `target_type` untuk promo baru, atau cuma legacy-support untuk data id=1. |
 | 7 | Urutan stacking default `created_at` ASC — cukup, atau perlu field prioritas manual (`prioritas_urutan`) supaya Admin Pusat bisa atur urutan tanpa bergantung kapan promo dibuat? | Kalau kasus di lapangan sering butuh urutan spesifik (bukan sekadar "yang lama duluan"), field tambahan ini perlu ditambah ke skema sebelum implementasi. |

@@ -625,90 +625,240 @@ function isItemExcludedFromDiscount($koneksi, $noitem) {
 }
 
 /**
- * Calculate discount for a single item
+ * Hitung jumlah kunjungan (no_service unik, status_servis='bayar') customer
+ * dalam N hari terakhir dari hari ini. Dipakai untuk syarat_kelayakan
+ * jenis 'jumlah_kunjungan' (FSD_PROMO.md FR-09).
+ */
+function countKunjunganRolling($koneksi, $no_pelanggan, $rolling_hari) {
+    $rolling_hari = (int)$rolling_hari;
+    $stmt = mysqli_prepare($koneksi, "SELECT COUNT(DISTINCT no_service) c
+                                       FROM tblservice
+                                       WHERE no_pelanggan=?
+                                         AND status_servis='bayar'
+                                         AND tanggal >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                                         AND tanggal <= CURDATE()");
+    mysqli_stmt_bind_param($stmt, "si", $no_pelanggan, $rolling_hari);
+    mysqli_stmt_execute($stmt);
+    $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    return (int)($row['c'] ?? 0);
+}
+
+/**
+ * Evaluasi apakah 1 promo eligible untuk customer tertentu berdasarkan
+ * baris master_diskon_periode_syarat (kategori_member/minimum_total_servis/
+ * jumlah_kunjungan/paket_workorder), dikombinasikan sesuai mode_syarat (AND/OR).
+ * 0 baris syarat = eligible untuk siapa saja (FSD_PROMO.md §5.3).
+ */
+function evaluateSyaratPromo($koneksi, $id_promo, $mode_syarat, $no_pelanggan) {
+    $stmt = mysqli_prepare($koneksi, "SELECT jenis_syarat, operator, nilai, rolling_hari
+                                       FROM master_diskon_periode_syarat WHERE id_promo=?");
+    mysqli_stmt_bind_param($stmt, "i", $id_promo);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+
+    $syarat_list = [];
+    while($row = mysqli_fetch_assoc($res)) { $syarat_list[] = $row; }
+    if(empty($syarat_list)) return true;
+
+    $hasil = [];
+    foreach($syarat_list as $s) {
+        $nilai_list = array_map('trim', explode(',', $s['nilai']));
+        $lolos = false;
+
+        if($s['jenis_syarat'] == 'kategori_member') {
+            $stmt2 = mysqli_prepare($koneksi, "SELECT status_member FROM statistik_pelanggan WHERE no_pelanggan=? LIMIT 1");
+            mysqli_stmt_bind_param($stmt2, "s", $no_pelanggan);
+            mysqli_stmt_execute($stmt2);
+            $row2 = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2));
+            $kategori = $row2['status_member'] ?? 'Bronze';
+            $lolos = in_array($kategori, $nilai_list);
+
+        } else if($s['jenis_syarat'] == 'minimum_total_servis') {
+            $stmt2 = mysqli_prepare($koneksi, "SELECT total_nominal FROM statistik_pelanggan WHERE no_pelanggan=? LIMIT 1");
+            mysqli_stmt_bind_param($stmt2, "s", $no_pelanggan);
+            mysqli_stmt_execute($stmt2);
+            $row2 = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2));
+            $total = floatval($row2['total_nominal'] ?? 0);
+            $batas = floatval($s['nilai']);
+            $lolos = ($s['operator'] == '<=') ? ($total <= $batas) : ($total >= $batas);
+
+        } else if($s['jenis_syarat'] == 'jumlah_kunjungan') {
+            $jumlah = countKunjunganRolling($koneksi, $no_pelanggan, $s['rolling_hari']);
+            $batas = (int)$s['nilai'];
+            $lolos = ($s['operator'] == '<=') ? ($jumlah <= $batas) : ($jumlah >= $batas);
+
+        } else if($s['jenis_syarat'] == 'paket_workorder') {
+            $placeholders = implode(',', array_fill(0, count($nilai_list), '?'));
+            $stmt2 = mysqli_prepare($koneksi, "SELECT COUNT(*) c FROM tbservis_workorder w
+                                                INNER JOIN tblservice sv ON sv.no_service=w.no_service
+                                                WHERE sv.no_pelanggan=? AND w.kode_wo IN ($placeholders)");
+            $types = "s" . str_repeat("s", count($nilai_list));
+            $bind_names = [$stmt2, $types, $no_pelanggan];
+            foreach($nilai_list as $k => $v) { $bind_names[] = $nilai_list[$k]; }
+            $refs = [];
+            foreach($bind_names as $k => $v) { $refs[$k] = &$bind_names[$k]; }
+            call_user_func_array('mysqli_stmt_bind_param', $refs);
+            mysqli_stmt_execute($stmt2);
+            $row2 = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2));
+            $lolos = ((int)($row2['c'] ?? 0)) > 0;
+        }
+
+        $hasil[] = $lolos;
+    }
+
+    if($mode_syarat == 'OR') {
+        return in_array(true, $hasil, true);
+    }
+    return !in_array(false, $hasil, true);
+}
+
+/**
+ * Cari semua promo aktif yang menyasar item/jasa ini (via master_diskon_periode_target),
+ * lolos scope cabang (master_diskon_periode_cabang, 0 baris = semua cabang), dan lolos
+ * syarat kelayakan (evaluateSyaratPromo). Diurutkan created_at ASC untuk stacking (FR-02).
+ */
+function getEligiblePromosForItem($koneksi, $no_pelanggan, $kd_cabang, $item_type, $noitem) {
+    $stmt = mysqli_prepare($koneksi, "SELECT p.id_promo, p.nama_promo, p.tipe_promo, p.nilai_promo,
+                                              p.stackable, p.boleh_gabung_diskon_member, p.mode_syarat
+                                       FROM master_diskon_periode p
+                                       INNER JOIN master_diskon_periode_target t ON t.id_promo=p.id_promo
+                                       WHERE p.status_aktif=1
+                                         AND p.tanggal_mulai <= CURDATE()
+                                         AND p.tanggal_selesai >= CURDATE()
+                                         AND t.target_type=? AND t.target_id=?
+                                       ORDER BY p.created_at ASC");
+    mysqli_stmt_bind_param($stmt, "ss", $item_type, $noitem);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+
+    $eligible = [];
+    while($promo = mysqli_fetch_assoc($res)) {
+        $id_promo = (int)$promo['id_promo'];
+
+        // Cek scope cabang: 0 baris = semua cabang
+        $stmt_cb = mysqli_prepare($koneksi, "SELECT kd_cabang FROM master_diskon_periode_cabang WHERE id_promo=?");
+        mysqli_stmt_bind_param($stmt_cb, "i", $id_promo);
+        mysqli_stmt_execute($stmt_cb);
+        $res_cb = mysqli_stmt_get_result($stmt_cb);
+        $cabang_list = [];
+        while($row_cb = mysqli_fetch_assoc($res_cb)) { $cabang_list[] = $row_cb['kd_cabang']; }
+        if(!empty($cabang_list) && !in_array($kd_cabang, $cabang_list)) {
+            continue;
+        }
+
+        if(!evaluateSyaratPromo($koneksi, $id_promo, $promo['mode_syarat'], $no_pelanggan)) {
+            continue;
+        }
+
+        $eligible[] = $promo;
+    }
+
+    return $eligible;
+}
+
+/**
+ * Calculate discount for a single item — multi-promo stacking berurutan
+ * (FSD_PROMO.md §8 Alur B). Kembalikan juga promo_breakdown untuk keperluan
+ * audit trail (promo_usage_log) oleh caller — belum di-wire otomatis ke
+ * 3 handler transaksi, lihat FSD_PROMO.md Open Items.
  *
  * @param mysqli $koneksi Database connection
  * @param string $no_pelanggan Customer ID
  * @param string $noitem Item code
  * @param string $item_type 'barang' or 'jasa'
  * @param float $harga Original price
- * @return array With diskon_persen, diskon_nominal, harga_akhir
+ * @param string|null $kd_cabang Kode cabang transaksi berjalan (default: sesi login)
+ * @return array With diskon_persen, diskon_nominal, harga_akhir, promo_breakdown
  */
-function calculateItemDiscount($koneksi, $no_pelanggan, $noitem, $item_type, $harga) {
+function calculateItemDiscount($koneksi, $no_pelanggan, $noitem, $item_type, $harga, $kd_cabang = null) {
     $result = [
         'harga_awal' => $harga,
         'diskon_persen' => 0,
         'diskon_nominal' => 0,
         'harga_akhir' => $harga,
-        'discount_source' => ''
+        'discount_source' => '',
+        'promo_breakdown' => []
     ];
 
-    // Get active discount
-    $discount = getActiveDiscountForService($koneksi, $no_pelanggan);
-
-    if(!$discount['apply_discount']) {
-        return $result;
+    if($kd_cabang === null) {
+        $kd_cabang = $_SESSION['_cabang'] ?? '';
     }
 
-    // Check if promo discount - need to verify item is in promo target
-    if($discount['discount_type'] == 'periode' && $discount['promo_id']) {
-        $promo_id = intval($discount['promo_id']);
-        $sql = "SELECT target_type, target_id, tipe_promo, nilai_promo
-                FROM master_diskon_periode
-                WHERE id_promo = $promo_id";
-        $res = mysqli_query($koneksi, $sql);
+    $eligible = getEligiblePromosForItem($koneksi, $no_pelanggan, $kd_cabang, $item_type, $noitem);
 
-        if($res && $promo = mysqli_fetch_assoc($res)) {
-            $target_ids = array_map('trim', explode(',', $promo['target_id']));
-            $is_target = in_array($noitem, $target_ids);
+    // Kalau ada promo non-stackable di antara yang eligible, hanya pakai 1
+    // (id_promo terbesar/terbaru menang) — fallback anomali, lihat Edge Case #3.
+    $non_stackable = array_values(array_filter($eligible, function($p) { return (int)$p['stackable'] === 0; }));
+    if(!empty($non_stackable)) {
+        usort($non_stackable, function($a, $b) { return $b['id_promo'] <=> $a['id_promo']; });
+        $eligible = [$non_stackable[0]];
+    }
 
-            // Check if item matches target type
-            if($promo['target_type'] == 'barang' && $item_type == 'barang' && $is_target) {
-                if($promo['tipe_promo'] == 'persen') {
-                    $result['diskon_persen'] = floatval($promo['nilai_promo']);
-                    $result['diskon_nominal'] = $harga * ($result['diskon_persen'] / 100);
-                } else {
-                    $result['diskon_nominal'] = floatval($promo['nilai_promo']);
-                    $result['diskon_persen'] = ($harga > 0) ? ($result['diskon_nominal'] / $harga * 100) : 0;
-                }
-                $result['harga_akhir'] = $harga - $result['diskon_nominal'];
-                $result['discount_source'] = 'Promo';
-                return $result;
+    $semua_boleh_gabung_member = true;
+    $harga_sisa = $harga;
+    $total_potongan = 0;
+    $urutan = 1;
+    $nama_promo_dipakai = [];
+
+    foreach($eligible as $promo) {
+        if((int)$promo['boleh_gabung_diskon_member'] === 0) {
+            $semua_boleh_gabung_member = false;
+        }
+        $potongan_ini = ($promo['tipe_promo'] == 'persen')
+            ? $harga_sisa * (floatval($promo['nilai_promo']) / 100)
+            : min(floatval($promo['nilai_promo']), $harga_sisa);
+
+        $harga_sisa -= $potongan_ini;
+        $total_potongan += $potongan_ini;
+        $nama_promo_dipakai[] = $promo['nama_promo'];
+        $result['promo_breakdown'][] = [
+            'id_promo' => (int)$promo['id_promo'],
+            'nilai_potongan' => $potongan_ini,
+            'urutan_stacking' => $urutan
+        ];
+        $urutan++;
+    }
+
+    $promo_diterapkan = !empty($eligible);
+
+    // Diskon member — dihitung untuk dibandingkan (kalau ada promo yang tidak
+    // boleh gabung) atau digabung berurutan setelah promo (kalau semua boleh).
+    $diskon_member_persen = 0;
+    $member_kategori = '';
+    if(!isItemExcludedFromDiscount($koneksi, $noitem)) {
+        $discount_member = getActiveDiscountForService($koneksi, $no_pelanggan);
+        if($discount_member['discount_type'] == 'member' && $discount_member['apply_discount']) {
+            $diskon_member_persen = ($item_type == 'jasa') ? $discount_member['diskon_jasa'] : $discount_member['diskon_barang'];
+            $member_kategori = $discount_member['member_kategori'];
+        }
+    }
+
+    if($promo_diterapkan && $diskon_member_persen > 0) {
+        if($semua_boleh_gabung_member) {
+            $potongan_member = $harga_sisa * ($diskon_member_persen / 100);
+            $harga_sisa -= $potongan_member;
+            $total_potongan += $potongan_member;
+            $result['discount_source'] = 'Promo: ' . implode(', ', $nama_promo_dipakai) . ' + Member ' . $member_kategori;
+        } else {
+            $potongan_member_saja = $harga * ($diskon_member_persen / 100);
+            if($potongan_member_saja > $total_potongan) {
+                $total_potongan = $potongan_member_saja;
+                $result['discount_source'] = 'Member ' . $member_kategori;
+                $result['promo_breakdown'] = [];
+            } else {
+                $result['discount_source'] = 'Promo: ' . implode(', ', $nama_promo_dipakai);
             }
-
-            if($promo['target_type'] == 'jasa' && $item_type == 'jasa' && $is_target) {
-                if($promo['tipe_promo'] == 'persen') {
-                    $result['diskon_persen'] = floatval($promo['nilai_promo']);
-                    $result['diskon_nominal'] = $harga * ($result['diskon_persen'] / 100);
-                } else {
-                    $result['diskon_nominal'] = floatval($promo['nilai_promo']);
-                    $result['diskon_persen'] = ($harga > 0) ? ($result['diskon_nominal'] / $harga * 100) : 0;
-                }
-                $result['harga_akhir'] = $harga - $result['diskon_nominal'];
-                $result['discount_source'] = 'Promo';
-                return $result;
-            }
         }
+    } else if($promo_diterapkan) {
+        $result['discount_source'] = 'Promo: ' . implode(', ', $nama_promo_dipakai);
+    } else if($diskon_member_persen > 0) {
+        $total_potongan = $harga * ($diskon_member_persen / 100);
+        $result['discount_source'] = 'Member ' . $member_kategori;
     }
 
-    // Member discount
-    if($discount['discount_type'] == 'member') {
-        // Check if item is excluded
-        if(isItemExcludedFromDiscount($koneksi, $noitem)) {
-            $result['discount_source'] = 'Excluded';
-            return $result;
-        }
-
-        // Apply appropriate discount based on item type
-        $diskon_persen = ($item_type == 'jasa') ? $discount['diskon_jasa'] : $discount['diskon_barang'];
-
-        if($diskon_persen > 0) {
-            $result['diskon_persen'] = $diskon_persen;
-            $result['diskon_nominal'] = $harga * ($diskon_persen / 100);
-            $result['harga_akhir'] = $harga - $result['diskon_nominal'];
-            $result['discount_source'] = 'Member ' . $discount['member_kategori'];
-        }
-    }
+    $result['diskon_nominal'] = $total_potongan;
+    $result['diskon_persen'] = ($harga > 0) ? ($total_potongan / $harga * 100) : 0;
+    $result['harga_akhir'] = $harga - $total_potongan;
 
     return $result;
 }
