@@ -179,10 +179,16 @@
                  $q_promo = mysqli_query($koneksi, "SELECT * FROM master_diskon_periode WHERE id_promo='$promo_id'");
                  if($q_promo && mysqli_num_rows($q_promo) > 0) {
                      $promo = mysqli_fetch_assoc($q_promo);
-                     
+
                      // Handle Work Order Packet
-                     if($promo['target_type'] == 'workorder') {
-                         $kode_wo_list = explode(',', $promo['target_id']);
+                     // NB: target_type/target_id sudah dipindah ke tabel anak
+                     // master_diskon_periode_target sejak migrasi 2026-07-18.
+                     $kode_wo_list = [];
+                     $q_wo_targets = mysqli_query($koneksi, "SELECT target_id FROM master_diskon_periode_target WHERE id_promo='$promo_id' AND target_type='workorder'");
+                     if($q_wo_targets) {
+                         while($twr = mysqli_fetch_assoc($q_wo_targets)) { $kode_wo_list[] = $twr['target_id']; }
+                     }
+                     if(!empty($kode_wo_list)) {
                          $items_added = 0;
                          
                          foreach($kode_wo_list as $kode_wo) {
@@ -672,7 +678,7 @@
 
                 // 1. Check Promo Periode (Priority) if no session discount applied
                 $tgl_cek = date('Y-m-d');
-                $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                   WHERE target_type = 'barang' 
                                                   AND (target_id = '".$txtkdbarang."' OR FIND_IN_SET('".$txtkdbarang."', target_id))
                                                   AND status_aktif = 1 
@@ -830,7 +836,7 @@
 
                 // 1. Check Promo Periode (Priority) if no session discount applied
                 $tgl_cek = date('Y-m-d');
-                $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                   WHERE target_type = 'jasa' 
                                                   AND (target_id = '".$txtcarisrv."' OR FIND_IN_SET('".$txtcarisrv."', target_id))
                                                   AND status_aktif = 1 
@@ -1220,7 +1226,7 @@
 
                         // Cek promo WO dan ambil yang lebih besar
                         // Cek promo WO dan ambil yang lebih besar (Use Robust Condition)
-                        $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode WHERE target_type='workorder' AND ($wo_condition_sql) AND status_aktif=1 AND '".$tgl_cek."' BETWEEN tanggal_mulai AND tanggal_selesai ORDER BY nilai_promo DESC LIMIT 1");
+                        $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy WHERE target_type='workorder' AND ($wo_condition_sql) AND status_aktif=1 AND '".$tgl_cek."' BETWEEN tanggal_mulai AND tanggal_selesai ORDER BY nilai_promo DESC LIMIT 1");
                         if($q_promo_wo && ($prow = mysqli_fetch_assoc($q_promo_wo))) {
                             $harga_tmp = floatval($pending_data['harga_satuan']);
                             $wo_persen = 0; $wo_nominal = 0;
@@ -1263,7 +1269,7 @@
 
                         // Cek promo WO dan ambil yang lebih besar
                         // Cek promo WO dan ambil yang lebih besar (Use Robust Condition)
-                        $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode WHERE target_type='workorder' AND ($wo_condition_sql) AND status_aktif=1 AND '".$tgl_cek."' BETWEEN tanggal_mulai AND tanggal_selesai ORDER BY nilai_promo DESC LIMIT 1");
+                        $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy WHERE target_type='workorder' AND ($wo_condition_sql) AND status_aktif=1 AND '".$tgl_cek."' BETWEEN tanggal_mulai AND tanggal_selesai ORDER BY nilai_promo DESC LIMIT 1");
                         if($q_promo_wo && ($prow = mysqli_fetch_assoc($q_promo_wo))) {
                             $harga_tmp = floatval($pending_data['harga_satuan']);
                             $wo_persen = 0; $wo_nominal = 0;
@@ -1452,7 +1458,7 @@
                             $wo_condition_sql = implode(' OR ', $wo_sql_parts);
 
                             $tgl_cek = date('Y-m-d');
-                            $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                            $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                                  WHERE target_type='workorder' 
                                                                    AND ($wo_condition_sql)
                                                                    AND status_aktif=1
@@ -1549,7 +1555,7 @@
                             $wo_condition_sql = implode(' OR ', $wo_sql_parts);
 
                             $tgl_cek = date('Y-m-d');
-                            $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                            $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                                  WHERE target_type='workorder' 
                                                                    AND ($wo_condition_sql)
                                                                    AND status_aktif=1
@@ -1698,7 +1704,7 @@
                                 $wo_condition_sql = implode(' OR ', $wo_sql_parts);
 
                                 $tgl_cek = date('Y-m-d');
-                                $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                                $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                                      WHERE target_type='workorder' 
                                                                        AND ($wo_condition_sql)
                                                                        AND status_aktif=1
@@ -1795,7 +1801,7 @@
                                 $wo_condition_sql = implode(' OR ', $wo_sql_parts);
 
                                 $tgl_cek = date('Y-m-d');
-                                $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode 
+                                $q_promo_wo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM v_promo_target_legacy 
                                                                      WHERE target_type='workorder' 
                                                                        AND ($wo_condition_sql)
                                                                        AND status_aktif=1

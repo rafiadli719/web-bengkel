@@ -64,9 +64,9 @@ if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
     $tanggal = date('Y-m-d');
 }
 
-$query_promo = "SELECT 
+$query_promo = "SELECT
             id_promo, nama_promo, tipe_promo, nilai_promo
-          FROM master_diskon_periode
+          FROM v_promo_target_legacy
           WHERE target_type = '$target_type'
             AND (target_id = '$noitem' OR FIND_IN_SET('$noitem', target_id))
             AND status_aktif = 1

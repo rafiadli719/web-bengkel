@@ -426,52 +426,28 @@
             }
 
             // === DISCOUNT LOGIC IMPLEMENTATION ===
+            // NB: query lama di sini pakai kolom target_type/target_id yang sudah
+            // di-drop migrasi 2026-07-18 Promo Engine — diganti calculateItemDiscount()
+            // (skema baru: master_diskon_periode_target + syarat kelayakan + multi-cabang).
             $diskon_source = 'none';
             $diskon_persen = 0;
             $diskon_nominal = 0;
             $id_promo = 'NULL';
             $pot = 0;
 
-            // 1. Check Promo Periode (Priority)
-            $tgl_cek = date('Y-m-d');
-            if(!empty($tanggal_service)) $tgl_cek = $tanggal_service;
+            $cust_query = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
+            $cust_row = mysqli_fetch_assoc($cust_query);
+            $no_pel = $cust_row['no_pelanggan'] ?? '';
 
-            $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode
-                                              WHERE target_type = 'barang'
-                                              AND (target_id = '$kd' OR FIND_IN_SET('$kd', target_id))
-                                              AND status_aktif = 1
-                                              AND '$tgl_cek' BETWEEN tanggal_mulai AND tanggal_selesai
-                                              ORDER BY nilai_promo DESC LIMIT 1");
-
-            if($q_promo && mysqli_num_rows($q_promo) > 0) {
-                $prow = mysqli_fetch_assoc($q_promo);
-                $diskon_source = 'promo';
-                $id_promo = $prow['id_promo'];
-                if($prow['tipe_promo'] == 'nominal') {
-                    $diskon_nominal = $prow['nilai_promo'];
-                    $diskon_persen = ($harga > 0) ? ($diskon_nominal / $harga * 100) : 0;
-                } else {
-                    $diskon_persen = $prow['nilai_promo'];
-                    $diskon_nominal = $harga * ($diskon_persen / 100);
-                }
-            }
-            // 2. Check Member Discount (If no promo)
-            else {
-                // Get pel properti
-                $cust_query = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
-                $cust_row = mysqli_fetch_assoc($cust_query);
-                $no_pel = $cust_row['no_pelanggan'] ?? '';
-
-                if(!empty($no_pel)) {
-                    // Check exclude
-                    $is_excluded = isItemExcludedFromMemberDiscount($koneksi, $kd);
-                    if(!$is_excluded) {
-                        $mem_disc = getMemberDiscountForItem($koneksi, $no_pel, $kd, 'barang');
-                        if($mem_disc > 0) {
-                            $diskon_source = 'member';
-                            $diskon_persen = $mem_disc;
-                            $diskon_nominal = $harga * ($diskon_persen / 100);
-                        }
+            if(!empty($no_pel) && function_exists('calculateItemDiscount')) {
+                $disc = calculateItemDiscount($koneksi, $no_pel, $kd, 'barang', $harga);
+                if(($disc['diskon_nominal'] ?? 0) > 0) {
+                    $diskon_persen = floatval($disc['diskon_persen']);
+                    $diskon_nominal = floatval($disc['diskon_nominal']);
+                    $src = $disc['discount_source'] ?? '';
+                    $diskon_source = (stripos($src, 'promo') !== false) ? 'promo' : ((stripos($src, 'member') !== false) ? 'member' : '');
+                    if(!empty($disc['promo_breakdown'][0]['id_promo'])) {
+                        $id_promo = intval($disc['promo_breakdown'][0]['id_promo']);
                     }
                 }
             }
@@ -547,52 +523,27 @@
             }
 
             // === DISCOUNT LOGIC IMPLEMENTATION ===
+            // NB: query lama di sini pakai kolom target_type/target_id yang sudah
+            // di-drop migrasi 2026-07-18 Promo Engine — diganti calculateItemDiscount().
             $diskon_source = 'none';
             $diskon_persen = 0;
             $diskon_nominal = 0;
             $id_promo = 'NULL';
             $potsrv = 0;
 
-            // 1. Check Promo Periode (Priority)
-            $tgl_cek = date('Y-m-d');
-            if(!empty($tanggal_service)) $tgl_cek = $tanggal_service;
+            $cust_query = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
+            $cust_row = mysqli_fetch_assoc($cust_query);
+            $no_pel = $cust_row['no_pelanggan'] ?? '';
 
-            $q_promo = mysqli_query($koneksi, "SELECT id_promo, tipe_promo, nilai_promo FROM master_diskon_periode
-                                              WHERE target_type = 'jasa'
-                                              AND (target_id = '$kdj' OR FIND_IN_SET('$kdj', target_id))
-                                              AND status_aktif = 1
-                                              AND '$tgl_cek' BETWEEN tanggal_mulai AND tanggal_selesai
-                                              ORDER BY nilai_promo DESC LIMIT 1");
-
-            if($q_promo && mysqli_num_rows($q_promo) > 0) {
-                $prow = mysqli_fetch_assoc($q_promo);
-                $diskon_source = 'promo';
-                $id_promo = $prow['id_promo'];
-                if($prow['tipe_promo'] == 'nominal') {
-                    $diskon_nominal = $prow['nilai_promo'];
-                    $diskon_persen = ($harga > 0) ? ($diskon_nominal / $harga * 100) : 0;
-                } else {
-                    $diskon_persen = $prow['nilai_promo'];
-                    $diskon_nominal = $harga * ($diskon_persen / 100);
-                }
-            }
-            // 2. Check Member Discount (If no promo)
-            else {
-                // Get pel properti
-                $cust_query = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");
-                $cust_row = mysqli_fetch_assoc($cust_query);
-                $no_pel = $cust_row['no_pelanggan'] ?? '';
-
-                if(!empty($no_pel)) {
-                    // Check exclude
-                    $is_excluded = isItemExcludedFromMemberDiscount($koneksi, $kdj);
-                    if(!$is_excluded) {
-                        $mem_disc = getMemberDiscountForItem($koneksi, $no_pel, $kdj, 'jasa');
-                        if($mem_disc > 0) {
-                            $diskon_source = 'member';
-                            $diskon_persen = $mem_disc;
-                            $diskon_nominal = $harga * ($diskon_persen / 100);
-                        }
+            if(!empty($no_pel) && function_exists('calculateItemDiscount')) {
+                $disc = calculateItemDiscount($koneksi, $no_pel, $kdj, 'jasa', $harga);
+                if(($disc['diskon_nominal'] ?? 0) > 0) {
+                    $diskon_persen = floatval($disc['diskon_persen']);
+                    $diskon_nominal = floatval($disc['diskon_nominal']);
+                    $src = $disc['discount_source'] ?? '';
+                    $diskon_source = (stripos($src, 'promo') !== false) ? 'promo' : ((stripos($src, 'member') !== false) ? 'member' : '');
+                    if(!empty($disc['promo_breakdown'][0]['id_promo'])) {
+                        $id_promo = intval($disc['promo_breakdown'][0]['id_promo']);
                     }
                 }
             }

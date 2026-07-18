@@ -59,13 +59,13 @@ if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
 $query = "SELECT 
             id_promo,
             nama_promo,
-            deskripsi,
+            keterangan,
             tipe_promo,
             nilai_promo,
             tanggal_mulai,
             tanggal_selesai,
             target_nama
-          FROM master_diskon_periode
+          FROM v_promo_target_legacy
           WHERE target_type = '$target_type'
             AND target_id = '$target_id'
             AND status_aktif = 1
@@ -84,7 +84,7 @@ if($result && mysqli_num_rows($result) > 0) {
         'promo' => [
             'id' => intval($row['id_promo']),
             'nama' => $row['nama_promo'],
-            'deskripsi' => $row['deskripsi'],
+            'deskripsi' => $row['keterangan'],
             'tipe' => $row['tipe_promo'],
             'nilai' => floatval($row['nilai_promo']),
             'tanggal_mulai' => $row['tanggal_mulai'],
