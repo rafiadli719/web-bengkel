@@ -7,6 +7,12 @@ if(empty($_SESSION['_iduser'])){
     $id_user = $_SESSION['_iduser'];
     $kd_cabang = $_SESSION['_cabang'];
     include "../config/koneksi.php";
+    require_once "_include_menu_rbac.php";
+
+    if (!canAccessPage($koneksi, $id_user, 'promo_diskon_read')) {
+        header("location:403.php?permission=promo_diskon_read");
+        exit;
+    }
 
     // User data
     $stmt = mysqli_prepare($koneksi, "SELECT nama_user, foto_user FROM tbuser WHERE id=?");
