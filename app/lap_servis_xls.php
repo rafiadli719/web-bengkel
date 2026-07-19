@@ -25,7 +25,7 @@
             // ---- SQL Hasil Data -----
                 $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
                             FROM view_service vs
-                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service
+                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
                             WHERE (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai')
                             ORDER BY vs.tanggal, vs.no_service";
 
@@ -39,7 +39,7 @@
             // ---- SQL Hasil Data -----
                 $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
                             FROM view_service vs
-                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service
+                            LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
                             WHERE (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
                             (vs.no_pelanggan LIKE '%$nopelanggan_esc%' OR vs.namapelanggan LIKE '%$nopelanggan_esc%')
                             ORDER BY vs.tanggal, vs.no_service";
@@ -114,12 +114,12 @@
 
 // Preload barang & jasa totals: 2 query, bukan N×2
 $_preload_brg = [];
-$q_pb = mysqli_query($koneksi, "SELECT sb.no_service, SUM(sb.total) as tot FROM tblservis_barang sb INNER JOIN tblservice ts ON sb.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sb.no_service");
-while ($r = mysqli_fetch_assoc($q_pb)) $_preload_brg[$r['no_service']] = (float)$r['tot'];
+$q_pb = mysqli_query($koneksi, "SELECT sb.no_service, ts.kd_cabang, SUM(sb.total) as tot FROM tblservis_barang sb INNER JOIN tblservice ts ON sb.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sb.no_service, ts.kd_cabang");
+while ($r = mysqli_fetch_assoc($q_pb)) $_preload_brg[$r['no_service'].'|'.$r['kd_cabang']] = (float)$r['tot'];
 
 $_preload_jsa = [];
-$q_pj = mysqli_query($koneksi, "SELECT sj.no_service, SUM(sj.total) as tot FROM tblservis_jasa sj INNER JOIN tblservice ts ON sj.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sj.no_service");
-while ($r = mysqli_fetch_assoc($q_pj)) $_preload_jsa[$r['no_service']] = (float)$r['tot'];
+$q_pj = mysqli_query($koneksi, "SELECT sj.no_service, ts.kd_cabang, SUM(sj.total) as tot FROM tblservis_jasa sj INNER JOIN tblservice ts ON sj.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sj.no_service, ts.kd_cabang");
+while ($r = mysqli_fetch_assoc($q_pj)) $_preload_jsa[$r['no_service'].'|'.$r['kd_cabang']] = (float)$r['tot'];
 
 $query = mysqli_query($koneksi,$sql_query);
 		$no = 0;
@@ -130,11 +130,12 @@ while($row = mysqli_fetch_array($query))
 {
                                                 $no++;
 $no_service=$row['no_service'];
+$_key_svc = $no_service.'|'.$row['kd_cabang'];
 
-                                            $harga_brg = $_preload_brg[$no_service] ?? 0;
+                                            $harga_brg = $_preload_brg[$_key_svc] ?? 0;
                                             $tot_brg=$tot_brg+$harga_brg;
 
-                                            $harga_jasa = $_preload_jsa[$no_service] ?? 0;
+                                            $harga_jasa = $_preload_jsa[$_key_svc] ?? 0;
                                             $tot_jasa=$tot_jasa+$harga_jasa;
 
                                             $harga_servis=$harga_brg+$harga_jasa;

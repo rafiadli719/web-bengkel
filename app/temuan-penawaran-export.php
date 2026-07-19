@@ -782,7 +782,7 @@ if(empty($_SESSION['_iduser'])){
                             COALESCE(mt.nama_temuan, t.temuan_custom) as nama_temuan_display,
                             mt.kategori as kategori_temuan
                           FROM tbservis_temuan t
-                          LEFT JOIN tblservice s ON t.no_service = s.no_service
+                          LEFT JOIN (SELECT no_service, MIN(tanggal) as tanggal FROM tblservice GROUP BY no_service) s ON t.no_service = s.no_service
                           LEFT JOIN tbmaster_temuan mt ON t.kode_temuan = mt.kode_temuan
                           WHERE $where_clause
                           ORDER BY t.created_at DESC";
@@ -1051,7 +1051,7 @@ if(empty($_SESSION['_iduser'])){
                             k.keluhan,
                             p.namapelanggan
                           FROM tbservis_temuan t
-                          LEFT JOIN tblservice s ON t.no_service = s.no_service
+                          LEFT JOIN (SELECT no_service, MIN(tanggal) as tanggal, MIN(no_pelanggan) as no_pelanggan FROM tblservice GROUP BY no_service) s ON t.no_service = s.no_service
                           LEFT JOIN tbmaster_temuan mt ON t.kode_temuan = mt.kode_temuan
                           LEFT JOIN tbservis_keluhan_status k ON t.keluhan_id = k.id
                           LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
@@ -1216,7 +1216,7 @@ if(empty($_SESSION['_iduser'])){
                                 pel.namapelanggan,
                                 COALESCE(mt.nama_temuan, t.temuan_custom) as nama_temuan
                               FROM tbservis_penawaran_part p
-                              LEFT JOIN tblservice s ON p.no_service = s.no_service
+                              LEFT JOIN (SELECT no_service, MIN(tanggal) as tanggal, MIN(no_pelanggan) as no_pelanggan FROM tblservice GROUP BY no_service) s ON p.no_service = s.no_service
                               LEFT JOIN tblpelanggan pel ON s.no_pelanggan = pel.nopelanggan
                               LEFT JOIN tbservis_temuan t ON p.temuan_id = t.id
                               LEFT JOIN tbmaster_temuan mt ON t.kode_temuan = mt.kode_temuan
