@@ -745,6 +745,7 @@
                                         (no_service, nobaris, no_item, harga_jual, quantity, qty_retur, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                         VALUES
                                         ('$no_service', '$nobaris_brg', '$txtkdbarang', '$harga_jual', '$txtqty', '0', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', '$id_promo')");
+                if($diskon_source === 'promo' && intval($id_promo) > 0 && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service, 'barang', $txtkdbarang, $diskon_nominal); }
 
                 echo "<script>window.location='servis-input-reguler-jemput.php?snoserv=$no_service&kd=&kdjasa=$txtcarisrv&kdwo=$txtcariwo';</script>";
                 exit;
@@ -905,6 +906,7 @@
                                         (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
                                         VALUES
                                         ('$no_service', '$next_nobaris', '$txtcarisrv', '$harga', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', '$id_promo', '$keterangan_jasa')");
+                if($diskon_source === 'promo' && intval($id_promo) > 0 && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service, 'jasa', $txtcarisrv, $diskon_nominal); }
 
                 echo "<script>window.location='servis-input-reguler-jemput.php?snoserv=$no_service&kd=$txtcaribrg&kdjasa=&kdwo=$txtcariwo';</script>";
                 exit;
@@ -1241,6 +1243,7 @@
                         if($subtotal < 0) { $subtotal = 0; }
 
                         mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('".mysqli_real_escape_string($koneksi, $no_service)."', '".$nb."', '".mysqli_real_escape_string($koneksi, $pending_data['kode_item'])."', '".$qty."', '0', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
+                        if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service, 'barang', $pending_data['kode_item'], $diskon_nominal); }
                         $auto_barang++;
                     }
                 } else { // jasa
@@ -1283,6 +1286,7 @@
                         $subtotal = $harga - $diskon_nominal; if($subtotal < 0) { $subtotal = 0; }
 
                         mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('".mysqli_real_escape_string($koneksi, $no_service)."', '".$nb."', '".mysqli_real_escape_string($koneksi, $pending_data['kode_item'])."', '".$waktu."', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
+                        if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
                         $auto_jasa++;
                     }
                 }
@@ -1494,6 +1498,7 @@
                                                ('$no_service_post', '$nobaris_barang', '" . mysqli_real_escape_string($koneksi, $pending_data['kode_item']) . "', '" . $qty_appr . "',
                                                 '0', '" . $harga_jual . "', '" . $diskon_persen . "', '" . $subtotal . "', '" . $diskon_source . "', '" . $diskon_persen . "', '" . $diskon_nominal . "', " . $id_promo . ")";
                         mysqli_query($koneksi, $sql_insert_barang);
+                        if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'barang', $pending_data['kode_item'], $diskon_nominal); }
                     }
                 } else {
                     // Jasa
@@ -1591,6 +1596,7 @@
                                             ('$no_service_post', '$nobaris_jasa', '" . mysqli_real_escape_string($koneksi, $pending_data['kode_item']) . "',
                                              '" . $waktu_jasa . "', '" . $harga_jasa . "', '" . $diskon_persen . "', '" . $subtotal . "', '" . $diskon_source . "', '" . $diskon_persen . "', '" . $diskon_nominal . "', " . $id_promo . ")";
                         mysqli_query($koneksi, $sql_insert_jasa);
+                        if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
                     }
                 }
 
@@ -1739,6 +1745,7 @@
                                                    VALUES
                                                    ('$no_service_post', '$nobaris_barang', '" . mysqli_real_escape_string($koneksi, $pending_data['kode_item']) . "',
                                                     '" . $qty_appr . "', '0', '" . $harga_jual . "', '" . $diskon_persen . "', '" . $subtotal . "', '" . $diskon_source . "', '" . $diskon_persen . "', '" . $diskon_nominal . "', " . $id_promo . ")");
+                            if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'barang', $pending_data['kode_item'], $diskon_nominal); }
                             $count_barang++;
                         }
                     } else {
@@ -1836,6 +1843,7 @@
                                                    VALUES
                                                    ('$no_service_post', '$nobaris_jasa', '" . mysqli_real_escape_string($koneksi, $pending_data['kode_item']) . "',
                                                     '" . $waktu_jasa . "', '" . $harga_jasa . "', '" . $diskon_persen . "', '" . $subtotal . "', '" . $diskon_source . "', '" . $diskon_persen . "', '" . $diskon_nominal . "', " . $id_promo . ")");
+                            if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
                             $count_jasa++;
                         }
                     }

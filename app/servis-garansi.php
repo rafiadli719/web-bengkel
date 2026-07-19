@@ -468,6 +468,7 @@
                 VALUES
                 ('$no_service', '$nobaris_brg', '$kd', '$qty', 0, '$harga', '$diskon_persen', '$subtotal',
                  '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+            if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'barang', $kd); }
         }
         // Redirect back
         header('Location: servis-garansi.php?snoserv=' . urlencode($no_service) . '&tab=service-items#service-items');
@@ -577,6 +578,7 @@
                     ('$no_service', '$nobaris_jasa', '$kdj', '$harga', '$diskon_persen', '$total',
                      '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo, '$keterangan_jasa')");
             }
+            if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kdj); }
         }
         // Redirect back
         header('Location: servis-garansi.php?snoserv=' . urlencode($no_service) . '&tab=service-jasa#service-jasa');

@@ -103,6 +103,7 @@ if($update) {
     }
 
     if($insert) {
+        if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kode_jasa); }
         echo "<script>alert('Penawaran jasa disetujui dan ditambahkan ke servis!'); window.location.href='".$redirect_base."?snoserv=$snoserv&tab=temuan-penawaran';</script>";
     } else {
         echo "<script>alert('Penawaran disetujui, tapi gagal menambahkan ke servis: ".mysqli_error($koneksi)."'); window.location.href='".$redirect_base."?snoserv=$snoserv&tab=temuan-penawaran';</script>";

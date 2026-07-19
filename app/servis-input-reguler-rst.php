@@ -611,6 +611,7 @@
                                                           VALUES
                                                           ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                                 }
+                                if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $detail['kode_barang']); }
                             }
                         } else {
                             // Barang - Insert to tblservis_barang
@@ -648,6 +649,7 @@
                                                       (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                       VALUES
                                                       ('$no_service', '$nobaris_brg', '{$detail['kode_barang']}', '$qty_brg_wo', '0', '$harga_brg_wo', '$diskon_persen', '$total_brg_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                                if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'barang', $detail['kode_barang']); }
                             }
                         }
                     }

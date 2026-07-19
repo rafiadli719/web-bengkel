@@ -864,6 +864,41 @@ function calculateItemDiscount($koneksi, $no_pelanggan, $noitem, $item_type, $ha
 }
 
 /**
+ * Catat pemakaian promo ke promo_usage_log. Dipanggil setelah INSERT baris
+ * tblservis_barang/tblservis_jasa yang diskon_source-nya 'promo'. Aman dipanggil
+ * dengan id_promo kosong/0 — akan no-op.
+ */
+function logPromoUsage($koneksi, $id_promo, $no_service, $target_type, $target_id, $nilai_potongan, $urutan_stacking = 1) {
+    $id_promo = intval($id_promo);
+    if ($id_promo <= 0 || empty($no_service) || empty($target_id)) {
+        return false;
+    }
+    $no_service = mysqli_real_escape_string($koneksi, $no_service);
+    $target_type = mysqli_real_escape_string($koneksi, $target_type);
+    $target_id = mysqli_real_escape_string($koneksi, $target_id);
+    $nilai_potongan = floatval($nilai_potongan);
+    $urutan_stacking = intval($urutan_stacking);
+    $dipakai_oleh = !empty($_SESSION['_iduser']) ? intval($_SESSION['_iduser']) : 'NULL';
+
+    return mysqli_query($koneksi, "INSERT INTO promo_usage_log
+        (id_promo, no_service, target_type, target_id, nilai_potongan, urutan_stacking, dipakai_oleh)
+        VALUES ($id_promo, '$no_service', '$target_type', '$target_id', $nilai_potongan, $urutan_stacking, $dipakai_oleh)");
+}
+
+/**
+ * Wrapper: log semua promo di promo_breakdown (hasil calculateItemDiscount)
+ * sekaligus, dipanggil sekali per baris item setelah INSERT sukses.
+ */
+function wireLogPromoUsage($koneksi, $disc, $no_service, $target_type, $target_id) {
+    if (empty($disc['promo_breakdown'])) {
+        return;
+    }
+    foreach ($disc['promo_breakdown'] as $bd) {
+        logPromoUsage($koneksi, $bd['id_promo'], $no_service, $target_type, $target_id, $bd['nilai_potongan'], $bd['urutan_stacking']);
+    }
+}
+
+/**
  * Clear session discount after service is saved
  */
 function clearSessionDiscount() {

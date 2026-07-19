@@ -118,6 +118,7 @@ try {
     if(!mysqli_query($koneksi, $sql_insert_barang)) {
         throw new Exception('Error insert barang: ' . mysqli_error($koneksi));
     }
+    if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $penawaran['no_service'], 'barang', $penawaran['kode_barang']); }
 
     // 2. Update status penawaran menjadi 'disetujui'
     $sql_update_penawaran = "UPDATE tbservis_penawaran_part

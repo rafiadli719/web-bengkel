@@ -38,7 +38,9 @@ function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)
         if($subtotal < 0) { $subtotal = 0; }
         $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_barang WHERE no_service='$no_service'");
         $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
-        return mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$quantity', 0, '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$quantity', 0, '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'barang', $kode_item); }
+        return $ok;
     }
 
     // jasa
@@ -48,9 +50,13 @@ function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)
     $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
     $has_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
     if($has_waktu && mysqli_num_rows($has_waktu) > 0) {
-        return mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kode_item); }
+        return $ok;
     }
-    return mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+    $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+    if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kode_item); }
+    return $ok;
 }
 
 /**

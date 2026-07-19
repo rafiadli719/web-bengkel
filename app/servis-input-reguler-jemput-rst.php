@@ -523,6 +523,7 @@
                                               (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                               VALUES
                                               ('$no_service', '$nobaris_jasa', '{$detail['kode_barang']}', '$harga_jasa_wo', '$waktu', '$diskon_persen', '$total_jasa_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                        if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $detail['kode_barang']); }
                     } else { // Barang
                         // Get next nobaris for barang
                         $q_nobaris_brg = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris), 0) + 1 as next_nobaris FROM tblservis_barang WHERE no_service='$no_service'");
@@ -552,6 +553,7 @@
                                               (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                               VALUES
                                               ('$no_service', '$nobaris_brg', '{$detail['kode_barang']}', '$qty_brg_wo', '0', '$harga_brg_wo', '$diskon_persen', '$total_brg_wo', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                        if($diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'barang', $detail['kode_barang']); }
                     }
                 }
 
