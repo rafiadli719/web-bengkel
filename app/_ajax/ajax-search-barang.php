@@ -59,8 +59,8 @@ $sql = "SELECT i.noitem, i.namaitem, i.hargajual, i.satuan, i.kodebarcode,
                v.namajenis,
                CASE
                    WHEN {$kd_kategori_motor} <= 0 THEN 1
-                   WHEN NOT EXISTS (SELECT 1 FROM tbitem_jenis_motor jm0 WHERE jm0.noitem=i.noitem COLLATE utf8mb4_unicode_ci) THEN 1
-                   WHEN EXISTS (SELECT 1 FROM tbitem_jenis_motor jm WHERE jm.noitem=i.noitem COLLATE utf8mb4_unicode_ci AND jm.".$map_col."={$kd_kategori_motor}) THEN 1
+                   WHEN NOT EXISTS (SELECT 1 FROM tbitem_jenis_motor jm0 WHERE CONVERT(jm0.noitem USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_unicode_ci) THEN 1
+                   WHEN EXISTS (SELECT 1 FROM tbitem_jenis_motor jm WHERE CONVERT(jm.noitem USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(i.noitem USING utf8mb4) COLLATE utf8mb4_unicode_ci AND jm.".$map_col."={$kd_kategori_motor}) THEN 1
                    ELSE 0
                END AS applicable
         FROM tblitem i

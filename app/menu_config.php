@@ -339,6 +339,7 @@ return [
                     ['title' => 'Tracking Keluhan', 'url' => 'report-tracking-keluhan.php', 'permission' => 'tracking_keluhan_read'],
                 ]
             ],
+            ['title' => 'Master Promo/Diskon', 'url' => 'master-diskon-periode.php', 'icon' => 'fa-caret-right', 'permission' => 'promo_diskon_read'],
             ['title' => 'Approval Diskon', 'url' => 'approval-diskon.php', 'icon' => 'fa-caret-right', 'permission' => 'diskon_approval_approve'],
             ['title' => 'Laporan DP Servis', 'url' => 'laporan-dp.php', 'icon' => 'fa-caret-right', 'permission' => 'servis_menu_read'],
             ['title' => 'Retur Servis', 'url' => 'retur_servis.php', 'icon' => 'fa-undo', 'permission' => 'servis_menu_read'],
