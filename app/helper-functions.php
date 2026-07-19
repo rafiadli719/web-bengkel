@@ -128,7 +128,7 @@ function getTopKeluhan($koneksi, $limit = 10, $tgl_dari = null, $tgl_sampai = nu
                                  mk.nama_keluhan,
                                  mk.kategori,
                                  mk.tingkat_prioritas,
-                                 COUNT(k.id) as jumlah_kejadian,
+                                 COUNT(DISTINCT k.id) as jumlah_kejadian,
                                  AVG(mk.estimasi_waktu) as avg_estimasi
                                  FROM tbmaster_keluhan mk
                                  JOIN tbservis_keluhan_status k ON k.keluhan LIKE CONCAT('%', mk.nama_keluhan, '%')
@@ -370,13 +370,21 @@ function logActivity($koneksi, $user_id, $action, $description, $related_table =
 function cleanOldTrackingData($koneksi, $days_to_keep = 90) {
     $cutoff_date = date('Y-m-d', strtotime("-$days_to_keep days"));
     
-    // Delete old tracking data for completed services
+    // Delete old tracking data for completed services.
+    // no_service tidak unik lintas cabang (lihat memory project_critical_no_service_not_unique) dan
+    // tbservis_keluhan_status/tracking tidak punya kolom kd_cabang, jadi JOIN ke tblservice via
+    // no_service saja bisa nyambung ke baris cabang lain. NOT EXISTS di bawah cegah delete kalau
+    // ada sibling service (no_service sama, cabang lain) yang statusnya belum '4' (masih aktif).
     $sql = "DELETE kt FROM tbservis_keluhan_tracking kt
             JOIN tbservis_keluhan_status k ON kt.keluhan_id = k.id
             JOIN tblservice s ON k.no_service = s.no_service
             WHERE DATE(s.tanggal) < '$cutoff_date'
             AND s.status = '4'
-            AND k.status_pengerjaan = 'selesai'";
+            AND k.status_pengerjaan = 'selesai'
+            AND NOT EXISTS (
+                SELECT 1 FROM tblservice s2
+                WHERE s2.no_service = s.no_service AND s2.status <> '4'
+            )";
     
     return mysqli_query($koneksi, $sql);
 }
