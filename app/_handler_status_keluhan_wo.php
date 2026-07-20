@@ -104,7 +104,7 @@ if(isset($_POST['btnupdatestatuskeluhan'])) {
             $keluhan_text = $keluhan_data['keluhan'];
             
             // Get current catatan
-            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
             $service_data = mysqli_fetch_array($q_service);
             $catatan_lama = $service_data['catatan'] ?? '';
             
@@ -117,7 +117,7 @@ if(isset($_POST['btnupdatestatuskeluhan'])) {
             
             // Update catatan
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
-            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
         }
         
         echo "<script>alert('Status keluhan berhasil diupdate!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
@@ -227,7 +227,7 @@ if(isset($_POST['btnupdatestatuswo'])) {
             $nama_wo = $wo_data['nama_wo'];
             
             // Get current catatan
-            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
             $service_data = mysqli_fetch_array($q_service);
             $catatan_lama = $service_data['catatan'] ?? '';
             
@@ -240,7 +240,7 @@ if(isset($_POST['btnupdatestatuswo'])) {
             
             // Update catatan
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
-            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
         }
         
         echo "<script>alert('Status work order berhasil diupdate!'); window.location.href='?snoserv=$no_service&tab=workorder-details';</script>";
@@ -325,7 +325,7 @@ if(isset($_POST['btntolakitem'])) {
             $tipe_readable = ($item['tipe'] == 'barang') ? 'Barang' : 'Jasa';
             $alasan_readable = str_replace('_', ' ', ucwords($alasan_tolak, '_'));
             
-            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
             $service_data = mysqli_fetch_array($q_service);
             $catatan_lama = $service_data['catatan'] ?? '';
             
@@ -340,7 +340,7 @@ if(isset($_POST['btntolakitem'])) {
             }
             
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
-            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
             
             echo "<script>alert('Item ditolak dan dicatat!'); window.location.href='?snoserv=$no_service&tab=temuan-penawaran';</script>";
         } else {

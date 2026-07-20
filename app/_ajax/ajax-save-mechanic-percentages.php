@@ -7,6 +7,8 @@ if(empty($_SESSION['_iduser'])){
     exit;
 }
 
+$kd_cabang = $_SESSION['_cabang'];
+
 include "../config/koneksi.php";
 
 if (!isset($_POST['no_service']) || empty($_POST['no_service'])) {
@@ -35,21 +37,21 @@ $mekanik4 = $_POST['mekanik4'] ?? '';
 $persen_kerja4 = intval($_POST['persen_kerja4'] ?? 0);
 
 try {
-    // Check if service exists
-    $query_check = "SELECT COUNT(*) as count FROM tblservice WHERE no_service = ?";
+    // Check if service exists AND belongs to this branch
+    $query_check = "SELECT COUNT(*) as count FROM tblservice WHERE no_service = ? AND kd_cabang = ?";
     $stmt_check = mysqli_prepare($koneksi, $query_check);
-    mysqli_stmt_bind_param($stmt_check, "s", $no_service);
+    mysqli_stmt_bind_param($stmt_check, "ss", $no_service, $kd_cabang);
     mysqli_stmt_execute($stmt_check);
     $result_check = mysqli_stmt_get_result($stmt_check);
     $check_data = mysqli_fetch_assoc($result_check);
-    
+
     if ($check_data['count'] == 0) {
-        echo json_encode(['success' => false, 'message' => 'Service tidak ditemukan']);
+        echo json_encode(['success' => false, 'message' => 'Service tidak ditemukan di cabang Anda']);
         exit;
     }
-    
+
     // Update mechanic data in tblservice
-    $query_update = "UPDATE tblservice SET 
+    $query_update = "UPDATE tblservice SET
                      kepala_mekanik1 = ?, persen_kepala_mekanik1 = ?,
                      kepala_mekanik2 = ?, persen_kepala_mekanik2 = ?,
                      mekanik1 = ?, persen_mekanik1 = ?,
@@ -57,17 +59,18 @@ try {
                      mekanik3 = ?, persen_mekanik3 = ?,
                      mekanik4 = ?, persen_mekanik4 = ?,
                      updated_at = NOW()
-                     WHERE no_service = ?";
-    
+                     WHERE no_service = ? AND kd_cabang = ?";
+
     $stmt_update = mysqli_prepare($koneksi, $query_update);
-    mysqli_stmt_bind_param($stmt_update, "sisisisisisisss", 
+    mysqli_stmt_bind_param($stmt_update, "sisisisisisisss",
         $kepala_mekanik1, $persen_kepala1,
         $kepala_mekanik2, $persen_kepala2,
         $mekanik1, $persen_kerja1,
         $mekanik2, $persen_kerja2,
         $mekanik3, $persen_kerja3,
         $mekanik4, $persen_kerja4,
-        $no_service
+        $no_service,
+        $kd_cabang
     );
     
     if (mysqli_stmt_execute($stmt_update)) {

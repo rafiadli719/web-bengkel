@@ -1125,20 +1125,20 @@ if(isset($_POST['btnupdatestatustemuan'])) {
             $nama_temuan = $temuan_data['nama_temuan'];
             
             // Get current catatan
-            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service'");
+            $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
             $service_data = mysqli_fetch_array($q_service);
             $catatan_lama = $service_data['catatan'] ?? '';
-            
+
             // Append new note
             $catatan_baru = $catatan_lama;
             if(!empty($catatan_lama)) {
                 $catatan_baru .= "\n\n";
             }
             $catatan_baru .= "[TEMUAN TIDAK SELESAI] $nama_temuan: $keterangan";
-            
+
             // Update catatan
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
-            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service'");
+            mysqli_query($koneksi, "UPDATE tblservice SET catatan = '$catatan_escaped' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
         }
         
         echo "<script>alert('Status temuan berhasil diupdate!'); window.location.href='?snoserv=$no_service&tab=temuan#temuan-penawaran';</script>";

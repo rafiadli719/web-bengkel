@@ -8,6 +8,8 @@ if (empty($_SESSION['_iduser'])) {
     exit;
 }
 
+$kd_cabang = $_SESSION['_cabang'];
+
 include "../config/koneksi.php";
 
 $no_service = $_POST['no_service'] ?? '';
@@ -19,7 +21,8 @@ if (empty($no_service)) {
 }
 
 $ns = mysqli_real_escape_string($koneksi, $no_service);
-$upd = mysqli_query($koneksi, "UPDATE tblservice SET boleh_dp=$boleh_dp WHERE no_service='$ns'");
+$cb = mysqli_real_escape_string($koneksi, $kd_cabang);
+$upd = mysqli_query($koneksi, "UPDATE tblservice SET boleh_dp=$boleh_dp WHERE no_service='$ns' AND kd_cabang='$cb'");
 
 if ($upd) {
     echo json_encode(['success' => true, 'boleh_dp' => $boleh_dp]);

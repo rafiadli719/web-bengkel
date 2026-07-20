@@ -7,6 +7,8 @@ if (empty($_SESSION['_iduser'])) {
     exit;
 }
 
+$kd_cabang = $_SESSION['_cabang'];
+
 // Include database connection (path relative to _admincab/_ajax)
 require_once('../../config/koneksi.php');
 
@@ -86,7 +88,8 @@ $setParts[] = "km_berikut = $km_berikut";
 
 $setSql = implode(",\n    ", $setParts);
 
-$query = "UPDATE tblservice SET\n    $setSql\nWHERE no_service = '$no_service'";
+$kd_cabang_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
+$query = "UPDATE tblservice SET\n    $setSql\nWHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_esc'";
 
 // Execute query
 $result = mysqli_query($koneksi, $query);
@@ -100,7 +103,7 @@ if($result) {
         ]);
     } else {
         // Check if record exists
-        $check = mysqli_query($koneksi, "SELECT no_service FROM tblservice WHERE no_service = '$no_service'");
+        $check = mysqli_query($koneksi, "SELECT no_service FROM tblservice WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_esc'");
         if(mysqli_num_rows($check) > 0) {
             echo json_encode([
                 'status' => 'success',

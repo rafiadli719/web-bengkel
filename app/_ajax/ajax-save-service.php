@@ -9,6 +9,8 @@ if(empty($_SESSION['_iduser'])){
     exit;
 }
 
+$kd_cabang = $_SESSION['_cabang'];
+
 try {
     // Get form data
     $no_service = $_POST['no_service'] ?? '';
@@ -66,10 +68,10 @@ try {
         }
         
         // Save to tblservice
-        $query_service = "INSERT INTO tblservice (no_service, tanggal, jam, no_pelanggan, no_polisi, status_servis, user_input, tanggal_input) 
-                         VALUES ('$no_service', '$tanggal_db', '$jam', '$kode_pelanggan', '$no_polisi', '$status_servis', '$_SESSION[_iduser]', NOW())
-                         ON DUPLICATE KEY UPDATE 
-                         tanggal = '$tanggal_db', jam = '$jam', no_pelanggan = '$kode_pelanggan', 
+        $query_service = "INSERT INTO tblservice (no_service, kd_cabang, tanggal, jam, no_pelanggan, no_polisi, status_servis, user_input, tanggal_input)
+                         VALUES ('$no_service', '$kd_cabang', '$tanggal_db', '$jam', '$kode_pelanggan', '$no_polisi', '$status_servis', '$_SESSION[_iduser]', NOW())
+                         ON DUPLICATE KEY UPDATE
+                         tanggal = '$tanggal_db', jam = '$jam', no_pelanggan = '$kode_pelanggan',
                          no_polisi = '$no_polisi', status_servis = '$status_servis', user_update = '$_SESSION[_iduser]', tanggal_update = NOW()";
         
         if(!mysqli_query($koneksi, $query_service)) {
@@ -91,10 +93,10 @@ try {
         
         // Save work order data to tblservice (update existing record)
         if(!empty($no_workorder) || !empty($deskripsi_pekerjaan)) {
-            $query_wo = "UPDATE tblservice SET 
+            $query_wo = "UPDATE tblservice SET
                         no_workorder = '$no_workorder',
                         deskripsi_pekerjaan = '$deskripsi_pekerjaan'
-                        WHERE no_service = '$no_service'";
+                        WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
             
             if(!mysqli_query($koneksi, $query_wo)) {
                 throw new Exception('Gagal menyimpan work order: ' . mysqli_error($koneksi));
@@ -128,10 +130,10 @@ try {
         
         // Save service detail to tblservice (update existing record)
         if(!empty($keluhan) || !empty($catatan)) {
-            $query_detail = "UPDATE tblservice SET 
-                            keluhan = '$keluhan', 
+            $query_detail = "UPDATE tblservice SET
+                            keluhan = '$keluhan',
                             catatan = '$catatan'
-                            WHERE no_service = '$no_service'";
+                            WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
             
             if(!mysqli_query($koneksi, $query_detail)) {
                 throw new Exception('Gagal menyimpan detail service: ' . mysqli_error($koneksi));
@@ -141,7 +143,7 @@ try {
         // Save items (barang) - store as JSON in tblservice for now
         if(!empty($item_barang)) {
             $item_barang_json = json_encode($item_barang);
-            $query_items = "UPDATE tblservice SET item_barang = '$item_barang_json' WHERE no_service = '$no_service'";
+            $query_items = "UPDATE tblservice SET item_barang = '$item_barang_json' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
             
             if(!mysqli_query($koneksi, $query_items)) {
                 throw new Exception('Gagal menyimpan item barang: ' . mysqli_error($koneksi));
@@ -151,7 +153,7 @@ try {
         // Save items (jasa) - store as JSON in tblservice for now
         if(!empty($item_jasa)) {
             $item_jasa_json = json_encode($item_jasa);
-            $query_items = "UPDATE tblservice SET item_jasa = '$item_jasa_json' WHERE no_service = '$no_service'";
+            $query_items = "UPDATE tblservice SET item_jasa = '$item_jasa_json' WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
             
             if(!mysqli_query($koneksi, $query_items)) {
                 throw new Exception('Gagal menyimpan item jasa: ' . mysqli_error($koneksi));
