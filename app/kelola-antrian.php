@@ -62,11 +62,11 @@ if(empty($_SESSION['_iduser'])){
         if($new_status == 'diproses') {
             mysqli_query($koneksi, "UPDATE tblservice
                                    SET status_servis='diproses'
-                                   WHERE no_service='$no_service'");
+                                   WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
         } elseif($new_status == 'selesai') {
             mysqli_query($koneksi, "UPDATE tblservice
                                    SET status_servis='selesai'
-                                   WHERE no_service='$no_service'");
+                                   WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
         }
 
         echo "<script>
@@ -94,7 +94,7 @@ if(empty($_SESSION['_iduser'])){
         // Also update service status
         mysqli_query($koneksi, "UPDATE tblservice
                                SET status_servis='cancel'
-                               WHERE no_service='$no_service'");
+                               WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
         echo "<script>
             alert('Antrian berhasil dibatalkan!');

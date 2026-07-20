@@ -83,7 +83,7 @@ function validateMekanikPercentage($mekanik_data) {
 }
 
 // Function untuk save service data
-function saveServiceData($koneksi, $service_data, $mekanik_data) {
+function saveServiceData($koneksi, $service_data, $mekanik_data, $kd_cabang) {
     $no_service = $service_data['no_service'];
     
     // Prepare mekanik update query
@@ -118,8 +118,8 @@ function saveServiceData($koneksi, $service_data, $mekanik_data) {
     
     $mekanik_fields[] = "updated_at = NOW()";
     
-    $update_query = "UPDATE tblservice SET " . implode(', ', $mekanik_fields) . " WHERE no_service = '$no_service'";
-    
+    $update_query = "UPDATE tblservice SET " . implode(', ', $mekanik_fields) . " WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
+
     return mysqli_query($koneksi, $update_query);
 }
 
@@ -168,7 +168,7 @@ if(isset($_POST['btnsimpan']) || isset($_POST['btnupdatemekanik'])) {
     
     try {
         // Save data
-        if(saveServiceData($koneksi, $service_data, $mekanik_data)) {
+        if(saveServiceData($koneksi, $service_data, $mekanik_data, $kd_cabang)) {
             // Log activity
             $activity_log = "Updated service $no_service - Mekanik assignment";
             mysqli_query($koneksi,"INSERT INTO activity_log (user_id, activity, created_at) VALUES ('$id_user', '$activity_log', NOW())");
@@ -209,17 +209,17 @@ if(isset($_POST['btnupdatestatus'])) {
     }
     
     try {
-        $update_query = "UPDATE tblservice SET 
+        $update_query = "UPDATE tblservice SET
                         status_servis = '$status_servis',
-                        updated_at = NOW() 
-                        WHERE no_service = '$no_service'";
-        
+                        updated_at = NOW()
+                        WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
+
         if(mysqli_query($koneksi, $update_query)) {
             // Update related keluhan status if service completed
             if($status_servis == 'selesai' || $status_servis == 'bayar') {
-                mysqli_query($koneksi,"UPDATE tbservis_keluhan_status 
+                mysqli_query($koneksi,"UPDATE tbservis_keluhan_status
                                       SET status_pengerjaan = 'selesai', updated_at = NOW()
-                                      WHERE no_service = '$no_service' 
+                                      WHERE no_service = '$no_service'
                                       AND status_pengerjaan IN ('datang', 'diproses')");
             }
             

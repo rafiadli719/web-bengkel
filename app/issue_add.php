@@ -177,18 +177,19 @@ function infer_legacy_issue_structure($koneksi, $issue){
     return $out;
 }
 
-function eksekusi_revisi_komisi($koneksi, $id_issue, $payload, $id_user){
+function eksekusi_revisi_komisi($koneksi, $id_issue, $payload, $id_user, $kd_cabang){
     $no_service  = $payload['no_service'] ?? '';
     $peran       = $payload['peran'] ?? '';
     if($peran === '' && !empty($payload['mekanik_ke'])) $peran = 'mekanik'.preg_replace('/[^1-4]/','', (string)$payload['mekanik_ke']);
     $persen_baru = (int)($payload['persen_baru'] ?? 0);
     if(!$no_service || !$peran || !$persen_baru) return false;
     $esc_svc = mysqli_real_escape_string($koneksi, $no_service);
-    $qsvc = mysqli_query($koneksi, "SELECT no_service, subtotal_jasa, subtotal_item FROM tblservice WHERE no_service='{$esc_svc}'");
+    $esc_cab = mysqli_real_escape_string($koneksi, $kd_cabang);
+    $qsvc = mysqli_query($koneksi, "SELECT no_service, subtotal_jasa, subtotal_item FROM tblservice WHERE no_service='{$esc_svc}' AND kd_cabang='{$esc_cab}'");
     $svc = $qsvc ? mysqli_fetch_assoc($qsvc) : null;
     if(!$svc) return false;
 
-    $qpersen = mysqli_query($koneksi, "SELECT persen_mekanik1,persen_mekanik2,persen_mekanik3,persen_mekanik4 FROM tblservice WHERE no_service='{$esc_svc}'");
+    $qpersen = mysqli_query($koneksi, "SELECT persen_mekanik1,persen_mekanik2,persen_mekanik3,persen_mekanik4 FROM tblservice WHERE no_service='{$esc_svc}' AND kd_cabang='{$esc_cab}'");
     $row_persen = $qpersen ? mysqli_fetch_assoc($qpersen) : [];
     $jml_mek = 0;
     for($i=1;$i<=4;$i++){ if(!empty($row_persen["persen_mekanik{$i}"]) && (int)$row_persen["persen_mekanik{$i}"] > 0) $jml_mek++; }
@@ -197,7 +198,7 @@ function eksekusi_revisi_komisi($koneksi, $id_issue, $payload, $id_user){
     // Live schema belum punya snapshot laba_barang di tblservice.
     // Hitung dari detail servis vs hargapokok master item: total line - (qty * hargapokok).
     $laba_barang = 0;
-    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, COALESCE(i.hargapokok,0) AS hargapokok FROM tblservis_barang sb LEFT JOIN tblitem i ON i.noitem=sb.no_item WHERE sb.no_service='{$esc_svc}'");
+    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, COALESCE(i.hargapokok,0) AS hargapokok FROM tblservis_barang sb LEFT JOIN tblitem i ON i.noitem=sb.no_item WHERE sb.no_service='{$esc_svc}' AND sb.kd_cabang='{$esc_cab}'");
     if($qbarang){
         while($rb = mysqli_fetch_assoc($qbarang)){
             $qty = (float)($rb['quantity'] ?? 0);
@@ -227,12 +228,12 @@ function eksekusi_revisi_komisi($koneksi, $id_issue, $payload, $id_user){
 }
 
 
-function eksekusi_koreksi_nopol_servis($koneksi, $id_issue, $payload, $id_user){
+function eksekusi_koreksi_nopol_servis($koneksi, $id_issue, $payload, $id_user, $kd_cabang){
     $no_service = $payload['no_service'] ?? '';
     $nopol_benar = trim((string)($payload['nopol_benar'] ?? ''));
     if($no_service === '' || $nopol_benar === '') return false;
-    $stmt = mysqli_prepare($koneksi, "UPDATE tblservice SET no_polisi=? WHERE no_service=?");
-    mysqli_stmt_bind_param($stmt, 'ss', $nopol_benar, $no_service);
+    $stmt = mysqli_prepare($koneksi, "UPDATE tblservice SET no_polisi=? WHERE no_service=? AND kd_cabang=?");
+    mysqli_stmt_bind_param($stmt, 'sss', $nopol_benar, $no_service, $kd_cabang);
     $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     return $ok;
@@ -331,8 +332,8 @@ if(isset($_POST['btnupdate_status']) && $id_issue!==''){
                         } else {
                             $fn = $jr['target_eksekusi'];
                             $ok = false;
-                            if($fn === 'revisi_komisi_pasca_bayar'){ $ok = eksekusi_revisi_komisi($koneksi,$id_issue,$payload,$id_user); }
-                            elseif($fn === 'koreksi_nopol_servis'){ $ok = eksekusi_koreksi_nopol_servis($koneksi,$id_issue,$payload,$id_user); }
+                            if($fn === 'revisi_komisi_pasca_bayar'){ $ok = eksekusi_revisi_komisi($koneksi,$id_issue,$payload,$id_user,$rc['kd_cabang']); }
+                            elseif($fn === 'koreksi_nopol_servis'){ $ok = eksekusi_koreksi_nopol_servis($koneksi,$id_issue,$payload,$id_user,$rc['kd_cabang']); }
                             if(!$ok){
                                 $message = 'Approve gagal: eksekusi otomatis untuk tiket ini tidak berhasil.'; $error_class = 'alert-danger';
                             } else {

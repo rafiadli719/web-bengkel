@@ -74,7 +74,7 @@ try {
 
         if($tipe_item === 'barang') {
             $cek_d = mysqli_query($koneksi, "SELECT quantity, qty_retur FROM tblservis_barang
-                                             WHERE no_service='$no_service' AND no_item='$no_item'");
+                                             WHERE no_service='$no_service' AND no_item='$no_item' AND kd_cabang='$kd_cabang'");
             if(mysqli_num_rows($cek_d) == 0) continue;
             $row_d = mysqli_fetch_assoc($cek_d);
             $sisa  = (int)$row_d['quantity'] - (int)$row_d['qty_retur'];
@@ -83,10 +83,10 @@ try {
             $subtotal = $qty * $harga;
 
             $sql_upd = "UPDATE tblservis_barang SET qty_retur = qty_retur + $qty
-                        WHERE no_service='$no_service' AND no_item='$no_item'";
+                        WHERE no_service='$no_service' AND no_item='$no_item' AND kd_cabang='$kd_cabang'";
         } else {
             $cek_d = mysqli_query($koneksi, "SELECT qty_retur FROM tblservis_jasa
-                                             WHERE no_service='$no_service' AND no_item='$no_item'");
+                                             WHERE no_service='$no_service' AND no_item='$no_item' AND kd_cabang='$kd_cabang'");
             if(mysqli_num_rows($cek_d) == 0) continue;
             $row_d = mysqli_fetch_assoc($cek_d);
             $sisa  = 1 - (int)$row_d['qty_retur'];
@@ -95,7 +95,7 @@ try {
             $subtotal = $qty * $harga;
 
             $sql_upd = "UPDATE tblservis_jasa SET qty_retur = qty_retur + $qty
-                        WHERE no_service='$no_service' AND no_item='$no_item'";
+                        WHERE no_service='$no_service' AND no_item='$no_item' AND kd_cabang='$kd_cabang'";
         }
 
         $sql_d = "INSERT INTO tblretur_servis_detail
@@ -108,10 +108,10 @@ try {
     }
 
     $res_tot = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_qty_retur),0) AS tq, COALESCE(SUM(total_retur),0) AS tn
-                                       FROM tblretur_servis_header WHERE no_service='$no_service'");
+                                       FROM tblretur_servis_header WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
     $row_tot     = mysqli_fetch_assoc($res_tot);
     $new_tot_ret = (float)$row_tot['tn'];
-    if(!mysqli_query($koneksi, "UPDATE tblservice SET total_retur=$new_tot_ret WHERE no_service='$no_service'"))
+    if(!mysqli_query($koneksi, "UPDATE tblservice SET total_retur=$new_tot_ret WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'"))
         throw new Exception("Gagal update header servis: ".mysqli_error($koneksi));
 
     mysqli_commit($koneksi);

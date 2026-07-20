@@ -29,7 +29,7 @@ try {
         $table   = $it['tipe_item'] === 'jasa' ? 'tblservis_jasa' : 'tblservis_barang';
         if(!mysqli_query($koneksi, "UPDATE $table
                                     SET qty_retur = GREATEST(0, qty_retur - $qty)
-                                    WHERE no_service='$no_service' AND no_item='$no_item'"))
+                                    WHERE no_service='$no_service' AND no_item='$no_item' AND kd_cabang='$kd_cabang'"))
             throw new Exception("Gagal rollback qty_retur: ".mysqli_error($koneksi));
     }
 
@@ -42,10 +42,10 @@ try {
         throw new Exception("Gagal hapus header: ".mysqli_error($koneksi));
 
     $res_tot = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_retur),0) AS tn
-                                       FROM tblretur_servis_header WHERE no_service='$no_service'");
+                                       FROM tblretur_servis_header WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
     $row_tot = mysqli_fetch_assoc($res_tot);
     $new_tot_ret = (float)$row_tot['tn'];
-    if(!mysqli_query($koneksi, "UPDATE tblservice SET total_retur=$new_tot_ret WHERE no_service='$no_service'"))
+    if(!mysqli_query($koneksi, "UPDATE tblservice SET total_retur=$new_tot_ret WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'"))
         throw new Exception("Gagal update header servis: ".mysqli_error($koneksi));
 
     mysqli_commit($koneksi);

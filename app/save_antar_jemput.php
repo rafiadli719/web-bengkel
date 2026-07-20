@@ -214,10 +214,10 @@ if (isset($_FILES['foto_patokan']) && $_FILES['foto_patokan']['error'] == 0) {
     }
 }
 
-// Check if service already exists
-$check_service = "SELECT COUNT(*) as count FROM tblservice WHERE no_service = ?";
+// Check if service already exists in this branch
+$check_service = "SELECT COUNT(*) as count FROM tblservice WHERE no_service = ? AND kd_cabang = ?";
 $stmt_check = mysqli_prepare($koneksi, $check_service);
-mysqli_stmt_bind_param($stmt_check, "s", $noserv_antar);
+mysqli_stmt_bind_param($stmt_check, "ss", $noserv_antar, $kd_cabang);
 mysqli_stmt_execute($stmt_check);
 $result_check = mysqli_stmt_get_result($stmt_check);
 $row_check = mysqli_fetch_assoc($result_check);
@@ -269,8 +269,10 @@ if ($row_check['count'] > 0) {
     
     $update_values[] = $noserv_antar;
     $update_types .= "s";
-    
-    $query = "UPDATE tblservice SET " . implode(", ", $update_fields) . " WHERE no_service = ?";
+    $update_values[] = $kd_cabang;
+    $update_types .= "s";
+
+    $query = "UPDATE tblservice SET " . implode(", ", $update_fields) . " WHERE no_service = ? AND kd_cabang = ?";
     
     debug_log("Executing UPDATE SQL: $query");
     $stmt = mysqli_prepare($koneksi, $query);
