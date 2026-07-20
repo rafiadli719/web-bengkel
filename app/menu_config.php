@@ -29,18 +29,22 @@ return [
         'icon' => 'fa-users',
         'permission' => 'issue_approve_supervisor'
     ],
-    [
-        'title' => 'Pindah Kepemilikan Motor',
-        'url' => 'kendaraan_pindah_tangan.php',
-        'icon' => 'fa-exchange',
-        'permission' => 'service_create'
-    ],
-    [
-        'title' => 'Approve Pindah Kepemilikan',
-        'url' => 'kendaraan_pindah_tangan_approve.php',
-        'icon' => 'fa-check-square-o',
-        'permission' => 'issue_approve_supervisor'
-    ],
+    // NONAKTIF SEMENTARA (2026-07-20): menu Pindah Kepemilikan Kendaraan disembunyikan
+    // sampai migrasi data Access selesai (lihat docs/migration/RENCANA_MIGRASI_DATA_ACCESS.md
+    // dan project_pindah_kepemilikan_kendaraan_planning). Route/file TIDAK dihapus,
+    // tinggal uncomment 2 blok di bawah untuk aktifkan lagi.
+    // [
+    //     'title' => 'Pindah Kepemilikan Motor',
+    //     'url' => 'kendaraan_pindah_tangan.php',
+    //     'icon' => 'fa-exchange',
+    //     'permission' => 'service_create'
+    // ],
+    // [
+    //     'title' => 'Approve Pindah Kepemilikan',
+    //     'url' => 'kendaraan_pindah_tangan_approve.php',
+    //     'icon' => 'fa-check-square-o',
+    //     'permission' => 'issue_approve_supervisor'
+    // ],
     [
         'title' => 'Data Master',
         'icon' => 'fa-cog',
