@@ -369,7 +369,7 @@
                 persen_mekanik4='$persen_mekanik4',
                 komisi_garansi_mode='$komisi_mode_baru',
                 updated_at=NOW()
-                WHERE no_service='$no_service'";
+                WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'";
 
             if(mysqli_query($koneksi, $update_mechanic)) {
                 echo "<script>
@@ -607,7 +607,7 @@
             // Update KM data
             mysqli_query($koneksi,"UPDATE tblservice
                                    SET km_skr='$km_skr', km_berikut='$km_berikut'
-                                   WHERE no_service='$no_service'");
+                                   WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
             echo"<script>
                 alert('Keluhan berhasil ditambahkan ke SPK Garansi!');
@@ -659,7 +659,7 @@
         if(!empty($no_service)) {
             mysqli_query($koneksi,"UPDATE tblservice
                                    SET km_skr='$km_skr', km_berikut='$km_berikut'
-                                   WHERE no_service='$no_service'");
+                                   WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
         }
 
         // Redirect to workorder search page
@@ -786,7 +786,7 @@
                     // Update KM data
                     mysqli_query($koneksi,"UPDATE tblservice
                                            SET km_skr='$km_skr', km_berikut='$km_berikut'
-                                           WHERE no_service='$no_service'");
+                                           WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
                     echo"<script>
                         alert('Work Order GARANSI berhasil ditambahkan ke SPK!\\nSemua item di-set GRATIS (potongan 100%).');
@@ -934,7 +934,7 @@
             persen_mekanik3='$persen_mekanik3',
             persen_mekanik4='$persen_mekanik4',
             updated_at=NOW()
-            WHERE no_service='$no_service'";
+            WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'";
             
         if(mysqli_query($koneksi, $update_query)) {
             echo "<script>
@@ -1106,7 +1106,7 @@
                 bayar_qris = '$bayar_qris',
                 ref_transfer = '$ref_transfer'"
                 . (!empty($bukti_pembayaran_path) ? ", bukti_pembayaran = '$bukti_pembayaran_path'" : "") . "
-                WHERE no_service = '$no_service'";
+                WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
 
             if(mysqli_query($koneksi, $update_payment)) {
                 // F2-A: tandai DP pending sebagai offset setelah pelunasan (Q9)

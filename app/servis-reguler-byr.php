@@ -44,9 +44,9 @@
                                         total, 
                                         diskon_persen, diskon_nom, 
                                         ppn_persen, ppn_nom, 
-                                        total_grand, status_servis 
-                                        FROM tblservice 
-                                        WHERE no_service='$no_service'");
+                                        total_grand, status_servis
+                                        FROM tblservice
+                                        WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal=$tm_cari['tanggal_serv'];                
         $tanggal_srv=$tm_cari['tanggal'];
@@ -136,9 +136,9 @@
             $no_service = $_POST['txtnosrv'];
             $status_servis_baru = $_POST['cbostatus'];
             
-            mysqli_query($koneksi,"UPDATE tblservice 
-                                   SET status_servis='$status_servis_baru' 
-                                   WHERE no_service='$no_service'");
+            mysqli_query($koneksi,"UPDATE tblservice
+                                   SET status_servis='$status_servis_baru'
+                                   WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
             
             echo"<script>window.location=('servis-reguler-byr.php?snoserv=$no_service&kd=$txtcaribrg&kdjasa=$txtcarisrv&kdwo=$txtcariwo');
             </script>";
@@ -578,7 +578,7 @@
                                         total_waktu='$total_waktu',
                                         status_servis='bayar'
                                         WHERE
-                                        no_service='$no_service'");                                            
+                                        no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang 
                                                 WHERE 

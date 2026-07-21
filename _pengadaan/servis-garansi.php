@@ -41,7 +41,7 @@
                                         ppn_persen, ppn_nom, 
                                         total_grand 
                                         FROM tblservice 
-                                        WHERE no_service='$no_service'");
+                                        WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal=$tm_cari['tanggal_serv'];                
 		$jam=$tm_cari['jam'];        
@@ -445,7 +445,7 @@
                                         total_grand='$net', 
                                         bayar='$bayar', kembali='$kembalian'
                                         WHERE 
-                                        no_service='$no_service'");                                            
+                                        no_service='$no_service' AND kd_cabang='$kd_cabang'");                                            
                 
             echo"<script>window.location=('servis-reguler-cetak.php?snoserv=$no_service');</script>";                        
         }
