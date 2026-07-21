@@ -1,180 +1,169 @@
-# Wiring Komisi Mekanik — Snapshot ke Tabel
+# Wiring Komisi Mekanik — Snapshot ke Tabel (REVISI)
 
 **Tanggal:** 2026-07-21
-**Status:** Disetujui
+**Status:** Revisi — spec versi awal (siang) salah premis, dibuang.
 
-## Latar Belakang
+## Kenapa ditulis ulang
 
-Temuan audit Access lama (T-05, `audit_tahap2_servis` memory): komisi
-mekanik/admin dihitung real-time saat laporan dibuka, tidak pernah
-di-*commit* ke tabel permanen. Kalau data servis direvisi belakangan,
-angka komisi ikut berubah — tidak ada snapshot historis.
+Draft pertama mengasumsikan tabel `servis_komisi` dan `bagi_hasil_komisi`
+belum ada, dan mendesain skema baru dengan pool persen yang
+bisa dikonfigurasi per cabang (`kategori`, `persen_pool`, `persen_individu`).
 
-Investigasi ulang di web app (2026-07-21) menemukan:
+Investigasi ulang (`app/issue_add.php` fungsi `eksekusi_revisi_komisi`,
+`app/lap_komisi_mekanik.php`, migrasi
+`db/migrations/2026-07-11_crm_tiket_terstruktur.sql`) menemukan:
 
-- Tiga jalur pembayaran servis (**reguler** `servis-reguler-byr.php`,
-  **jemput** `servis-input-reguler-jemput.php` btnbayar, **garansi**
-  `servis-garansi.php` btnsimpan) semuanya sudah menangkap *siapa*
-  mengerjakan servis dan *pembagian per-orang* lewat template bersama
-  `app/_template/panel-kiri-kasir.php`: kolom `kepala_mekanik1/2`,
-  `admin1/2`, `mekanik1-4` di `tblservice`, masing-masing dengan
-  `persen_kepala_mekanik1/2`, `persen_admin1/2`, `persen_mekanik1-4`.
-- Tiga grup persen (`km`, `admin`, `mekanik`) masing-masing **independen
-  menjumlah 100%** — ini hanya pembagian *di dalam* peran (contoh:
-  mekanik1 60%, mekanik2 40% dari "jatah mekanik"), BUKAN besaran pool
-  Rupiah per peran terhadap omset.
-- Besaran pool per peran (dari Access: jasa->mekanik 20%, jasa->admin 5%,
-  barang->mekanik 5%, barang->admin 5%) **tidak ada di kode manapun** saat
-  ini — gap ini yang membuat konversi ke Rupiah belum bisa dilakukan.
-- Tidak ada tabel snapshot komisi sama sekali di skema
-  (`tools/sql/fitmotor_dbbengkel_FIXED_V7.sql` dicek, tidak ketemu).
+- Tabel `servis_komisi` **sudah ada di produksi** dan sudah dipakai
+  (jalur revisi tiket lewat `issue_add.php`). Skemanya beda total dari
+  draft: `peran ENUM('mekanik1'..'admin2')`, `nominal_jasa`,
+  `nominal_barang`, `persen_terpakai`, `dihitung_saat
+  ENUM('selesai','bayar','revisi_tiket')`, `id_issue_ref`. Tidak ada
+  kolom `kategori`/`persen_pool` sama sekali.
+- Persentase pool **tidak configurable per cabang** — hardcoded di dua
+  tempat independen dengan formula identik:
+  - Mekanik/kepala_mekanik: jasa 20%, barang 5%, **dibagi jml_mekanik
+    aktif** (slot mekanik1-4 terisi).
+  - Admin: jasa 5%, barang 5%, **flat, tidak dibagi**.
+  - `laba_barang = SUM(GREATEST(total_baris - qty x hargapokok, 0))`
+    per `no_service`, dari `tblservis_barang` JOIN `tblitem.hargapokok`.
+- `app/lap_komisi_mekanik.php` adalah laporan **live-recompute** —
+  hitung ulang dari `tblservice`+`tblservis_barang` tiap load, sama
+  sekali tidak baca `servis_komisi`. Ini sumber angka komisi paralel
+  yang sudah berjalan dan dipakai sekarang.
+- `servis_komisi` **tidak ada kolom `kd_cabang`**, kunci cuma
+  `no_service` — padahal `no_service` terbukti tidak unik lintas cabang
+  (temuan kritis 2026-07-19, `project_critical_no_service_not_unique`
+  memory, 30rb+ baris dobel).
+
+Tidak ada tabel `bagi_hasil_komisi` — konsep pool configurable per
+cabang **tidak dipakai**, dibuang dari scope.
+
+## Keputusan (dikonfirmasi user 2026-07-21)
+
+1. **Tambah kolom `kd_cabang`** ke `servis_komisi` lewat migration baru
+   — insert di 3 titik bayar wajib isi `kd_cabang` dari session, supaya
+   tidak tabrakan data lintas cabang (mengingat `no_service` tidak
+   unik).
+2. **`lap_komisi_mekanik.php` TIDAK disentuh** — tetap live-recompute.
+   Wiring `servis_komisi` jalan paralel sebagai snapshot/audit-trail,
+   bukan pengganti sumber laporan. Migrasi laporan ke baca snapshot
+   ditunda sampai data snapshot terbukti konsisten (item terpisah,
+   bukan scope sesi ini).
 
 ## Tujuan
 
-1. Simpan snapshot komisi (Rupiah final, per orang, per servis) saat
-   pembayaran servis selesai — supaya revisi data servis di kemudian
-   hari tidak mengubah komisi yang sudah tercatat.
-2. Sediakan cara admin mengatur besaran pool per peran (mekanik/admin)
-   per kategori (jasa/barang), per cabang — karena kebutuhan boleh beda
-   antar cabang.
-3. Tidak mengubah UI input mekanik/persen yang sudah ada — murni
-   menambah langkah snapshot di titik pembayaran.
+Insert baris `servis_komisi` (pakai skema **yang sudah ada**, ditambah
+`kd_cabang`) di 3 titik pembayaran servis, dengan formula yang sudah
+terbukti benar di `lap_komisi_mekanik.php` dan `issue_add.php` — bukan
+formula baru.
 
 ## Scope
 
 **Termasuk:**
-- Tabel baru `bagi_hasil_komisi` (config pool per cabang).
-- Tabel baru `servis_komisi` (snapshot final).
-- Halaman master CRUD `app/master-bagi-hasil-komisi.php` (pola sama
-  seperti `app/master-tarif-jemput.php`) + permission RBAC
-  `master_komisi_manage` + entry menu.
-- Fungsi/logic hitung & insert `servis_komisi`, dipanggil dari 3 titik
-  pembayaran: `servis-reguler-byr.php` (btnsimpan),
-  `servis-input-reguler-jemput.php` (btnbayar), `servis-garansi.php`
-  (btnsimpan/btnsave-bayar).
+- Migration: `ALTER TABLE servis_komisi ADD COLUMN kd_cabang VARCHAR(10)
+  NOT NULL DEFAULT '' AFTER no_service`, plus index
+  `idx_komisi_cabang_service (kd_cabang, no_service)`.
+- Fungsi shared hitung+insert, dipakai 3 titik bayar:
+  - `app/servis-reguler-byr.php` (blok `btnsimpan`)
+  - `app/servis-input-reguler-jemput.php` (blok `btnbayar`)
+  - `app/servis-garansi.php` (blok pembayaran)
+- Insert 1 baris per slot terisi (mekanik1-4, kepala_mekanik1-2,
+  admin1-2) dengan `dihitung_saat='bayar'`, `id_issue_ref=NULL`.
 
-**Tidak termasuk (di luar scope sesi ini):**
-- Halaman laporan/rekap komisi mekanik (menyusul terpisah).
-- Perubahan UI slider persen yang sudah ada di
-  `panel-kiri-kasir.php`.
-- Migrasi data historis (servis yang sudah dibayar sebelum fitur ini
-  aktif tidak akan punya baris `servis_komisi`).
+**Tidak termasuk:**
+- Perubahan `lap_komisi_mekanik.php` (tetap live-recompute).
+- Pool persen configurable per cabang (tidak ada kebutuhan terbukti —
+  formula 20/5/5/5 hardcoded dipakai konsisten di 2 tempat produksi).
+- Migrasi data historis (servis yang sudah dibayar sebelum fitur aktif
+  tidak dapat baris `servis_komisi`).
+- Halaman master baru — tidak ada config untuk di-CRUD (persen
+  hardcoded, bukan per-cabang).
 
 ## Desain
 
-### 1. Skema tabel
+### 1. Migration
 
 ```sql
-CREATE TABLE bagi_hasil_komisi (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  kd_cabang VARCHAR(10) NOT NULL,
-  kategori ENUM('jasa','barang') NOT NULL,
-  persen_mekanik DECIMAL(5,2) NOT NULL DEFAULT 0,
-  persen_admin DECIMAL(5,2) NOT NULL DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_cabang_kategori (kd_cabang, kategori)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
-CREATE TABLE servis_komisi (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  no_service VARCHAR(50) NOT NULL,
-  kd_cabang VARCHAR(10) NOT NULL,
-  kategori ENUM('jasa','barang') NOT NULL,
-  peran ENUM('kepala_mekanik','mekanik','admin') NOT NULL,
-  kd_penerima VARCHAR(50) NOT NULL,
-  nama_penerima VARCHAR(100) DEFAULT NULL,
-  persen_pool DECIMAL(5,2) NOT NULL DEFAULT 0,
-  persen_individu DECIMAL(5,2) NOT NULL DEFAULT 0,
-  nominal DECIMAL(15,2) NOT NULL DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_no_service (no_service),
-  KEY idx_cabang_penerima (kd_cabang, kd_penerima)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+ALTER TABLE servis_komisi
+  ADD COLUMN kd_cabang VARCHAR(10) NOT NULL DEFAULT '' AFTER no_service,
+  ADD INDEX idx_komisi_cabang_service (kd_cabang, no_service);
 ```
 
-Catatan: `kepala_mekanik` dan `mekanik` dianggap berbagi **satu pool**
-yang sama (`persen_mekanik` di config) — Access formula hanya
-membedakan mekanik vs admin, bukan kepala vs mekanik biasa. Kolom
-`peran` di `servis_komisi` tetap membedakan `kepala_mekanik` vs
-`mekanik` untuk keperluan pelaporan nanti, tapi keduanya memakai
-`persen_mekanik` yang sama sebagai basis pool.
-
-`nama_penerima` didenormalisasi supaya laporan komisi tidak putus kalau
-mekanik/admin dihapus dari master di kemudian hari.
-
-### 2. Formula hitung nominal
-
-Basis per kategori:
-- `jasa` -> total nilai jasa servis (`SUM(tblservis_jasa.total)` untuk
-  `no_service` tsb — variabel `$total_service` sudah dihitung di semua
-  3 file).
-- `barang` -> total nilai barang servis (`$total_barang`, sudah
-  dihitung di semua 3 file).
-
-Per slot terisi (kepala_mekanik1/2, mekanik1-4, admin1/2):
+### 2. Formula (copy exact dari lap_komisi_mekanik.php / issue_add.php)
 
 ```
-nominal = basis_kategori x (persen_pool / 100) x (persen_individu / 100)
+jml_mekanik_aktif = COUNT slot mekanik1..4 yang terisi (non-null, non-empty)
+
+laba_barang = SUM(GREATEST(sb.total - sb.quantity * ti.hargapokok, 0))
+              FROM tblservis_barang sb LEFT JOIN tblitem ti
+              WHERE sb.no_service = ? AND sb.kd_cabang = ?
+
+per slot mekanik{n} / kepala_mekanik{n} terisi:
+  nominal_jasa   = subtotal_jasa * 0.20 / jml_mekanik_aktif
+  nominal_barang = laba_barang   * 0.05 / jml_mekanik_aktif
+
+per slot admin{n} terisi:
+  nominal_jasa   = subtotal_jasa * 0.05
+  nominal_barang = laba_barang   * 0.05
 ```
 
-`persen_pool` diambil dari `bagi_hasil_komisi` sesuai `kd_cabang` +
-`kategori` + peran (mekanik pool dipakai untuk kepala_mekanik & mekanik,
-admin pool untuk admin). Kalau baris config belum ada untuk cabang
-tsb, `persen_pool` dianggap 0 — nominal jadi 0, pembayaran servis TETAP
-lanjut (tidak boleh block transaksi).
+`persen_terpakai` diisi dari `persen_mekanik{n}`/`persen_admin{n}` yang
+ada di `tblservice` untuk baris itu (bagian-dalam-peran, bukan pool) —
+disimpan sebagai snapshot, tidak dipakai untuk hitung nominal Rupiah.
 
-Satu slot yang terisi bisa menghasilkan sampai 2 baris `servis_komisi`
-(satu kategori jasa, satu kategori barang) kalau kedua basis > 0.
+### 3. Titik wiring (3 file) — KOREKSI 2026-07-21 siang
 
-### 3. Titik wiring (3 file)
+Investigasi ulang menemukan nama file di draft awal salah.
+`servis-reguler-byr.php` (blok `btnsimpan` baris 537) **BUKAN** titik
+yang benar — blok itu cuma set `status_servis='bayar'`, tidak pernah
+menangkap `mekanik1-4`/`admin1-2`/`kepala_mekanik1-2`. Titik yang benar,
+dikonfirmasi baca kode:
 
-Logic hitung+insert dibungkus jadi 1 fungsi shared, taruh di file baru
-`app/_include_komisi_snapshot.php` (di-include oleh ketiga halaman
-pembayaran), supaya tidak duplikasi 3x. Fungsi menerima:
-`$koneksi, $no_service, $kd_cabang, $total_service, $total_barang`,
-dan membaca kolom `kepala_mekanik1/2`, `admin1/2`, `mekanik1-4`,
-`persen_*` langsung dari `tblservice` (SELECT ulang sebelum insert,
-supaya data yang dipakai adalah yang baru saja di-UPDATE, bukan nilai
-lama dari awal request).
+- **`app/servis-input-reguler.php`** baris ~693-743 (UPDATE
+  `tblservice` status='2', capture kepala_mekanik/admin/mekanik) —
+  **guard `kd_cabang` TIDAK ADA** di WHERE (baris 743).
+- **`app/servis-input-reguler-jemput.php`** baris ~2531-2573 (sama
+  polanya, `status_servis='selesai'`) — **guard `kd_cabang` TIDAK ADA**
+  (baris 2573).
+- **`app/servis-garansi.php`** baris ~1066-1109 — guard `kd_cabang`
+  **SUDAH ADA** (`AND kd_cabang = '$kd_cabang'`, baris 1109).
 
-Dipanggil **setelah** UPDATE `tblservice SET status.../status_servis=...`
-sukses, di titik yang sama tempat sudah ada guard `kd_cabang` (baru
-ditambahkan sesi ini):
-- `app/servis-reguler-byr.php` — dalam blok `btnsimpan`, setelah baris
-  UPDATE `tblservice` (skrg ~line 570-581).
-- `app/servis-input-reguler-jemput.php` — dalam blok `btnbayar`,
-  setelah UPDATE status jadi bayar.
-- `app/servis-garansi.php` — dalam blok `btnsimpan` pembayaran (line
-  ~116 area), setelah UPDATE status.
+Keputusan user: sekalian fix guard `kd_cabang` yang hilang di 2 file
+pertama, di commit yang sama dengan wiring komisi (satu blok kode yang
+sama disentuh untuk dua alasan).
 
-### 4. Halaman master `bagi_hasil_komisi`
+Fungsi shared di `app/_include_komisi_snapshot.php`
+(`snapshot_komisi_servis($koneksi, $no_service, $kd_cabang)`),
+dipanggil **setelah** UPDATE `tblservice` sukses (setelah guard
+`kd_cabang` ditambah/dipastikan ada). Fungsi:
+1. SELECT ulang `tblservice` (subtotal_jasa, mekanik1-4,
+   kepala_mekanik1-2, admin1-2, persen_*) by `no_service AND kd_cabang`
+   — data terbaru pasca-UPDATE, bukan nilai awal request.
+2. Hitung `laba_barang` dari `tblservis_barang` JOIN `tblitem`.
+3. Loop tiap slot terisi, INSERT baris `servis_komisi` dengan
+   `kd_cabang` diisi.
+4. Return jumlah baris ter-insert (buat logging), tidak throw — insert
+   gagal dicatat `error_log()`, tidak menggagalkan alur bayar (konsisten
+   pola existing, tidak ada transaction wrapper di 3 file ini).
 
-Pola sama seperti `master-tarif-jemput.php`: list per cabang, form
-tambah/edit `kategori` (dropdown jasa/barang), `persen_mekanik`,
-`persen_admin` (validasi masing-masing 0-100, tidak wajib total 100
-karena mekanik dan admin adalah pool terpisah, bukan saling melengkapi).
-RBAC: permission baru `master_komisi_manage`, guard pakai
-`rbac_require_any(['master_komisi_manage'])`, entry menu ditaruh di
-grup Master bareng tarif jemput.
+### 4. Error handling
 
-### 5. Error handling
+- Insert gagal -> `error_log()`, alur bayar tetap lanjut.
+- `jml_mekanik_aktif == 0` (servis tanpa mekanik ditugaskan, kasus
+  garansi tertentu) -> skip insert baris mekanik, admin tetap insert
+  kalau slot admin terisi (admin tidak dibagi jml_mekanik).
 
-- Insert `servis_komisi` gagal (`mysqli_query` return false) -> catat ke
-  `error_log()`, **tidak** menggagalkan alur pembayaran utama (konsisten
-  dengan pola existing di 3 file ini — tidak ada transaction wrapper).
-- Config `bagi_hasil_komisi` kosong untuk suatu cabang -> nominal 0.
-  **Keputusan:** skip insert kalau nominal Rupiah = 0 (baik karena
-  persen_pool 0 maupun basis 0), supaya tabel tidak penuh baris kosong.
+### 5. Testing
 
-### 6. Testing
-
-Manual E2E via browser (tidak ada automated test suite di project ini):
-1. Set config `bagi_hasil_komisi` untuk 1 cabang lewat halaman master.
-2. Bayar 1 servis reguler dengan mekanik+persen terisi -> cek baris
-   `servis_komisi` muncul dengan nominal benar.
-3. Bayar 1 servis jemput, 1 servis garansi -> sama.
-4. Bayar servis di cabang yang belum punya config -> pastikan
-   pembayaran tetap sukses, tidak ada baris `servis_komisi` (nominal 0
-   di-skip).
-5. `php -l` semua file yang diubah.
+Manual E2E via browser (tidak ada automated test suite di project):
+1. Bayar 1 servis reguler dengan mekanik+admin terisi -> cek baris
+   `servis_komisi` (dengan `kd_cabang` benar) muncul, nominal cocok
+   manual hitung.
+2. Bayar 1 servis jemput, 1 servis garansi -> sama.
+3. Bandingkan total nominal snapshot vs angka yang tampil di
+   `lap_komisi_mekanik.php` untuk servis yang sama -> harus sama persis
+   (bukti formula konsisten).
+4. `php -l` semua file yang diubah.
+5. Cek 2 servis beda cabang dengan `no_service` sama (kalau ada di data
+   test) -> pastikan insert servis_komisi tidak tercampur, masing-masing
+   `kd_cabang` benar.

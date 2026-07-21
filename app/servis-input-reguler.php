@@ -13,6 +13,7 @@
         include "_include_kategori_member.php"; // Member kategori & discount helper
         include "_include_customer_vehicle_sync.php";
         include "_handler_temuan_penawaran.php";
+        include "_include_komisi_snapshot.php";
         include "_handler_barang_custom.php";
         include "_handler_status_keluhan_wo.php";
         include_once "helper-functions.php";
@@ -688,7 +689,11 @@
                 exit;
             }
             
-            $has_tgl_bayar_col = true;
+            $has_tgl_bayar_col = false;
+            $chk_tgl_bayar = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservice LIKE 'tgl_bayar'");
+            if ($chk_tgl_bayar && mysqli_num_rows($chk_tgl_bayar) > 0) {
+                $has_tgl_bayar_col = true;
+            }
 
             $update_query = "UPDATE tblservice SET 
                 status='2', 
@@ -740,11 +745,13 @@
                 $update_query .= ", bukti_pembayaran='$bukti_pembayaran_path'";
             }
 
-            $update_query .= " WHERE no_service='$no_service'";
+            $update_query .= " WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'";
 
             if(!mysqli_query($koneksi, $update_query)) {
                 die("Error Update Service: " . mysqli_error($koneksi));
             }
+
+            snapshot_komisi_servis($koneksi, $no_service, $kd_cabang);
 
             // F2-A: tandai DP pending sebagai offset setelah pelunasan (Q9)
             if (function_exists('offsetDpPending')) {

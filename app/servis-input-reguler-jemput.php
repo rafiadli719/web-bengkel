@@ -36,6 +36,7 @@
 		include "_handler_temuan_penawaran.php";
 		include "_handler_barang_custom.php";
 		include "_handler_status_keluhan_wo.php";
+		include "_include_komisi_snapshot.php";
 		include_once "helper-functions.php";
 
         if (!function_exists('normalizePostedInt')) {
@@ -2570,11 +2571,13 @@
                                 ref_transfer='$ref_transfer'" .
                                 (!empty($bukti_pembayaran_path) ? ", bukti_pembayaran='$bukti_pembayaran_path'" : "") . "
                                 WHERE
-                                no_service='$no_service'";
+                                no_service='$no_service' AND kd_cabang='$kd_cabang'";
 
         if(!mysqli_query($koneksi, $update_query)) {
             die("Error Update Service: " . mysqli_error($koneksi));
         }
+
+        snapshot_komisi_servis($koneksi, $no_service, $kd_cabang);
 
         // F2-A: tandai DP pending sebagai offset setelah pelunasan (Q9)
         if (function_exists('offsetDpPending')) {
