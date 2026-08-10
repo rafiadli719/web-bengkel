@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FIT MOTOR - Cashier Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#6ffbbe",
+                        "background-muted": "#F3F4F6",
+                        "on-tertiary-fixed": "#241a00",
+                        "tertiary-fixed-dim": "#dec483",
+                        "on-secondary-container": "#00714d",
+                        "primary-fixed": "#dae2ff",
+                        "surface-variant": "#e4e2e5",
+                        "on-secondary-fixed": "#002113",
+                        "status-incoming": "#3B82F6",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-tint": "#515d83",
+                        "secondary": "#006c49",
+                        "surface-default": "#FFFFFF",
+                        "on-error": "#ffffff",
+                        "status-alert": "#EF4444",
+                        "on-surface-variant": "#45464e",
+                        "on-tertiary-fixed-variant": "#564510",
+                        "on-primary-fixed": "#0b1a3b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1b1b1e",
+                        "tertiary": "#705c26",
+                        "surface-container-high": "#eae7eb",
+                        "outline": "#75777f",
+                        "inverse-on-surface": "#f2f0f3",
+                        "surface-container-low": "#f5f3f6",
+                        "on-primary-container": "#99a6cf",
+                        "tertiary-container": "#c2a96b",
+                        "surface-dim": "#dbd9dd",
+                        "inverse-primary": "#b8c5f0",
+                        "surface-bright": "#fbf8fc",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#394669",
+                        "inverse-surface": "#303033",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#fce09d",
+                        "on-background": "#1b1b1e",
+                        "primary": "#172547",
+                        "on-tertiary-container": "#4f3d09",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "member-gold": "#F59E0B",
+                        "surface-container": "#efedf0",
+                        "primary-container": "#2e3b5e",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#fbf8fc",
+                        "surface": "#fbf8fc",
+                        "surface-container-highest": "#e4e2e5",
+                        "primary-fixed-dim": "#b8c5f0",
+                        "outline-variant": "#c6c6cf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem",
+                        "2xl": "0.75rem",
+                        "3xl": "1rem"
+                    },
+                    "spacing": {
+                        "stack-compact": "0.5rem",
+                        "container-margin": "1rem",
+                        "column-gap": "0.75rem",
+                        "cell-padding": "0.375rem"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-display": ["Hanken Grotesk"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "headline-display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #c6c6cf; border-radius: 4px; }
+        .modal-enter { animation: modal-fade-in 0.2s ease-out; }
+        @keyframes modal-fade-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-background-muted h-full w-full overflow-hidden text-on-surface flex flex-col font-body-sm">
+<!-- Top Mini Header (5vh) -->
+<header class="h-[5vh] min-h-[40px] bg-primary text-on-primary flex items-center justify-between px-container-margin shrink-0">
+<div class="flex items-center gap-column-gap">
+<button class="flex items-center gap-1 text-primary-fixed-dim hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">arrow_back_ios</span>
+<span class="font-label-caps text-label-caps uppercase">KEMBALI</span>
+</button>
+<div class="w-px h-4 bg-primary-fixed-dim/30"></div>
+<h1 class="font-headline-md text-headline-md text-white tracking-tight">FIT MOTOR</h1>
+</div>
+<div class="flex items-center gap-column-gap">
+<div class="bg-status-alert text-on-error px-3 py-1 rounded-DEFAULT flex items-center gap-2 shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span class="font-label-caps text-label-caps font-bold">Kepala Mekanik belum diinput</span>
+</div>
+<div class="flex items-center gap-2 text-primary-fixed-dim">
+<span class="material-symbols-outlined">person</span>
+<span class="">Selamat datang, admin</span>
+</div>
+</div>
+</header>
+<!-- Main Grid Content (95vh) -->
+<main class="h-[95vh] flex p-stack-compact gap-stack-compact">
+<!-- Left Column (25%) - Metadata -->
+<section class="w-1/4 flex flex-col gap-stack-compact overflow-hidden">
+<div class="bg-surface-default rounded-xl border border-outline-variant p-4 flex flex-col gap-3 shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-data-mono text-data-mono font-bold text-primary">SV26000000221</span>
+<span class="bg-status-incoming/10 text-status-incoming font-label-caps text-label-caps px-2 py-1 rounded-full border border-status-incoming/20">STATUS: DATANG</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-caps text-label-caps bg-surface-container px-2 py-1 rounded-DEFAULT">REGULER</span>
+<span class="font-data-mono text-data-mono text-xs">12/06/2026 15:59</span>
+</div>
+</div>
+<div class="bg-surface-default rounded-xl border border-outline-variant p-5 flex flex-col gap-5 shadow-sm flex-grow">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-1">PELANGGAN</h3>
+<div class="font-body-lg text-body-lg text-on-surface font-bold">EDI SUBEKHI, BPK</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">KENDARAAN</h3>
+<div class="inline-block bg-on-surface text-surface rounded-md px-4 py-1.5 shadow-sm w-fit">
+<span class="font-data-mono text-data-mono font-bold tracking-widest text-lg">G 2086 AQ</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">HONDA BEAT (HITAM)</div>
+</div>
+<div class="mt-2 bg-gradient-to-r from-tertiary-fixed to-member-gold p-4 rounded-xl border border-tertiary-container shadow-sm">
+<div class="flex items-center gap-2 text-on-tertiary-container mb-2">
+<span class="material-symbols-outlined text-[20px]">stars</span>
+<span class="font-label-caps text-label-caps font-bold">MEMBER GOLD AKTIF</span>
+</div>
+<div class="flex gap-4 font-body-sm text-body-sm text-on-tertiary-container/80">
+<span class="">• 15% Jasa</span>
+<span class="">• 11% Barang</span>
+</div>
+</div>
+<div class="flex flex-col gap-3 mt-4 border-t border-outline-variant pt-4">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant font-bold">PENUGASAN MEKANIK</h3>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Kepala Mekanik 1</label>
+<div class="flex gap-2">
+<select class="flex-1 border border-outline-variant rounded-md px-2 py-1.5 font-body-sm text-body-sm focus:outline-none focus:border-primary">
+<option>- Pilih -</option>
+</select>
+<div class="flex items-center gap-1 w-20 border border-outline-variant rounded-md px-2 py-1.5 bg-surface-container-low">
+<input class="w-8 bg-transparent text-right font-data-mono text-data-mono border-none p-0 focus:ring-0" type="text" value="0"/>
+<span class="font-label-caps text-on-surface-variant">%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<button class="w-full py-2.5 border border-outline-variant rounded-xl text-primary hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 font-body-sm text-body-sm font-medium" onclick="document.getElementById('modal-riwayat').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Riwayat Kendaraan
+                    </button>
+</div>
+</div>
+</section>
+<!-- Center Column (50%) - Workflow -->
+<section class="w-2/4 bg-surface-default rounded-xl border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<div class="flex border-b border-outline-variant bg-surface-container-low shrink-0">
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container transition-colors" onclick="document.getElementById('modal-keluhan').classList.remove('hidden')">
+                    Keluhan &amp; Perintah Kerja
+                </button>
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg font-bold text-primary border-b-2 border-primary bg-surface-default">
+                    Barang &amp; Jasa
+                </button>
+</div>
+<div class="flex flex-col h-full p-5 gap-5 overflow-hidden">
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-status-incoming text-white rounded-md font-body-sm text-body-sm flex items-center gap-2 hover:bg-blue-600 transition-colors" onclick="document.getElementById('modal-penawaran').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">list_alt</span>
+                        Temuan &amp; Penawaran
+                    </button>
+<button class="px-4 py-2 bg-member-gold text-white rounded-md font-body-sm text-body-sm flex items-center gap-2 hover:bg-amber-600 transition-colors" onclick="document.getElementById('modal-custom').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        Barang Custom
+                    </button>
+</div>
+<!-- Search Bar -->
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">CARI BARANG</label>
+<div class="flex gap-2">
+<input class="flex-1 px-4 py-2.5 border border-outline-variant rounded-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm" placeholder="Ketik kode atau nama barang..." type="text"/>
+<button class="px-4 py-2.5 bg-status-incoming text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">search</span> Cari
+                        </button>
+</div>
+</div>
+<!-- Table Section -->
+<div class="flex-grow flex flex-col overflow-hidden">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary text-[20px]">list</span>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Daftar Item Barang</h3>
+<span class="ml-auto bg-surface-container px-2 py-0.5 rounded-full text-label-caps font-label-caps text-on-surface-variant border border-outline-variant">1 Item</span>
+</div>
+<div class="flex-grow border border-outline-variant rounded-xl overflow-hidden flex flex-col bg-surface-container-lowest">
+<div class="bg-surface-container-low px-4 py-3 flex text-on-surface-variant font-label-caps text-label-caps border-b border-outline-variant">
+<div class="w-12">NO</div>
+<div class="flex-1">KODE / NAMA BARANG</div>
+<div class="w-24 text-right">HARGA</div>
+<div class="w-16 text-center">QTY</div>
+<div class="w-16 text-center">DISC</div>
+<div class="w-32 text-right">TOTAL</div>
+<div class="w-16 text-center ml-4">AKSI</div>
+</div>
+<div class="overflow-y-auto custom-scroll flex-grow">
+<div class="flex items-center px-4 py-3 border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<div class="w-12 font-data-mono text-data-mono">1</div>
+<div class="flex-1">
+<div class="font-body-sm text-body-sm font-bold">20W-40 4T</div>
+<div class="text-xs text-on-surface-variant uppercase">OLI BEBEK CASTROL GO 0.8L</div>
+</div>
+<div class="w-24 text-right font-data-mono text-data-mono">34.000</div>
+<div class="w-16 text-center font-data-mono text-data-mono">1</div>
+<div class="w-16 text-center font-data-mono text-data-mono text-secondary">11%</div>
+<div class="w-32 text-right font-data-mono text-data-mono font-bold">30.260</div>
+<div class="w-16 flex justify-center gap-1 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-status-incoming hover:bg-blue-50 rounded" onclick="document.getElementById('modal-edit-item').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-error hover:bg-red-50 rounded">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column (25%) - Financials -->
+<section class="w-1/4 bg-surface-default rounded-xl border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<div class="p-5 bg-surface-container-low border-b border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">RINGKASAN BIAYA</h2>
+</div>
+<div class="flex-grow p-5 flex flex-col gap-5 overflow-y-auto custom-scroll">
+<div class="flex flex-col gap-3 text-body-sm font-body-sm text-on-surface">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Suku Cadang</span>
+<span class="font-data-mono text-data-mono">Rp 34.000</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Jasa</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center text-member-gold">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">stars</span> Diskon Gold</span>
+<span class="font-data-mono text-data-mono">- Rp 3.740</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant w-full"></div>
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL AKHIR</span>
+<div class="font-headline-display text-headline-display text-primary font-bold">Rp 30.260</div>
+</div>
+<div class="flex flex-col gap-2.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">METODE PEMBAYARAN</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2.5 border-2 border-secondary bg-secondary-container text-on-secondary-container rounded-xl font-label-caps text-label-caps text-center font-bold shadow-sm">TUNAI</button>
+<button class="py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-label-caps text-label-caps text-center hover:bg-surface-container transition-colors">TRANSFER</button>
+<button class="py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-label-caps text-label-caps text-center hover:bg-surface-container transition-colors">QRIS</button>
+</div>
+</div>
+<div class="flex flex-col gap-2.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TUNAI DITERIMA</span>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-data-mono text-data-mono text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-2.5 text-right font-data-mono text-data-mono text-lg font-bold border border-primary rounded-xl focus:outline-none focus:ring-1 focus:ring-primary shadow-sm" type="text" value="50.000"/>
+</div>
+</div>
+<div class="flex justify-between items-center text-body-lg font-body-lg text-on-surface mt-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
+<span class="text-on-surface-variant">Kembalian</span>
+<span class="font-data-mono text-data-mono text-status-alert">Rp 19.740</span>
+</div>
+</div>
+<div class="p-5 bg-surface-container-low border-t border-outline-variant mt-auto shrink-0">
+<button class="w-full py-4 bg-secondary text-white rounded-xl font-headline-md text-headline-md font-bold shadow-md hover:bg-on-secondary-fixed-variant transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">print</span>
+                    PROSES &amp; CETAK NOTA
+                </button>
+</div>
+</section>
+</main>
+<!-- MODAL: BARANG CUSTOM -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden transition-opacity" id="modal-custom">
+<div class="bg-surface-default w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[85vh]">
+<div class="bg-primary px-6 py-4 flex justify-between items-center text-on-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[24px]">inventory_2</span>
+<h2 class="font-headline-md text-headline-md">Pilih / Input Barang Custom</h2>
+</div>
+<button class="hover:bg-white/10 rounded-full p-2 transition-colors" onclick="document.getElementById('modal-custom').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="border-b border-outline-variant bg-surface-container-low flex px-4">
+<button class="px-6 py-3 font-bold border-b-2 border-primary text-primary text-body-sm">Cari dari Database</button>
+<button class="px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors text-body-sm">Input Manual Baru</button>
+</div>
+<div class="p-6 flex flex-col gap-5 overflow-y-auto custom-scroll">
+<div class="bg-blue-50 border border-blue-100 p-4 rounded-xl flex gap-3 text-blue-800">
+<span class="material-symbols-outlined text-[20px] shrink-0">info</span>
+<p class="text-body-sm">Cari barang custom yang sudah pernah diinput sebelumnya. Jika tidak ditemukan, gunakan tab "Input Manual Baru".</p>
+</div>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary" placeholder="Cari nama barang atau kode..." type="text"/>
+</div>
+<button class="px-6 py-2.5 bg-status-incoming text-white rounded-xl font-bold hover:bg-blue-600 transition-colors">CARI</button>
+</div>
+<div class="border border-outline-variant rounded-2xl overflow-hidden">
+<table class="w-full text-left font-body-sm">
+<thead class="bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps">
+<tr>
+<th class="px-4 py-3 border-b border-outline-variant">KODE</th>
+<th class="px-4 py-3 border-b border-outline-variant">NAMA BARANG</th>
+<th class="px-4 py-3 border-b border-outline-variant text-right">HARGA</th>
+<th class="px-4 py-3 border-b border-outline-variant text-center">AKSI</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-4 py-3 font-data-mono">CUSTOM-00007</td>
+<td class="px-4 py-3">FILTER UDARA BEAT INDOPART</td>
+<td class="px-4 py-3 text-right font-data-mono">Rp 45.000</td>
+<td class="px-4 py-3 text-center">
+<button class="bg-secondary text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-on-secondary-fixed-variant transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[14px]">check</span> PILIH
+                                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL: KELUHAN BARU -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden" id="modal-keluhan">
+<div class="bg-surface-default w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[85vh]">
+<div class="bg-primary px-6 py-4 flex justify-between items-center text-on-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[24px]">assignment_add</span>
+<h2 class="font-headline-md text-headline-md">Pilih Keluhan dari Master</h2>
+</div>
+<button class="hover:bg-white/10 rounded-full p-2 transition-colors" onclick="document.getElementById('modal-keluhan').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex flex-col gap-4 overflow-y-auto custom-scroll">
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-label-caps font-label-caps text-on-surface-variant">CARI KELUHAN</label>
+<input class="px-4 py-2.5 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary" placeholder="Ketik nama keluhan..." type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-caps font-label-caps text-on-surface-variant">KATEGORI</label>
+<select class="px-4 py-2.5 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary">
+<option>Semua Kategori</option>
+<option>Mesin</option>
+<option>Ban</option>
+</select>
+</div>
+</div>
+<div class="border border-outline-variant rounded-2xl overflow-hidden">
+<table class="w-full text-left font-body-sm">
+<thead class="bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps">
+<tr>
+<th class="px-4 py-3">KODE</th>
+<th class="px-4 py-3">NAMA KELUHAN</th>
+<th class="px-4 py-3">KATEGORI</th>
+<th class="px-4 py-3 text-center">AKSI</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low cursor-pointer">
+<td class="px-4 py-3 font-data-mono">KEL008</td>
+<td class="px-4 py-3">
+<div class="font-bold">Aki Soak</div>
+<div class="text-xs text-on-surface-variant">Aki lemah atau tidak bisa menyimpan daya</div>
+</td>
+<td class="px-4 py-3"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold">Kelistrikan</span></td>
+<td class="px-4 py-3 text-center">
+<button class="bg-status-incoming text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center gap-1 mx-auto">
+<span class="material-symbols-outlined text-[14px]">check</span> PILIH
+                                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<button class="text-status-incoming font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[18px]">add</span> Input Keluhan Manual
+                </button>
+<button class="px-6 py-2.5 bg-outline text-white rounded-xl font-bold hover:bg-on-surface-variant transition-colors" onclick="document.getElementById('modal-keluhan').classList.add('hidden')">BATAL</button>
+</div>
+</div>
+</div>
+<!-- MODAL: RIWAYAT KENDARAAN -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden" id="modal-riwayat">
+<div class="bg-surface-default w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[85vh]">
+<div class="bg-primary px-6 py-4 flex justify-between items-center text-on-primary">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<h2 class="font-headline-md text-headline-md">Riwayat Servis - G 2086 AQ</h2>
+</div>
+<button class="hover:bg-white/10 rounded-full p-2 transition-colors" onclick="document.getElementById('modal-riwayat').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 overflow-y-auto custom-scroll flex flex-col gap-6">
+<div class="flex gap-4 relative">
+<div class="absolute left-[15px] top-8 bottom-0 w-0.5 bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0 relative z-10">
+<span class="material-symbols-outlined text-white text-[18px]">build</span>
+</div>
+<div class="flex-1 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
+<div class="flex justify-between items-start mb-2">
+<span class="font-data-mono text-primary font-bold">12 April 2026</span>
+<span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Selesai</span>
+</div>
+<h4 class="font-bold text-on-surface mb-1">Ganti Oli &amp; Service Ringan</h4>
+<div class="text-xs text-on-surface-variant flex gap-4">
+<span>Mekanik: <strong class="text-on-surface">Budi</strong></span>
+<span>Total: <strong class="text-on-surface">Rp 125.000</strong></span>
+</div>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center shrink-0 relative z-10">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">tire_repair</span>
+</div>
+<div class="flex-1 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
+<div class="flex justify-between items-start mb-2">
+<span class="font-data-mono text-primary font-bold">05 Januari 2026</span>
+<span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Selesai</span>
+</div>
+<h4 class="font-bold text-on-surface mb-1">Ganti Ban Belakang &amp; Kampas Rem</h4>
+<div class="text-xs text-on-surface-variant flex gap-4">
+<span>Mekanik: <strong class="text-on-surface">Agus</strong></span>
+<span>Total: <strong class="text-on-surface">Rp 450.000</strong></span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low border-t border-outline-variant flex justify-end">
+<button class="px-8 py-2.5 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-opacity" onclick="document.getElementById('modal-riwayat').classList.add('hidden')">TUTUP</button>
+</div>
+</div>
+</div>
+<!-- MODAL: EDIT ITEM -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden" id="modal-edit-item">
+<div class="bg-surface-default w-[400px] rounded-3xl shadow-2xl overflow-hidden modal-enter">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+<h3 class="font-bold text-on-surface">Edit Item Barang</h3>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors" onclick="document.getElementById('modal-edit-item').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex flex-col gap-5">
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant mb-1.5 block">NAMA BARANG</label>
+<input class="w-full bg-surface-container px-4 py-2.5 rounded-xl border-none font-bold text-on-surface" readonly="" type="text" value="OLI BEBEK CASTROL GO 0.8L"/>
+</div>
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant mb-1.5 block">HARGA SATUAN</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-data-mono text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-2.5 border border-outline-variant rounded-xl font-data-mono focus:ring-1 focus:ring-primary" type="text" value="34.000"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant mb-1.5 block">QTY</label>
+<input class="w-full px-4 py-2.5 border border-outline-variant rounded-xl font-data-mono text-center focus:ring-1 focus:ring-primary" type="number" value="1"/>
+</div>
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant mb-1.5 block">DISC %</label>
+<input class="w-full px-4 py-2.5 border border-outline-variant rounded-xl font-data-mono text-center focus:ring-1 focus:ring-primary" type="number" value="11"/>
+</div>
+</div>
+<div class="flex gap-3 pt-2">
+<button class="flex-1 py-3 bg-outline text-white rounded-xl font-bold hover:opacity-90" onclick="document.getElementById('modal-edit-item').classList.add('hidden')">BATAL</button>
+<button class="flex-1 py-3 bg-status-incoming text-white rounded-xl font-bold hover:bg-blue-600 shadow-md">SIMPAN</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL: TEMUAN & PENAWARAN (WORKFLOW APPROVAL) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden" id="modal-penawaran">
+<div class="bg-surface-default w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden modal-enter flex flex-col max-h-[90vh]">
+<div class="bg-status-incoming px-6 py-4 flex justify-between items-center text-white">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[24px]">recommend</span>
+<h2 class="font-headline-md text-headline-md">Temuan &amp; Penawaran Baru</h2>
+</div>
+<div class="flex items-center gap-4">
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold">5 Pending</span>
+<button class="hover:bg-white/10 rounded-full p-2 transition-colors" onclick="document.getElementById('modal-penawaran').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<div class="flex-grow overflow-hidden flex flex-col p-6 gap-5">
+<div class="flex items-center gap-4 border-b border-outline-variant pb-4">
+<button class="px-4 py-2 bg-blue-50 text-status-incoming font-bold rounded-xl border border-blue-200 text-body-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span> Pending Approval
+                    </button>
+<button class="px-4 py-2 text-on-surface-variant font-bold rounded-xl hover:bg-surface-container transition-colors text-body-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">history</span> Riwayat
+                    </button>
+<button class="ml-auto px-4 py-2 bg-error text-white rounded-xl font-bold hover:bg-red-600 transition-colors text-body-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Export Estimasi
+                    </button>
+</div>
+<div class="flex-grow overflow-y-auto custom-scroll flex flex-col gap-3">
+<!-- Item Penawaran 1 -->
+<div class="flex items-center gap-4 p-4 border border-outline-variant rounded-2xl hover:border-status-incoming transition-all bg-surface-container-lowest">
+<input class="w-5 h-5 rounded-md border-outline-variant text-status-incoming focus:ring-status-incoming" type="checkbox"/>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">JASA</span>
+<h4 class="font-bold text-on-surface">PEMBERSIHAN CVT LENGKAP</h4>
+</div>
+<div class="text-xs text-on-surface-variant">Rekomendasi mekanik: Kotoran menumpuk di area pulley</div>
+</div>
+<div class="text-right flex flex-col gap-1">
+<div class="font-data-mono text-on-surface font-bold">Rp 65.000</div>
+<div class="flex gap-2">
+<button class="bg-secondary text-white p-1 rounded hover:opacity-90"><span class="material-symbols-outlined text-[18px]">done</span></button>
+<button class="bg-error text-white p-1 rounded hover:opacity-90"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+</div>
+</div>
+<!-- Item Penawaran 2 -->
+<div class="flex items-center gap-4 p-4 border border-outline-variant rounded-2xl hover:border-status-incoming transition-all bg-surface-container-lowest">
+<input class="w-5 h-5 rounded-md border-outline-variant text-status-incoming focus:ring-status-incoming" type="checkbox"/>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">BARANG</span>
+<h4 class="font-bold text-on-surface">ROLLER SET BEAT FI</h4>
+</div>
+<div class="text-xs text-on-surface-variant">Status: Aus / Peyang (Perlu Ganti)</div>
+</div>
+<div class="text-right flex flex-col gap-1">
+<div class="font-data-mono text-on-surface font-bold">Rp 120.000</div>
+<div class="flex gap-2">
+<button class="bg-secondary text-white p-1 rounded hover:opacity-90"><span class="material-symbols-outlined text-[18px]">done</span></button>
+<button class="bg-error text-white p-1 rounded hover:opacity-90"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<div class="text-on-surface-variant text-body-sm">
+                    Terpilih <strong class="text-status-incoming">0 Item</strong>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 border border-outline-variant rounded-xl font-bold hover:bg-surface-container transition-colors" onclick="document.getElementById('modal-penawaran').classList.add('hidden')">TUTUP</button>
+<button class="px-8 py-2.5 bg-secondary text-white rounded-xl font-bold hover:opacity-90 shadow-md">SETUJUI TERPILIH</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

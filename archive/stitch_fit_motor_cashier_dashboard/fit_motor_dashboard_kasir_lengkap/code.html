@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FIT MOTOR - Cashier Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-surface": "#1b1b1e",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary-fixed": "#002113",
+                "background": "#fbf8fc",
+                "on-primary-fixed": "#0b1a3b",
+                "surface": "#fbf8fc",
+                "secondary": "#006c49",
+                "status-incoming": "#3B82F6",
+                "on-tertiary-fixed": "#241a00",
+                "on-primary-fixed-variant": "#394669",
+                "surface-container-low": "#f5f3f6",
+                "surface-default": "#FFFFFF",
+                "primary-fixed": "#dae2ff",
+                "outline-variant": "#c6c6cf",
+                "error-container": "#ffdad6",
+                "status-alert": "#EF4444",
+                "on-tertiary": "#ffffff",
+                "inverse-surface": "#303033",
+                "on-error": "#ffffff",
+                "outline": "#75777f",
+                "on-error-container": "#93000a",
+                "surface-container-high": "#eae7eb",
+                "surface-container-highest": "#e4e2e5",
+                "surface-container": "#efedf0",
+                "tertiary-fixed-dim": "#dec483",
+                "on-background": "#1b1b1e",
+                "surface-dim": "#dbd9dd",
+                "surface-bright": "#fbf8fc",
+                "on-primary": "#ffffff",
+                "tertiary": "#705c26",
+                "on-tertiary-container": "#4f3d09",
+                "inverse-primary": "#b8c5f0",
+                "on-secondary-container": "#00714d",
+                "on-tertiary-fixed-variant": "#564510",
+                "secondary-container": "#6cf8bb",
+                "primary": "#172547",
+                "member-gold": "#F59E0B",
+                "on-surface-variant": "#45464e",
+                "on-primary-container": "#99a6cf",
+                "secondary-fixed": "#6ffbbe",
+                "primary-fixed-dim": "#b8c5f0",
+                "surface-tint": "#515d83",
+                "secondary-fixed-dim": "#4edea3",
+                "inverse-on-surface": "#f2f0f3",
+                "background-muted": "#F3F4F6",
+                "tertiary-container": "#c2a96b",
+                "on-secondary": "#ffffff",
+                "primary-container": "#2e3b5e",
+                "error": "#ba1a1a",
+                "on-secondary-fixed-variant": "#005236",
+                "surface-variant": "#e4e2e5",
+                "tertiary-fixed": "#fce09d"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "stack-compact": "0.5rem",
+                "column-gap": "0.75rem",
+                "container-margin": "1rem",
+                "cell-padding": "0.375rem"
+        },
+        "fontFamily": {
+                "label-caps": [
+                        "Hanken Grotesk"
+                ],
+                "data-mono": [
+                        "JetBrains Mono"
+                ],
+                "headline-md": [
+                        "Hanken Grotesk"
+                ],
+                "headline-display": [
+                        "Hanken Grotesk"
+                ],
+                "body-sm": [
+                        "Hanken Grotesk"
+                ],
+                "body-lg": [
+                        "Hanken Grotesk"
+                ]
+        },
+        "fontSize": {
+                "label-caps": [
+                        "11px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "data-mono": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-display": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "18px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "500"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        /* Custom scrollbar for tables */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #c6c6cf; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-background-muted h-full w-full overflow-hidden text-on-surface flex flex-col font-body-sm">
+<!-- Top Mini Header (5vh) -->
+<header class="h-[5vh] min-h-[40px] bg-primary text-on-primary flex items-center justify-between px-container-margin shrink-0">
+<div class="flex items-center gap-column-gap">
+<button class="flex items-center gap-1 text-primary-fixed-dim hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">arrow_back_ios</span>
+<span class="font-label-caps text-label-caps uppercase">KEMBALI</span>
+</button>
+<div class="w-px h-4 bg-primary-fixed-dim/30"></div>
+<h1 class="font-headline-md text-headline-md text-white tracking-tight">FIT MOTOR</h1>
+</div>
+<div class="flex items-center gap-column-gap">
+<div class="bg-status-alert text-on-error px-3 py-1 rounded-DEFAULT flex items-center gap-2 shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span class="font-label-caps text-label-caps font-bold">Kepala Mekanik belum diinput</span>
+</div>
+<div class="flex items-center gap-2 text-primary-fixed-dim">
+<span class="material-symbols-outlined">person</span>
+<span class="">Selamat datang, admin</span>
+</div>
+</div>
+</header>
+<!-- Main Grid Content (95vh) -->
+<main class="h-[95vh] flex p-stack-compact gap-stack-compact">
+<!-- Left Column (25%) - Metadata -->
+<section class="w-1/4 flex flex-col gap-stack-compact overflow-hidden">
+<!-- Ticket Card -->
+<div class="bg-surface-default rounded-xl border border-outline-variant p-4 flex flex-col gap-3 shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-data-mono text-data-mono font-bold text-primary">SV26000000221</span>
+<span class="bg-status-incoming/10 text-status-incoming font-label-caps text-label-caps px-2 py-1 rounded-full border border-status-incoming/20">STATUS: DATANG</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-caps text-label-caps bg-surface-container px-2 py-1 rounded-DEFAULT">REGULER</span>
+<span class="font-data-mono text-data-mono text-xs">12/06/2026 15:59</span>
+</div>
+</div>
+<!-- Customer & Vehicle Card -->
+<div class="bg-surface-default rounded-xl border border-outline-variant p-5 flex flex-col gap-5 shadow-sm flex-grow">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-1">PELANGGAN</h3>
+<div class="font-body-lg text-body-lg text-on-surface font-bold">EDI SUBEKHI, BPK</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">KENDARAAN</h3>
+<div class="inline-block bg-on-surface text-surface rounded-md px-4 py-1.5 shadow-sm w-fit">
+<span class="font-data-mono text-data-mono font-bold tracking-widest text-lg">G 2086 AQ</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">HONDA BEAT (HITAM)</div>
+</div>
+<!-- Gold Member Badge -->
+<div class="mt-2 bg-gradient-to-r from-tertiary-fixed to-member-gold p-4 rounded-xl border border-tertiary-container shadow-sm">
+<div class="flex items-center gap-2 text-on-tertiary-container mb-2">
+<span class="material-symbols-outlined text-[20px]">stars</span>
+<span class="font-label-caps text-label-caps font-bold">MEMBER GOLD AKTIF</span>
+</div>
+<div class="flex gap-4 font-body-sm text-body-sm text-on-tertiary-container/80">
+<span class="">• 15% Jasa</span>
+<span class="">• 11% Barang</span>
+</div>
+</div>
+<!-- Mechanic Assignment -->
+<div class="flex flex-col gap-3 mt-4 border-t border-outline-variant pt-4">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant font-bold">PENUGASAN MEKANIK</h3>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Kepala Mekanik 1</label>
+<div class="flex gap-2">
+<select class="flex-1 border border-outline-variant rounded-md px-2 py-1.5 font-body-sm text-body-sm focus:outline-none focus:border-primary">
+<option>- Pilih -</option>
+</select>
+<div class="flex items-center gap-1 w-20 border border-outline-variant rounded-md px-2 py-1.5 bg-surface-container-low">
+<input class="w-8 bg-transparent text-right font-data-mono text-data-mono border-none p-0 focus:ring-0" type="text" value="0"/>
+<span class="font-label-caps text-on-surface-variant">%</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Admin/Kasir 1</label>
+<div class="flex gap-2">
+<select class="flex-1 border border-outline-variant rounded-md px-2 py-1.5 font-body-sm text-body-sm focus:outline-none focus:border-primary">
+<option>- Pilih -</option>
+</select>
+<div class="flex items-center gap-1 w-20 border border-outline-variant rounded-md px-2 py-1.5 bg-surface-container-low">
+<input class="w-8 bg-transparent text-right font-data-mono text-data-mono border-none p-0 focus:ring-0" type="text" value="0"/>
+<span class="font-label-caps text-on-surface-variant">%</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">build</span> Mekanik 1</label>
+<div class="flex gap-2">
+<select class="flex-1 border border-outline-variant rounded-md px-2 py-1.5 font-body-sm text-body-sm focus:outline-none focus:border-primary">
+<option>- Pilih -</option>
+</select>
+<div class="flex items-center gap-1 w-20 border border-outline-variant rounded-md px-2 py-1.5 bg-surface-container-low">
+<input class="w-8 bg-transparent text-right font-data-mono text-data-mono border-none p-0 focus:ring-0" type="text" value="0"/>
+<span class="font-label-caps text-on-surface-variant">%</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">build</span> Mekanik 2</label>
+<select class="w-full border border-outline-variant rounded-md px-2 py-1.5 font-body-sm text-body-sm focus:outline-none focus:border-primary">
+<option>- Pilih -</option>
+</select>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<button class="w-full py-2.5 border border-outline-variant rounded-xl text-primary hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 font-body-sm text-body-sm font-medium" onclick="document.getElementById('vehicle-history-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Riwayat Kendaraan
+                    </button>
+</div>
+</div>
+</section>
+<!-- Center Column (50%) - Workflow -->
+<section class="w-2/4 bg-surface-default rounded-xl border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant bg-surface-container-low shrink-0">
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container transition-colors">
+                    Keluhan &amp; Perintah Kerja
+                </button>
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg font-bold text-primary border-b-2 border-primary bg-surface-default">
+                    Barang &amp; Jasa
+                </button>
+</div>
+<!-- Tab 2 Content -->
+<div class="flex flex-col h-full p-5 gap-5 overflow-hidden">
+<!-- Action Buttons -->
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-[#3B82F6] text-white rounded-md font-body-sm text-body-sm flex items-center gap-2 hover:bg-blue-600 transition-colors">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+            Fast Moves
+        </button>
+<button class="px-4 py-2 bg-[#F59E0B] text-white rounded-md font-body-sm text-body-sm flex items-center gap-2 hover:bg-amber-600 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+            Barang Custom
+        </button>
+</div>
+<!-- Search Bar -->
+<div class="flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">CARI BARANG</label>
+<div class="flex gap-2">
+<input class="flex-1 px-4 py-2.5 border border-outline-variant rounded-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm" placeholder="Ketik kode atau nama barang..." type="text"/>
+<button class="px-4 py-2.5 bg-[#3B82F6] text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">search</span> Cari
+            </button>
+<button class="px-3 py-2.5 border border-outline-variant text-on-surface-variant rounded-md hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Input Form -->
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-3 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">KODE <span class="text-status-alert">*</span></label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface-variant" placeholder="Kode" readonly="" type="text"/>
+</div>
+<div class="col-span-9 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">NAMA BARANG <span class="text-status-alert">*</span></label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface-variant" placeholder="Nama barang" readonly="" type="text"/>
+</div>
+<div class="col-span-4 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">HARGA <span class="text-status-alert">*</span></label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-md font-data-mono text-data-mono" type="text" value="0"/>
+</div>
+<div class="col-span-2 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">QTY <span class="text-status-alert">*</span></label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-md font-data-mono text-data-mono text-center" type="number" value="1"/>
+</div>
+<div class="col-span-2 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">DISC %</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-md font-data-mono text-data-mono text-center" type="number" value="0"/>
+</div>
+<div class="col-span-4 flex flex-col gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">TOTAL</label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-md font-data-mono text-data-mono" readonly="" type="text" value="Rp 0"/>
+</div>
+</div>
+<div class="flex justify-end border-b border-outline-variant pb-5">
+<button class="px-4 py-2.5 bg-[#10B981] text-white rounded-md font-body-sm text-body-sm font-medium hover:bg-emerald-600 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Tambah ke Daftar
+        </button>
+</div>
+<!-- Table Section -->
+<div class="flex-grow flex flex-col overflow-hidden">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary text-[20px]">list</span>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Daftar Item Barang</h3>
+<span class="ml-auto bg-surface-container px-2 py-0.5 rounded-full text-label-caps font-label-caps text-on-surface-variant border border-outline-variant">0 Item</span>
+</div>
+<div class="flex-grow border border-outline-variant rounded-xl overflow-hidden flex flex-col bg-surface-container-lowest">
+<div class="bg-surface-container-low px-4 py-3 flex text-on-surface-variant font-label-caps text-label-caps border-b border-outline-variant">
+<div class="w-12">NO</div>
+<div class="flex-1">KODE / NAMA BARANG</div>
+<div class="w-24 text-right">HARGA</div>
+<div class="w-16 text-center">QTY</div>
+<div class="w-16 text-center">DISC</div>
+<div class="w-32 text-right">TOTAL</div>
+<div class="w-12 text-center ml-4">AKSI</div>
+</div>
+<div class="overflow-y-auto custom-scroll flex-grow p-2">
+<div class="flex flex-col items-center justify-center h-full text-on-surface-variant opacity-60">
+<span class="font-body-lg text-body-lg mb-1">Belum Ada Item Barang</span>
+<span class="font-body-sm text-body-sm">Gunakan form di atas untuk menambahkan item barang</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column (25%) - Financials -->
+<section class="w-1/4 bg-surface-default rounded-xl border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<div class="p-5 bg-surface-container-low border-b border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">RINGKASAN BIAYA</h2>
+</div>
+<div class="flex-grow p-5 flex flex-col gap-5 overflow-y-auto custom-scroll">
+<!-- Subtotals -->
+<div class="flex flex-col gap-3 text-body-sm font-body-sm text-on-surface">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Suku Cadang</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Jasa</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">PPN (0%)</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center text-member-gold">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">stars</span> Diskon Gold</span>
+<span class="font-data-mono text-data-mono">- Rp 0</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant w-full"></div>
+<!-- Grand Total -->
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL AKHIR</span>
+<div class="font-headline-display text-headline-display text-primary font-bold">Rp 0</div>
+</div>
+<!-- Payment Methods -->
+<div class="flex flex-col gap-2.5 mt-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">METODE PEMBAYARAN</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2.5 border-2 border-[#10B981] bg-emerald-50 text-emerald-700 rounded-xl font-label-caps text-label-caps text-center font-bold shadow-sm">TUNAI</button>
+<button class="py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-label-caps text-label-caps text-center hover:bg-surface-container transition-colors">TRANSFER</button>
+<button class="py-2.5 border border-outline-variant text-on-surface-variant rounded-xl font-label-caps text-label-caps text-center hover:bg-surface-container transition-colors">QRIS</button>
+</div>
+</div>
+<!-- Cash Input -->
+<div class="flex flex-col gap-2.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TUNAI DITERIMA</span>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-data-mono text-data-mono text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-2.5 text-right font-data-mono text-data-mono text-lg font-bold border border-primary rounded-xl focus:outline-none focus:ring-1 focus:ring-primary shadow-sm" type="text" value="0"/>
+</div>
+</div>
+<div class="flex justify-between items-center text-body-lg font-body-lg text-on-surface mt-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
+<span class="text-on-surface-variant">Kembalian</span>
+<span class="font-data-mono text-data-mono text-status-alert">Rp 0</span>
+</div>
+</div>
+<!-- Bottom Action -->
+<div class="p-5 bg-surface-container-low border-t border-outline-variant mt-auto shrink-0">
+<button class="w-full py-4 bg-[#006c49] text-white rounded-xl font-headline-md text-headline-md font-bold shadow-md hover:bg-[#005236] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">print</span>
+                    PROSES &amp; CETAK NOTA
+                </button>
+</div>
+</section>
+</main>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden" id="vehicle-history-modal">
+<div class="bg-surface-default w-full max-w-2xl rounded-xl shadow-md overflow-hidden flex flex-col max-h-[80vh]">
+<!-- Modal Header -->
+<div class="bg-primary p-4 flex justify-between items-center text-white">
+<h2 class="font-headline-md text-headline-md">Riwayat Servis Kendaraan - G 2086 AQ</h2>
+<button class="hover:bg-white/10 rounded-full p-1 transition-colors" onclick="document.getElementById('vehicle-history-modal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 overflow-y-auto custom-scroll flex flex-col gap-4">
+<div class="flex gap-4 items-start">
+<div class="flex flex-col items-center">
+<div class="w-3 h-3 rounded-full bg-secondary mt-1.5"></div>
+<div class="w-px h-full bg-outline-variant min-h-[40px]"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="font-data-mono text-data-mono text-primary">12/04/2026</div>
+<div class="font-body-lg text-body-lg text-on-surface">Ganti Oli &amp; Service Ringan</div>
+<div class="text-body-sm text-on-surface-variant">Mekanik: Budi</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex flex-col items-center">
+<div class="w-3 h-3 rounded-full bg-outline-variant mt-1.5"></div>
+</div>
+<div class="flex-1">
+<div class="font-data-mono text-data-mono text-primary">05/01/2026</div>
+<div class="font-body-lg text-body-lg text-on-surface">Ganti Ban Belakang &amp; Kampas Rem</div>
+<div class="text-body-sm text-on-surface-variant">Mekanik: Agus</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-4 bg-surface-container-low border-t border-outline-variant flex justify-end">
+<button class="px-6 py-2 bg-primary text-on-primary rounded-xl font-medium hover:bg-primary/90 transition-colors" onclick="document.getElementById('vehicle-history-modal').classList.add('hidden')">
+                Tutup
+            </button>
+</div>
+</div>
+</div></body></html>

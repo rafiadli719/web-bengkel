@@ -1,0 +1,367 @@
+================================================================================
+  SCRIPT DIALOG — GOOGLE MEET
+  Requirements Workshop: Sistem Web Bengkel FIT MOTOR
+  Dipimpin oleh: [Nama Anda / Tim IT]
+  Tanggal: 28 Juni 2026
+================================================================================
+
+CATATAN SEBELUM MULAI:
+- Bagian [ANDA] = yang Anda ucapkan
+- Bagian [TUNGGU] = tunggu respon peserta
+- Bagian *catatan* = pengingat untuk Anda sendiri, tidak perlu diucapkan
+- Tanda (...) = jeda sebentar
+
+================================================================================
+BAGIAN 1 — PEMBUKAAN (± 5 menit)
+================================================================================
+
+[ANDA]
+"Selamat pagi / siang semuanya. Terima kasih sudah meluangkan waktu untuk hadir
+di meeting ini.
+
+Perkenalkan, saya [nama Anda] dari tim IT. Meeting hari ini kita adakan karena
+sistem Web Bengkel yang sedang kami bangun sudah mencapai titik di mana kami
+butuh keputusan dari teman-teman semua sebelum kami lanjutkan ke tahap berikutnya.
+
+Bukan keputusan teknis — tapi keputusan operasional. Kami ingin pastikan sistem
+yang kami buat nanti benar-benar sesuai dengan cara kerja FIT MOTOR, bukan
+sesuai asumsi kami dari tim IT."
+
+(...)
+
+"Agenda hari ini ada 3 hal:
+  Pertama, kami mau minta keputusan untuk 4 pertanyaan yang belum terjawab.
+  Kedua, ada beberapa risiko dari keputusan yang sudah pernah disepakati
+  sebelumnya — kami ingin konfirmasi ulang.
+  Ketiga, sesi tanya jawab bebas.
+
+Total estimasi waktunya sekitar 45-60 menit. Apakah semuanya siap?"
+
+[TUNGGU — jawaban peserta]
+
+[ANDA]
+"Baik. Sebelum mulai, saya mau bagikan dokumen panduan meeting ini di chat.
+Teman-teman bisa buka sambil kita diskusi."
+
+*sambil share dokumen PANDUAN MEETING WEB BENGKEL v2.docx di Google Meet chat*
+
+
+================================================================================
+BAGIAN 2 — KONFIRMASI KEPUTUSAN YANG SUDAH ADA (± 10 menit)
+================================================================================
+
+[ANDA]
+"Oke kita mulai. Jadi sebelumnya kami sudah pernah diskusi informal dan ada
+beberapa hal yang katanya sudah disepakati. Kami mau konfirmasi ulang agar
+semuanya yakin dan tercatat resmi.
+
+Yang pertama soal REFUND..."
+
+---
+
+[ANDA — Q1 Refund]
+"Jika ada pelanggan yang sudah LUNAS kemudian minta batal — misalnya tidak jadi
+ganti sparepart — kesepakatannya adalah:
+  stok dikembalikan ke gudang,
+  uang dikembalikan ke pelanggan,
+  dan komisi mekanik tidak jadi diberikan.
+
+Apakah ini benar? Ada yang mau ditambahkan atau diubah?"
+
+[TUNGGU — konfirmasi dari Kepala Workshop / Kasir]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q5 Komisi Revisi]
+"Yang kedua soal KOMISI MEKANIK. Sistem kami rancang seperti sistem lama —
+komisi dihitung otomatis setiap saat berdasarkan total invoice terakhir.
+Artinya kalau invoice direvisi, komisi ikut berubah otomatis.
+
+Ini sudah sesuai dengan yang diinginkan?"
+
+[TUNGGU]
+
+*jika ada pertanyaan soal 'kalau komisi sudah dibayar terus direvisi bagaimana':*
+
+[ANDA — jika ditanya]
+"Nah ini yang mau kami tanyakan juga. Kalau komisi sudah dibayarkan ke mekanik,
+tapi ternyata invoice direvisi — apa yang terjadi? Apakah ada koreksi di
+pembayaran komisi berikutnya, atau invoice dikunci setelah komisi dibayar?"
+
+[TUNGGU — keputusan dari Manajemen / Kepala Operasional]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q6 Komisi Garansi]
+"Lanjut. Soal servis GARANSI atau COMEBACK — pelanggan yang kembali karena
+hasil servis bermasalah. Kesepakatannya: mekanik yang mengerjakan ulang tidak
+dapat komisi tambahan.
+
+Tapi ada satu hal yang perlu kami tanyakan — bagaimana kalau mekanik yang
+mengerjakan garansi BERBEDA dengan mekanik yang mengerjakan aslinya?
+Mekanik pengganti tetap tidak dapat komisi?"
+
+[TUNGGU — keputusan dari Kepala Workshop]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q8 Multi Payment]
+"Yang terakhir dari konfirmasi — ini yang kami anggap paling kritis — soal
+PEMBAYARAN HYBRID. Pelanggan bisa bayar sebagian tunai, sebagian transfer.
+
+Pertanyaan kami: status LUNAS itu ditentukan kapan?
+  Apakah saat tunai diterima saja sudah cukup?
+  Atau baru LUNAS setelah transfer juga dikonfirmasi?
+
+Karena ini mempengaruhi laporan omset harian."
+
+[TUNGGU — keputusan dari Kasir / Keuangan]
+
+*jika belum ada keputusan, bantu dengan contoh:*
+
+[ANDA — jika perlu dibantu]
+"Contoh kasusnya begini: Pelanggan total tagihan Rp 500 ribu.
+Bayar tunai Rp 200 ribu, sisanya Rp 300 ribu bilang mau transfer.
+Pelanggan pergi sambil bawa motornya.
+
+Di laporan hari ini, Rp 500 ribu itu masuk sebagai LUNAS, atau masih PENDING?"
+
+[TUNGGU — keputusan]
+
+*catat jawaban*
+
+
+================================================================================
+BAGIAN 3 — 4 PERTANYAAN YANG BELUM ADA KEPUTUSAN (± 20 menit)
+================================================================================
+
+[ANDA]
+"Oke sekarang kita masuk ke bagian yang benar-benar butuh keputusan hari ini.
+Ada 4 pertanyaan yang belum pernah kita bahas sebelumnya."
+
+---
+
+[ANDA — Q2 Stok Batal]
+"Pertama — soal PEMBATALAN SERVIS yang belum lunas.
+
+Jadi sebelum pelanggan bayar, bisa saja servis dibatalkan. Nah kalau itu terjadi,
+sparepart yang sudah terlanjur diinput ke sistem — apakah stoknya otomatis
+dikembalikan oleh sistem? Atau perlu konfirmasi dulu?
+
+Ada 3 pilihan:
+  A: Sistem otomatis kembalikan stok saat admin klik Batalkan Servis
+  B: Perlu konfirmasi kasir dulu sebelum stok kembali
+  C: Staf gudang yang atur manual
+
+Mana yang paling sesuai dengan cara kerja di lapangan?"
+
+[TUNGGU — diskusi dan keputusan]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q3 Biaya Garansi]
+"Kedua — masih soal servis garansi. Kalau pelanggan kembali komplain,
+apakah ada biaya yang dikenakan?
+
+Pilihannya:
+  A: Gratis total — jasa dan sparepart ditanggung bengkel
+  B: Gratis jasa, tapi sparepart tetap bayar
+  C: Tergantung keputusan kepala workshop per kasus
+
+Ini penting karena mempengaruhi bagaimana sistem mencatat transaksinya."
+
+[TUNGGU — keputusan dari Kepala Workshop / Manajemen]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q4 Diskon]
+"Ketiga — soal DISKON. Sistem sudah bisa input diskon fleksibel, bisa persen
+atau nominal rupiah, bisa untuk jasa maupun barang.
+
+Pertanyaannya: siapa yang boleh kasih diskon, dan ada batas maksimalnya tidak?
+
+Pilihannya:
+  A: Kasir bebas input berapa saja
+  B: Ada batas maksimal — kalau melebihi harus minta approval kepala
+  C: Diskon hanya dari kategori pelanggan Silver/Gold/Diamond — tidak bisa
+     diinput manual
+
+Yang mana yang kita pakai?"
+
+[TUNGGU — keputusan]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q7 Closing Kasir]
+"Keempat — soal CLOSING KASIR harian.
+
+Sekarang di sistem lama, kasir itu hitung sendiri uang fisiknya dan dicocokkan
+dengan laporan. Kalau ada selisih, bagaimana prosedurnya?
+
+Yang perlu kami tahu:
+  Berapa batas toleransi selisih yang masih dianggap wajar?
+  Kalau melebihi batas, siapa yang harus lapor ke siapa?
+  Apakah perlu tanda tangan berita acara closing harian?"
+
+[TUNGGU — keputusan dari Kasir / Keuangan / Manajemen]
+
+*catat jawaban*
+
+---
+
+[ANDA — Q10 Akses Antar Cabang]
+"Dan satu lagi — soal AKSES DATA ANTAR CABANG.
+
+Kalau ada staf dari Cabang Pesalakan misalnya, apakah dia bisa lihat data
+transaksi Cabang Pacul? Atau masing-masing cabang hanya lihat datanya sendiri?
+
+Pilihannya:
+  A: Tidak bisa — tiap cabang hanya lihat datanya sendiri
+  B: Bisa lihat tapi tidak bisa ubah data cabang lain
+  C: Tergantung level — staf hanya cabang sendiri, manajer bisa semua cabang"
+
+[TUNGGU — keputusan dari Manajemen]
+
+*catat jawaban*
+
+
+================================================================================
+BAGIAN 4 — SESI TANYA JAWAB (± 15 menit)
+================================================================================
+
+[ANDA]
+"Baik, kita sudah selesaikan semua pertanyaan utama. Sekarang saya buka sesi
+tanya jawab bebas. Kalau ada yang ingin ditanyakan soal sistem — apapun —
+silakan."
+
+[TUNGGU]
+
+---
+
+*PANDUAN JIKA ADA PERTANYAAN YANG MUNGKIN MUNCUL:*
+
+---
+
+Jika ditanya: "Berapa lama implementasinya?"
+[ANDA]
+"Estimasi kami modul wajib — servis, kasir, stok, laporan — bisa siap dalam
+3 sampai 4 bulan. Modul pelengkap seperti dashboard manajemen, CRM, dan insentif
+dikerjakan bertahap setelahnya."
+
+---
+
+Jika ditanya: "Data lama bisa dipindah tidak?"
+[ANDA]
+"Bisa. Kita sudah punya pipeline sinkronisasi dari sistem Access lama ke MySQL
+baru. Data pelanggan, kendaraan, dan histori servis sudah pernah diuji
+migrasinya. Jadi data tidak hilang."
+
+---
+
+Jika ditanya: "Kalau internet mati gimana?"
+[ANDA]
+"Sistem kita jalan lewat jaringan lokal — LAN atau WiFi di kantor. Selama
+server di kantor menyala, semua transaksi tetap bisa jalan normal.
+Yang tidak bisa hanya akses dari luar kantor."
+
+---
+
+Jika ditanya: "Apakah bisa dibuka dari HP?"
+[ANDA]
+"Bisa dibuka dari browser HP. Tampilannya sudah responsif. Tapi untuk input
+servis yang banyak kolom, tetap lebih nyaman di laptop atau komputer."
+
+---
+
+Jika ditanya: "Kalau ada error siapa yang dihubungi?"
+[ANDA]
+"Kami siapkan kontak support IT. Untuk masalah kritis ada prosedur eskalasi
+yang akan kami dokumentasikan sebelum sistem diluncurkan."
+
+---
+
+Jika ditanya: "Komisi mekanik kena pajak tidak?"
+[ANDA]
+"Sistem menghitung komisi secara gross — belum dipotong pajak. Pemotongan
+PPh dilakukan manual oleh bagian keuangan sesuai aturan yang berlaku.
+Kalau memang perlu diotomasi, bisa kita tambahkan di fase berikutnya."
+
+---
+
+Jika ditanya: "Apakah ada notifikasi ke pelanggan saat motor selesai?"
+[ANDA]
+"Itu sudah masuk rencana di modul CRM. Data nomor WhatsApp pelanggan sudah
+tersimpan di sistem. Notifikasi otomatis akan kami kerjakan setelah
+modul wajib selesai."
+
+---
+
+Jika ada pertanyaan yang BELUM BISA DIJAWAB:
+[ANDA]
+"Ini pertanyaan yang bagus. Saya belum bisa jawab sekarang karena butuh
+pengecekan lebih lanjut. Boleh saya catat dan saya follow up setelah meeting?"
+
+[TUNGGU — konfirmasi]
+
+
+================================================================================
+BAGIAN 5 — PENUTUPAN (± 5 menit)
+================================================================================
+
+[ANDA]
+"Baik, kita sudah hampir selesai. Saya mau rekap singkat keputusan yang sudah
+kita sepakati hari ini ya..."
+
+*sebutkan ulang satu per satu keputusan yang dicatat selama meeting*
+
+(...)
+
+"Jadi hari ini kita sudah menyepakati [sebutkan jumlah] keputusan penting.
+Semuanya akan kami dokumentasikan dalam notulensi resmi dan akan dikirim
+ke semua peserta paling lambat [sebutkan hari/tanggal] untuk dikonfirmasi.
+
+Setelah konfirmasi notulensi, tim kami akan mulai implementasi berdasarkan
+keputusan yang sudah disepakati. Tidak ada lagi perubahan besar setelah
+implementasi dimulai ya — karena itu akan mempengaruhi timeline."
+
+(...)
+
+"Kalau ada yang mau menambahkan sesuatu sebelum kita tutup?"
+
+[TUNGGU]
+
+(...)
+
+[ANDA — penutup]
+"Baik. Terima kasih banyak kepada semua yang sudah hadir dan berkontribusi
+dalam meeting ini. Masukan dari teman-teman sangat penting supaya sistem
+yang kami buat benar-benar berguna untuk operasional FIT MOTOR.
+
+Sampai bertemu lagi. Selamat beraktivitas."
+
+
+================================================================================
+CHECKLIST SETELAH MEETING:
+================================================================================
+
+[ ] Tulis notulensi berdasarkan catatan selama meeting
+[ ] Kirim notulensi ke semua peserta maksimal 1-2 hari setelah meeting
+[ ] Minta konfirmasi dari peserta bahwa notulensi sudah benar
+[ ] Update dokumen PANDUAN MEETING dengan keputusan yang sudah diisi
+[ ] Lanjutkan implementasi berdasarkan keputusan yang sudah disepakati
+
+================================================================================
+  END OF SCRIPT
+================================================================================

@@ -1,0 +1,321 @@
+<!DOCTYPE html><html class="h-full" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FIT MOTOR - Cashier Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e4e2e5",
+                        "on-secondary-fixed": "#002113",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#dec483",
+                        "surface-variant": "#e4e2e5",
+                        "tertiary-fixed": "#fce09d",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#303033",
+                        "on-tertiary-fixed-variant": "#564510",
+                        "surface-dim": "#dbd9dd",
+                        "primary-fixed": "#dae2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "member-gold": "#F59E0B",
+                        "on-primary": "#ffffff",
+                        "background": "#fbf8fc",
+                        "tertiary-container": "#c2a96b",
+                        "status-incoming": "#3B82F6",
+                        "outline-variant": "#c6c6cf",
+                        "on-tertiary-fixed": "#241a00",
+                        "primary-container": "#2e3b5e",
+                        "on-secondary-container": "#00714d",
+                        "on-tertiary-container": "#4f3d09",
+                        "status-alert": "#EF4444",
+                        "on-surface-variant": "#45464e",
+                        "surface-tint": "#515d83",
+                        "surface-bright": "#fbf8fc",
+                        "on-primary-container": "#99a6cf",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-default": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "primary": "#172547",
+                        "surface-container-high": "#eae7eb",
+                        "tertiary": "#705c26",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-container-low": "#f5f3f6",
+                        "on-surface": "#1b1b1e",
+                        "inverse-primary": "#b8c5f0",
+                        "on-secondary-fixed-variant": "#005236",
+                        "secondary": "#006c49",
+                        "on-background": "#1b1b1e",
+                        "primary-fixed-dim": "#b8c5f0",
+                        "surface": "#fbf8fc",
+                        "on-primary-fixed": "#0b1a3b",
+                        "on-primary-fixed-variant": "#394669",
+                        "outline": "#75777f",
+                        "background-muted": "#F3F4F6",
+                        "inverse-on-surface": "#f2f0f3",
+                        "secondary-container": "#6cf8bb",
+                        "surface-container": "#efedf0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-margin": "1rem",
+                        "cell-padding": "0.375rem",
+                        "column-gap": "0.75rem",
+                        "stack-compact": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Hanken Grotesk"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-display": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        /* Custom scrollbar for tables */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #c6c6cf; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-background-muted h-full w-full overflow-hidden text-on-surface flex flex-col font-body-sm">
+<!-- Top Mini Header (5vh) -->
+<header class="h-[5vh] min-h-[40px] bg-primary text-on-primary flex items-center justify-between px-container-margin shrink-0">
+<div class="flex items-center gap-column-gap">
+<button class="flex items-center gap-1 text-primary-fixed-dim hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">arrow_back_ios</span>
+<span class="font-label-caps text-label-caps">BACK</span>
+</button>
+<div class="w-px h-4 bg-primary-fixed-dim/30"></div>
+<h1 class="font-headline-md text-headline-md text-white tracking-tight">FIT MOTOR</h1>
+</div>
+<div class="flex items-center gap-column-gap">
+<div class="bg-status-alert text-on-error px-3 py-1 rounded flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span class="font-label-caps text-label-caps">Kepala Mekanik belum diinput</span>
+</div>
+<div class="flex items-center gap-2 text-primary-fixed-dim">
+<span class="material-symbols-outlined">person</span>
+<span class="">Welcome, admin</span>
+</div>
+</div>
+</header>
+<!-- Main Grid Content (95vh) -->
+<main class="h-[95vh] flex p-stack-compact gap-stack-compact">
+<!-- Left Column (25%) - Metadata -->
+<section class="w-1/4 flex flex-col gap-stack-compact overflow-hidden">
+<!-- Ticket Card -->
+<div class="bg-surface-default rounded-lg border border-outline-variant p-4 flex flex-col gap-2 shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-data-mono text-data-mono font-bold text-primary">SV26000000221</span>
+<span class="bg-status-incoming/10 text-status-incoming font-label-caps text-label-caps px-2 py-1 rounded-full border border-status-incoming/20">STATUS: DATANG</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-caps text-label-caps bg-surface-container px-2 py-1 rounded">REGULER</span>
+<span class="">12/06/2026 15:59</span>
+</div>
+</div>
+<!-- Customer & Vehicle Card -->
+<div class="bg-surface-default rounded-lg border border-outline-variant p-4 flex flex-col gap-4 shadow-sm flex-grow">
+<div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-1">CUSTOMER</h3>
+<div class="font-body-lg text-body-lg text-on-surface font-bold">EDI SUBEKHI, BPK</div>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">VEHICLE</h3>
+<div class="inline-block border-2 border-primary rounded-DEFAULT px-3 py-1 bg-white shadow-sm w-fit">
+<span class="font-data-mono text-data-mono font-bold text-primary tracking-wider text-lg">G 2086 AQ</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">HONDA BEAT (HITAM)</div>
+</div>
+<!-- Gold Member Badge -->
+<div class="mt-2 bg-gradient-to-r from-tertiary-fixed to-member-gold p-3 rounded-lg border border-tertiary-container shadow-sm">
+<div class="flex items-center gap-2 text-on-tertiary-container mb-2">
+<span class="material-symbols-outlined text-[20px]">stars</span>
+<span class="font-label-caps text-label-caps font-bold">GOLD MEMBER ACTIVATED</span>
+</div>
+<div class="flex gap-4 font-body-sm text-body-sm text-on-tertiary-container/80">
+<span class="">• 15% Jasa</span>
+<span class="">• 11% Barang</span>
+</div>
+</div>
+<div class="mt-auto pt-4">
+<button class="w-full py-2 border border-outline-variant rounded-lg text-primary hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 font-body-sm text-body-sm font-medium" onclick="document.getElementById('vehicle-history-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Vehicle History
+                    </button>
+</div>
+</div>
+</section>
+<!-- Center Column (50%) - Workflow -->
+<section class="w-2/4 bg-surface-default rounded-lg border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant bg-surface-container-low shrink-0">
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg font-bold text-primary border-b-2 border-primary bg-surface-default">
+                    Complaints &amp; WO
+                </button>
+<button class="flex-1 py-3 px-4 font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container transition-colors">
+                    Items &amp; Services
+                </button>
+</div>
+<!-- Tab 1 Content -->
+<div class="flex flex-col h-full p-4 gap-4 overflow-hidden">
+<!-- Search -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm" placeholder="Cari keluhan atau WO..." type="text">
+</div>
+<!-- Toggles -->
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg border border-primary bg-primary-container text-on-primary-container font-label-caps text-label-caps text-center">DITINGGAL</button>
+<button class="flex-1 py-2 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-lowest font-label-caps text-label-caps text-center">DIJEMPUT</button>
+<button class="flex-1 py-2 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-lowest font-label-caps text-label-caps text-center">DITUNGGU</button>
+</div>
+<!-- Table -->
+<div class="flex-grow border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="bg-surface-container-low px-4 py-2 flex text-on-surface-variant font-label-caps text-label-caps border-b border-outline-variant">
+<div class="w-12">NO</div>
+<div class="flex-1">KELUHAN</div>
+<div class="w-24 text-right">ACTION</div>
+</div>
+<div class="overflow-y-auto custom-scroll flex-grow p-2">
+<!-- Empty state or initial items -->
+<div class="flex flex-col items-center justify-center h-full text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined text-[48px] mb-2">assignment</span>
+<span class="">Belum ada keluhan diinput</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column (25%) - Financials -->
+<section class="w-1/4 bg-surface-default rounded-lg border border-outline-variant flex flex-col shadow-sm overflow-hidden">
+<div class="p-4 bg-surface-container-low border-b border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">INVOICE</h2>
+</div>
+<div class="flex-grow p-4 flex flex-col gap-4 overflow-y-auto custom-scroll">
+<!-- Subtotals -->
+<div class="flex flex-col gap-2 text-body-sm font-body-sm text-on-surface">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Sparepart</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Subtotal Jasa</span>
+<span class="font-data-mono text-data-mono">Rp 0</span>
+</div>
+<div class="flex justify-between items-center text-member-gold">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">stars</span> Gold Discount</span>
+<span class="font-data-mono text-data-mono">- Rp 0</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant w-full"></div>
+<!-- Grand Total -->
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">GRAND TOTAL</span>
+<div class="font-headline-display text-headline-display text-primary font-bold">Rp 0</div>
+</div>
+<!-- Payment Methods -->
+<div class="flex flex-col gap-2 mt-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">METODE PEMBAYARAN</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2 border-2 border-secondary bg-secondary-container text-on-secondary-container rounded-lg font-label-caps text-label-caps text-center font-bold">TUNAI</button>
+<button class="py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-caps text-label-caps text-center hover:bg-surface-container">TRANSFER</button>
+<button class="py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-caps text-label-caps text-center hover:bg-surface-container">QRIS</button>
+</div>
+</div>
+<!-- Cash Input -->
+<div class="flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CASH DITERIMA</span>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-data-mono text-data-mono text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-2 text-right font-data-mono text-data-mono text-lg font-bold border-2 border-primary rounded-lg focus:outline-none focus:ring-0" type="text" value="0">
+</div>
+</div>
+<div class="flex justify-between items-center text-body-lg font-body-lg text-on-surface">
+<span class="text-on-surface-variant">Kembalian</span>
+<span class="font-data-mono text-data-mono text-status-alert">Rp 0</span>
+</div>
+</div>
+<!-- Bottom Action -->
+<div class="p-4 bg-surface-container-low border-t border-outline-variant mt-auto shrink-0">
+<button class="w-full py-4 bg-secondary text-on-secondary rounded-lg font-headline-md text-headline-md font-bold shadow-md hover:bg-secondary/90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">print</span>
+                    PROSES &amp; CETAK NOTA
+                </button>
+</div>
+</section>
+</main>
+
+
+<div id="vehicle-history-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-surface-default w-full max-w-2xl rounded-xl shadow-md overflow-hidden flex flex-col max-h-[80vh]">
+        <!-- Modal Header -->
+        <div class="bg-primary p-4 flex justify-between items-center text-white">
+            <h2 class="font-headline-md text-headline-md">Riwayat Servis Kendaraan - G 2086 AQ</h2>
+            <button onclick="document.getElementById('vehicle-history-modal').classList.add('hidden')" class="hover:bg-white/10 rounded-full p-1 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="p-6 overflow-y-auto custom-scroll flex flex-col gap-4">
+            <div class="flex gap-4 items-start">
+                <div class="flex flex-col items-center">
+                    <div class="w-3 h-3 rounded-full bg-secondary mt-1.5"></div>
+                    <div class="w-px h-full bg-outline-variant min-h-[40px]"></div>
+                </div>
+                <div class="flex-1 pb-4">
+                    <div class="font-data-mono text-data-mono text-primary">12/04/2026</div>
+                    <div class="font-body-lg text-body-lg text-on-surface">Ganti Oli &amp; Service Ringan</div>
+                    <div class="text-body-sm text-on-surface-variant">Mekanik: Budi</div>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 items-start">
+                <div class="flex flex-col items-center">
+                    <div class="w-3 h-3 rounded-full bg-outline-variant mt-1.5"></div>
+                </div>
+                <div class="flex-1">
+                    <div class="font-data-mono text-data-mono text-primary">05/01/2026</div>
+                    <div class="font-body-lg text-body-lg text-on-surface">Ganti Ban Belakang &amp; Kampas Rem</div>
+                    <div class="text-body-sm text-on-surface-variant">Mekanik: Agus</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-4 bg-surface-container-low border-t border-outline-variant flex justify-end">
+            <button onclick="document.getElementById('vehicle-history-modal').classList.add('hidden')" class="px-6 py-2 bg-primary text-on-primary rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div></body></html>
