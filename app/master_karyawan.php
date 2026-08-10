@@ -570,8 +570,8 @@ if(empty($_SESSION['_iduser'])){
                 html = '<tr><td colspan="8" class="text-center">Tidak ada data</td></tr>';
             } else {
                 $.each(data, function(index, row) {
-                    // Determine status based on is_active from tbuser
-                    var isAktif = (row.is_active === 'active' || row.is_active === null || typeof row.is_active === 'undefined');
+                    // Determine status based on is_active from tbuser_karyawan (nilai: 'aktif'/'nonaktif')
+                    var isAktif = (row.is_active === 'aktif' || row.is_active === null || typeof row.is_active === 'undefined');
                     var statusClass = isAktif ? 'label label-success' : 'label label-danger';
                     var statusText = isAktif ? 'Aktif' : 'Non-Aktif';
                     

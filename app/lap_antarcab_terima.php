@@ -177,18 +177,20 @@ if(empty($_SESSION['_iduser'])){
 
                     <!-- Summary -->
                     <?php
-                    $where = "WHERE oh.kd_cabang_tujuan = '$kd_cabang'
-                              AND oh.tipe_transaksi IN ('ANTAR_CABANG', 'MITRA_EKSTERNAL')
-                              AND oh.tanggal BETWEEN '$filter_tgl_dari' AND '$filter_tgl_sampai'";
+                    // Sumber data yang benar: tblorder_antarcab_header (bukan tblorderjual_header —
+                    // itu tabel penjualan umum, tidak punya kd_cabang_tujuan). Lihat catatan yang
+                    // sama di lap_antarcab_kirim.php.
+                    $where = "WHERE oh.kd_cabang_tujuan = '$kd_cabang'";
                     if($filter_cabang != ''){
-                        $where .= " AND oh.kd_cabang = '$filter_cabang'";
+                        $where .= " AND oh.kd_cabang_asal = '$filter_cabang'";
                     }
+                    $where .= " AND COALESCE(oh.tanggal_terima, oh.tanggal_kirim, oh.tanggal_request) BETWEEN '$filter_tgl_dari' AND '$filter_tgl_sampai'";
 
-                    $sum = mysqli_query($koneksi, "SELECT COUNT(*) as cnt, COALESCE(SUM(total_qty),0) as qty, COALESCE(SUM(total_order),0) as total
-                                                    FROM tblorderjual_header oh $where");
+                    $sum = mysqli_query($koneksi, "SELECT COUNT(*) as cnt, COALESCE(SUM(total_qty),0) as qty, COALESCE(SUM(total_nilai),0) as total
+                                                    FROM tblorder_antarcab_header oh $where");
                     $r_sum = mysqli_fetch_array($sum);
 
-                    $sum_diterima = mysqli_query($koneksi, "SELECT COUNT(*) as cnt FROM tblorderjual_header oh $where AND oh.status='1'");
+                    $sum_diterima = mysqli_query($koneksi, "SELECT COUNT(*) as cnt FROM tblorder_antarcab_header oh $where AND oh.tanggal_terima IS NOT NULL");
                     $r_diterima = mysqli_fetch_array($sum_diterima);
                     ?>
                     <div class="row">
@@ -233,10 +235,10 @@ if(empty($_SESSION['_iduser'])){
                                     <tbody>
                                         <?php
                                         $sql = "SELECT oh.*, c.nama_cabang as cabang_asal_nama
-                                                FROM tblorderjual_header oh
-                                                LEFT JOIN tbcabang c ON c.kode_cabang = oh.kd_cabang
+                                                FROM tblorder_antarcab_header oh
+                                                LEFT JOIN tbcabang c ON c.kode_cabang = oh.kd_cabang_asal
                                                 $where
-                                                ORDER BY oh.tanggal DESC, oh.no_order DESC";
+                                                ORDER BY COALESCE(oh.tanggal_terima, oh.tanggal_kirim, oh.tanggal_request) DESC, oh.no_order DESC";
                                         $result = mysqli_query($koneksi, $sql);
                                         $no = 0;
                                         $grand_qty = 0;
@@ -246,20 +248,22 @@ if(empty($_SESSION['_iduser'])){
                                             while($row = mysqli_fetch_array($result)){
                                                 $no++;
                                                 $grand_qty += $row['total_qty'];
-                                                $grand_total += $row['total_order'];
+                                                $grand_total += $row['total_nilai'];
 
-                                                $tipe = ($row['tipe_transaksi'] == 'MITRA_EKSTERNAL') ? 'Mitra' : 'Internal';
-                                                $status = ($row['status'] == '1') ? 'Diterima' : 'Pending';
-                                                $status_class = ($row['status'] == '1') ? 'text-success' : 'text-warning';
+                                                $tipe = ($row['jenis'] == 'push') ? 'Push' : 'Pull';
+                                                $sudah_terima = !empty($row['tanggal_terima']);
+                                                $status = $sudah_terima ? 'Diterima' : 'Pending';
+                                                $status_class = $sudah_terima ? 'text-success' : 'text-warning';
+                                                $tgl = $row['tanggal_terima'] ?: ($row['tanggal_kirim'] ?: $row['tanggal_request']);
                                         ?>
                                         <tr>
                                             <td class="center"><?php echo $no; ?></td>
                                             <td><?php echo $row['no_order']; ?></td>
-                                            <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
-                                            <td><?php echo $row['cabang_asal_nama']; ?></td>
+                                            <td><?php echo $tgl ? date('d/m/Y', strtotime($tgl)) : '-'; ?></td>
+                                            <td><?php echo $row['cabang_asal_nama'] ?: $row['kd_cabang_asal']; ?></td>
                                             <td><?php echo $tipe; ?></td>
                                             <td class="center"><?php echo number_format($row['total_qty'], 0); ?></td>
-                                            <td class="right"><?php echo number_format($row['total_order'], 0, ',', '.'); ?></td>
+                                            <td class="right"><?php echo number_format($row['total_nilai'], 0, ',', '.'); ?></td>
                                             <td class="center <?php echo $status_class; ?>"><strong><?php echo $status; ?></strong></td>
                                         </tr>
                                         <?php

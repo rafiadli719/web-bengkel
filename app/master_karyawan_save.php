@@ -82,7 +82,7 @@ function saveKaryawanBaru() {
 
         $seqRes = mysqli_query($koneksi,
             "SELECT MAX(CAST(RIGHT(kode_karyawan, 4) AS UNSIGNED)) AS seq
-             FROM karyawan WHERE kode_karyawan LIKE '$prefix%'");
+             FROM tbuser_karyawan WHERE kode_karyawan LIKE '$prefix%'");
         $seq = 1;
         if ($seqRes) {
             $sr = mysqli_fetch_assoc($seqRes);
@@ -91,7 +91,7 @@ function saveKaryawanBaru() {
         $kode_karyawan = sprintf('%s%04d', $prefix, $seq);
 
         $check = mysqli_query($koneksi,
-            "SELECT COUNT(*) as cnt FROM karyawan WHERE kode_karyawan = '$kode_karyawan'");
+            "SELECT COUNT(*) as cnt FROM tbuser_karyawan WHERE kode_karyawan = '$kode_karyawan'");
         if ($check && (int)mysqli_fetch_assoc($check)['cnt'] > 0) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Kode karyawan sudah terdaftar, coba lagi']);
@@ -101,7 +101,7 @@ function saveKaryawanBaru() {
         $is_active = ($tanggal_keluar === 'NULL') ? 'aktif' : 'nonaktif';
         $kj_val    = $kode_jabatan !== '' ? "'$kode_jabatan'" : 'NULL';
 
-        $query = "INSERT INTO karyawan
+        $query = "INSERT INTO tbuser_karyawan
                     (kode_karyawan, nik, nama_lengkap, nama_panggilan,
                      kode_posisi, kode_jabatan, kode_cabang,
                      email, telp, alamat, spesialisasi, sertifikat,
@@ -156,7 +156,7 @@ function updateKaryawan() {
         $is_active = ($tanggal_keluar === 'NULL') ? 'aktif' : 'nonaktif';
         $kj_val    = $kode_jabatan !== '' ? "'$kode_jabatan'" : 'NULL';
 
-        $query = "UPDATE karyawan SET
+        $query = "UPDATE tbuser_karyawan SET
                     nama_lengkap   = '$nama_lengkap',
                     nama_panggilan = '$nama_panggilan',
                     kode_posisi    = '$kode_posisi',

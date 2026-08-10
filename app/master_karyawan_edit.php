@@ -43,7 +43,7 @@ if(empty($_SESSION['_iduser'])){
         exit;
     }
     
-    $query = "SELECT * FROM karyawan WHERE id = $id";
+    $query = "SELECT * FROM tbuser_karyawan WHERE id = $id";
     $result = mysqli_query($koneksi, $query);
 
     if (!$result || mysqli_num_rows($result) == 0) {

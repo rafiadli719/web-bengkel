@@ -335,10 +335,12 @@ if(empty($_SESSION['_iduser'])){
 
                                             <datalist id="item_list">
                                                 <?php
-                                                $q_item = mysqli_query($koneksi, "SELECT kode_barang, nama_barang FROM tblbarang
-                                                                                   WHERE status='1' ORDER BY nama_barang LIMIT 500");
+                                                // tblbarang tidak ada; katalog item pakai view_cari_item
+                                                // (pola sama dengan cari_item_penjualan_jl.php).
+                                                $q_item = mysqli_query($koneksi, "SELECT noitem, namaitem FROM view_cari_item
+                                                                                   ORDER BY namaitem LIMIT 500");
                                                 while($r_item = mysqli_fetch_array($q_item)){
-                                                    echo "<option value='{$r_item['kode_barang']}'>{$r_item['nama_barang']}</option>";
+                                                    echo "<option value='{$r_item['noitem']}'>{$r_item['namaitem']}</option>";
                                                 }
                                                 ?>
                                             </datalist>

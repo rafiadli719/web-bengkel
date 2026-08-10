@@ -65,8 +65,8 @@ function getKaryawanList() {
         $status = isset($_POST['status']) ? trim($_POST['status']) : '';
 
         $query = "SELECT id, kode_karyawan, nama_lengkap, kode_posisi, kode_jabatan,
-                         kode_cabang, email, telp, is_active
-                  FROM karyawan
+                         kode_level, kode_cabang, email, telp, is_active
+                  FROM tbuser_karyawan
                   WHERE 1=1";
 
         if (!empty($search)) {
@@ -123,7 +123,7 @@ function deleteKaryawan() {
             return;
         }
 
-        $query = "SELECT kode_karyawan FROM karyawan WHERE id = $id";
+        $query = "SELECT kode_karyawan FROM tbuser_karyawan WHERE id = $id";
         $result = mysqli_query($koneksi, $query);
 
         if (!$result || mysqli_num_rows($result) == 0) {
@@ -135,7 +135,7 @@ function deleteKaryawan() {
         $row = mysqli_fetch_assoc($result);
 
         // Soft-delete
-        $ok = mysqli_query($koneksi, "UPDATE karyawan SET is_active='nonaktif' WHERE id = $id");
+        $ok = mysqli_query($koneksi, "UPDATE tbuser_karyawan SET is_active='nonaktif' WHERE id = $id");
 
         if ($ok) {
             logActivity('SUCCESS', 'users', "Delete karyawan ID $id");
@@ -166,7 +166,7 @@ function getKaryawanDetail() {
 
         $query = "SELECT id, kode_karyawan, nama_lengkap, nama_panggilan,
                          kode_posisi, kode_jabatan, kode_cabang, email, telp, is_active
-                  FROM karyawan WHERE id = $id";
+                  FROM tbuser_karyawan WHERE id = $id";
         $result = mysqli_query($koneksi, $query);
 
         if (!$result) {
