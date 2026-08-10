@@ -228,8 +228,8 @@
                                             $sql_pelanggan = "SELECT DISTINCT 
                                                             pj.no_pelanggan,
                                                             p.namapelanggan,
-                                                            p.alamatpelanggan,
-                                                            p.tlppelanggan
+                                                            p.alamat as alamatpelanggan,
+                                                            p.telephone as tlppelanggan
                                                         FROM tblpenjualan_header pj
                                                         JOIN tblpelanggan p ON pj.no_pelanggan = p.nopelanggan
                                                         WHERE pj.carabayar = 'Kredit'

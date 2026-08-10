@@ -2,10 +2,20 @@
 /**
  * Template: Semua Pelanggan
  * Menampilkan semua data statistik pelanggan
+ * Dipaginasi server-side — tabel bisa 37rb+ baris, kalau di-render sekaligus
+ * halaman jadi ratusan MB dan berat/hang di browser.
  */
 
-// Query untuk semua pelanggan
-$query_semua = "SELECT * FROM view_statistik_pelanggan ORDER BY total_nominal DESC";
+$per_page_semua = 50;
+$page_semua = max(1, (int)($_GET['page_semua'] ?? 1));
+$offset_semua = ($page_semua - 1) * $per_page_semua;
+
+$count_semua_result = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM view_statistik_pelanggan");
+$total_semua = (int)(mysqli_fetch_assoc($count_semua_result)['total'] ?? 0);
+$total_pages_semua = max(1, (int)ceil($total_semua / $per_page_semua));
+
+// Query untuk semua pelanggan (satu halaman saja)
+$query_semua = "SELECT * FROM view_statistik_pelanggan ORDER BY total_nominal DESC LIMIT $per_page_semua OFFSET $offset_semua";
 $result_semua = mysqli_query($koneksi, $query_semua);
 ?>
 
@@ -132,6 +142,21 @@ $result_semua = mysqli_query($koneksi, $query_semua);
                         <?php endwhile; ?>
                     </tbody>
                 </table>
+            </div>
+            <div class="text-center" style="padding: 10px 0;">
+                <small class="text-muted">
+                    Menampilkan <?php echo $offset_semua + 1; ?>–<?php echo min($offset_semua + $per_page_semua, $total_semua); ?>
+                    dari <?php echo number_format($total_semua); ?> pelanggan
+                    (halaman <?php echo $page_semua; ?> dari <?php echo $total_pages_semua; ?>)
+                </small>
+                <div class="btn-group" style="display:block; margin-top:6px;">
+                    <?php if ($page_semua > 1): ?>
+                        <a class="btn btn-xs btn-default" href="?page_semua=<?php echo $page_semua - 1; ?>#tab-semua">&laquo; Sebelumnya</a>
+                    <?php endif; ?>
+                    <?php if ($page_semua < $total_pages_semua): ?>
+                        <a class="btn btn-xs btn-default" href="?page_semua=<?php echo $page_semua + 1; ?>#tab-semua">Berikutnya &raquo;</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

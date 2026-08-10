@@ -230,8 +230,8 @@
                                             $sql_supplier = "SELECT DISTINCT 
                                                             ph.no_supplier,
                                                             s.namasupplier,
-                                                            s.alamatsupplier,
-                                                            s.tlpsupplier
+                                                            s.alamat as alamatsupplier,
+                                                            s.telephone as tlpsupplier
                                                         FROM tblpembelian_header ph
                                                         JOIN tblsupplier s ON ph.no_supplier = s.nosupplier
                                                         WHERE ph.carabayar = 'Kredit'

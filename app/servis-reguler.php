@@ -69,7 +69,7 @@ if(empty($_SESSION['_iduser'])){
     // Filter opsional via query string (misal ?filter=garansi -> riwayat klaim garansi yang sudah selesai)
     $filter_type = $_GET['filter'] ?? '';
     if ($filter_type === 'garansi' && empty($where_clause)) {
-        $where_clause = "WHERE s.tipe_service LIKE '%garansi%' AND (s.status_servis = 'selesai' OR s.status_servis = 'bayar')";
+        $where_clause = "WHERE s.is_garansi = 1 AND (s.status_servis = 'selesai' OR s.status_servis = 'bayar')";
         $hasil = "Riwayat Servis Garansi (Selesai)";
     }
 
@@ -398,7 +398,7 @@ if(empty($_SESSION['_iduser'])){
                                                                     // Servis Jemput
                                                                     $edit_url = $is_finished ? 'servis-input-reguler-jemput-rst.php' : 'servis-input-reguler-jemput.php';
                                                                     $edit_label = $is_finished ? 'Lihat Servis Jemput' : 'Edit Servis Jemput';
-                                                                } elseif (strpos(strtolower($tampil['tipe_service'] ?? ''), 'garansi') !== false) {
+                                                                } elseif (!empty($tampil['is_garansi'])) {
                                                                     // Servis Garansi
                                                                     $edit_url = $is_finished ? 'servis-garansi-rst.php' : 'servis-garansi.php';
                                                                     $edit_label = $is_finished ? 'Lihat Servis Garansi' : 'Edit Servis Garansi';

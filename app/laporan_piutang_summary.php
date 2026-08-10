@@ -227,9 +227,9 @@
                                             // Query untuk get summary piutang per pelanggan
                                             $sql_summary = "SELECT 
                                                             pj.no_pelanggan,
-                                                            p.namapelanggan,
-                                                            p.alamatpelanggan,
-                                                            p.tlppelanggan,
+                                                            MAX(p.namapelanggan) as namapelanggan,
+                                                            MAX(p.alamat) as alamatpelanggan,
+                                                            MAX(p.telephone) as tlppelanggan,
                                                             COUNT(pj.notransaksi) as jumlah_transaksi,
                                                             SUM(pj.total_akhir - pj.jumlah_bayar) as total_piutang
                                                         FROM tblpenjualan_header pj

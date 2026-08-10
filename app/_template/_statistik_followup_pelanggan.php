@@ -5,7 +5,16 @@
  */
 
 // Query untuk pelanggan perlu follow-up
-$query_followup = "SELECT * FROM view_pelanggan_follow_up ORDER BY hari_tidak_datang DESC";
+// Dipaginasi server-side — bisa 37rb+ baris kalau di-render sekaligus.
+$per_page_followup = 50;
+$page_followup = max(1, (int)($_GET['page_followup'] ?? 1));
+$offset_followup = ($page_followup - 1) * $per_page_followup;
+
+$count_followup_result = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM view_pelanggan_follow_up");
+$total_followup = (int)(mysqli_fetch_assoc($count_followup_result)['total'] ?? 0);
+$total_pages_followup = max(1, (int)ceil($total_followup / $per_page_followup));
+
+$query_followup = "SELECT * FROM view_pelanggan_follow_up ORDER BY hari_tidak_datang DESC LIMIT $per_page_followup OFFSET $offset_followup";
 $result_followup = mysqli_query($koneksi, $query_followup);
 ?>
 
@@ -17,7 +26,7 @@ $result_followup = mysqli_query($koneksi, $query_followup);
         </h4>
         <div class="widget-toolbar">
             <span class="badge badge-warning">
-                <?php echo mysqli_num_rows($result_followup); ?> pelanggan
+                <?php echo number_format($total_followup); ?> pelanggan
             </span>
         </div>
     </div>
@@ -25,19 +34,19 @@ $result_followup = mysqli_query($koneksi, $query_followup);
     <div class="widget-body">
         <div class="widget-main no-padding">
             
-            <?php if(mysqli_num_rows($result_followup) == 0): ?>
-            
+            <?php if($total_followup == 0): ?>
+
             <div class="alert alert-success" style="margin: 20px;">
                 <i class="ace-icon fa fa-check"></i>
                 <strong>Bagus!</strong> Tidak ada pelanggan yang perlu di-follow-up saat ini.
                 Semua pelanggan aktif dan rutin datang.
             </div>
-            
+
             <?php else: ?>
-            
+
             <div class="alert alert-warning" style="margin: 20px;">
                 <i class="ace-icon fa fa-exclamation-triangle"></i>
-                <strong>Perhatian!</strong> Ada <?php echo mysqli_num_rows($result_followup); ?> pelanggan yang sudah lama tidak datang.
+                <strong>Perhatian!</strong> Ada <?php echo number_format($total_followup); ?> pelanggan yang sudah lama tidak datang.
                 Segera lakukan follow-up untuk meningkatkan customer retention.
             </div>
             
@@ -128,7 +137,23 @@ $result_followup = mysqli_query($koneksi, $query_followup);
                     </tbody>
                 </table>
             </div>
-            
+
+            <div class="text-center" style="padding: 10px 0;">
+                <small class="text-muted">
+                    Menampilkan <?php echo $offset_followup + 1; ?>–<?php echo min($offset_followup + $per_page_followup, $total_followup); ?>
+                    dari <?php echo number_format($total_followup); ?> pelanggan
+                    (halaman <?php echo $page_followup; ?> dari <?php echo $total_pages_followup; ?>)
+                </small>
+                <div class="btn-group" style="display:block; margin-top:6px;">
+                    <?php if ($page_followup > 1): ?>
+                        <a class="btn btn-xs btn-default" href="?page_followup=<?php echo $page_followup - 1; ?>#tab-followup">&laquo; Sebelumnya</a>
+                    <?php endif; ?>
+                    <?php if ($page_followup < $total_pages_followup): ?>
+                        <a class="btn btn-xs btn-default" href="?page_followup=<?php echo $page_followup + 1; ?>#tab-followup">Berikutnya &raquo;</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <div class="widget-toolbox padding-12 clearfix">
                 <div class="pull-left">
                     <strong>Tips Follow-up:</strong>

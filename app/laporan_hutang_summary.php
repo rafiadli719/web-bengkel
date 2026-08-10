@@ -227,9 +227,9 @@
                                             // Query untuk get summary hutang per supplier
                                             $sql_summary = "SELECT 
                                                             ph.no_supplier,
-                                                            s.namasupplier,
-                                                            s.alamatsupplier,
-                                                            s.tlpsupplier,
+                                                            MAX(s.namasupplier) as namasupplier,
+                                                            MAX(s.alamat) as alamatsupplier,
+                                                            MAX(s.telephone) as tlpsupplier,
                                                             COUNT(ph.notransaksi) as jumlah_faktur,
                                                             SUM(ph.total_akhir - ph.jumlah_bayar) as total_hutang
                                                         FROM tblpembelian_header ph
