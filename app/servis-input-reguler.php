@@ -351,21 +351,21 @@
                                              $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_barang WHERE no_service='$no_service'");
                                              $nb = mysqli_fetch_assoc($q_nb)['n'];
                                              
-                                             mysqli_query($koneksi, "INSERT INTO tblservis_barang 
-                                                (no_service, nobaris, no_item, quantity, harga_jual, potongan, total, 
+                                             mysqli_query($koneksi, "INSERT INTO tblservis_barang
+                                                (no_service, kd_cabang, nobaris, no_item, quantity, harga_jual, potongan, total,
                                                  diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                 VALUES
-                                                ('$no_service', '$nb', '$kode_item', '{$det['jumlah']}', '{$det['harga']}', 
+                                                ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nb', '$kode_item', '{$det['jumlah']}', '{$det['harga']}',
                                                  '$diskon_persen', '$subtotal', 'promo', '$diskon_persen', '$diskon_nominal', '$promo_id')");
                                          } else {
                                               $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_jasa WHERE no_service='$no_service'");
                                               $nb = mysqli_fetch_assoc($q_nb)['n'];
                                               
-                                              mysqli_query($koneksi, "INSERT INTO tblservis_jasa 
-                                                (no_service, nobaris, no_item, harga, potongan, total, 
+                                              mysqli_query($koneksi, "INSERT INTO tblservis_jasa
+                                                (no_service, kd_cabang, nobaris, no_item, harga, potongan, total,
                                                  diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                 VALUES
-                                                ('$no_service', '$nb', '$kode_item', '{$det['harga']}', 
+                                                ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nb', '$kode_item', '{$det['harga']}',
                                                  '$diskon_persen', '$subtotal', 'promo', '$diskon_persen', '$diskon_nominal', '$promo_id')");
                                          }
                                          $items_added++;
@@ -1236,11 +1236,11 @@
                     $subtotal = ($harga * $qty) - $total_diskon_amt;
                     
                     // Insert with discount columns
-                    mysqli_query($koneksi, "INSERT INTO tblservis_barang 
-                        (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, 
-                         diskon_source, diskon_persen, diskon_nominal, id_promo) 
-                        VALUES 
-                        ('$no_service', 0, '$kd', '$qty', 0, '$harga', '$diskon_persen', '$subtotal',
+                    mysqli_query($koneksi, "INSERT INTO tblservis_barang
+                        (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
+                         diskon_source, diskon_persen, diskon_nominal, id_promo)
+                        VALUES
+                        ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', 0, '$kd', '$qty', 0, '$harga', '$diskon_persen', '$subtotal',
                          '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                 }
                 // Tetap di tab Item Barang setelah tambah
@@ -1264,10 +1264,10 @@
                     $pc_ket     = '[PART-CUST: ' . $pc_nama . ' | ' . ($pc_merek ?: '-') . ' | ' . $pc_kondisi . ']';
                     if (!empty($pc_nama)) {
                         mysqli_query($koneksi, "INSERT INTO tblservis_barang
-                            (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
+                            (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total,
                              diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan, asal_barang)
                             VALUES
-                            ('$no_service', 0, 'PART-CUST', $pc_qty, 0, $pc_harga, 0, $pc_total,
+                            ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', 0, 'PART-CUST', $pc_qty, 0, $pc_harga, 0, $pc_total,
                              'none', 0, 0, 0, '$pc_ket', 'PART-CUST')");
                     }
                 }
@@ -1948,9 +1948,9 @@
 
                                 // Insert to tblservis_barang with discount fields
                                 $sql_insert_barang = "INSERT INTO tblservis_barang
-                                                       (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                                       (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                        VALUES
-                                                       ('$no_service_post', '$nobaris_barang', '{$pending_data['kode_item']}', '$qty_appr',
+                                                       ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nobaris_barang', '{$pending_data['kode_item']}', '$qty_appr',
                                                         '0', '$harga_jual', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)";
                                 mysqli_query($koneksi, $sql_insert_barang);
                                 if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'barang', $pending_data['kode_item'], $diskon_nominal); }
@@ -2046,9 +2046,9 @@
 
                                 // Insert to tblservis_jasa with discount fields
                                 $sql_insert_jasa = "INSERT INTO tblservis_jasa
-                                                    (no_service, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                                    (no_service, kd_cabang, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                     VALUES
-                                                    ('$no_service_post', '$nobaris_jasa', '{$pending_data['kode_item']}',
+                                                    ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nobaris_jasa', '{$pending_data['kode_item']}',
                                                      '$waktu_jasa', '$harga_jasa', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)";
                                 mysqli_query($koneksi, $sql_insert_jasa);
                                 if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
@@ -2196,9 +2196,9 @@
 
                                     // Insert to tblservis_barang with discount fields
                                     mysqli_query($koneksi, "INSERT INTO tblservis_barang
-                                                           (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                                           (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                            VALUES
-                                                           ('$no_service_post', '$nobaris_barang', '{$pending_data['kode_item']}',
+                                                           ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nobaris_barang', '{$pending_data['kode_item']}',
                                                             '$qty_appr', '0', '$harga_jual', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                                     if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'barang', $pending_data['kode_item'], $diskon_nominal); }
                                     $count_barang++;
@@ -2294,9 +2294,9 @@
 
                                     // Insert to tblservis_jasa with discount fields
                                     mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                                                           (no_service, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
+                                                           (no_service, kd_cabang, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo)
                                                            VALUES
-                                                           ('$no_service_post', '$nobaris_jasa', '{$pending_data['kode_item']}',
+                                                           ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nobaris_jasa', '{$pending_data['kode_item']}',
                                                             '$waktu_jasa', '$harga_jasa', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                                     if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
                                     $count_jasa++;
