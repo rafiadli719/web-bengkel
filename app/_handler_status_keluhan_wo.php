@@ -8,7 +8,7 @@
  * Hitung diskon promo/member aktif untuk satu item pending, lalu insert
  * ke tblservis_barang/tblservis_jasa. Dipakai oleh approve single & bulk.
  */
-function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc) {
+function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc, $kd_cabang = '') {
     $tipe = $item['tipe'];
     $kode_item = $item['kode_item'];
     $quantity = (int)$item['quantity'];
@@ -38,7 +38,7 @@ function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)
         if($subtotal < 0) { $subtotal = 0; }
         $q_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS n FROM tblservis_barang WHERE no_service='$no_service'");
         $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
-        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$quantity', 0, '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nb', '$kode_item', '$quantity', 0, '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
         if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'barang', $kode_item); }
         return $ok;
     }
@@ -50,11 +50,11 @@ function _insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)
     $nb = $q_nb ? mysqli_fetch_assoc($q_nb)['n'] : 1;
     $has_waktu = mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_jasa LIKE 'waktu'");
     if($has_waktu && mysqli_num_rows($has_waktu) > 0) {
-        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+        $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, kd_cabang, nobaris, no_item, harga, waktu, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nb', '$kode_item', '$harga_satuan', '$waktu', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
         if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kode_item); }
         return $ok;
     }
-    $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '$nb', '$kode_item', '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+    $ok = mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, kd_cabang, nobaris, no_item, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '$nb', '$kode_item', '$harga_satuan', '$diskon_persen', '$subtotal', '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
     if($ok && $diskon_source === 'promo' && isset($disc) && function_exists('wireLogPromoUsage')) { wireLogPromoUsage($koneksi, $disc, $no_service, 'jasa', $kode_item); }
     return $ok;
 }
@@ -145,7 +145,7 @@ if(isset($_POST['btnapprove_wo_bulk'])) {
         $q = mysqli_query($koneksi, "SELECT * FROM tbservis_pending_items WHERE id='$item_id' AND no_service='$no_service' AND status_approval='pending'");
         if(!$q || mysqli_num_rows($q) == 0) { $fail++; continue; }
         $item = mysqli_fetch_array($q);
-        if(!_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)) { $fail++; continue; }
+        if(!_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc, $kd_cabang ?? '')) { $fail++; continue; }
         mysqli_query($koneksi, "UPDATE tbservis_pending_items SET status_approval='disetujui', approved_by='$user', approved_at=NOW() WHERE id='$item_id'");
         $ok++;
     }
@@ -271,7 +271,7 @@ if(isset($_POST['btnsetujuiitem'])) {
         $cust = $q_cust ? mysqli_fetch_assoc($q_cust) : null;
         $no_polisi_svc = $cust['no_polisi'] ?? '';
 
-        if(_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc)) {
+        if(_insertApprovedServisItem($koneksi, $item, $no_service, $no_polisi_svc, $kd_cabang ?? '')) {
             // Update status
             mysqli_query($koneksi, "UPDATE tbservis_pending_items
                                    SET status_approval='disetujui',
