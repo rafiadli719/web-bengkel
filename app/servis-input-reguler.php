@@ -1405,21 +1405,24 @@
                     
                     $has_waktu = true;
                     
-                    $keterangan_jasa = mysqli_real_escape_string($koneksi, $_POST['keterangan_jasa'] ?? '');
                     if ($has_waktu) {
-                        mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                            (no_service, nobaris, no_item, harga, waktu, potongan, total,
-                             diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
+                        $ins_jasa = mysqli_query($koneksi, "INSERT INTO tblservis_jasa
+                            (no_service, kd_cabang, nobaris, no_item, harga, waktu, potongan, total,
+                             diskon_source, diskon_persen, diskon_nominal, id_promo)
                             VALUES
-                            ('$no_service', 0, '$kdj', '$harga', '$waktu', '$diskon_persen', '$total',
-                             '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo, '$keterangan_jasa')");
+                            ('$no_service', '$kd_cabang', 0, '$kdj', '$harga', '$waktu', '$diskon_persen', '$total',
+                             '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
                     } else {
-                        mysqli_query($koneksi, "INSERT INTO tblservis_jasa
-                            (no_service, nobaris, no_item, harga, potongan, total,
-                             diskon_source, diskon_persen, diskon_nominal, id_promo, keterangan)
+                        $ins_jasa = mysqli_query($koneksi, "INSERT INTO tblservis_jasa
+                            (no_service, kd_cabang, nobaris, no_item, harga, potongan, total,
+                             diskon_source, diskon_persen, diskon_nominal, id_promo)
                             VALUES
-                            ('$no_service', 0, '$kdj', '$harga', '$diskon_persen', '$total',
-                             '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo, '$keterangan_jasa')");
+                            ('$no_service', '$kd_cabang', 0, '$kdj', '$harga', '$diskon_persen', '$total',
+                             '$diskon_source', '$diskon_persen', '$diskon_nominal', $id_promo)");
+                    }
+                    if (!$ins_jasa) {
+                        error_log('[servis-input-reguler] Gagal insert tblservis_jasa: ' . mysqli_error($koneksi));
+                        echo "<script>alert('Gagal menyimpan jasa: " . addslashes(mysqli_error($koneksi)) . "');</script>";
                     }
                 }
                 // Tetap di tab Item Jasa setelah tambah
