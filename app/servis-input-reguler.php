@@ -1734,7 +1734,7 @@
                                             $subtotal = ($harga * $qty) - ($diskon_nominal * $qty);
                                             if($subtotal < 0) { $subtotal = 0; }
 
-                                            mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service_post', '".$nb."', '".$pending_data['kode_item']."', '".$qty."', '0', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
+                                            mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service, kd_cabang, nobaris, no_item, quantity, qty_retur, harga_jual, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '".$nb."', '".$pending_data['kode_item']."', '".$qty."', '0', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
                                             if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'barang', $pending_data['kode_item'], $diskon_nominal); }
                                             $auto_barang++;
                                         }
@@ -1775,7 +1775,7 @@
                                             $waktu = intval($pending_data['waktu']);
                                             $subtotal = $harga - $diskon_nominal; if($subtotal < 0) { $subtotal = 0; }
 
-                                            mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service_post', '".$nb."', '".$pending_data['kode_item']."', '".$waktu."', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
+                                            mysqli_query($koneksi, "INSERT INTO tblservis_jasa (no_service, kd_cabang, nobaris, no_item, waktu, harga, potongan, total, diskon_source, diskon_persen, diskon_nominal, id_promo) VALUES ('$no_service_post', '".mysqli_real_escape_string($koneksi, $kd_cabang)."', '".$nb."', '".$pending_data['kode_item']."', '".$waktu."', '".$harga."', '".$diskon_persen."', '".$subtotal."', '".$diskon_source."', '".$diskon_persen."', '".$diskon_nominal."', $id_promo)");
                                             if($diskon_source === 'promo' && $id_promo !== 'NULL' && function_exists('logPromoUsage')) { logPromoUsage($koneksi, $id_promo, $no_service_post, 'jasa', $pending_data['kode_item'], $diskon_nominal); }
                                             $auto_jasa++;
                                         }
