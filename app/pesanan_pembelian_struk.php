@@ -1,16 +1,16 @@
 <?php
     include "../config/koneksi.php";
+    include "_template/_nota_pdf_parts.php";
 	$nopesanan = $_GET['snopesanan'];
-    
+
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
-    $alamat=$tm_cari['alamat'];	
-    $notlp=$tm_cari['notlp'];	
-    $fax=$tm_cari['fax'];	
-    $file_logo=$tm_cari['file_logo'];	    
-    $file_logo='uploads/motor_photos/SV25000000007_1748749597_DP LOGO FIT MOTOR.png';
+    $alamat=$tm_cari['alamat'];
+    $notlp=$tm_cari['notlp'];
+    $fax=$tm_cari['fax'];
+    $file_logo=$tm_cari['file_logo'];
 // ===================
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -49,79 +49,21 @@
 	$dompdf = new Dompdf();
 
 	$html = '<head>
-				<style>
-					html, body {
-						font-family: Arial, Helvetica, sans-serif;
-					}
-					table.table, table.table td, table.table th {
-						border: 1px solid black;
-					}
-
-					table.table {
-						width: 100%;
-						border-collapse: collapse;
-					}
-
-div.page_break + div.page_break{
-    page-break-before: always;
-}
-
-					sup {
-						font-size: 8;
-					}
-				</style>	
+				<style>'.nota_pdf_style().'</style>
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-
-        <table style="margin: 0 0pt; width: 100%;">
-            <tbody>
-                <tr valign="top">
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;">
-                    <img src="../'.$file_logo.'" width="120pt">
-                    </td> 			
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>'.$nama_perusahaan.'</b><br>
-                        <font size="2">
-                            '.$alamat.'<br>
-                            Telp. '.$notlp.'<br>
-                            Fax. '.$fax.'
-                        </font>
-                    </td> 			                    
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>&nbsp;FAKTUR PESANAN PEMBELIAN</b><br>
-                        <table style="margin: 0 0pt; width: 100%;">
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2"><b>No. Pesanan</b></font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2"><b>'.$nopesanan.'</b></font></td>                    
-                            </tr>                        
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Tanggal</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$tanggal_order.'</font></td>                    
-                            </tr>                
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Supplier</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$no_supplier.'&nbsp;'.$namasupplier.'</font></td>                    
-                            </tr>                           
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Alamat</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat.'</font></td>                    
-                            </tr>                                                 
-                        </table>
-                    </td> 			
-                </tr>
-			</tbody>
-		</table>
-        <br>
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PESANAN PEMBELIAN', array(
+            array('No. Pesanan', $nopesanan),
+            array('Tanggal', $tanggal_order),
+            array('Supplier', $no_supplier.'&nbsp;'.$namasupplier),
+            array('Alamat', $alamat),
+        )).'
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
             <tr>
                 <td colspan="6"><hr></td>
             </tr>
-            <tr>	
+            <tr>
                 <td class="center" width="5%"><font size="2"><b>No</b></font></td>
                 <td width="15%"><font size="2"><b>Kode</b></font></td>
                 <td width="40%"><font size="2"><b>Nama Item</b></font></td>
@@ -178,26 +120,7 @@ div.page_break + div.page_break{
             </tr>
             </table>
             <br>&nbsp;
-            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-            <tr>																			
-                <td width="50%" align="center">
-                <font size="2">Mengetahui</font>
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                </td>
-                <td width="50%" align="center">
-                <font size="2">Penerima</font>
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                </td>
-            </tr>
-            </table>';
+            '.nota_pdf_footer_ttd();
 							
 $html .= "</div></body></html>";
 $dompdf->loadHtml($html);

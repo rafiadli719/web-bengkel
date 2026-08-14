@@ -2,6 +2,7 @@
     session_start();
     if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
     include "../config/koneksi.php";
+    include "_template/_nota_pdf_parts.php";
     include "_include_customer_vehicle_sync.php";
     include "helper-functions.php";
     $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv'] ?? '');
@@ -96,72 +97,15 @@
 	$dompdf = new Dompdf();
 
 	$html = '<head>
-				<style>
-					html, body {
-						font-family: Arial, Helvetica, sans-serif;
-					}
-					table.table, table.table td, table.table th {
-						border: 1px solid black;
-					}
-
-					table.table {
-						width: 100%;
-						border-collapse: collapse;
-					}
-
-div.page_break + div.page_break{
-    page-break-before: always;
-}
-
-					sup {
-						font-size: 8;
-					}
-				</style>	
+				<style>'.nota_pdf_style().'</style>
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-<table style="margin: 0 0pt; width: 100%;">
-            <tbody>
-                <tr valign="top">
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;">
-                    <img src="../'.$file_logo.'" width="120pt">
-                    </td> 			
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>'.$nama_perusahaan.'</b><br>
-                        <font size="2">
-                            '.$alamat.'<br>
-                            Telp. '.$notlp.'<br>
-                            Fax. '.$fax.'
-                        </font>
-                    </td> 			                    
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>&nbsp;FAKTUR SERVICE</b><br>
-                        <table style="margin: 0 0pt; width: 100%;">
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2"><b>No. Service</b></font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.$no_service.'</b></font></td>                    
-                            </tr>                        
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2">Tanggal</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2">'.$tanggal.'</font></td>                    
-                            </tr>                
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2">Pelanggan</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2">'.$namapelanggan.'</font></td>                    
-                            </tr>                           
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2">User</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"></font></td>                    
-                            </tr>                                                 
-                        </table>
-                    </td> 			
-                </tr>
-			</tbody>
-		</table>
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR SERVICE', array(
+            array('No. Service', $no_service),
+            array('Tanggal', $tanggal),
+            array('Pelanggan', $namapelanggan),
+        )).'
         <hr>
         <table style="margin: 0 0pt; width: 100%;">
             <tr>
