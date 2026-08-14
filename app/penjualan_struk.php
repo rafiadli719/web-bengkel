@@ -1,5 +1,6 @@
 <?php
     include "../config/koneksi.php";
+    include "_template/_nota_pdf_parts.php";
 	$nobl = $_GET['snobl'];
     
 // Data Perusahaan ===========
@@ -68,74 +69,16 @@
 	$dompdf = new Dompdf();
 
 	$html = '<head>
-				<style>
-					html, body {
-						font-family: Arial, Helvetica, sans-serif;
-					}
-					table.table, table.table td, table.table th {
-						border: 1px solid black;
-					}
-
-					table.table {
-						width: 100%;
-						border-collapse: collapse;
-					}
-
-div.page_break + div.page_break{
-    page-break-before: always;
-}
-
-					sup {
-						font-size: 8;
-					}
-				</style>	
+				<style>'.nota_pdf_style().'</style>
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-
-        <table style="margin: 0 0pt; width: 100%;">
-            <tbody>
-                <tr valign="top">
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;">
-                    <img src="../'.$file_logo.'" width="120pt">
-                    </td> 			
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>'.$nama_perusahaan.'</b><br>
-                        <font size="2">
-                            '.$alamat.'<br>
-                            Telp. '.$notlp.'<br>
-                            Fax. '.$fax.'
-                        </font>
-                    </td> 			                    
-                    <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">
-                        <b>&nbsp;FAKTUR PENJUALAN</b><br>
-                        <table style="margin: 0 0pt; width: 100%;">
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2"><b>No. Transaksi</b></font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2"><b>'.$nobl.'</b></font></td>                    
-                            </tr>                        
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Tanggal</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$tanggal_order.'</font></td>                    
-                            </tr>                
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Supplier</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$no_supplier.'&nbsp;'.$namapelanggan.'</font></td>                    
-                            </tr>                           
-                            <tr>
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">Alamat</font></td> 			
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">:</font></td>                    
-                                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$alamat.'</font></td>                    
-                            </tr>                                                 
-                        </table>
-                    </td> 			
-                </tr>
-			</tbody>
-		</table>
-        <br>
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PENJUALAN', array(
+            array('No. Transaksi', $nobl),
+            array('Tanggal', $tanggal_order),
+            array('Supplier', $no_supplier.'&nbsp;'.$namapelanggan),
+            array('Alamat', $alamat),
+        )).'
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
             <tr>
                 <td colspan="8"><hr></td>
@@ -209,28 +152,7 @@ div.page_break + div.page_break{
             </tr>
             </table>
             <br>&nbsp;
-            <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">											
-            <tr>																			
-                <td width="50%" align="center">
-                <font size="2">Mengetahui</font>
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
-                </td>
-                <td width="50%" align="center">
-                <font size="2">Penerima</font>
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
-                </td>
-            </tr>
-            </table>';
+            '.nota_pdf_footer_ttd();
 							
 $html .= "</div></body></html>";
 $dompdf->loadHtml($html);
@@ -239,5 +161,5 @@ $dompdf->setPaper('A4', 'landscape');
 // Rendering dari HTML Ke PDF
 $dompdf->render();
 // Melakukan output file Pdf
-$dompdf->stream('surat-penawaran.pdf',array("Attachment"=>0));
+$dompdf->stream('faktur-penjualan.pdf',array("Attachment"=>0));
 ?>

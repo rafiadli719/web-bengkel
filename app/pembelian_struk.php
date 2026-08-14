@@ -255,7 +255,6 @@ div.page_break + div.page_break{
                 <br>&nbsp;
                 <br>&nbsp;
                 <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
                 </td>
                 <td width="50%" align="center">
                 <font size="2">Penerima</font>
@@ -264,7 +263,6 @@ div.page_break + div.page_break{
                 <br>&nbsp;
                 <br>&nbsp;
                 <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
                 </td>
             </tr>
             </table>';

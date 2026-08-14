@@ -167,7 +167,6 @@ div.page_break + div.page_break{
                 <br>&nbsp;
                 <br>&nbsp;
                 <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
                 </td>
                 <td width="50%" align="center">
                 <font size="2">Penerima</font>
@@ -176,7 +175,6 @@ div.page_break + div.page_break{
                 <br>&nbsp;
                 <br>&nbsp;
                 <br>&nbsp;
-                <u><font color="white">andri mulia alius amir hamzah</font></u>
                 </td>
             </tr>
             </table>';
@@ -188,5 +186,5 @@ $dompdf->setPaper('A4', 'landscape');
 // Rendering dari HTML Ke PDF
 $dompdf->render();
 // Melakukan output file Pdf
-$dompdf->stream('surat-penawaran.pdf',array("Attachment"=>0));
+$dompdf->stream('penyesuaian-stok-masuk.pdf',array("Attachment"=>0));
 ?>
