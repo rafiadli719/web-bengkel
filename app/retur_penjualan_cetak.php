@@ -28,6 +28,13 @@ $det = mysqli_query($koneksi, "SELECT d.*, COALESCE(i.namaitem, d.no_item) AS na
 
 $cari_cab = mysqli_query($koneksi, "SELECT * FROM tbcabang WHERE kode_cabang='$kd_cabang'");
 $cab = mysqli_fetch_assoc($cari_cab);
+
+$q_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting LIMIT 1");
+$setting = ($q_setting && mysqli_num_rows($q_setting) > 0) ? mysqli_fetch_assoc($q_setting) : [];
+$nama_perusahaan   = $setting['nama_perusahaan'] ?? ($cab['nama_cabang'] ?? 'BENGKEL');
+$alamat_perusahaan = $setting['alamat'] ?? ($cab['alamat_cabang'] ?? '');
+$telp_perusahaan   = $setting['notlp'] ?? '';
+$judul_doc         = 'BUKTI RETUR PENJUALAN';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,23 +42,11 @@ $cab = mysqli_fetch_assoc($cari_cab);
     <meta charset="utf-8" />
     <title>Cetak Retur Penjualan - <?php echo htmlspecialchars($noretur); ?></title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; margin: 10px; }
-        .header-perusahaan { text-align: center; margin-bottom: 10px; }
-        .header-perusahaan h2 { margin: 0; font-size: 16px; }
-        .header-perusahaan p { margin: 2px 0; font-size: 11px; }
-        .judul-doc { text-align: center; margin: 10px 0; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 4px 0; }
-        .judul-doc h3 { margin: 0; font-size: 14px; }
+<?php include "_template/_nota_print_style.php"; ?>
         table.info { width: 100%; margin-bottom: 10px; }
         table.info td { padding: 2px 4px; }
-        table.items { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        table.items th { border: 1px solid #000; padding: 4px; background: #f0f0f0; text-align: center; }
-        table.items td { border: 1px solid #000; padding: 4px; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
-        .ttd-area { margin-top: 40px; display: flex; justify-content: space-between; }
-        .ttd-box { text-align: center; width: 30%; }
-        .ttd-box .nama { margin-top: 50px; border-top: 1px solid #000; padding-top: 4px; }
-        @media print { .no-print { display: none; } body { margin: 5px; } }
     </style>
 </head>
 <body>
@@ -59,11 +54,8 @@ $cab = mysqli_fetch_assoc($cari_cab);
         <button onclick="window.print()">&#128438; Print</button>
         <button onclick="window.close()">Tutup</button>
     </div>
-    <div class="header-perusahaan">
-        <h2><?php echo htmlspecialchars($cab['nama_cabang'] ?? 'BENGKEL'); ?></h2>
-        <p><?php echo htmlspecialchars($cab['alamat_cabang'] ?? ''); ?></p>
-    </div>
-    <div class="judul-doc"><h3>BUKTI RETUR PENJUALAN</h3></div>
+    <div class="container">
+    <?php include "_template/_nota_print_header.php"; ?>
     <table class="info">
         <tr>
             <td width="20%">No. Retur</td><td width="2%">:</td><td width="28%"><strong><?php echo htmlspecialchars($h['noretur']); ?></strong></td>
@@ -75,7 +67,7 @@ $cab = mysqli_fetch_assoc($cari_cab);
         </tr>
         <tr><td>Keterangan</td><td>:</td><td colspan="3"><?php echo htmlspecialchars($h['note']); ?></td></tr>
     </table>
-    <table class="items">
+    <table class="detail">
         <thead>
             <tr>
                 <th width="5%">No</th><th width="12%">Kode</th><th width="28%">Nama Item</th>
@@ -103,10 +95,14 @@ $cab = mysqli_fetch_assoc($cari_cab);
         </tr>
         </tbody>
     </table>
-    <div class="ttd-area">
-        <div class="ttd-box"><div>Dibuat Oleh,</div><div class="nama">(<?php echo htmlspecialchars($h['user']); ?>)</div></div>
-        <div class="ttd-box"><div>Diketahui,</div><div class="nama">(______________)</div></div>
-        <div class="ttd-box"><div>Pelanggan,</div><div class="nama">(______________)</div></div>
+    <?php
+        $ttd_cols = [
+            ['label' => 'Dibuat Oleh,', 'nama' => $h['user']],
+            ['label' => 'Diketahui,',   'nama' => '______________'],
+            ['label' => 'Pelanggan,',   'nama' => '______________'],
+        ];
+        include "_template/_nota_print_ttd.php";
+    ?>
     </div>
 </body>
 </html>
