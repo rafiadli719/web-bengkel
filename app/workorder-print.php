@@ -3,23 +3,27 @@
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
 	} else {
-		$id_user=$_SESSION['_iduser'];		
-        $kd_cabang=$_SESSION['_cabang'];        
+		$id_user=$_SESSION['_iduser'];
+        $kd_cabang=$_SESSION['_cabang'];
 		include "../config/koneksi.php";
-        
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_user, password, user_akses, foto_user 
-                                        FROM tbuser WHERE id='$id_user'");			
+
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        nama_user, password, user_akses, foto_user
+                                        FROM tbuser WHERE id='$id_user'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
-		$_nama=$tm_cari['nama_user'];				        
+		$_nama=$tm_cari['nama_user'];
 
     // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        nama_cabang, tipe_cabang 
-                                        FROM tbcabang 
-                                        WHERE kode_cabang='$kd_cabang'");			
-		$tm_cari=mysqli_fetch_array($cari_kd);
-		$nama_cabang=$tm_cari['nama_cabang'];				        
+		$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbcabang WHERE kode_cabang='$kd_cabang'");
+		$cab=mysqli_fetch_array($cari_kd);
+		$nama_cabang=$cab['nama_cabang'];
+
+        $q_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting LIMIT 1");
+        $setting = ($q_setting && mysqli_num_rows($q_setting) > 0) ? mysqli_fetch_assoc($q_setting) : [];
+        $nama_perusahaan   = $nama_cabang ?: ($setting['nama_perusahaan'] ?? 'BENGKEL');
+        $alamat_perusahaan = $cab['alamat_cabang'] ?? ($setting['alamat'] ?? '');
+        $telp_perusahaan   = $cab['notlp_cabang'] ?? ($setting['notlp'] ?? '');
+        $judul_doc         = 'WORK ORDER (PAKET SERVIS)';
     // --------------------
 
         $kode_wo = $_GET['kode'] ?? '';
@@ -54,52 +58,12 @@
 		<link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
 
 		<style>
-			@media print {
-				.no-print { display: none !important; }
-				body { background: white; }
-			}
-			
-			body { 
-				background: white; 
-				font-family: Arial, sans-serif;
-				font-size: 12px;
-			}
-			
-			.print-header {
-				text-align: center;
-				border-bottom: 2px solid #333;
-				margin-bottom: 20px;
-				padding-bottom: 10px;
-			}
-			
-			.info-table {
-				width: 100%;
-				margin-bottom: 15px;
-			}
-			
-			.info-table td {
-				padding: 5px;
-				border: 1px solid #ddd;
-			}
-			
-			.detail-table {
-				width: 100%;
-				border-collapse: collapse;
-				margin-bottom: 15px;
-			}
-			
-			.detail-table th,
-			.detail-table td {
-				padding: 8px;
-				border: 1px solid #333;
-				text-align: left;
-			}
-			
-			.detail-table th {
-				background-color: #f5f5f5;
-				font-weight: bold;
-			}
-			
+<?php include "_template/_nota_print_style.php"; ?>
+			.info-table { width: 100%; margin-bottom: 15px; font-size: 11px; }
+			.info-table td { padding: 5px; border: 1px solid #ddd; }
+			.detail-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
+			.detail-table th, .detail-table td { padding: 6px 8px; border: 1px solid #333; text-align: left; }
+			.detail-table th { background-color: #333; color: #fff; font-weight: bold; }
 			.text-center { text-align: center; }
 			.text-right { text-align: right; }
 			.text-bold { font-weight: bold; }
@@ -107,7 +71,7 @@
 	</head>
 
 	<body>
-		<div class="container-fluid">
+		<div class="container">
 			<!-- Print Controls -->
 			<div class="no-print" style="margin-bottom: 20px; text-align: center;">
 				<button onclick="window.print()" class="btn btn-primary">
@@ -118,12 +82,8 @@
 				</button>
 			</div>
 
-			<!-- Print Content -->
-			<div class="print-header">
-				<h2><?php echo $nama_cabang; ?></h2>
-				<h3>WORK ORDER (PAKET SERVIS)</h3>
-				<p style="margin: 5px 0;">Tanggal Print: <?php echo date('d/m/Y H:i:s'); ?></p>
-			</div>
+			<?php include "_template/_nota_print_header.php"; ?>
+			<p style="text-align:center; font-size:11px; margin-bottom:15px;">Tanggal Print: <?php echo date('d/m/Y H:i:s'); ?></p>
 
 			<!-- Work Order Info -->
 			<table class="info-table">
