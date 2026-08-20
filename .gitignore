@@ -3,6 +3,9 @@ node_modules/
 excel_xml/
 logs/
 .env
+*.env
+*.log
+__pycache__/
 
 # runtime state dari tooling AI (claude-flow/ruflo/agentdb) - bukan source code
 .agents/
