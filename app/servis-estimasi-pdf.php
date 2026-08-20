@@ -10,6 +10,17 @@ error_reporting(E_ALL);
 
 session_start();
 require_once '../config/koneksi.php';
+require_once '_template/_nota_pdf_parts.php';
+
+// Data Perusahaan ===========
+$cari_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting");
+$tm_setting = mysqli_fetch_array($cari_setting);
+$nama_perusahaan = $tm_setting['nama_perusahaan'];
+$alamat_perusahaan = $tm_setting['alamat'];
+$notlp = $tm_setting['notlp'];
+$fax = $tm_setting['fax'];
+$file_logo = $tm_setting['file_logo'];
+// ===================
 
 // Get no_service
 $no_service = isset($_GET['no_service']) ? mysqli_real_escape_string($koneksi, $_GET['no_service']) : '';
@@ -283,6 +294,7 @@ ob_start();
                 display: none !important;
             }
         }
+        <?php echo nota_pdf_style(); ?>
     </style>
 </head>
 <body>
@@ -320,12 +332,11 @@ ob_start();
         </a>
     </div>
     
-    <div class="header">
-        <h2>ESTIMASI SERVIS</h2>
-        <p>Dokumen Estimasi Biaya & Penawaran</p>
-        <h3><?php echo $no_service; ?></h3>
-    </div>
-    
+    <?php echo nota_pdf_header($file_logo, $nama_perusahaan, $alamat_perusahaan, $notlp, $fax, 'ESTIMASI SERVIS', array(
+        array('No. Service', $no_service),
+        array('Tanggal', $data['tanggal_format']),
+    )); ?>
+
     <div class="info-box">
         <table class="info-table">
             <tr>
@@ -546,6 +557,8 @@ ob_start();
             <li>Dokumen ini digenerate otomatis pada <?php echo date('d/m/Y H:i'); ?></li>
         </ul>
     </div>
+
+    <?php echo nota_pdf_footer_ttd('Mengetahui', 'Pelanggan'); ?>
 </body>
 </html>
 <?php
