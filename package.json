@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@vostride/agent-qa-subscription-auth": "^0.0.1"
+  }
+}
