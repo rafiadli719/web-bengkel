@@ -73,8 +73,12 @@ try {
         exit;
     }
     
-    // Generate PDF URL
-    $pdf_url = 'http://localhost/web-bengkel/aplikasi/aplikasi/_admincab/servis-print-pdf.php?no_service=' . $no_service;
+    // Generate PDF URL - dibangun dinamis dari host+path request ini sendiri,
+    // sebelumnya hardcode 'http://localhost/.../_admincab/...' (folder gak ada,
+    // host gak reachable dari server WA gateway di produksi).
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $base_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
+    $pdf_url = $base_url . '/servis-print-pdf.php?no_service=' . urlencode($no_service);
     
     // Buat pesan
     $message = "🧾 *INVOICE SERVIS*\n\n";

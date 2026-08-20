@@ -2,3 +2,12 @@ node_modules/
 .playwright-mcp/
 excel_xml/
 logs/
+.env
+
+# runtime state dari tooling AI (claude-flow/ruflo/agentdb) - bukan source code
+.agents/
+.claude-flow/
+.swarm/
+agentdb.rvf
+agentdb.rvf.lock
+ruvector.db

@@ -54,7 +54,6 @@ $page_title = "Master Barang Custom";
     <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
     
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="assets/css/dataTables.bootstrap.min.css" />
     
     <!-- ace settings handler -->
     <script src="assets/js/ace-extra.min.js"></script>

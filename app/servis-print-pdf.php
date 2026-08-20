@@ -66,9 +66,11 @@ $query_barang = "SELECT
                  ORDER BY sb.nobaris";
 $result_barang = mysqli_query($koneksi, $query_barang);
 
-// Set header untuk PDF
-header('Content-Type: application/pdf');
-header('Content-Disposition: inline; filename="Invoice-' . $no_service . '.pdf"');
+// Data Perusahaan (sumber sama dengan nota lain, bukan hardcode per-cabang)
+$cari_perusahaan = mysqli_query($koneksi, "SELECT * FROM tbsetting");
+$tm_perusahaan = mysqli_fetch_array($cari_perusahaan);
+$nama_perusahaan = $tm_perusahaan['nama_perusahaan'] ?? 'FIT MOTOR';
+$alamat_perusahaan = $tm_perusahaan['alamat'] ?? '';
 
 // Generate HTML untuk PDF
 ob_start();
@@ -131,8 +133,8 @@ ob_start();
 </head>
 <body>
     <div class="header">
-        <h2>CABANG PESALAKAN</h2>
-        <p>Jl. Pesalakan No. 10</p>
+        <h2><?php echo htmlspecialchars($nama_perusahaan); ?></h2>
+        <p><?php echo htmlspecialchars($alamat_perusahaan); ?></p>
         <h3>INVOICE SERVIS</h3>
     </div>
     
@@ -325,37 +327,13 @@ ob_start();
 <?php
 $html = ob_get_clean();
 
-// Untuk sementara, gunakan wkhtmltopdf atau library PDF
-// Jika tidak ada library, return HTML saja
-// Nanti bisa diupgrade dengan TCPDF atau mPDF
-
-// Check if wkhtmltopdf available
-$wkhtmltopdf_path = 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
-
-if(file_exists($wkhtmltopdf_path)) {
-    // Save HTML to temp file
-    $temp_html = sys_get_temp_dir() . '/invoice_' . $no_service . '.html';
-    file_put_contents($temp_html, $html);
-    
-    // Generate PDF
-    $temp_pdf = sys_get_temp_dir() . '/invoice_' . $no_service . '.pdf';
-    $command = '"' . $wkhtmltopdf_path . '" "' . $temp_html . '" "' . $temp_pdf . '"';
-    exec($command);
-    
-    // Output PDF
-    if(file_exists($temp_pdf)) {
-        readfile($temp_pdf);
-        unlink($temp_html);
-        unlink($temp_pdf);
-    } else {
-        // Fallback to HTML
-        header('Content-Type: text/html');
-        echo $html;
-    }
-} else {
-    // Fallback: Return HTML (browser will render)
-    // Atau bisa install library PHP PDF seperti TCPDF
-    header('Content-Type: text/html');
-    echo $html;
-}
+// Render PDF beneran pakai Dompdf (sama seperti semua nota lain di app ini),
+// bukan wkhtmltopdf.exe Windows yang gak ada di hosting produksi.
+require_once("dompdf/autoload.inc.php");
+use Dompdf\Dompdf;
+$dompdf = new Dompdf();
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
+$dompdf->stream('Invoice-' . $no_service . '.pdf', array("Attachment" => 0));
 ?>
