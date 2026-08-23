@@ -6,6 +6,7 @@ if (empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+include "function_servis.php";
 
 // Ambil data dari form dan session
 $nopelanggan_param = $_GET['nopelanggan'] ?? '';
@@ -49,29 +50,16 @@ $namapelanggan = $pelanggan['namapelanggan'];
 mysqli_stmt_close($stmt);
 
 // Generate nomor service
+// FIX 2026-08-23: SELECT ... ORDER BY DESC LIMIT 1 lalu +1 rawan race
+// condition kalau dua request nabrak barengan. Ganti ke atomic counter
+// per prefix (function_servis.php::NextServiceSeqByPrefix). Format
+// no_service TIDAK berubah.
 $tahun = date('Y');
 $bulan = date('m');
 $prefix = "SRV" . $tahun . $bulan;
 
-// Cari nomor service terakhir
-$stmt = mysqli_prepare($koneksi, "SELECT no_service FROM tblservice WHERE no_service LIKE ? ORDER BY no_service DESC LIMIT 1");
-$search_pattern = $prefix . "%";
-mysqli_stmt_bind_param($stmt, "s", $search_pattern);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$last_service = mysqli_fetch_assoc($result);
-
-if ($last_service) {
-    // Ambil nomor urut terakhir dan increment
-    $last_number = substr($last_service['no_service'], strlen($prefix));
-    $next_number = str_pad((int)$last_number + 1, 4, '0', STR_PAD_LEFT);
-} else {
-    // Jika belum ada, mulai dari 0001
-    $next_number = "0001";
-}
-
-$no_service = $prefix . $next_number;
-mysqli_stmt_close($stmt);
+$next_seq = NextServiceSeqByPrefix($koneksi, $prefix, $prefix);
+$no_service = $prefix . str_pad($next_seq, 4, '0', STR_PAD_LEFT);
 
 // Tentukan jenis servis berdasarkan ada tidaknya jam jemput
 $jenis_servis = (!empty($jam_jemput)) ? 'jemput' : 'reguler';

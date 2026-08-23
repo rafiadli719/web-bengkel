@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "../../config/koneksi.php";
+include "../function_servis.php";
 
 header('Content-Type: application/json');
 
@@ -63,8 +64,13 @@ try {
     
     try {
         // Generate service number if not exists
+        // FIX 2026-08-23: rand(1,999) bisa nabrak (cuma 999 kemungkinan per
+        // hari, gak dicek unik). Ganti ke atomic counter per prefix
+        // (function_servis.php::NextServiceSeqByPrefix).
         if(empty($no_service)) {
-            $no_service = 'SERV' . date('Ymd') . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
+            $prefix_serv = 'SERV' . date('Ymd');
+            $next_serv = NextServiceSeqByPrefix($koneksi, $prefix_serv, $prefix_serv);
+            $no_service = $prefix_serv . str_pad($next_serv, 3, '0', STR_PAD_LEFT);
         }
         
         // Save to tblservice

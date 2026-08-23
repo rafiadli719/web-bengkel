@@ -9,6 +9,7 @@
 		include "../config/koneksi.php";
 		include_once "../lib/rbac.php";
 		include_once "helper-functions.php";
+		include_once "function_servis.php";
 		rbac_require_any(array('lihat_servis_garansi_read','servis_garansi_read','servis_menu_read','service_read'));
 		include "_include_customer_vehicle_sync.php";
 		include "_include_statistik_pelanggan.php";
@@ -120,17 +121,12 @@
             $tanggal_service = date('Y-m-d');
 
             // Generate nomor service untuk garansi
+            // FIX 2026-08-23: SELECT ... ORDER BY DESC LIMIT 1 lalu +1 rawan
+            // race condition. Ganti ke atomic counter per prefix
+            // (function_servis.php::NextServiceSeqByPrefix). Format
+            // no_service TIDAK berubah (masih dicek servis-estimasi-pdf.php).
             $prefix_service = 'GAR-' . date('Ymd') . '-';
-            $query_last_service = "SELECT no_service FROM tblservice WHERE no_service LIKE '$prefix_service%' ORDER BY no_service DESC LIMIT 1";
-            $result_last_service = mysqli_query($koneksi, $query_last_service);
-
-            if(mysqli_num_rows($result_last_service) > 0) {
-                $last_service = mysqli_fetch_array($result_last_service)['no_service'];
-                $last_number = intval(substr($last_service, -4));
-                $new_number = $last_number + 1;
-            } else {
-                $new_number = 1;
-            }
+            $new_number = NextServiceSeqByPrefix($koneksi, $prefix_service, $prefix_service);
 
             $no_service = $prefix_service . str_pad($new_number, 4, '0', STR_PAD_LEFT);
 

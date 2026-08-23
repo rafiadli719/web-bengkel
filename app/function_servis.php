@@ -75,4 +75,59 @@ function FormatNoTrans($num) {
         }
         return $NoTrans;
 }
+
+/**
+ * FIX 2026-08-23 (lanjutan): generator no_service lain SELAIN OtomatisID()
+ * (save_garapan.php, servis-garansi.php, servis-reguler-jemput.php,
+ * ajax-save-service.php) masing-masing punya generator inline sendiri —
+ * 3 pakai pola "SELECT MAX(...)+1" (race condition sama seperti
+ * OtomatisID() lama) dan 1 pakai rand(1,999) (bisa nabrak, bukan cuma
+ * race). Keempatnya punya prefix format beda (GAR-, SRV, SV, SERV) yang
+ * dipakai/dicek di file lain, jadi format TIDAK diubah — cuma cara
+ * generate nomor urutnya yang diganti ke atomic-increment per prefix,
+ * pola sama seperti OtomatisID(): tabel counter kecil + row-lock MySQL
+ * "UPDATE ... SET seq = LAST_INSERT_ID(seq + 1)".
+ *
+ * @param mysqli $koneksi
+ * @param string $seqKey  kunci counter unik (biasanya = $prefix, atau
+ *                         $prefix + periode kalau prefix-nya per-hari/bulan)
+ * @param string $prefix  prefix no_service yang mau dicari MAX-nya buat seed
+ * @return int    nomor urut berikutnya (belum di-pad, caller yang format)
+ */
+function NextServiceSeqByPrefix($koneksi, $seqKey, $prefix)
+{
+    mysqli_query($koneksi, "CREATE TABLE IF NOT EXISTS tbl_service_seq_counter (
+        seq_key VARCHAR(64) NOT NULL PRIMARY KEY,
+        seq INT NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB");
+
+    $seqKeyEsc = mysqli_real_escape_string($koneksi, $seqKey);
+
+    $qCheck = mysqli_query($koneksi, "SELECT 1 FROM tbl_service_seq_counter WHERE seq_key = '$seqKeyEsc'");
+    if (!$qCheck || mysqli_num_rows($qCheck) === 0) {
+        $prefixEsc = mysqli_real_escape_string($koneksi, $prefix);
+        // Seed dari nomor tertinggi yang SUDAH terpakai untuk prefix ini,
+        // bukan COUNT — biar gak nabrak no_service existing.
+        $qSeed = mysqli_query($koneksi, "SELECT COALESCE(MAX(CAST(SUBSTRING(no_service, " . (strlen($prefix) + 1) . ") AS UNSIGNED)), 0) AS mx
+                                          FROM tblservice WHERE no_service LIKE '{$prefixEsc}%'");
+        $seed = 0;
+        if ($qSeed && ($rowSeed = mysqli_fetch_assoc($qSeed))) {
+            $seed = (int) $rowSeed['mx'];
+        }
+        mysqli_query($koneksi, "INSERT IGNORE INTO tbl_service_seq_counter (seq_key, seq) VALUES ('$seqKeyEsc', $seed)");
+    }
+
+    // Atomic increment — aman dipanggil bersamaan dari cabang/staf berbeda.
+    mysqli_query($koneksi, "UPDATE tbl_service_seq_counter SET seq = LAST_INSERT_ID(seq + 1) WHERE seq_key = '$seqKeyEsc'");
+    $next = (int) mysqli_insert_id($koneksi);
+
+    if ($next <= 0) {
+        // Fallback (harusnya tidak pernah kejadian): baca langsung.
+        $qFallback = mysqli_query($koneksi, "SELECT seq FROM tbl_service_seq_counter WHERE seq_key = '$seqKeyEsc'");
+        $rowFallback = mysqli_fetch_assoc($qFallback);
+        $next = (int) ($rowFallback['seq'] ?? 0);
+    }
+
+    return $next;
+}
 ?>

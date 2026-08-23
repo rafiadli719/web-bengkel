@@ -13,6 +13,7 @@ $kd_cabang = $_SESSION['_cabang'];
 
 // Database connection
 require_once "../config/koneksi.php";
+require_once "function_servis.php";
 require_once "_include_customer_vehicle_sync.php";
 
 // Fetch user data using prepared statement
@@ -58,13 +59,14 @@ $keterangan_jemput = '';
 $foto_patokan = '';
 
 // Generate new service number if empty
+// FIX 2026-08-23: SELECT MAX(...) lalu +1 rawan race condition kalau dua
+// request nabrak barengan. Ganti ke atomic counter per prefix
+// (function_servis.php::NextServiceSeqByPrefix). Format no_service TIDAK
+// berubah.
 if (empty($no_service)) {
     $year = date('Y');
     $prefix = 'SV' . $year;
-    $q_max = mysqli_query($koneksi, "SELECT MAX(CAST(SUBSTRING(no_service, 7) AS UNSIGNED)) AS maxnum
-                                      FROM tblservice WHERE no_service LIKE '{$prefix}%'");
-    $row_max = mysqli_fetch_assoc($q_max);
-    $next_num = intval($row_max['maxnum'] ?? 0) + 1;
+    $next_num = NextServiceSeqByPrefix($koneksi, $prefix, $prefix);
     $no_service = $prefix . sprintf("%08d", $next_num);
 }
 
