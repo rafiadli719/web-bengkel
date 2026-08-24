@@ -683,9 +683,19 @@
             $check_result = mysqli_fetch_array($check_wo);
 
             if($check_result['count'] == 0) {
-                // Verify workorder exists in master
-                $verify_wo = mysqli_query($koneksi,"SELECT COUNT(*) as count FROM tbworkorderheader WHERE kode_wo='$kode_wo'");
-                $verify_result = mysqli_fetch_array($verify_wo);
+                // FIX 2026-08-24 (fraud): dulu cuma cek WO ada di master
+                // (tbworkorderheader) — bebas pilih WO apapun dari seluruh
+                // katalog dan digratiskan (potongan 100%) walau gak ada
+                // hubungannya sama servis asal. Sekarang wajib WO itu
+                // BENERAN pernah dikerjakan/tercatat di servis referensi
+                // ($ref_service) sebelum boleh diklaim gratis di sini.
+                $verify_result = array('count' => 0);
+                if (!empty($ref_service)) {
+                    $ref_service_esc_wo = mysqli_real_escape_string($koneksi, $ref_service);
+                    $verify_wo = mysqli_query($koneksi,"SELECT COUNT(*) as count FROM tbservis_workorder
+                                                        WHERE no_service='$ref_service_esc_wo' AND kode_wo='$kode_wo'");
+                    $verify_result = mysqli_fetch_array($verify_wo);
+                }
 
                 if($verify_result['count'] > 0) {
                     // Insert workorder to SPK with status garansi
@@ -791,7 +801,7 @@
                     </script>";
                 } else {
                     echo"<script>
-                        alert('Kode Work Order tidak ditemukan di master!\\nSilakan periksa kembali kode WO.');
+                        alert('Work Order ini tidak ditemukan di servis referensi (" . htmlspecialchars($ref_service, ENT_QUOTES) . ")!\\nKlaim garansi cuma boleh untuk pekerjaan yang benar-benar tercatat di servis asal.');
                         window.history.back();
                     </script>";
                 }
