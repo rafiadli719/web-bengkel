@@ -88,8 +88,8 @@ function saveToAccurate($unit_code, $unit_name) {
 }
 
 // Main processing
-$txtkd = $_POST['txtkd'];
-$txtnama = $_POST['txtnama'];
+$txtkd = mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+$txtnama = mysqli_real_escape_string($koneksi, $_POST['txtnama']);
 
 // Validate inputs
 if (empty($txtkd) || empty($txtnama)) {

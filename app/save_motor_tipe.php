@@ -1,9 +1,9 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtnama= $_POST['txtnama'];
-    $cbomerek= $_POST['cbomerek'];
-    $cbokat= $_POST['cbokat'];
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+    $cbomerek= mysqli_real_escape_string($koneksi, $_POST['cbomerek']);
+    $cbokat= mysqli_real_escape_string($koneksi, $_POST['cbokat']);
     
 	mysqli_query($koneksi,"INSERT INTO tbtipe_motor 
                         (tipe, kode_pabrik, kode_kategori) 

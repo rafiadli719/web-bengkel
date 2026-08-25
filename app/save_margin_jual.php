@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 	    
-    $cbolevel= $_POST['cbolevel'];        
-	$txtmarginpersen= $_POST['txtmarginpersen'];
-	$txtmarginplus= $_POST['txtmarginplus'];    
-	$txtbulat= $_POST['txtbulat'];
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);        
+	$txtmarginpersen= mysqli_real_escape_string($koneksi, $_POST['txtmarginpersen']);
+	$txtmarginplus= mysqli_real_escape_string($koneksi, $_POST['txtmarginplus']);    
+	$txtbulat= mysqli_real_escape_string($koneksi, $_POST['txtbulat']);
     
 	mysqli_query($koneksi,"INSERT INTO tbhargajual 
                         (jenis, margin, marginplus, bulat) 

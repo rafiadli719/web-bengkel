@@ -7,11 +7,11 @@ error_reporting(E_ALL);
 include "../config/koneksi.php";
 
 // Ambil data dari form
-$txtkd = $_POST['txtkd'] ?? null;
-$txtnama = $_POST['txtnama'] ?? null;
-$txtketerangan = $_POST['txtketerangan'] ?? null;
-$margin_sesuai_jenis = $_POST['margin_sesuai_jenis'] ?? null;
-$txtmargin = $_POST['txtmargin'] ?? null;
+$txtkd = isset($_POST['txtkd']) ? mysqli_real_escape_string($koneksi, $_POST['txtkd']) : null;
+$txtnama = isset($_POST['txtnama']) ? mysqli_real_escape_string($koneksi, $_POST['txtnama']) : null;
+$txtketerangan = isset($_POST['txtketerangan']) ? mysqli_real_escape_string($koneksi, $_POST['txtketerangan']) : null;
+$margin_sesuai_jenis = isset($_POST['margin_sesuai_jenis']) ? mysqli_real_escape_string($koneksi, $_POST['margin_sesuai_jenis']) : null;
+$txtmargin = isset($_POST['txtmargin']) ? floatval($_POST['txtmargin']) : null;
 
 // Inisialisasi file log
 $log_file = 'accurate_category_update_log.txt';

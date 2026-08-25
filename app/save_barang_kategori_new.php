@@ -9,9 +9,9 @@ include "../config/koneksi.php";
 include "../config/accurate_config.php";
 
 // Ambil data dari form
-$kategori = strtoupper(trim($_POST['txtkategori']));
-$keterangan = strtoupper(trim($_POST['txtketerangan']));
-$margin_sesuai_jenis = $_POST['margin_sesuai_jenis'];
+$kategori = mysqli_real_escape_string($koneksi, strtoupper(trim($_POST['txtkategori'])));
+$keterangan = mysqli_real_escape_string($koneksi, strtoupper(trim($_POST['txtketerangan'])));
+$margin_sesuai_jenis = mysqli_real_escape_string($koneksi, $_POST['margin_sesuai_jenis']);
 $margin_kategori = isset($_POST['txtmargin']) ? floatval($_POST['txtmargin']) : null;
 
 // Validasi input

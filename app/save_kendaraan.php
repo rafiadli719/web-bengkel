@@ -1,21 +1,21 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtnopol= $_POST['txtnopol'];    
-	$txtnama= $_POST['txtnama'];
-    $txtalamat= $_POST['txtalamat'];
-    $cbomerek= $_POST['cbomerek'];
+	$txtnopol= mysqli_real_escape_string($koneksi, $_POST['txtnopol']);    
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+    $txtalamat= mysqli_real_escape_string($koneksi, $_POST['txtalamat']);
+    $cbomerek= mysqli_real_escape_string($koneksi, $_POST['cbomerek']);
     
-    $cbotipe= $_POST['cbotipe'];
-    $cbojenis= $_POST['cbojenis'];
-    $cbowarna= $_POST['cbowarna'];
+    $cbotipe= mysqli_real_escape_string($koneksi, $_POST['cbotipe']);
+    $cbojenis= mysqli_real_escape_string($koneksi, $_POST['cbojenis']);
+    $cbowarna= mysqli_real_escape_string($koneksi, $_POST['cbowarna']);
     
-    $txtthn_buat= $_POST['txtthn_buat'];
-    $txtthn_rakit= $_POST['txtthn_rakit'];
-    $txtsilinder= $_POST['txtsilinder'];
-    $txtnorangka= $_POST['txtnorangka'];
-    $txtnomesin= $_POST['txtnomesin'];
-    $txtnote= $_POST['txtnote'];
+    $txtthn_buat= mysqli_real_escape_string($koneksi, $_POST['txtthn_buat']);
+    $txtthn_rakit= mysqli_real_escape_string($koneksi, $_POST['txtthn_rakit']);
+    $txtsilinder= mysqli_real_escape_string($koneksi, $_POST['txtsilinder']);
+    $txtnorangka= mysqli_real_escape_string($koneksi, $_POST['txtnorangka']);
+    $txtnomesin= mysqli_real_escape_string($koneksi, $_POST['txtnomesin']);
+    $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
 
 	$data = mysqli_query($koneksi,"SELECT nopelanggan FROM tblpelanggan 
                                     WHERE nopelanggan='$txtnopol'");

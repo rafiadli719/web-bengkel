@@ -1,8 +1,8 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtkdakun= $_POST['txtkdakun'];
-    $txtnamaakun= $_POST['txtnamaakun'];
+	$txtkdakun= mysqli_real_escape_string($koneksi, $_POST['txtkdakun']);
+    $txtnamaakun= mysqli_real_escape_string($koneksi, $_POST['txtnamaakun']);
     
 	mysqli_query($koneksi,"INSERT INTO tbakun 
                             (no_akun, nama_akun, pos, status_akun, akun_induk, no_akun_induk) 

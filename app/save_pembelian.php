@@ -1,15 +1,15 @@
 <?php
     include "../config/koneksi.php";
     
-	$no_order= $_POST['no_order'];
-    $txttotal= $_POST['txttotal']; 
-    $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
-    $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
-    $txtpajak_persen= $_POST['txtpajak_persen'];   
-    $txtpajak_nom= $_POST['txtpajak_nom'];   
-    $txtnet= $_POST['txtnet'];   
-    $txtdp= $_POST['txtdp'];   
-    $txtkekurangan= $_POST['txtkekurangan'];   
+	$no_order= mysqli_real_escape_string($koneksi, $_POST['no_order']);
+    $txttotal= mysqli_real_escape_string($koneksi, $_POST['txttotal']); 
+    $txtpotfaktur_persen= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);  
+    $txtpotfaktur_nom= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);   
+    $txtpajak_persen= mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);   
+    $txtpajak_nom= mysqli_real_escape_string($koneksi, $_POST['txtpajak_nom']);   
+    $txtnet= mysqli_real_escape_string($koneksi, $_POST['txtnet']);   
+    $txtdp= mysqli_real_escape_string($koneksi, $_POST['txtdp']);   
+    $txtkekurangan= mysqli_real_escape_string($koneksi, $_POST['txtkekurangan']);   
 
     $kekurangan_num = (float)preg_replace('/[^0-9\-\.]/', '', (string)$txtkekurangan);
     $status_lunas = ($kekurangan_num <= 0) ? '1' : '0';

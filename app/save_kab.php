@@ -1,8 +1,8 @@
 <?php
 	include "../config/koneksi.php";
 	
-	$txtkd= $_POST['txtkd'];
-	$txtnama= $_POST['txtnama'];
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
 //	$txtnama= $_POST['txtnama'];
 //cboprop
     

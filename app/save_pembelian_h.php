@@ -11,8 +11,8 @@
 	}
     
 	$txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-	$cbosupplier= $_POST['cbosupplier'];
-    $txtuser= $_POST['txtuser']; 
+	$cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+    $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']); 
  
     
     include "function_pembelian.php";

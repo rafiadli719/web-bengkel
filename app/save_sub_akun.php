@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtkdakun_induk= $_POST['txtkdakun_induk'];    
-	$txtkdakun= $_POST['txtkdakun'];
-    $txtnamaakun= $_POST['txtnamaakun'];
-    $cbopos= $_POST['cbopos'];
+	$txtkdakun_induk= mysqli_real_escape_string($koneksi, $_POST['txtkdakun_induk']);    
+	$txtkdakun= mysqli_real_escape_string($koneksi, $_POST['txtkdakun']);
+    $txtnamaakun= mysqli_real_escape_string($koneksi, $_POST['txtnamaakun']);
+    $cbopos= mysqli_real_escape_string($koneksi, $_POST['cbopos']);
     
 	mysqli_query($koneksi,"INSERT INTO tbakun 
                             (no_akun, nama_akun, pos, status_akun, akun_induk, no_akun_induk) 

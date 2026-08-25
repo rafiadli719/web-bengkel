@@ -1,7 +1,7 @@
 <?php
 	include "../config/koneksi.php";
 	
-	$txtnama= $_POST['txtnama'];
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
 
 	mysqli_query($koneksi,"INSERT INTO tbstatus_harga 
 							(status) 

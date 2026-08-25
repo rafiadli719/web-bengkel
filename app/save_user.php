@@ -1,9 +1,9 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtuser= $_POST['txtuser'];    
-	$txtpwd= $_POST['txtpwd'];
-    $cbolevel= $_POST['cbolevel'];
+	$txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
+	$txtpwd= mysqli_real_escape_string($koneksi, $_POST['txtpwd']);
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
 
     
 	mysqli_query($koneksi,"INSERT INTO tbuser 
