@@ -37,10 +37,11 @@
                         VALUES 
                         ('$txtkd_escaped','$txtnama_escaped','$cbolevel_escaped')");
     
-    // Redirect ke halaman tambah pelanggan dengan data yang sudah di-prefill
-    // User tinggal melengkapi field lainnya
-    $redirect_url = "pelanggan_add.php?from_cabang=1&kd=" . urlencode($txtkd) . "&nama=" . urlencode($txtnama);
-								
-	echo"<script>window.alert('Data Cabang Berhasil disimpan! Kode Cabang: $txtkd. Silakan lengkapi data pelanggan.');
+    // Redirect ke halaman edit cabang supaya alamat/Google Maps/koordinat
+    // bisa dilengkapi - form Tambah Cabang sendiri tidak punya field itu.
+    // (sebelumnya redirect salah ke pelanggan_add.php, bug copy-paste)
+    $redirect_url = "cabang_edit.php?kd=" . urlencode($txtkd);
+
+	echo"<script>window.alert('Data Cabang Berhasil disimpan! Kode Cabang: $txtkd. Silakan lengkapi alamat & lokasi cabang.');
     window.location=('" . $redirect_url . "');</script>";
 ?>

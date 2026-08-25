@@ -613,9 +613,28 @@
 				$('.nav-tabs a').on('click', function() {
 					saveActiveTab();
 				});
-				
-				// Restore active tab on page load
-				restoreActiveTab();
+
+				// Catatan: restoreActiveTab() SENGAJA tidak dipanggil di halaman
+				// Tambah Pelanggan - form ini selalu record baru, jadi harus
+				// selalu mulai dari tab "Data Dasar", bukan tab terakhir yang
+				// kepake pengguna lain sebelumnya (localStorage activeTab
+				// kepakai bareng lintas sesi/user, dulu bikin form ini bisa
+				// kebuka di tab "Pengaturan" duluan).
+
+				// Field wajib (Alamat/Kota/Provinsi/Kode Pos di tab Kontak &
+				// Alamat, Grup/Tipe Potongan di tab Pengaturan) bikin submit
+				// gagal diam-diam kalau usernya cuma isi tab Data Dasar -
+				// browser gak bisa fokus ke field yang ketutup tab non-aktif.
+				// Fix: pas ada field invalid, pindah ke tab yang isinya duluan.
+				$('form').on('submit', function(e) {
+					var $invalid = $(this).find(':invalid').first();
+					if ($invalid.length) {
+						var $pane = $invalid.closest('.tab-pane');
+						if ($pane.length) {
+							$('.nav-tabs a[href="#' + $pane.attr('id') + '"]').tab('show');
+						}
+					}
+				});
 
 				function _parseLatLngPair(text) {
 					if (!text) return null;

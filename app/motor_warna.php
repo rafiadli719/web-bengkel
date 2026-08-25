@@ -220,11 +220,7 @@
 												<thead>
 													<tr>
 														<th class="center" width="5%">No</th>
-														<th width="81%">Warna Motor</th>
-														<th width="1%"></th>                                                        
-														<th width="1%"></th>                                                        
-														<th width="1%"></th>                                                        
-														<th width="1%"></th>                                                                                                                
+														<th width="85%">Warna Motor</th>
 														<th class="center" width="10%">Aksi</th>
 													</tr>
 												</thead>
@@ -240,10 +236,6 @@
 													<tr>
 														<td class="center"><?php echo $no ?></td>
 														<td><?php echo $tampil['warna']?></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>														
 														<td class="center">													
 															<a class="green" data-rel="tooltip" title="Edit" 
 																href="motor_warna_edit.php?kd=<?php echo $tampil['id']?>">
