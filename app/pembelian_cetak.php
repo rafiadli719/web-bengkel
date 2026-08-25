@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$nobl=$_GET['nopesanan'];        
+		$nobl=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);        
 		$cari_kd=mysqli_query($koneksi,"SELECT *,  
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
                                         DATE_FORMAT(tanggal_order,'%d/%m/%Y') AS tanggal_order, 

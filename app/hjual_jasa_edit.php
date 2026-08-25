@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$kd=$_GET['kd'];
+		$kd=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
 										nilai FROM tbhjual_jasa 
 										WHERE 

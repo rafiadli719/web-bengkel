@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 
-        $sid = $_GET['sid'];
-        $stgl = $_GET['stgl'];
-        $cbocabang = $_GET['ssup'];
-        $kd = $_GET['kd'];
+        $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+        $stgl = mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $cbocabang = mysqli_real_escape_string($koneksi, $_GET['ssup']);
+        $kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
     
 	$modal=mysqli_query($koneksi,"Delete 
                                     FROM tblorderjual_detail 

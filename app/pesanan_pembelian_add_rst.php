@@ -36,9 +36,9 @@
 		include "function_pesanan_pembelian.php";
 		$LastID=FormatNoTrans(OtomatisID());	
 
-        $txtcaribrg=$_GET['kd'];
-        $tgl_pilih=$_GET['stgl'];
-        $cbo_supplier=$_GET['ssup'];
+        $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd']);
+        $tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $cbo_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tblorder_detail 
                                                 WHERE 
@@ -60,9 +60,9 @@
         }
 
 		if(isset($_POST['btncari'])) {				
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -97,10 +97,10 @@
         }            
 
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtcaribrg'];
-			$txtqty= $_POST['txtqty'];
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -159,7 +159,7 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= $_POST['txttotal_harga'];            
+            $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);            
             if($txttotal_harga=='0') {
                 echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
             } else {
@@ -174,9 +174,9 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $txtnopesanan= $_POST['txtnopesanan'];
-                $cbosupplier= $_POST['cbosupplier'];
-                $txttotal_harga= $_POST['txttotal_harga'];
+                $txtnopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+                $cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+                $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
         
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot 
                                                 FROM tblorder_detail 

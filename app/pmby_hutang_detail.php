@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobyr=$_GET['snotrx'];
+		$nobyr=mysqli_real_escape_string($koneksi, $_GET['snotrx']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
                                         no_supplier, user 

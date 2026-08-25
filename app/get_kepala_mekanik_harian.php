@@ -99,7 +99,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'get_kepala_mekanik') {
     include "../config/koneksi.php";
     
     $kd_cabang = $_SESSION['_cabang'];
-    $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : null;
+    $tanggal = isset($_GET['tanggal']) ? mysqli_real_escape_string($koneksi, $_GET['tanggal']) : null;
     
     header('Content-Type: application/json');
     echo getKepalaMetanikHarianJSON($koneksi, $kd_cabang, $tanggal);

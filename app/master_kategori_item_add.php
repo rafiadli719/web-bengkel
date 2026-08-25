@@ -28,7 +28,7 @@ $success_msg = '';
 if ($_POST) {
     $kategori_item = strtoupper(trim($_POST['kategori_item']));
     $keterangan = trim($_POST['keterangan']);
-    $margin_sesuai_jenis = $_POST['margin_sesuai_jenis'];
+    $margin_sesuai_jenis = mysqli_real_escape_string($koneksi, $_POST['margin_sesuai_jenis']);
     $margin_kategori = ($margin_sesuai_jenis == 'TIDAK' && !empty($_POST['margin_kategori'])) ?
                        (float)$_POST['margin_kategori'] : null;
 

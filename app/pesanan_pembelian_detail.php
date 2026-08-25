@@ -35,9 +35,9 @@
 
 		$nopesanan = '';
 		if (isset($_GET['nopesanan'])) {
-			$nopesanan = $_GET['nopesanan'];
+			$nopesanan = mysqli_real_escape_string($koneksi, $_GET['nopesanan']);
 		} elseif (isset($_GET['no'])) {
-			$nopesanan = $_GET['no'];
+			$nopesanan = mysqli_real_escape_string($koneksi, $_GET['no']);
 		}
 		$nopesanan = mysqli_real_escape_string($koneksi, $nopesanan);
 		if (empty($nopesanan)) {

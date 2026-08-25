@@ -54,8 +54,8 @@
         $sql_pel = mysqli_query($koneksi,"SELECT nopelanggan, namapelanggan FROM tblpelanggan ORDER BY namapelanggan LIMIT 500");
 
         if(isset($_POST['btnrst'])) {
-            $tgl_pilih_dari   = $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai = $_POST['id-date-picker-2'];
+            $tgl_pilih_dari   = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);
             $cbo_pelanggan    = mysqli_real_escape_string($koneksi, $_POST['cbopelanggan'] ?? '');
             $tgl_dari_eng     = ubahformatTgl_RPJ($tgl_pilih_dari);
             $tgl_sampai_eng   = ubahformatTgl_RPJ($tgl_pilih_sampai);

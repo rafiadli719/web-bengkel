@@ -29,11 +29,11 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
         
-		$no_service=$_GET['snoserv'];
-        $_key=$_GET['_key'];
-        $_cari=$_GET['_cari'];
-        $_urut=$_GET['_urut'];
-        $_flt=$_GET['_flt'];
+		$no_service=mysqli_real_escape_string($koneksi, $_GET['snoserv']);
+        $_key=mysqli_real_escape_string($koneksi, $_GET['_key']);
+        $_cari=mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $_urut=mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $_flt=mysqli_real_escape_string($koneksi, $_GET['_flt']);
 ?>
 
 <!DOCTYPE html>

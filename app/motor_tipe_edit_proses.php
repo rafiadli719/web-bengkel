@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$id= $_POST['txtid'];
-	$txtnama= $_POST['txtnama'];
-    $cbomerek= $_POST['cbomerek'];
-    $cbokat= $_POST['cbokat'];
+	$id= mysqli_real_escape_string($koneksi, $_POST['txtid']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+    $cbomerek= mysqli_real_escape_string($koneksi, $_POST['cbomerek']);
+    $cbokat= mysqli_real_escape_string($koneksi, $_POST['cbokat']);
     
 	mysqli_query($koneksi,"UPDATE tbtipe_motor 
                         SET tipe='$txtnama', kode_pabrik='$cbomerek', 

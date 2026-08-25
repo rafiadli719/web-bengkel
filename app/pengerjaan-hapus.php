@@ -6,8 +6,8 @@
         include "../config/koneksi.php";
         
         // Get parameters
-        $pengerjaan_id = $_GET['sid'];
-        $no_service = $_GET['snoserv'];
+        $pengerjaan_id = mysqli_real_escape_string($koneksi, $_GET['sid']);
+        $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
         
         // Delete item pengerjaan
         mysqli_query($koneksi,"DELETE FROM tbservis_pengerjaan WHERE id='$pengerjaan_id'");

@@ -1,11 +1,11 @@
 <?php
 	include "../config/koneksi.php";
 	    
-    $txtid= $_POST['txtid'];        
-    $cbolevel= $_POST['cbolevel'];        
-	$txtmarginpersen= $_POST['txtmarginpersen'];
-	$txtmarginplus= $_POST['txtmarginplus'];    
-	$txtbulat= $_POST['txtbulat'];
+    $txtid= mysqli_real_escape_string($koneksi, $_POST['txtid']);        
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);        
+	$txtmarginpersen= mysqli_real_escape_string($koneksi, $_POST['txtmarginpersen']);
+	$txtmarginplus= mysqli_real_escape_string($koneksi, $_POST['txtmarginplus']);    
+	$txtbulat= mysqli_real_escape_string($koneksi, $_POST['txtbulat']);
     
 	mysqli_query($koneksi,"UPDATE tbhargajual 
                         SET jenis='$cbolevel', margin='$txtmarginpersen', 

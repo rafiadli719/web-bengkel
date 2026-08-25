@@ -22,7 +22,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobl=$_GET['noorder'];
+		$nobl=mysqli_real_escape_string($koneksi, $_GET['noorder']);
         $txtcaribrg= trim($_GET['kd']);
         $tot=0;
         
@@ -51,9 +51,9 @@ $cari_kd=mysqli_query($koneksi,"SELECT
         $txtnamaitem=$tm_cari['namaitem'];        
         
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtkdbarang'];
-			$txtqty= $_POST['txtqty'];
-			$txtpot= $_POST['txtpot'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtkdbarang']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+			$txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargajual FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);

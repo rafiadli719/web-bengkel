@@ -239,7 +239,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="satuan" name="satuan" class="form-control"
 															placeholder="Otomatis dibuat dari keterangan" maxlength="3"
-															value="<?php echo isset($_POST['satuan']) ? $_POST['satuan'] : ''; ?>" required />
+															value="<?php echo isset($_POST['satuan']) ? mysqli_real_escape_string($koneksi, $_POST['satuan']) : ''; ?>" required />
 														<span class="help-block">
 															<strong>Otomatis dibuat dari keterangan</strong> - dapat diedit (maksimal 3 karakter)
 														</span>
@@ -253,7 +253,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="namasatuan" name="namasatuan" class="form-control"
 															placeholder="Otomatis dibuat dari keterangan" maxlength="30"
-															value="<?php echo isset($_POST['namasatuan']) ? $_POST['namasatuan'] : ''; ?>" required />
+															value="<?php echo isset($_POST['namasatuan']) ? mysqli_real_escape_string($koneksi, $_POST['namasatuan']) : ''; ?>" required />
 														<span class="help-block"><strong>Otomatis dibuat dari keterangan</strong> - dapat diedit</span>
 													</div>
 												</div>

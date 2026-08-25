@@ -108,10 +108,10 @@ if (empty($_SESSION['_iduser'])) {
         mysqli_begin_transaction($koneksi);
 
         try {
-            $tipe_item = $_POST['tipe_item'];
+            $tipe_item = mysqli_real_escape_string($koneksi, $_POST['tipe_item']);
             $nama_item = mysqli_real_escape_string($koneksi, $_POST['txtnama']);
-            $jenis = $_POST['cbojenis'];
-            $satuan = $_POST['cbosatuan'];
+            $jenis = mysqli_real_escape_string($koneksi, $_POST['cbojenis']);
+            $satuan = mysqli_real_escape_string($koneksi, $_POST['cbosatuan']);
             $harga_beli = floatval($_POST['txthargabeli']);
             $harga_jual = floatval($_POST['txthargajual']);
             $supplier = $_POST['cbosupplier'] ?? '';

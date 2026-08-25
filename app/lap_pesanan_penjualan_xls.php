@@ -10,9 +10,9 @@
         return $satukan;
     }
                 
-	$tgl_pilih_dari= $_GET['stgl1'];
-	$tgl_pilih_sampai= $_GET['stgl2'];	
-	$nopelanggan= $_GET['ssup'];	
+	$tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_GET['stgl1']);
+	$tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_GET['stgl2']);	
+	$nopelanggan= mysqli_real_escape_string($koneksi, $_GET['ssup']);	
     
     $tglmulai = ubahformatTgl($_GET['stgl1']); 
     $tglselesai = ubahformatTgl($_GET['stgl2']); 

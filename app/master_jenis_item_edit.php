@@ -30,7 +30,7 @@
     // --------------------
 
 		// Ambil data yang akan diedit
-		$id = $_GET['kd'];
+		$id = mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$sql_edit = mysqli_query($koneksi, "SELECT * FROM tbmaster_jenis_item WHERE id='$id'");
 		$data_edit = mysqli_fetch_array($sql_edit);
 
@@ -243,7 +243,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="kode" name="kode" class="form-control"
 																placeholder="Contoh: ORI, IMI, AFT" maxlength="3"
-																value="<?php echo isset($_POST['kode']) ? $_POST['kode'] : $data_edit['kode']; ?>" required />
+																value="<?php echo isset($_POST['kode']) ? mysqli_real_escape_string($koneksi, $_POST['kode']) : $data_edit['kode']; ?>" required />
 														<span class="help-block">
 															<strong>Wajib 3 digit huruf</strong> (tidak boleh ada kode yang sama persis)
 														</span>
@@ -257,7 +257,7 @@
 													<div class="col-sm-9">
 														<textarea id="keterangan" name="keterangan" class="form-control" rows="2"
 																placeholder="Diisi bebas sesuai arti kode..."
-																required><?php echo isset($_POST['keterangan']) ? $_POST['keterangan'] : $data_edit['nama_jenis']; ?></textarea>
+																required><?php echo isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : $data_edit['nama_jenis']; ?></textarea>
 														<span class="help-block">Keterangan diisi bebas sesuai arti kode</span>
 													</div>
 												</div>
@@ -270,7 +270,7 @@
 														<div class="input-group">
 															<input type="text" id="persentase" name="persentase" class="form-control"
 																	placeholder="0"
-																	value="<?php echo isset($_POST['persentase']) ? $_POST['persentase'] : number_format($data_edit['margin'], 2); ?>" required />
+																	value="<?php echo isset($_POST['persentase']) ? mysqli_real_escape_string($koneksi, $_POST['persentase']) : number_format($data_edit['margin'], 2); ?>" required />
 															<span class="input-group-addon">%</span>
 														</div>
 														<span class="help-block">

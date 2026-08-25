@@ -12,7 +12,7 @@ if(isset($_POST['id'])) {
     
     include "../config/koneksi.php";
     
-    $keluhan_id = $_POST['id'];
+    $keluhan_id = mysqli_real_escape_string($koneksi, $_POST['id']);
     
     if(empty($keluhan_id)) {
         echo json_encode(['success' => false, 'message' => 'ID keluhan tidak valid']);
@@ -42,7 +42,7 @@ if(empty($_SESSION['_iduser'])){
     
     // Get parameters
     $keluhan_id = $_GET['kid'] ?? $_GET['sid'] ?? $_GET['id']; // Support multiple parameter names
-    $no_service = $_GET['snoserv'];
+    $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
     
     if(!empty($keluhan_id)) {
         // Delete keluhan

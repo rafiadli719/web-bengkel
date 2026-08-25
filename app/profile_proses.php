@@ -4,8 +4,8 @@
 	$folder="../file_upload/";
 	$folder_save="file_upload/";
 	
-	$txtid= $_POST['txtid'];
-	$txtuser= $_POST['txtuser'];
+	$txtid= mysqli_real_escape_string($koneksi, $_POST['txtid']);
+	$txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
 
 		$foto_save="";
 		if(!empty($_FILES["id-input-file-3"]["tmp_name"])){

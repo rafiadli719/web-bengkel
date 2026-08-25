@@ -29,9 +29,9 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$nobyr=$_GET['nobyr'];
-		$tgl_pilih=$_GET['stgl'];
-		$nopelanggan=$_GET['ssup'];        
+		$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
+		$tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+		$nopelanggan=mysqli_real_escape_string($koneksi, $_GET['ssup']);        
                                         
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                             namapelanggan 
@@ -50,7 +50,7 @@
 		$tot_bayar=$tm_cari['tot'];    
 
         if(isset($_POST['btnsimpan'])) {
-            $txttot= $_POST['txttot'];            
+            $txttot= mysqli_real_escape_string($koneksi, $_POST['txttot']);            
             if($txttot=='0') {
                 echo"<script>window.alert('Silahkan Edit nominal yang harus dibayar terlebih dahulu!');</script>";			                            
             } else {
@@ -64,8 +64,8 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $txtnobyr= $_POST['txtnobyr'];
-                $nopelanggan=$_POST['txtkey'];
+                $txtnobyr= mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
+                $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
 
                 mysqli_query($koneksi,"INSERT INTO tblpiutang_header    
                             (no_transaksi, tanggal, no_pelanggan, 

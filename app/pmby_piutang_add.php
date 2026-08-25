@@ -42,8 +42,8 @@
                 carabayar='Kredit'";
 
 		if(isset($_POST['btncari_pelanggan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopelanggan= $_POST['txtkey'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopelanggan= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
             $sql_cari="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
             FROM tblpenjualan_header 
                     WHERE 
@@ -76,13 +76,13 @@
         }
         
         if(isset($_POST['btnsimpan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopelanggan=$_POST['txtkey'];
-            //$nmpelanggan=$_POST['txtnmpelanggan'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+            //$nmpelanggan=mysqli_real_escape_string($koneksi, $_POST['txtnmpelanggan']);
 
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
-                $nip=$_POST["hapus"][$i];
+                $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
                 mysqli_query($koneksi,"INSERT INTO tblpiutang_detail 
                                         (no_transaksi, no_penjualan) 
                                         VALUES 

@@ -30,7 +30,7 @@
     // --------------------
 
 		// Ambil data yang akan diedit
-		$kd = $_GET['kd'];
+		$kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$sql_edit = mysqli_query($koneksi, "SELECT * FROM tbjenis_motor WHERE kd='$kd'");
 		$data_edit = mysqli_fetch_array($sql_edit);
 
@@ -254,7 +254,7 @@
 														<input type="text" id="jenis" name="jenis" class="form-control"
 																placeholder="Masukkan jenis motor baru..."
 																maxlength="50"
-																value="<?php echo isset($_POST['jenis']) ? $_POST['jenis'] : $data_edit['jenis']; ?>" required />
+																value="<?php echo isset($_POST['jenis']) ? mysqli_real_escape_string($koneksi, $_POST['jenis']) : $data_edit['jenis']; ?>" required />
 														<span class="help-block">
 															<strong>Hanya boleh 1 kata, tidak boleh ada spasi</strong>, otomatis huruf besar
 														</span>
@@ -268,7 +268,7 @@
 													<div class="col-sm-9">
 														<textarea id="keterangan" name="keterangan" class="form-control" rows="3"
 																placeholder="Masukkan keterangan baru..."
-																required><?php echo isset($_POST['keterangan']) ? $_POST['keterangan'] : $data_edit['keterangan']; ?></textarea>
+																required><?php echo isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : $data_edit['keterangan']; ?></textarea>
 														<span class="help-block">Muncul isi keterangan dari data awal, namun masih bisa diubah</span>
 													</div>
 												</div>

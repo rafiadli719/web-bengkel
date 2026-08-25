@@ -23,7 +23,7 @@ $now = date('Y-m-d H:i:s');
 // AJAX ENDPOINTS (JSON)
 // =====================
 if (isset($_GET['action'])) {
-    $action = $_GET['action'];
+    $action = mysqli_real_escape_string($koneksi, $_GET['action']);
 
     // Search jasa item (jenis=SERVIS)
     if ($action === 'search_jasa') {

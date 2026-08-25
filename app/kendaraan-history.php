@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $no_polisi=$_GET['kd'];
+        $no_polisi=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         pemilik, jenis, merek, warna, 
                                         no_rangka, no_mesin, tipe, alamat  

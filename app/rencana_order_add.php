@@ -65,7 +65,7 @@ $periode_awal = date('Y-m-d', strtotime('-84 days'));
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rencana'])) {
-    $items = isset($_POST['items']) ? $_POST['items'] : [];
+    $items = isset($_POST['items']) ? mysqli_real_escape_string($koneksi, $_POST['items']) : [];
 
     if (empty($items)) {
         $error_message = "Pilih minimal satu item untuk dibuat rencana order.";
@@ -163,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rencana'])) {
 
 // Get items that need ordering
 $calculator = new MinMaxCalculator($koneksi);
-$filter_cabang = isset($_GET['cabang']) ? $_GET['cabang'] : null;
-$filter_kategori = isset($_GET['kategori']) ? $_GET['kategori'] : null;
+$filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : null;
+$filter_kategori = isset($_GET['kategori']) ? mysqli_real_escape_string($koneksi, $_GET['kategori']) : null;
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
 
 $items_need_order = $calculator->getItemPerluOrder($filter_cabang, $filter_kategori, $limit);

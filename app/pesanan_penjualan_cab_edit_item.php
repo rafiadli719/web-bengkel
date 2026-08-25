@@ -29,10 +29,10 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $sid = $_GET['sid'];
-        $stgl = $_GET['stgl'];
-        $cbocabang = $_GET['ssup'];
-        $kd = $_GET['kd'];
+        $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+        $stgl = mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $cbocabang = mysqli_real_escape_string($koneksi, $_GET['ssup']);
+        $kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
         
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, harga_jual, total, potongan 
@@ -53,9 +53,9 @@
         $namaitem=$tm_cari['namaitem'];
 
         if(isset($_POST['btnsimpan'])) {
-            $txtharga= $_POST['txtharga'];
-            $txtqty= $_POST['txtqty'];
-            $txtpot= $_POST['txtpot'];
+            $txtharga= mysqli_real_escape_string($koneksi, $_POST['txtharga']);
+            $txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
 
             $subtotal=($txtharga*$txtqty)-(($txtharga*$txtqty)*($txtpot/100));            
 

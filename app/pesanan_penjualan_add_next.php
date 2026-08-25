@@ -22,7 +22,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobl=$_GET['nojl'];
+		$nobl=mysqli_real_escape_string($koneksi, $_GET['nojl']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_pelanggan, user, no_sales 
                                         FROM tblorderjual_header 

@@ -30,7 +30,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
         
-		$no_service=$_GET['snoserv'];        
+		$no_service=mysqli_real_escape_string($koneksi, $_GET['snoserv']);        
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_serv, 
                                         jam, no_pelanggan, no_polisi, 

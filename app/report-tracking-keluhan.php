@@ -17,12 +17,12 @@ if(empty($_SESSION['_iduser'])){
     }
 
     // Get filter parameters
-    $tgl_dari = isset($_GET['tgl_dari']) ? $_GET['tgl_dari'] : date('Y-m-01');
-    $tgl_sampai = isset($_GET['tgl_sampai']) ? $_GET['tgl_sampai'] : date('Y-m-d');
-    $filter_kategori = isset($_GET['kategori']) ? $_GET['kategori'] : '';
-    $filter_prioritas = isset($_GET['prioritas']) ? $_GET['prioritas'] : '';
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
-    $filter_cabang = isset($_GET['cabang']) ? $_GET['cabang'] : $kd_cabang;
+    $tgl_dari = isset($_GET['tgl_dari']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_dari']) : date('Y-m-01');
+    $tgl_sampai = isset($_GET['tgl_sampai']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_sampai']) : date('Y-m-d');
+    $filter_kategori = isset($_GET['kategori']) ? mysqli_real_escape_string($koneksi, $_GET['kategori']) : '';
+    $filter_prioritas = isset($_GET['prioritas']) ? mysqli_real_escape_string($koneksi, $_GET['prioritas']) : '';
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : '';
+    $filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : $kd_cabang;
 ?>
 
 <!DOCTYPE html>

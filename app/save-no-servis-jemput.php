@@ -6,7 +6,7 @@
 	date_default_timezone_set('Asia/Jakarta');
 	$tgl_skr=date('Y/m/d');
     $waktu_skr=date('h:i');
-	$nopol= $_GET['snopol'];
+	$nopol= mysqli_real_escape_string($koneksi, $_GET['snopol']);
 
     include "../config/koneksi.php";
     include "function_servis.php";

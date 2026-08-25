@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobyr=$_POST['txtnobyr'];
+		$nobyr=mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_pelanggan, user 
                                         FROM tblpiutang_header 

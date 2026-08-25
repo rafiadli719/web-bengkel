@@ -5,8 +5,8 @@ if(empty($_SESSION['_iduser'])){
 } else {
     include "../config/koneksi.php";
     
-    $jid = $_GET['jid'];
-    $snoserv = $_GET['snoserv'];
+    $jid = mysqli_real_escape_string($koneksi, $_GET['jid']);
+    $snoserv = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
     
     // Delete jasa item
     mysqli_query($koneksi,"DELETE FROM tblservis_jasa WHERE id='$jid'");

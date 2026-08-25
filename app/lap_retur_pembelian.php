@@ -54,8 +54,8 @@
         $sql_sup = mysqli_query($koneksi,"SELECT nosupplier, namasupplier FROM tblsupplier ORDER BY namasupplier");
 
         if(isset($_POST['btnrst'])) {
-            $tgl_pilih_dari   = $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai = $_POST['id-date-picker-2'];
+            $tgl_pilih_dari   = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);
             $cbo_supplier     = mysqli_real_escape_string($koneksi, $_POST['cbosupplier'] ?? '');
             $tgl_dari_eng     = ubahformatTgl_RP($tgl_pilih_dari);
             $tgl_sampai_eng   = ubahformatTgl_RP($tgl_pilih_sampai);

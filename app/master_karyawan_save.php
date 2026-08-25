@@ -20,7 +20,7 @@ if (empty($_SESSION['_iduser'])) {
     exit;
 }
 
-$action = isset($_POST['action']) ? $_POST['action'] : 'add';
+$action = isset($_POST['action']) ? mysqli_real_escape_string($koneksi, $_POST['action']) : 'add';
 
 if ($action === 'add' || !isset($_POST['id'])) {
     if (!hasPermission('users', 'add') && !isAdmin()) {

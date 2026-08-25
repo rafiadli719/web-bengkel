@@ -414,7 +414,7 @@ if(empty($_SESSION['_iduser'])){
     // PERBAIKAN: Proses pencarian dengan validasi yang lebih baik
     if(isset($_POST['btncari'])) {               
         $txtcaribrg = trim($_POST['txtcaribrg']); 
-        $tgl_pilih = $_POST['id-date-picker-1'];
+        $tgl_pilih = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
         
         debug_log("Proses pencarian", ["kode" => $txtcaribrg, "tanggal" => $tgl_pilih]);
         
@@ -465,7 +465,7 @@ if(empty($_SESSION['_iduser'])){
     if(isset($_POST['btnadd'])) { 
         $txtkdbarang = trim($_POST['txtcaribrg']);
         $txtqty = floatval($_POST['txtqty']);
-        $tgl_pilih = $_POST['id-date-picker-1'];
+        $tgl_pilih = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
         
         debug_log("Proses ADD", [
             "kode" => $txtkdbarang, 

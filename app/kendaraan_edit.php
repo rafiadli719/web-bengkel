@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
                         
-		$nopol=$_GET['kd'];
+		$nopol=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT * FROM tblkendaraan WHERE nopolisi='$nopol'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$nama=$tm_cari['pemilik'];

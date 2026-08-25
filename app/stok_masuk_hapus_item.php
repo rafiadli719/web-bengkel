@@ -1,8 +1,8 @@
 <?php
 	include "../config/koneksi.php";
 
-	$sid = $_GET['sid'];
-    $stgl = $_GET['stgl'];
+	$sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+    $stgl = mysqli_real_escape_string($koneksi, $_GET['stgl']);
     $kdbrg="";
     
 	$modal=mysqli_query($koneksi,"Delete 

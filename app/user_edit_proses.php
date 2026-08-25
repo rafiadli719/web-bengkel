@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtid= $_POST['txtid'];    
-	$txtuser= $_POST['txtuser'];    
-	$txtpwd= $_POST['txtpwd'];
-    $cbolevel= $_POST['cbolevel'];
+	$txtid= mysqli_real_escape_string($koneksi, $_POST['txtid']);    
+	$txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);    
+	$txtpwd= mysqli_real_escape_string($koneksi, $_POST['txtpwd']);
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
 
     
 	mysqli_query($koneksi,"UPDATE tbuser 

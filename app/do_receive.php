@@ -56,7 +56,7 @@ while($r = mysqli_fetch_assoc($qd)){ $items[] = $r; }
 if(isset($_POST['btnreceive'])){
     $tanggal_terima = post('tanggal_terima', date('Y-m-d'));
     $keterangan_qc = post('keterangan_qc');
-    $receive_items = isset($_POST['items']) ? $_POST['items'] : [];
+    $receive_items = isset($_POST['items']) ? mysqli_real_escape_string($koneksi, $_POST['items']) : [];
 
     $has_receive = false;
     foreach($receive_items as $it){

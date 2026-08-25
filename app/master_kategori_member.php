@@ -34,15 +34,15 @@ if(empty($_SESSION['_iduser'])){
     
     if(isset($_POST['btn_simpan'])) {
         $id_kategori = $_POST['id_kategori'] ?? '';
-        $nama_kategori = $_POST['nama_kategori'];
-        $tipe_kategori = $_POST['tipe_kategori'];
-        $min_value = $_POST['min_value'];
+        $nama_kategori = mysqli_real_escape_string($koneksi, $_POST['nama_kategori']);
+        $tipe_kategori = mysqli_real_escape_string($koneksi, $_POST['tipe_kategori']);
+        $min_value = mysqli_real_escape_string($koneksi, $_POST['min_value']);
         $max_value = $_POST['max_value'] == '' ? NULL : $_POST['max_value'];
-        $diskon_persen = $_POST['diskon_persen'];
-        $benefit_text = $_POST['benefit_text'];
-        $icon = $_POST['icon'];
-        $warna = $_POST['warna'];
-        $urutan = $_POST['urutan'];
+        $diskon_persen = mysqli_real_escape_string($koneksi, $_POST['diskon_persen']);
+        $benefit_text = mysqli_real_escape_string($koneksi, $_POST['benefit_text']);
+        $icon = mysqli_real_escape_string($koneksi, $_POST['icon']);
+        $warna = mysqli_real_escape_string($koneksi, $_POST['warna']);
+        $urutan = mysqli_real_escape_string($koneksi, $_POST['urutan']);
         $is_active = isset($_POST['is_active']) ? 1 : 0;
         
         if(empty($id_kategori)) {
@@ -77,7 +77,7 @@ if(empty($_SESSION['_iduser'])){
     }
     
     if(isset($_POST['btn_hapus'])) {
-        $id_kategori = $_POST['id_kategori'];
+        $id_kategori = mysqli_real_escape_string($koneksi, $_POST['id_kategori']);
         $sql = "DELETE FROM master_kategori_member WHERE id_kategori = '$id_kategori'";
         
         if(mysqli_query($koneksi, $sql)) {

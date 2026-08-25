@@ -38,7 +38,7 @@
         $thn_skr=date('Y');
         $thn=substr($thn_skr,2,2);
     
-		$nopesanan=$_GET['nopesanan'];        
+		$nopesanan=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);        
 		$cari_kd=mysqli_query($koneksi,"SELECT *,  
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tblorder_header 

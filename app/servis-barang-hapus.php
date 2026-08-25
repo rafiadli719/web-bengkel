@@ -5,8 +5,8 @@ if(empty($_SESSION['_iduser'])){
 } else {
     include "../config/koneksi.php";
     
-    $bid = $_GET['bid'];
-    $snoserv = $_GET['snoserv'];
+    $bid = mysqli_real_escape_string($koneksi, $_GET['bid']);
+    $snoserv = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
     
     // Delete barang item
     mysqli_query($koneksi,"DELETE FROM tblservis_barang WHERE id='$bid'");

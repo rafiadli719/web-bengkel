@@ -34,14 +34,14 @@ $kd_cabang=$_SESSION['_cabang'];
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $txttgljl = $_GET['stgl']; 
-        $cbosales = $_GET['ssales']; 
-        $txtuser= $_GET['suser'];
+        $txttgljl = mysqli_real_escape_string($koneksi, $_GET['stgl']); 
+        $cbosales = mysqli_real_escape_string($koneksi, $_GET['ssales']); 
+        $txtuser= mysqli_real_escape_string($koneksi, $_GET['suser']);
         
-        $txtkey= $_GET['_key'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -160,25 +160,25 @@ $kd_cabang=$_SESSION['_cabang'];
         }
         
 		if(isset($_POST['btnasc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
         
-            $txttgljl = $_POST['id-date-picker-1']; 
-            $cbosales = $_POST['cbosales']; 
-            $txtuser= $_POST['txtuser'];
+            $txttgljl = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']); 
+            $cbosales = mysqli_real_escape_string($koneksi, $_POST['cbosales']); 
+            $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
         
 			echo"<script>window.location=('cari_pelanggan_jl_pesan_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&stgl=<?php echo $txttgljl; ?>&ssales=<?php echo $cbosales; ?>&suser=<?php echo $txtuser; ?>');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
 
-            $txttgljl = $_POST['id-date-picker-1']; 
-            $cbosales = $_POST['cbosales']; 
-            $txtuser= $_POST['txtuser'];
+            $txttgljl = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']); 
+            $cbosales = mysqli_real_escape_string($koneksi, $_POST['cbosales']); 
+            $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
             
 			echo"<script>window.location=('cari_pelanggan_jl_pesan_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&stgl=<?php echo $txttgljl; ?>&ssales=<?php echo $cbosales; ?>&suser=<?php echo $txtuser; ?>');</script>";            
         }

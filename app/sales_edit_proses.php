@@ -1,15 +1,15 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtkd= $_POST['txtkd'];
-	$txtnama= $_POST['txtnama'];
-	$txtalamat= $_POST['txtalamat'];    
-	$txtkota= $_POST['txtkota'];
-	$txttlp= $_POST['txttlp']; 
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+	$txtalamat= mysqli_real_escape_string($koneksi, $_POST['txtalamat']);    
+	$txtkota= mysqli_real_escape_string($koneksi, $_POST['txtkota']);
+	$txttlp= mysqli_real_escape_string($koneksi, $_POST['txttlp']); 
 
-	$cbokomisi1= $_POST['cbokomisi1']; 
-	$cbokomisi2= $_POST['cbokomisi2']; 
-	$txtilai= $_POST['txtilai']; 
+	$cbokomisi1= mysqli_real_escape_string($koneksi, $_POST['cbokomisi1']); 
+	$cbokomisi2= mysqli_real_escape_string($koneksi, $_POST['cbokomisi2']); 
+	$txtilai= mysqli_real_escape_string($koneksi, $_POST['txtilai']); 
 
     if($cbokomisi2=='1') {
         mysqli_query($koneksi,"UPDATE tblsales 

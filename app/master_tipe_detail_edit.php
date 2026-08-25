@@ -66,14 +66,14 @@ $kategori_motors_result = mysqli_query($koneksi, $kategori_motors_query);
 // Process form submission
 if ($_POST) {
     $id_tipe_header = (int)$_POST['id_tipe_header'];
-    $nama_detail = trim($_POST['nama_detail']);
+    $nama_detail = mysqli_real_escape_string($koneksi, trim($_POST['nama_detail']));
     $cc = !empty($_POST['cc']) ? (int)$_POST['cc'] : null;
     $id_jenis_motor = !empty($_POST['id_jenis_motor']) ? (int)$_POST['id_jenis_motor'] : null;
-    $fitur_pembeda = trim($_POST['fitur_pembeda']);
-    $ciri_fisik_pembeda = trim($_POST['ciri_fisik_pembeda']);
+    $fitur_pembeda = mysqli_real_escape_string($koneksi, trim($_POST['fitur_pembeda']));
+    $ciri_fisik_pembeda = mysqli_real_escape_string($koneksi, trim($_POST['ciri_fisik_pembeda']));
     $tahun_awal = !empty($_POST['tahun_awal']) ? (int)$_POST['tahun_awal'] : null;
-    $tahun_akhir = trim($_POST['tahun_akhir']);
-    $no_seri_mesin = trim($_POST['no_seri_mesin']);
+    $tahun_akhir = mysqli_real_escape_string($koneksi, trim($_POST['tahun_akhir']));
+    $no_seri_mesin = mysqli_real_escape_string($koneksi, trim($_POST['no_seri_mesin']));
     $id_kategori_motor = !empty($_POST['id_kategori_motor']) ? (int)$_POST['id_kategori_motor'] : null;
 
     // Validasi input

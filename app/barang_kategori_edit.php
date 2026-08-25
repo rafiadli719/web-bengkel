@@ -119,7 +119,7 @@ if (empty($_SESSION['_iduser'])) {
     }
 
     // Get data kategori untuk edit
-    $kd = $_GET['kd'];
+    $kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
     $cari_kd = mysqli_query($koneksi, "SELECT * FROM tblitemjenis WHERE id='$kd'");
     $tm_cari = mysqli_fetch_array($cari_kd);    
     $jenis = $tm_cari['jenis'];

@@ -28,7 +28,7 @@ header('Content-Type: application/json');
 // Get parameters
 $target_type = isset($_GET['target_type']) ? mysqli_real_escape_string($koneksi, $_GET['target_type']) : '';
 $target_id = isset($_GET['target_id']) ? mysqli_real_escape_string($koneksi, $_GET['target_id']) : '';
-$tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$tanggal = isset($_GET['tanggal']) ? mysqli_real_escape_string($koneksi, $_GET['tanggal']) : date('Y-m-d');
 
 // Validate
 if(empty($target_type) || empty($target_id)) {

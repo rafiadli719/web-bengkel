@@ -114,8 +114,8 @@ if(empty($_SESSION['_iduser'])){
         $keterangan = trim($_POST['keterangan'] ?? '');
         $tipe_promo = ($_POST['tipe_promo'] === 'nominal') ? 'nominal' : 'persen';
         $nilai_promo = floatval($_POST['nilai_promo']);
-        $tanggal_mulai = $_POST['tanggal_mulai'];
-        $tanggal_selesai = $_POST['tanggal_selesai'];
+        $tanggal_mulai = mysqli_real_escape_string($koneksi, $_POST['tanggal_mulai']);
+        $tanggal_selesai = mysqli_real_escape_string($koneksi, $_POST['tanggal_selesai']);
         $stackable = isset($_POST['stackable']) ? 1 : 0;
         $boleh_gabung_diskon_member = isset($_POST['boleh_gabung_diskon_member']) ? 1 : 0;
         $mode_syarat = ($_POST['mode_syarat'] ?? 'AND') === 'OR' ? 'OR' : 'AND';
@@ -152,8 +152,8 @@ if(empty($_SESSION['_iduser'])){
         $keterangan = trim($_POST['keterangan'] ?? '');
         $tipe_promo = ($_POST['tipe_promo'] === 'nominal') ? 'nominal' : 'persen';
         $nilai_promo = floatval($_POST['nilai_promo']);
-        $tanggal_mulai = $_POST['tanggal_mulai'];
-        $tanggal_selesai = $_POST['tanggal_selesai'];
+        $tanggal_mulai = mysqli_real_escape_string($koneksi, $_POST['tanggal_mulai']);
+        $tanggal_selesai = mysqli_real_escape_string($koneksi, $_POST['tanggal_selesai']);
         $status_aktif = isset($_POST['status_aktif']) ? 1 : 0;
         $stackable = isset($_POST['stackable']) ? 1 : 0;
         $boleh_gabung_diskon_member = isset($_POST['boleh_gabung_diskon_member']) ? 1 : 0;

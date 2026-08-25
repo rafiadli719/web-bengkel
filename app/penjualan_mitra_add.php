@@ -45,14 +45,14 @@ if(empty($_SESSION['_iduser'])){
 
     // Process form submission
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $tgl_transaksi = isset($_POST['tgl_transaksi']) ? $_POST['tgl_transaksi'] : date('Y-m-d');
+        $tgl_transaksi = isset($_POST['tgl_transaksi']) ? mysqli_real_escape_string($koneksi, $_POST['tgl_transaksi']) : date('Y-m-d');
         $cabang_tujuan = isset($_POST['cabang_tujuan']) ? mysqli_real_escape_string($koneksi, $_POST['cabang_tujuan']) : '';
         $keterangan = isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : '';
 
         // Get items from POST
-        $item_codes = isset($_POST['item_code']) ? $_POST['item_code'] : [];
-        $item_qtys = isset($_POST['item_qty']) ? $_POST['item_qty'] : [];
-        $item_prices = isset($_POST['item_price']) ? $_POST['item_price'] : [];
+        $item_codes = isset($_POST['item_code']) ? mysqli_real_escape_string($koneksi, $_POST['item_code']) : [];
+        $item_qtys = isset($_POST['item_qty']) ? mysqli_real_escape_string($koneksi, $_POST['item_qty']) : [];
+        $item_prices = isset($_POST['item_price']) ? mysqli_real_escape_string($koneksi, $_POST['item_price']) : [];
 
         if(isset($_POST['btn_simpan'])){
             // Validate

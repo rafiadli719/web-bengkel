@@ -140,7 +140,7 @@ $result = mysqli_query($koneksi, $sql);
                     </h1>
                 </div>
 
-                <?php if(isset($_GET['msg'])): $msg = $_GET['msg'];
+                <?php if(isset($_GET['msg'])): $msg = mysqli_real_escape_string($koneksi, $_GET['msg']);
                     $is_ok = in_array($msg,['ok','proses_ok','terima_ok','push_ok']);
                 ?>
                 <div class="alert alert-<?php echo $is_ok?'success':'danger'; ?> alert-dismissible">

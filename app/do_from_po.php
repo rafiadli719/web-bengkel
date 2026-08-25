@@ -183,7 +183,7 @@ if(isset($_POST['btnreceive_do'])){
     }
 
     // Items
-    $items = isset($_POST['items']) ? $_POST['items'] : [];
+    $items = isset($_POST['items']) ? mysqli_real_escape_string($koneksi, $_POST['items']) : [];
     $has_qty = false; foreach($items as $ni=>$it){ if(((int)$it['qty_terima'])>0){ $has_qty = true; break; }}
     if($msg!==''){
         // approval gate blocked above

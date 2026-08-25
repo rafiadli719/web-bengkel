@@ -80,7 +80,7 @@ if(empty($_SESSION['_iduser'])){
         $nama_user = mysqli_real_escape_string($koneksi, $_POST['nama_user']);
         $password = mysqli_real_escape_string($koneksi, $_POST['password']);
         $kode_posisi = mysqli_real_escape_string($koneksi, trim($_POST['kode_posisi'] ?? ''));
-        $is_active = $_POST['is_active'];
+        $is_active = mysqli_real_escape_string($koneksi, $_POST['is_active']);
 
         if (!isset($role_lookup[$kode_posisi])) {
             $message = "Role/posisi tidak valid.";
@@ -124,7 +124,7 @@ if(empty($_SESSION['_iduser'])){
         $user_id = intval($_POST['user_id']);
         $nama_user = mysqli_real_escape_string($koneksi, $_POST['nama_user']);
         $kode_posisi = mysqli_real_escape_string($koneksi, trim($_POST['kode_posisi'] ?? ''));
-        $is_active = $_POST['is_active'];
+        $is_active = mysqli_real_escape_string($koneksi, $_POST['is_active']);
 
         if (!isset($role_lookup[$kode_posisi])) {
             $message = "Role/posisi tidak valid.";

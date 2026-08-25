@@ -11,14 +11,14 @@
 	}
     
 	$txttgl = ubahformatTgl($_POST['id-date-picker-1']); 
-	//$txtcabang= $_POST['txtcabang'];
-    //$txtuser= $_POST['txtuser']; 
+	//$txtcabang= mysqli_real_escape_string($koneksi, $_POST['txtcabang']);
+    //$txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']); 
             
-    $txtnobyr= $_POST['txtnobyr'];
-    $cboakun= $_POST['cboakun'];
-    $txtnote= $_POST['txtnote'];
-    $txtjml= $_POST['txtjml'];
-    $cboakunbiaya= $_POST['cboakunbiaya'];
+    $txtnobyr= mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
+    $cboakun= mysqli_real_escape_string($koneksi, $_POST['cboakun']);
+    $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+    $txtjml= mysqli_real_escape_string($koneksi, $_POST['txtjml']);
+    $cboakunbiaya= mysqli_real_escape_string($koneksi, $_POST['cboakunbiaya']);
     
     mysqli_query($koneksi,"UPDATE tblkas_keluar_masuk 
                         SET tanggal='$txttgl', uraian='$txtnote', masuk='$txtjml', 

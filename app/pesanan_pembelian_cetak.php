@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$nopesanan=$_GET['nopesanan'];
+		$nopesanan=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);
 		$stmt=mysqli_prepare($koneksi,"SELECT
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx,
                                         no_supplier, note, payment_term, total_qty, total_order

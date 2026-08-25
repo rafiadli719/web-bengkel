@@ -1,9 +1,9 @@
 <?php
 	include "../config/koneksi.php";
 	
-	$txtkd= $_POST['txtkd'];
-	$txtnama= $_POST['txtnama'];
-	$txtdiskon= $_POST['txtdiskon'];
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+	$txtdiskon= mysqli_real_escape_string($koneksi, $_POST['txtdiskon']);
 
 	mysqli_query($koneksi,"UPDATE tblpelanggangrup 
 							SET grup='$txtnama', diskon='$txtdiskon' 

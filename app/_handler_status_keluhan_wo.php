@@ -129,7 +129,7 @@ if(isset($_POST['btnupdatestatuskeluhan'])) {
 
 if(isset($_POST['btnapprove_wo_bulk'])) {
     $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
-    $ids = isset($_POST['selected_item_ids']) ? $_POST['selected_item_ids'] : [];
+    $ids = isset($_POST['selected_item_ids']) ? mysqli_real_escape_string($koneksi, $_POST['selected_item_ids']) : [];
     $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';
     $ok = 0; $fail = 0;
     if(!is_array($ids)) { $ids = [$ids]; }
@@ -156,7 +156,7 @@ if(isset($_POST['btnapprove_wo_bulk'])) {
 
 if(isset($_POST['btnreject_wo_bulk'])) {
     $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
-    $ids = isset($_POST['selected_item_ids']) ? $_POST['selected_item_ids'] : [];
+    $ids = isset($_POST['selected_item_ids']) ? mysqli_real_escape_string($koneksi, $_POST['selected_item_ids']) : [];
     $alasan = mysqli_real_escape_string($koneksi, $_POST['alasan_reject'] ?? '');
     $ket = isset($_POST['keterangan_reject']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_reject']) : '';
     $user = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'system';

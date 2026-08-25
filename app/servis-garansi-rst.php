@@ -44,7 +44,7 @@
         $tipe_cabang = $tm_cari ? $tm_cari['tipe_cabang'] : '';	
     // --------------------				        
     
-        $no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
+        $no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : '';
     $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
     $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');

@@ -34,10 +34,10 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $txttgljl = $_POST['id-date-picker-1']; 
-        $cbosales = $_POST['cbosales']; 
-        $txtuser= $_POST['txtuser'];
-        $txtkey= $_POST['txtkey'];
+        $txttgljl = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']); 
+        $cbosales = mysqli_real_escape_string($koneksi, $_POST['cbosales']); 
+        $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
+        $txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
         
         $txtcari= "";
         $txturut= "23";
@@ -160,25 +160,25 @@
         }
         
 		if(isset($_POST['btnasc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
         
-            $txttgljl = $_POST['id-date-picker-1']; 
-            $cbosales = $_POST['cbosales']; 
-            $txtuser= $_POST['txtuser'];
+            $txttgljl = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']); 
+            $cbosales = mysqli_real_escape_string($koneksi, $_POST['cbosales']); 
+            $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
         
 			echo"<script>window.location=('cari_pelanggan_jl_pesan_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&stgl=<?php echo $txttgljl; ?>&ssales=<?php echo $cbosales; ?>&suser=<?php echo $txtuser; ?>');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
 
-            $txttgljl = $_POST['id-date-picker-1']; 
-            $cbosales = $_POST['cbosales']; 
-            $txtuser= $_POST['txtuser'];
+            $txttgljl = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']); 
+            $cbosales = mysqli_real_escape_string($koneksi, $_POST['cbosales']); 
+            $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']);
             
 			echo"<script>window.location=('cari_pelanggan_jl_pesan_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&stgl=<?php echo $txttgljl; ?>&ssales=<?php echo $cbosales; ?>&suser=<?php echo $txtuser; ?>');</script>";            
         }

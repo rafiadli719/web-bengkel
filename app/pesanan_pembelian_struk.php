@@ -1,7 +1,7 @@
 <?php
     include "../config/koneksi.php";
     include "_template/_nota_pdf_parts.php";
-	$nopesanan = $_GET['snopesanan'];
+	$nopesanan = mysqli_real_escape_string($koneksi, $_GET['snopesanan']);
 
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");

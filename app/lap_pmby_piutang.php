@@ -68,9 +68,9 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";             
         
 		if(isset($_POST['btnrst'])) {				
-            $tgl_pilih_dari= $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai= $_POST['id-date-picker-2'];            
-            $nopelanggan= $_POST['txtpelanggan'];
+            $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
+            $nopelanggan= mysqli_real_escape_string($koneksi, $_POST['txtpelanggan']);
 
             $tglmulai = ubahformatTgl($_POST['id-date-picker-1']); 
             $tglselesai = ubahformatTgl($_POST['id-date-picker-2']); 
@@ -121,15 +121,15 @@
         }     
 
 		if(isset($_POST['btnpdf'])) {				
-            $tgl_pilih_dari= $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai= $_POST['id-date-picker-2'];            
-            $nopelanggan= $_POST['txtpelanggan'];
+            $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
+            $nopelanggan= mysqli_real_escape_string($koneksi, $_POST['txtpelanggan']);
 			echo"<script>window.location=('lap_pmby_piutang_pdf.php?stgl1=$tgl_pilih_dari&stgl2=$tgl_pilih_sampai&ssup=$nopelanggan');</script>";                        
         }        
 		if(isset($_POST['btnxl'])) {				
-            $tgl_pilih_dari= $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai= $_POST['id-date-picker-2'];            
-            $nopelanggan= $_POST['txtpelanggan'];
+            $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
+            $nopelanggan= mysqli_real_escape_string($koneksi, $_POST['txtpelanggan']);
 			echo"<script>window.location=('lap_pmby_piutang_xls.php?stgl1=$tgl_pilih_dari&stgl2=$tgl_pilih_sampai&ssup=$nopelanggan');</script>";                        
         }        
 ?>

@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nopelanggan=$_GET['kd'];
+		$nopelanggan=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT *, 
                                         DATE_FORMAT(tgllahir,'%d/%m/%Y') AS tanggal_lahir 
                                         FROM tblpelanggan 

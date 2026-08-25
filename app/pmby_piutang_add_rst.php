@@ -32,8 +32,8 @@
 		include "function_pmby_piutang.php";
 		$LastID=FormatNoTrans(OtomatisID());
 
-        $tgl_pilih=$_GET['stgl'];
-        $nopelanggan=$_GET['ssup'];
+        $tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $nopelanggan=mysqli_real_escape_string($koneksi, $_GET['ssup']);
 
     // Cari Nama Pelanggan ==========
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -51,8 +51,8 @@
                 carabayar='Kredit'";
 
 		if(isset($_POST['btncari_pelanggan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopelanggan= $_POST['txtkey'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopelanggan= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
             $sql_cari="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tblpenjualan_header 
                     WHERE 
                     no_pelanggan='$nopelanggan' and 
@@ -83,13 +83,13 @@
         }
         
         if(isset($_POST['btnsimpan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopelanggan=$_POST['txtkey'];
-            //$nmpelanggan=$_POST['txtnmpelanggan'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+            //$nmpelanggan=mysqli_real_escape_string($koneksi, $_POST['txtnmpelanggan']);
 
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
-                $nip=$_POST["hapus"][$i];
+                $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
                 mysqli_query($koneksi,"INSERT INTO tblpiutang_detail 
                                         (no_transaksi, no_penjualan) 
                                         VALUES 

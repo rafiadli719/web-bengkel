@@ -10,11 +10,16 @@
     $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
 	$txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);    
     
-	mysqli_query($koneksi,"INSERT INTO tblmekanik 
-                        (nomekanik, nama, alamat, kota, provinsi, notelepon, note, keahlian) 
-                        VALUES 
-                        ('$txtkd','$txtnama','$txtalamat','$txtkota','$txtprop','$txttlp',
-                        '$txtnote','$cbolevel')");
+	// Catatan: tblmekanik tidak punya kolom kota/provinsi/notelepon/note -
+	// insert lama selalu gagal diam-diam (mysqli_query return false, tidak
+	// dicek). Kolom asli: nomekanik, nama, alamat, telp, keahlian, status,
+	// spesialisasi, dst (lihat mekanik_management.php sebagai referensi).
+	// txtkota/txtprop tidak punya tempat penyimpanan, sengaja tidak dipakai.
+	mysqli_query($koneksi,"INSERT INTO tblmekanik
+                        (nomekanik, nama, alamat, telp, spesialisasi, keahlian, status)
+                        VALUES
+                        ('$txtkd','$txtnama','$txtalamat','$txttlp',
+                        '$txtnote','$cbolevel','aktif')");
 								
 	echo"<script>window.alert('Data Mekanik Berhasil disimpan!');
     window.location=('mekanik.php');</script>";

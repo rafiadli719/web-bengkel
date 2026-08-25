@@ -32,8 +32,8 @@
         // Date filter
         include_once "includes/report-default-range.php";
         $_default_range = app_report_default_range($koneksi, 'tblpenjualan_header', 'tanggal', "carabayar='Kredit'");
-        $tgl_dari = isset($_POST['tgl_dari']) ? $_POST['tgl_dari'] : $_default_range['from_dmy'];
-        $tgl_sampai = isset($_POST['tgl_sampai']) ? $_POST['tgl_sampai'] : $_default_range['to_dmy'];
+        $tgl_dari = isset($_POST['tgl_dari']) ? mysqli_real_escape_string($koneksi, $_POST['tgl_dari']) : $_default_range['from_dmy'];
+        $tgl_sampai = isset($_POST['tgl_sampai']) ? mysqli_real_escape_string($koneksi, $_POST['tgl_sampai']) : $_default_range['to_dmy'];
         
         function ubahformatTgl($tanggal) {
             $pisah = explode('/',$tanggal);
@@ -43,8 +43,8 @@
         }
         
         if(isset($_POST['btngenerate'])) {
-            $tgl_dari = $_POST['tgl_dari'];
-            $tgl_sampai = $_POST['tgl_sampai'];
+            $tgl_dari = mysqli_real_escape_string($koneksi, $_POST['tgl_dari']);
+            $tgl_sampai = mysqli_real_escape_string($koneksi, $_POST['tgl_sampai']);
         }
         
         $tgl_dari_sql = ubahformatTgl($tgl_dari);

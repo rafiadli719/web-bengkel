@@ -5,8 +5,8 @@
     } else {
         include "../config/koneksi.php";
         
-        $wo_id = $_GET['woid'];
-        $no_service = $_GET['snoserv'];
+        $wo_id = mysqli_real_escape_string($koneksi, $_GET['woid']);
+        $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
         
         // Hapus work order dari service
         mysqli_query($koneksi,"DELETE FROM tbservis_workorder WHERE id='$wo_id'");

@@ -21,7 +21,7 @@ include "../config/koneksi.php";
 // Get user info (no admin check for easier access)
 $id_user = $_SESSION['_iduser'];
 
-$action = isset($_GET['action']) ? $_GET['action'] : 'analyze';
+$action = isset($_GET['action']) ? mysqli_real_escape_string($koneksi, $_GET['action']) : 'analyze';
 $msg = '';
 $msg_type = 'info';
 

@@ -14,13 +14,13 @@
 	}
     
 	$txttgl = ubahformatTgl($_POST['id-date-picker-1']); 
-    $txttgl_indo = $_POST['id-date-picker-1'];
-	$txtcabang= $_POST['txtcabang'];
-    $txtuser= $_POST['txtuser']; 
-	$jam= $_POST['timepicker1'];             
-    $total= $_POST['total'];
-    $total_awal= $_POST['total_awal'];
-    $total_real= $_POST['total_real'];    
+    $txttgl_indo = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+	$txtcabang= mysqli_real_escape_string($koneksi, $_POST['txtcabang']);
+    $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']); 
+	$jam= mysqli_real_escape_string($koneksi, $_POST['timepicker1']);             
+    $total= mysqli_real_escape_string($koneksi, $_POST['total']);
+    $total_awal= mysqli_real_escape_string($koneksi, $_POST['total_awal']);
+    $total_real= mysqli_real_escape_string($koneksi, $_POST['total_real']);    
     
     include "function_kasir.php";
     $LastID=FormatNoTrans(OtomatisID());	

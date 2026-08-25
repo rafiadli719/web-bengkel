@@ -30,7 +30,7 @@
     // --------------------
 
 		// Ambil data yang akan dihapus untuk preview
-		$id = $_GET['kd'];
+		$id = mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$sql_preview = mysqli_query($koneksi, "SELECT * FROM tbmaster_jenis_item WHERE id='$id'");
 		$data_preview = mysqli_fetch_array($sql_preview);
 

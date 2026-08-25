@@ -36,9 +36,9 @@
         include "function_pesanan_penjualan.php";
 		$LastID=FormatNoTrans(OtomatisID());	
 
-        $txtcaribrg=$_GET['kd'];
-        $tgl_pilih=$_GET['stgl'];
-        $cbocabang=$_GET['ssup'];
+        $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd']);
+        $tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $cbocabang=mysqli_real_escape_string($koneksi, $_GET['ssup']);
 
     // Cari Nama Barang ==========
         $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
@@ -62,9 +62,9 @@
         $total_qty_order=$tm_cari['tot_qty_jual'];                                 
 
 		if(isset($_POST['btncari'])) {				
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbocabang=$_POST['cbocabang'];
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbocabang=mysqli_real_escape_string($koneksi, $_POST['cbocabang']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -102,12 +102,12 @@
         }            
 
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtcaribrg'];
-			$txtqty= $_POST['txtqty'];
-            $txtpot= $_POST['txtpot'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
             
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbocabang=$_POST['cbocabang'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbocabang=mysqli_real_escape_string($koneksi, $_POST['cbocabang']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             hargapokok 
@@ -189,7 +189,7 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= $_POST['txttotal_harga'];            
+            $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);            
             if($txttotal_harga=='0') {
                 echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
             } else {
@@ -204,12 +204,12 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $cbocabang=$_POST['cbocabang'];
+                $cbocabang=mysqli_real_escape_string($koneksi, $_POST['cbocabang']);
 
-                //$cbocarabyr= $_POST['cbocarabyr'];                
-                //$txtsyarat= $_POST['txtsyarat'];                                
-                $txtnote= $_POST['txtnote'];  
-                //$txtjt= $_POST['txtjt'];                                                                
+                //$cbocarabyr= mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']);                
+                //$txtsyarat= mysqli_real_escape_string($koneksi, $_POST['txtsyarat']);                                
+                $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);  
+                //$txtjt= mysqli_real_escape_string($koneksi, $_POST['txtjt']);                                                                
                 
 
         
@@ -227,13 +227,13 @@
             $total_qty_order=$tm_cari['tot_qty_jual'];                                 
 
                 $txttotal_harga= $tot;
-                $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
-                $txtpajak_persen= $_POST['txtpajak_persen'];    
-                $txtdp= $_POST['txtdp'];   
-                $txtkekurangan= $_POST['txtkekurangan'];
+                $txtpotfaktur_persen= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);  
+                $txtpajak_persen= mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);    
+                $txtdp= mysqli_real_escape_string($koneksi, $_POST['txtdp']);   
+                $txtkekurangan= mysqli_real_escape_string($koneksi, $_POST['txtkekurangan']);
 
-                $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
-                $txtpajak_nom= $_POST['txtpajak_nom'];   
+                $txtpotfaktur_nom= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);   
+                $txtpajak_nom= mysqli_real_escape_string($koneksi, $_POST['txtpajak_nom']);   
                 
                 $txtnet= $txttotal_harga-$txtpotfaktur_nom+$txtpajak_nom; 
                              

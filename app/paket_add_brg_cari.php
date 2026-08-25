@@ -29,14 +29,14 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $snamawo=$_GET['snamawo'];
-        $sketwo=$_GET['sketwo'];
-        $swaktu=$_GET['swaktu'];
+        $snamawo=mysqli_real_escape_string($koneksi, $_GET['snamawo']);
+        $sketwo=mysqli_real_escape_string($koneksi, $_GET['sketwo']);
+        $swaktu=mysqli_real_escape_string($koneksi, $_GET['swaktu']);
         
-        $txtkey= $_GET['_keyjasa'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_keyjasa']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -149,24 +149,24 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {	
-			$snamawo= $_POST['txtnamawo'];
-			$sketwo= $_POST['txtketwo'];                        
-            $swaktu=$_POST['txtwaktu'];
+			$snamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+			$sketwo= mysqli_real_escape_string($koneksi, $_POST['txtketwo']);                        
+            $swaktu=mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
         
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('paket_add_brg_cari.php?snamawo=$snamawo&sketwo=$sketwo&_keyjasa=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&swaktu=$swaktu');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$snamawo= $_POST['txtnamawo'];
-			$sketwo= $_POST['txtketwo'];                        
-            $swaktu=$_POST['txtwaktu'];
+			$snamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+			$sketwo= mysqli_real_escape_string($koneksi, $_POST['txtketwo']);                        
+            $swaktu=mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
         
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('paket_add_brg_cari.php?snamawo=$snamawo&sketwo=$sketwo&_keyjasa=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&swaktu=$swaktu');</script>";            
         }
 

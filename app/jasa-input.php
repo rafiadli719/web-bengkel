@@ -75,17 +75,17 @@
 
         // Proses simpan jasa
         if(isset($_POST['btnsimpan'])) {
-            $kode_jasa = $_POST['kode_jasa'];
-            $namaitem = $_POST['namaitem'];
-            $jenis = $_POST['jenis'];
-            $satuan = $_POST['satuan'];
-            $hargajual = $_POST['hargajual'];
-            $hargapokok = $_POST['hargapokok'];
-            $jasawaktu = $_POST['jasawaktu'];
-            $jasasatuanwaktu = $_POST['jasasatuanwaktu'];
-            $jenis_jasa = $_POST['jenis_jasa'];
-            $statusitem = $_POST['statusitem'];
-            $note = $_POST['note'];
+            $kode_jasa = mysqli_real_escape_string($koneksi, $_POST['kode_jasa']);
+            $namaitem = mysqli_real_escape_string($koneksi, $_POST['namaitem']);
+            $jenis = mysqli_real_escape_string($koneksi, $_POST['jenis']);
+            $satuan = mysqli_real_escape_string($koneksi, $_POST['satuan']);
+            $hargajual = mysqli_real_escape_string($koneksi, $_POST['hargajual']);
+            $hargapokok = mysqli_real_escape_string($koneksi, $_POST['hargapokok']);
+            $jasawaktu = mysqli_real_escape_string($koneksi, $_POST['jasawaktu']);
+            $jasasatuanwaktu = mysqli_real_escape_string($koneksi, $_POST['jasasatuanwaktu']);
+            $jenis_jasa = mysqli_real_escape_string($koneksi, $_POST['jenis_jasa']);
+            $statusitem = mysqli_real_escape_string($koneksi, $_POST['statusitem']);
+            $note = mysqli_real_escape_string($koneksi, $_POST['note']);
             
             if($mode == 'add') {
                 // Insert jasa baru

@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nosales=$_GET['kd'];
+		$nosales=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namasales, alamat, kota, telephone, 
                                         op_pil_hitung, op_pil_sistem_komisi, 

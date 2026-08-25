@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $no_wo=$_GET['kd'];
+        $no_wo=mysqli_real_escape_string($koneksi, $_GET['kd']);
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_wo, keterangan, waktu, harga 
                                         FROM tbworkorderheader 

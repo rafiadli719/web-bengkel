@@ -32,8 +32,8 @@ if (empty($_SESSION['_iduser'])) {
     include "function_stok_masuk.php";
     $LastID = FormatNoTrans(OtomatisID());
 
-    $txtcaribrg = isset($_GET['kd']) ? $_GET['kd'] : "";
-    $tgl_pilih = isset($_GET['stgl']) ? $_GET['stgl'] : date('d/m/Y');
+    $txtcaribrg = isset($_GET['kd']) ? mysqli_real_escape_string($koneksi, $_GET['kd']) : "";
+    $tgl_pilih = isset($_GET['stgl']) ? mysqli_real_escape_string($koneksi, $_GET['stgl']) : date('d/m/Y');
     $tot = "0";
 
     // Global variable untuk session Accurate
@@ -307,8 +307,8 @@ if (empty($_SESSION['_iduser'])) {
 
     // Handle form submissions
     if (isset($_POST['btncari'])) {
-        $txtcaribrg = $_POST['txtcaribrg'];
-        $tgl_pilih = $_POST['id-date-picker-1'];
+        $txtcaribrg = mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+        $tgl_pilih = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
 
         $cari_kd = mysqli_query($koneksi, "SELECT count(noitem) as tot FROM view_cari_item WHERE noitem='$txtcaribrg'");
         $tm_cari = mysqli_fetch_array($cari_kd);
@@ -338,9 +338,9 @@ if (empty($_SESSION['_iduser'])) {
     }
 
     if (isset($_POST['btnadd'])) {
-        $txtkdbarang = $_POST['txtcaribrg'];
-        $txtqty = $_POST['txtqty'];
-        $tgl_pilih = $_POST['id-date-picker-1'];
+        $txtkdbarang = mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+        $txtqty = mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+        $tgl_pilih = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
 
         $cari_kd = mysqli_query($koneksi, "SELECT hargapokok FROM view_cari_item WHERE noitem='$txtkdbarang'");
         if ($cari_kd && mysqli_num_rows($cari_kd) > 0) {
@@ -374,7 +374,7 @@ if (empty($_SESSION['_iduser'])) {
     }
 
     if (isset($_POST['btnsimpan'])) {
-        $txttotal_harga = $_POST['txttotal_harga'];
+        $txttotal_harga = mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
         if ($txttotal_harga == '0') {
             echo "<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('stok_masuk_add_rst.php');</script>";
         } else {
@@ -396,8 +396,8 @@ if (empty($_SESSION['_iduser'])) {
 
             $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']);
             $txttglpesan_accurate = ubahformatTglToAccurate($_POST['id-date-picker-1']);
-            $txttotal_harga = $_POST['txttotal_harga'];
-            $txtket = $_POST['txtket'];
+            $txttotal_harga = mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
+            $txtket = mysqli_real_escape_string($koneksi, $_POST['txtket']);
 
             $cari_kd = mysqli_query($koneksi, "SELECT sum(quantity) as tot FROM tbitem_masuk_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
             $tm_cari = mysqli_fetch_array($cari_kd);

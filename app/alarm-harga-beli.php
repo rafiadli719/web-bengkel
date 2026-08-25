@@ -16,7 +16,7 @@ if(empty($_SESSION['_iduser'])){
     // --- Handler aksi review ---
     if(isset($_POST['btnaksi'])){
         $id = (int)$_POST['id'];
-        $aksi = $_POST['aksi']; // 'harga_disesuaikan' atau 'diabaikan'
+        $aksi = mysqli_real_escape_string($koneksi, $_POST['aksi']); // 'harga_disesuaikan' atau 'diabaikan'
         if(in_array($aksi, ['harga_disesuaikan','diabaikan'], true)){
             $stmt = mysqli_prepare($koneksi, "UPDATE alarm_harga_beli SET status_review=?, direview_oleh=? WHERE id=?");
             mysqli_stmt_bind_param($stmt, "ssi", $aksi, $_nama, $id);

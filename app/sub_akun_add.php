@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
         
-		$kdkel=$_GET['kdkel'];
+		$kdkel=mysqli_real_escape_string($koneksi, $_GET['kdkel']);
         $no_induk=substr($kdkel,0,2);
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 

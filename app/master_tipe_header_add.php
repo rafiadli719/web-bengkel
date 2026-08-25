@@ -30,7 +30,7 @@ $merk_result = mysqli_query($koneksi, $merk_query);
 
 // Process form submission
 if ($_POST) {
-    $tipe_header = strtoupper(trim($_POST['tipe_header']));
+    $tipe_header = mysqli_real_escape_string($koneksi, strtoupper(trim($_POST['tipe_header'])));
     $id_brand = (int)$_POST['id_brand'];
 
     // Validasi input

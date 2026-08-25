@@ -30,7 +30,7 @@
     // --------------------
 
 	// Ambil data yang akan diedit
-	$kd = $_GET['kd'];
+	$kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
 	$sql_edit = mysqli_query($koneksi, "SELECT * FROM tblnamabarang WHERE id='$kd'");
 	$data_edit = mysqli_fetch_array($sql_edit);
 
@@ -325,7 +325,7 @@
 																		<div class="col-sm-9">
 																			<input type="text" id="nama_barang" name="nama_barang" placeholder="Contoh: Filter, Busi, Ban, dll"
 																				   class="form-control" required maxlength="50"
-																				   value="<?php echo isset($_POST['nama_barang']) ? $_POST['nama_barang'] : $data_edit['nama_barang']; ?>" />
+																				   value="<?php echo isset($_POST['nama_barang']) ? mysqli_real_escape_string($koneksi, $_POST['nama_barang']) : $data_edit['nama_barang']; ?>" />
 																			<span class="help-block">
 																				<small><strong>HANYA 1 KATA, TANPA SPASI!</strong> Contoh: Filter, Busi, Ban, Kampas, Rantai. Maksimal 50 karakter.</small>
 																			</span>
@@ -337,7 +337,7 @@
 																		<div class="col-sm-9">
 																			<input type="text" id="sinonim_1" name="sinonim_1" placeholder="Nama alternatif 1 (opsional)"
 																				   class="form-control" maxlength="50"
-																				   value="<?php echo isset($_POST['sinonim_1']) ? $_POST['sinonim_1'] : $data_edit['sinonim_1']; ?>" />
+																				   value="<?php echo isset($_POST['sinonim_1']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_1']) : $data_edit['sinonim_1']; ?>" />
 																			<span class="help-block">
 																				<small>Nama alternatif pertama. Jika diisi, hanya 1 kata tanpa spasi.</small>
 																			</span>
@@ -349,7 +349,7 @@
 																		<div class="col-sm-9">
 																			<input type="text" id="sinonim_2" name="sinonim_2" placeholder="Nama alternatif 2 (opsional)"
 																				   class="form-control" maxlength="50"
-																				   value="<?php echo isset($_POST['sinonim_2']) ? $_POST['sinonim_2'] : $data_edit['sinonim_2']; ?>" />
+																				   value="<?php echo isset($_POST['sinonim_2']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_2']) : $data_edit['sinonim_2']; ?>" />
 																			<span class="help-block">
 																				<small>Nama alternatif kedua. Jika diisi, hanya 1 kata tanpa spasi.</small>
 																			</span>
@@ -361,7 +361,7 @@
 																		<div class="col-sm-9">
 																			<input type="text" id="sinonim_3" name="sinonim_3" placeholder="Nama alternatif 3 (opsional)"
 																				   class="form-control" maxlength="50"
-																				   value="<?php echo isset($_POST['sinonim_3']) ? $_POST['sinonim_3'] : $data_edit['sinonim_3']; ?>" />
+																				   value="<?php echo isset($_POST['sinonim_3']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_3']) : $data_edit['sinonim_3']; ?>" />
 																			<span class="help-block">
 																				<small>Nama alternatif ketiga. Jika diisi, hanya 1 kata tanpa spasi.</small>
 																			</span>
@@ -373,7 +373,7 @@
 																		<div class="col-sm-9">
 																			<input type="text" id="ukuran" name="ukuran" placeholder="Ukuran/spesifikasi barang"
 																				   class="form-control" maxlength="100"
-																				   value="<?php echo isset($_POST['ukuran']) ? $_POST['ukuran'] : $data_edit['ukuran']; ?>" />
+																				   value="<?php echo isset($_POST['ukuran']) ? mysqli_real_escape_string($koneksi, $_POST['ukuran']) : $data_edit['ukuran']; ?>" />
 																			<span class="help-block">
 																				<small>Ukuran atau spesifikasi barang. Contoh: 70/90, Standard/Racing.</small>
 																			</span>
@@ -386,7 +386,7 @@
 																		</label>
 																		<div class="col-sm-9">
 																			<textarea id="keterangan" name="keterangan" placeholder="Masukkan keterangan nama barang"
-																					  class="form-control" rows="3" maxlength="255" required><?php echo isset($_POST['keterangan']) ? $_POST['keterangan'] : $data_edit['keterangan']; ?></textarea>
+																					  class="form-control" rows="3" maxlength="255" required><?php echo isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : $data_edit['keterangan']; ?></textarea>
 																			<span class="help-block">
 																				<small><strong>KETERANGAN WAJIB DIISI!</strong> Jelaskan detail nama barang. Maksimal 255 karakter.</small>
 																			</span>

@@ -19,7 +19,7 @@ if(empty($_SESSION['_iduser'])){
     $nama_cabang=$tm_cari['nama_cabang'];
 
     $txtkey  = isset($_GET['_key'])  ? mysqli_real_escape_string($koneksi, $_GET['_key'])  : '';
-    $cbocari = isset($_GET['_cari']) ? $_GET['_cari'] : '';
+    $cbocari = isset($_GET['_cari']) ? mysqli_real_escape_string($koneksi, $_GET['_cari']) : '';
 
     $allowed_cols = ['noretur','nopembelian','namasupplier'];
     $where_key = "";

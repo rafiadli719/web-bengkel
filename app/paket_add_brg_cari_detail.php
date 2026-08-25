@@ -29,12 +29,12 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $kdwo=$_GET['kdwo'];
+        $kdwo=mysqli_real_escape_string($koneksi, $_GET['kdwo']);
         
-        $txtkey= $_GET['_keyjasa'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_keyjasa']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -147,20 +147,20 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {	
-			$kdwo= $_POST['txtkdwo'];
+			$kdwo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
         
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('paket_add_brg_cari_detail.php?kdwo=$kdwo&_keyjasa=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";                        
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$kdwo= $_POST['txtkdwo'];
+			$kdwo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
         
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('paket_add_brg_cari_detail.php?kdwo=$kdwo&_keyjasa=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";                        
         }
 

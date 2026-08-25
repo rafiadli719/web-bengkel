@@ -31,7 +31,7 @@ include "_include_statistik_pelanggan.php"; // Helper functions for member disco
 $noitem = isset($_GET['noitem']) ? mysqli_real_escape_string($koneksi, $_GET['noitem']) : '';
 $no_pelanggan = isset($_GET['no_pelanggan']) ? mysqli_real_escape_string($koneksi, $_GET['no_pelanggan']) : '';
 $item_type = isset($_GET['item_type']) ? strtolower(trim($_GET['item_type'])) : 'barang';
-$tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$tanggal = isset($_GET['tanggal']) ? mysqli_real_escape_string($koneksi, $_GET['tanggal']) : date('Y-m-d');
 
 if(empty($noitem)) {
     echo json_encode([

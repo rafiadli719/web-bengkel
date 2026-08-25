@@ -36,13 +36,13 @@
         include "function_penjualan.php";
 		$LastID=FormatNoTrans(OtomatisID());	
 
-		$txtcaribrg=isset($_GET['kd']) ? $_GET['kd'] : '';
-		$tgl_pilih=isset($_GET['stgl']) ? $_GET['stgl'] : date('d/m/Y');
-		$nopelanggan=isset($_GET['ssup']) ? $_GET['ssup'] : '';
-		$cbosales=isset($_GET['ssales']) ? $_GET['ssales'] : '';
-		$nopesanan=isset($_GET['spesan']) ? $_GET['spesan'] : '';
-		$auto=isset($_GET['auto']) ? $_GET['auto'] : '';
-		$imported=isset($_GET['imported']) ? $_GET['imported'] : '';
+		$txtcaribrg=isset($_GET['kd']) ? mysqli_real_escape_string($koneksi, $_GET['kd']) : '';
+		$tgl_pilih=isset($_GET['stgl']) ? mysqli_real_escape_string($koneksi, $_GET['stgl']) : date('d/m/Y');
+		$nopelanggan=isset($_GET['ssup']) ? mysqli_real_escape_string($koneksi, $_GET['ssup']) : '';
+		$cbosales=isset($_GET['ssales']) ? mysqli_real_escape_string($koneksi, $_GET['ssales']) : '';
+		$nopesanan=isset($_GET['spesan']) ? mysqli_real_escape_string($koneksi, $_GET['spesan']) : '';
+		$auto=isset($_GET['auto']) ? mysqli_real_escape_string($koneksi, $_GET['auto']) : '';
+		$imported=isset($_GET['imported']) ? mysqli_real_escape_string($koneksi, $_GET['imported']) : '';
 
 		mysqli_query(
 			$koneksi,
@@ -164,12 +164,12 @@
             
         
 		if(isset($_POST['btncari_pesanan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopesanan= $_POST['txtnopesanan'];
-            $nopelanggan=$_POST['txtkey'];
-            $nmpelanggan=$_POST['txtnmpelanggan'];
-            $cbosales=$_POST['cbosales'];
-            $txtcaribrg=$_POST['txtcaribrg'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+            $nmpelanggan=mysqli_real_escape_string($koneksi, $_POST['txtnmpelanggan']);
+            $cbosales=mysqli_real_escape_string($koneksi, $_POST['cbosales']);
+            $txtcaribrg=mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
 
             // == Cari Data Pesanan ==
             if($nopesanan<>'') {
@@ -257,11 +257,11 @@
         }
 
 		if(isset($_POST['btncari_pelanggan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopesanan= $_POST['txtnopesanan'];
-            $nopelanggan=$_POST['txtkey'];
-            $cbosales=$_POST['cbosales'];
-            $txtcaribrg=$_POST['txtcaribrg'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+            $cbosales=mysqli_real_escape_string($koneksi, $_POST['cbosales']);
+            $txtcaribrg=mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(nopelanggan) as tot 
                                             FROM tblpelanggan 
@@ -306,12 +306,12 @@
 
 
 		if(isset($_POST['btncari'])) {				
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $nopesanan= $_POST['txtnopesanan'];
-            $nopelanggan=$_POST['txtkey'];
-            $nmpelanggan=$_POST['txtnmpelanggan'];
-            $cbosales=$_POST['cbosales'];
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+            $nmpelanggan=mysqli_real_escape_string($koneksi, $_POST['txtnmpelanggan']);
+            $cbosales=mysqli_real_escape_string($koneksi, $_POST['cbosales']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -358,7 +358,7 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= $_POST['txttotal_harga'];            
+            $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);            
             if($txttotal_harga=='0') {
                 $tgl_back = isset($_POST['id-date-picker-1']) ? $_POST['id-date-picker-1'] : $tgl_pilih;
                 $kdbrg = "";
@@ -375,23 +375,23 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $nopesanan= $_POST['txtnopesanan'];
-                $nopelanggan=$_POST['txtkey'];
-                $cbosales=$_POST['cbosales'];
+                $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+                $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+                $cbosales=mysqli_real_escape_string($koneksi, $_POST['cbosales']);
 
-                $cbocarabyr= $_POST['cbocarabyr'];                
-                $txtsyarat= $_POST['txtsyarat'];                                
-                $txtnote= $_POST['txtnote'];  
-                $txtjt= $_POST['txtjt'];                                                                
+                $cbocarabyr= mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']);                
+                $txtsyarat= mysqli_real_escape_string($koneksi, $_POST['txtsyarat']);                                
+                $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);  
+                $txtjt= mysqli_real_escape_string($koneksi, $_POST['txtjt']);                                                                
                 
-                $txttotal_harga= $_POST['txttotal_harga'];
-                $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
-                $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
-                $txtpajak_persen= $_POST['txtpajak_persen'];   
-                $txtpajak_nom= $_POST['txtpajak_nom'];   
-                $txtnet= $_POST['txtnet'];   
-                $txtdp= $_POST['txtdp'];   
-                $txtkekurangan= $_POST['txtkekurangan'];
+                $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
+                $txtpotfaktur_persen= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);  
+                $txtpotfaktur_nom= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);   
+                $txtpajak_persen= mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);   
+                $txtpajak_nom= mysqli_real_escape_string($koneksi, $_POST['txtpajak_nom']);   
+                $txtnet= mysqli_real_escape_string($koneksi, $_POST['txtnet']);   
+                $txtdp= mysqli_real_escape_string($koneksi, $_POST['txtdp']);   
+                $txtkekurangan= mysqli_real_escape_string($koneksi, $_POST['txtkekurangan']);
 
                 if($cbocarabyr=='Kredit') {
                     $lama_jt="+".$txtsyarat." days";

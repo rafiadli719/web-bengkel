@@ -45,7 +45,7 @@ $tgl_pilih = date('d/m/Y');
 $edit_mode = isset($_GET['phone']) && !empty($_GET['phone']);
 $customer_data = null;
 if ($edit_mode) {
-    $phone = $_GET['phone'];
+    $phone = mysqli_real_escape_string($koneksi, $_GET['phone']);
     $stmt = mysqli_prepare($koneksi, "SELECT * FROM tblpelanggan WHERE telephone = ?");
     mysqli_stmt_bind_param($stmt, "s", $phone);
     mysqli_stmt_execute($stmt);

@@ -47,7 +47,7 @@ if(empty($_SESSION['_iduser'])){
     $offset = ($page - 1) * $limit;
 
     // Filter status
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : '';
 
     // Count total records
     $where_clause = "1=1";

@@ -1,6 +1,6 @@
 <?php
 	//include "../config/koneksi.php";
-	$nim = $_GET['nim'];
+	$nim = mysqli_real_escape_string($koneksi, $_GET['nim']);
 	//$query = mysqli_query($koneksi, "select nama, lokasi, kode_status_emp from tbpegawai where nip='$nim'");
 
 		

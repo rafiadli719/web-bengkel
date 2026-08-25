@@ -22,7 +22,7 @@ $now = date('Y-m-d H:i:s');
 // AJAX ENDPOINTS (JSON/CSV)
 // =====================
 if (isset($_GET['action'])) {
-    $action = $_GET['action'];
+    $action = mysqli_real_escape_string($koneksi, $_GET['action']);
     if ($action === 'search_item') {
         header('Content-Type: application/json');
         $q = mysqli_real_escape_string($koneksi, trim($_GET['q'] ?? ''));

@@ -46,9 +46,9 @@ if(empty($_SESSION['_iduser'])){
         $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
         $telp = mysqli_real_escape_string($koneksi, $_POST['telp']);
         $email = mysqli_real_escape_string($koneksi, $_POST['email']);
-        $keahlian = $_POST['keahlian'];
-        $status = $_POST['status'];
-        $tanggal_masuk = $_POST['tanggal_masuk'];
+        $keahlian = mysqli_real_escape_string($koneksi, $_POST['keahlian']);
+        $status = mysqli_real_escape_string($koneksi, $_POST['status']);
+        $tanggal_masuk = mysqli_real_escape_string($koneksi, $_POST['tanggal_masuk']);
         $gaji_pokok = str_replace('.', '', $_POST['gaji_pokok']);
         $spesialisasi = mysqli_real_escape_string($koneksi, $_POST['spesialisasi']);
         $sertifikat = mysqli_real_escape_string($koneksi, $_POST['sertifikat']);
@@ -99,9 +99,9 @@ if(empty($_SESSION['_iduser'])){
         $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
         $telp = mysqli_real_escape_string($koneksi, $_POST['telp']);
         $email = mysqli_real_escape_string($koneksi, $_POST['email']);
-        $keahlian = $_POST['keahlian'];
-        $status = $_POST['status'];
-        $tanggal_masuk = $_POST['tanggal_masuk'];
+        $keahlian = mysqli_real_escape_string($koneksi, $_POST['keahlian']);
+        $status = mysqli_real_escape_string($koneksi, $_POST['status']);
+        $tanggal_masuk = mysqli_real_escape_string($koneksi, $_POST['tanggal_masuk']);
         $gaji_pokok = str_replace('.', '', $_POST['gaji_pokok']);
         $spesialisasi = mysqli_real_escape_string($koneksi, $_POST['spesialisasi']);
         $sertifikat = mysqli_real_escape_string($koneksi, $_POST['sertifikat']);

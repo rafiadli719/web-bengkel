@@ -60,16 +60,16 @@
         $tipe_cabang = $tm_cari ? $tm_cari['tipe_cabang'] : '';	
     // --------------------
         
-		$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
+		$no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : '';
         $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
         $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
         $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
         
         // Fallback if index.php passes no_service instead of snoserv
-        if (empty($no_service) && isset($_GET['no_service'])) { $no_service = $_GET['no_service']; }
+        if (empty($no_service) && isset($_GET['no_service'])) { $no_service = mysqli_real_escape_string($koneksi, $_GET['no_service']); }
         // Tentukan tab aktif agar konsisten dengan versi RST
         $active_tab = 'service-details';
-        $tab_req = isset($_GET['tab']) ? $_GET['tab'] : (isset($_POST['tab']) ? $_POST['tab'] : null);
+        $tab_req = isset($_GET['tab']) ? mysqli_real_escape_string($koneksi, $_GET['tab']) : (isset($_POST['tab']) ? mysqli_real_escape_string($koneksi, $_POST['tab']) : null);
         if ($tab_req !== null) {
             switch($tab_req) {
                 case 'items':

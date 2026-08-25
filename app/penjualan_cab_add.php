@@ -28,7 +28,7 @@ while($col_check && $col = mysqli_fetch_assoc($col_check)){
 $where_order_ke = $has_order_ke ? "AND oh.order_ke='$kd_safe'" : "";
 $where_tipe_trx = $has_tipe_trx ? "AND oh.tipe_trx='Antar Cabang'" : "";
 
-$filter = isset($_GET['status']) ? $_GET['status'] : 'pending';
+$filter = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'pending';
 $where_status = ($filter=='semua') ? "" : "AND oh.status='0'";
 
 $sql = "SELECT oh.no_order, oh.tanggal, oh.kd_cabang, oh.total_qty, oh.total_jual, oh.status, oh.note,

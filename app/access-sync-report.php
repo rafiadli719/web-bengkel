@@ -23,8 +23,8 @@ $foto_user = $userRow && !empty($userRow['foto_user']) ? $userRow['foto_user'] :
 
 $selectedCabang = isset($_GET['kd_cabang']) ? strtoupper(trim($_GET['kd_cabang'])) : '';
 $selectedDataset = isset($_GET['dataset']) ? trim($_GET['dataset']) : 'all';
-$selectedFrom = accessSyncNormalizeDate(isset($_GET['date_from']) ? $_GET['date_from'] : '');
-$selectedTo = accessSyncNormalizeDate(isset($_GET['date_to']) ? $_GET['date_to'] : '');
+$selectedFrom = accessSyncNormalizeDate(isset($_GET['date_from']) ? mysqli_real_escape_string($koneksi, $_GET['date_from']) : '');
+$selectedTo = accessSyncNormalizeDate(isset($_GET['date_to']) ? mysqli_real_escape_string($koneksi, $_GET['date_to']) : '');
 
 $allowedDatasets = ['all', 'pembelian', 'penjualan', 'service'];
 if (!in_array($selectedDataset, $allowedDatasets, true)) {

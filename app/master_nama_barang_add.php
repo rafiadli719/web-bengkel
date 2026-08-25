@@ -35,7 +35,7 @@
 		$sinonim_1 = trim(strtoupper($_POST['sinonim_1']));
 		$sinonim_2 = trim(strtoupper($_POST['sinonim_2']));
 		$sinonim_3 = trim(strtoupper($_POST['sinonim_3']));
-		$perlu_ukuran = $_POST['perlu_ukuran'];
+		$perlu_ukuran = mysqli_real_escape_string($koneksi, $_POST['perlu_ukuran']);
 		$keterangan = trim($_POST['keterangan']);
 		$satuan = trim(strtoupper($_POST['satuan']));
 
@@ -272,7 +272,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="nama_barang" name="nama_barang" placeholder="Contoh: Filter, Busi, Ban, dll"
 															   class="form-control" required maxlength="50"
-															   value="<?php echo isset($_POST['nama_barang']) ? $_POST['nama_barang'] : ''; ?>" />
+															   value="<?php echo isset($_POST['nama_barang']) ? mysqli_real_escape_string($koneksi, $_POST['nama_barang']) : ''; ?>" />
 														<span class="help-block">
 															<small><strong>HANYA 1 KATA, TANPA SPASI!</strong> Contoh: Filter, Busi, Ban, Kampas, Rantai. Maksimal 50 karakter.</small>
 														</span>
@@ -284,7 +284,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="sinonim_1" name="sinonim_1" placeholder="Nama alternatif 1 (opsional)"
 															   class="form-control" maxlength="50"
-															   value="<?php echo isset($_POST['sinonim_1']) ? $_POST['sinonim_1'] : ''; ?>" />
+															   value="<?php echo isset($_POST['sinonim_1']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_1']) : ''; ?>" />
 														<span class="help-block">
 															<small>Nama alternatif pertama. Jika diisi, hanya 1 kata tanpa spasi. Contoh: SARINGAN, FILTER.</small>
 														</span>
@@ -296,7 +296,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="sinonim_2" name="sinonim_2" placeholder="Nama alternatif 2 (opsional)"
 															   class="form-control" maxlength="50"
-															   value="<?php echo isset($_POST['sinonim_2']) ? $_POST['sinonim_2'] : ''; ?>" />
+															   value="<?php echo isset($_POST['sinonim_2']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_2']) : ''; ?>" />
 														<span class="help-block">
 															<small>Nama alternatif kedua. Jika diisi, hanya 1 kata tanpa spasi.</small>
 														</span>
@@ -308,7 +308,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="sinonim_3" name="sinonim_3" placeholder="Nama alternatif 3 (opsional)"
 															   class="form-control" maxlength="50"
-															   value="<?php echo isset($_POST['sinonim_3']) ? $_POST['sinonim_3'] : ''; ?>" />
+															   value="<?php echo isset($_POST['sinonim_3']) ? mysqli_real_escape_string($koneksi, $_POST['sinonim_3']) : ''; ?>" />
 														<span class="help-block">
 															<small>Nama alternatif ketiga. Jika diisi, hanya 1 kata tanpa spasi.</small>
 														</span>
@@ -338,7 +338,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="keterangan" name="keterangan" placeholder="Akan otomatis terisi berdasarkan pilihan Perlu Ukuran"
 															   class="form-control" maxlength="255"
-															   value="<?php echo isset($_POST['keterangan']) ? $_POST['keterangan'] : ''; ?>" />
+															   value="<?php echo isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : ''; ?>" />
 														<span class="help-block">
 															<small id="keterangan_help"><strong>OTOMATIS TERISI!</strong>
 																<br>• Jika Perlu Ukuran = YA → Format: angka tanpa spasi (contoh: 10X20X5)

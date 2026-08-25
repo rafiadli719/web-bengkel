@@ -1,7 +1,7 @@
 <?php
 	include "../config/koneksi.php";
 
-	$nobyr = $_GET['nobyr'];    
+	$nobyr = mysqli_real_escape_string($koneksi, $_GET['nobyr']);    
 	$modal=mysqli_query($koneksi,"Delete FROM tblhutang_detail 
     WHERE no_transaksi='$nobyr'");
 

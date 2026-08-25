@@ -34,12 +34,12 @@
 		$thn_skr=date('Y');
 
 		if(isset($_POST['btnasc'])) {				
-			$cbourut= $_POST['cbourut'];
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
 			echo"<script>window.location=('pmby_hutang_rst.php?_urut=$cbourut&_flt=asc');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$cbourut= $_POST['cbourut'];
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
 			echo"<script>window.location=('pmby_hutang_rst.php?_urut=$cbourut&_flt=desc');</script>";            
         }
 ?>

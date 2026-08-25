@@ -1,26 +1,26 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtkd= $_POST['txtkd'];
-	$txtnama= $_POST['txtnama'];
-	$txtalamat= $_POST['txtalamat'];    
-	$txtkota= $_POST['txtkota'];
-	$txtprop= $_POST['txtprop'];
-	$txtpos= $_POST['txtpos'];    
-	$txtnegara= $_POST['txtnegara'];    
-	$txttlp= $_POST['txttlp']; 
-	$txtfax= $_POST['txtfax'];
-	$txtbank= $_POST['txtbank'];
-	$txtnorek= $_POST['txtnorek'];
-	$txtnmrek= $_POST['txtnmrek'];    
-	$txtkontak= $_POST['txtkontak'];
-	$txtemail= $_POST['txtemail'];
-	$txtnote= $_POST['txtnote'];    
-	// $cbocabang= $_POST['cbocabang']; // Removed cabang field    
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+	$txtalamat= mysqli_real_escape_string($koneksi, $_POST['txtalamat']);    
+	$txtkota= mysqli_real_escape_string($koneksi, $_POST['txtkota']);
+	$txtprop= mysqli_real_escape_string($koneksi, $_POST['txtprop']);
+	$txtpos= mysqli_real_escape_string($koneksi, $_POST['txtpos']);    
+	$txtnegara= mysqli_real_escape_string($koneksi, $_POST['txtnegara']);    
+	$txttlp= mysqli_real_escape_string($koneksi, $_POST['txttlp']); 
+	$txtfax= mysqli_real_escape_string($koneksi, $_POST['txtfax']);
+	$txtbank= mysqli_real_escape_string($koneksi, $_POST['txtbank']);
+	$txtnorek= mysqli_real_escape_string($koneksi, $_POST['txtnorek']);
+	$txtnmrek= mysqli_real_escape_string($koneksi, $_POST['txtnmrek']);    
+	$txtkontak= mysqli_real_escape_string($koneksi, $_POST['txtkontak']);
+	$txtemail= mysqli_real_escape_string($koneksi, $_POST['txtemail']);
+	$txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);    
+	// $cbocabang= mysqli_real_escape_string($koneksi, $_POST['cbocabang']); // Removed cabang field    
 
 // Baru ----------
-	$txtlama= $_POST['txtlama'];    
-	$txtjwkredit= $_POST['txtjwkredit'];   
+	$txtlama= mysqli_real_escape_string($koneksi, $_POST['txtlama']);    
+	$txtjwkredit= mysqli_real_escape_string($koneksi, $_POST['txtjwkredit']);   
     
 	mysqli_query($koneksi,"UPDATE tblsupplier 
                         SET namasupplier='$txtnama', 
@@ -36,7 +36,7 @@
 
     $jumlah=count($_POST["hapus"]);
     for($i=0; $i<$jumlah; $i++){
-        $nip=$_POST["hapus"][$i];
+        $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
         mysqli_query($koneksi,"INSERT INTO tblsupplier_spart 
                                 (nosupplier, id_pabrik) 
                                 VALUES 

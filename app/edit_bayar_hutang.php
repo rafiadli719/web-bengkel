@@ -33,11 +33,11 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobyr=$_GET['nobyr'];
-		$nobl=$_GET['nobl'];
-		$jml=$_GET['jml'];
-		$tgl_pilih=$_GET['stgl'];
-		$no_supplier=$_GET['ssup'];                
+		$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
+		$nobl=mysqli_real_escape_string($koneksi, $_GET['nobl']);
+		$jml=mysqli_real_escape_string($koneksi, $_GET['jml']);
+		$tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+		$no_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);                
 ?>
 
 <!DOCTYPE html>

@@ -29,8 +29,8 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $sid = $_GET['sid'];
-        $stgl = $_GET['stgl'];
+        $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+        $stgl = mysqli_real_escape_string($koneksi, $_GET['stgl']);
 
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, harga, total 
@@ -50,8 +50,8 @@
         $namaitem=$tm_cari['namaitem'];
 
         if(isset($_POST['btnsimpan'])) {
-            $txtharga= $_POST['txtharga'];
-            $txtqty= $_POST['txtqty'];
+            $txtharga= mysqli_real_escape_string($koneksi, $_POST['txtharga']);
+            $txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
             $subtotal=$txtharga*$txtqty;
 
             mysqli_query($koneksi,"UPDATE 

@@ -1,8 +1,8 @@
 <?php
 	include "../config/koneksi.php";
 
-    $sid = $_GET['sid'];
-    $kdwo = $_GET['kdwo'];
+    $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+    $kdwo = mysqli_real_escape_string($koneksi, $_GET['kdwo']);
     $kdbrg="";
     $kdjasa="";
             

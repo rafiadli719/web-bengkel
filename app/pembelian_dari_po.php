@@ -32,7 +32,7 @@ if(empty($_SESSION['_iduser'])){
     $tipe_cabang=$tm_cari['tipe_cabang'];
 
     // Filter
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : 'ready';
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'ready';
     $filter_supplier = isset($_GET['supplier']) ? mysqli_real_escape_string($koneksi, $_GET['supplier']) : '';
     $filter_keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
 ?>

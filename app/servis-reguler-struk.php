@@ -6,7 +6,7 @@
     include "_include_customer_vehicle_sync.php";
     include "helper-functions.php";
     $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv'] ?? '');
-	$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
+	$mode = isset($_GET['mode']) ? mysqli_real_escape_string($koneksi, $_GET['mode']) : '';
     
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");

@@ -83,13 +83,13 @@
         $long_cabang = $tm_cari ? $tm_cari['long_cabang'] : '';
     // --------------------
 
-		$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
+		$no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : '';
     $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
     $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
 
     // Fallback if index.php passes no_service instead of snoserv
-    if (empty($no_service) && isset($_GET['no_service'])) { $no_service = $_GET['no_service']; }
+    if (empty($no_service) && isset($_GET['no_service'])) { $no_service = mysqli_real_escape_string($koneksi, $_GET['no_service']); }
     // Guard: redirect to RST page if service already finished/paid
     if (!empty($no_service)) {
         $__ns = mysqli_real_escape_string($koneksi, $no_service);
@@ -382,8 +382,8 @@
 
     // Handler untuk tambah keluhan
     if(isset($_POST['btnaddkeluhan'])) {
-        $no_service = $_POST['txtnosrv'];
-        $txtkeluhan = $_POST['txtkeluhan'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan']);
         $kode_keluhan = $_POST['kode_keluhan'] ?? '';
 
         $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
@@ -990,8 +990,8 @@
 
     // Add Work Order
     if(isset($_POST['btnaddworkorder'])) {
-        $no_service = $_POST['txtnosrv'];
-        $kode_wo = $_POST['txtcariwo'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $kode_wo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
 
         $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
         $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
@@ -1323,8 +1323,8 @@
 
     // Update Status Work Order
     if(isset($_POST['btnupdatestatuswo'])) {
-        $wo_id = $_POST['wo_id'];
-        $status_wo = $_POST['status_wo'];
+        $wo_id = mysqli_real_escape_string($koneksi, $_POST['wo_id']);
+        $status_wo = mysqli_real_escape_string($koneksi, $_POST['status_wo']);
         $keterangan = $_POST['keterangan_wo'] ?? '';
 
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
@@ -1348,8 +1348,8 @@
 
     // Delete Work Order
     if(isset($_POST['btndeletewo'])) {
-        $wo_id = $_POST['wo_id'];
-        $no_service = $_POST['txtnosrv'];
+        $wo_id = mysqli_real_escape_string($koneksi, $_POST['wo_id']);
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
 
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -1369,7 +1369,7 @@
 
     // Search Work Order - Always redirect to search page for better UX
     if(isset($_POST['btncariwo'])) {
-        $no_service = $_POST['txtnosrv'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
         $txtcariwo = $_POST['txtcariwo'] ?? '';
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
@@ -2681,7 +2681,7 @@ if (!isset($koneksi) || !$koneksi) {
     if(file_exists("../config/koneksi.php")) include "../config/koneksi.php";
 }
 if (!isset($no_service)) {
-    $no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : (isset($_GET['no_service']) ? $_GET['no_service'] : '');
+    $no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : (isset($_GET['no_service']) ? mysqli_real_escape_string($koneksi, $_GET['no_service']) : '');
 }
 if (!isset($active_tab)) {
     $active_tab = 'service-details';

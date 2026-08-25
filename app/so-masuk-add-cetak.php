@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $notrx=$_GET['nopesanan'];
+        $notrx=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);
         $cari_kd=mysqli_query($koneksi,"SELECT *, 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tbitem_masuk_header 

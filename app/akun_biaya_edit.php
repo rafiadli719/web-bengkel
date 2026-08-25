@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
         
-		$kdakun=$_GET['kd'];
+		$kdakun=mysqli_real_escape_string($koneksi, $_GET['kd']);
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
 										nama_akun, pos, no_akun_induk 

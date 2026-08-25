@@ -1,11 +1,11 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtkode= $_POST['txtkode'];
-	$txtnamawo= $_POST['txtnamawo'];
-    $txtwaktu= $_POST['txtwaktu'];
-    $txtnote= $_POST['txtnote'];
-    $txtharga= $_POST['txtharga'];
+	$txtkode= mysqli_real_escape_string($koneksi, $_POST['txtkode']);
+	$txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+    $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
+    $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+    $txtharga= mysqli_real_escape_string($koneksi, $_POST['txtharga']);
     
 	mysqli_query($koneksi,"UPDATE 
                             tbworkorderheader 

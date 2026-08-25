@@ -1,7 +1,7 @@
 <?php
 	include "../config/koneksi.php";
 
-	$txtid = $_GET['kd'];
+	$txtid = mysqli_real_escape_string($koneksi, $_GET['kd']);
 	$modal=mysqli_query($koneksi,"Delete FROM tbl_adm WHERE id='$txtid'");
 
 	echo"<script>window.alert('Data Kecamatan Berhasil dihapus!');

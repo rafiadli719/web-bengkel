@@ -4,7 +4,7 @@
 
 
 	//$no_bukti = "HT22000000001";
-	$no_bukti = $_GET['snotrx'];
+	$no_bukti = mysqli_real_escape_string($koneksi, $_GET['snotrx']);
     
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");

@@ -12,25 +12,25 @@
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']);
 	    
-	$txtkd= $_POST['txtkd'];
-	$txtnama= $_POST['txtnama'];
-	$txtalamat= $_POST['txtalamat'];    
-	$txtkota= $_POST['txtkota'];
-	$txtprop= $_POST['txtprop'];
-	$txtnegara= $_POST['txtnegara'];    
-	$txtpos= $_POST['txtpos'];    
-	$txttlp= $_POST['txttlp']; 
-	$txtfax= $_POST['txtfax'];
-	$txtkontak= $_POST['txtkontak'];
-    $cbolevel= $_POST['cbolevel'];
-	$txtnote= $_POST['txtnote']; 
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+	$txtalamat= mysqli_real_escape_string($koneksi, $_POST['txtalamat']);    
+	$txtkota= mysqli_real_escape_string($koneksi, $_POST['txtkota']);
+	$txtprop= mysqli_real_escape_string($koneksi, $_POST['txtprop']);
+	$txtnegara= mysqli_real_escape_string($koneksi, $_POST['txtnegara']);    
+	$txtpos= mysqli_real_escape_string($koneksi, $_POST['txtpos']);    
+	$txttlp= mysqli_real_escape_string($koneksi, $_POST['txttlp']); 
+	$txtfax= mysqli_real_escape_string($koneksi, $_POST['txtfax']);
+	$txtkontak= mysqli_real_escape_string($koneksi, $_POST['txtkontak']);
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
+	$txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']); 
 
-	$txtpanggilan= $_POST['txtpanggilan'];    
-	$txtlat= $_POST['txtlat'];    
-	$txtlong= $_POST['txtlong'];    
-	$txtpatokan= $_POST['txtpatokan'];       
+	$txtpanggilan= mysqli_real_escape_string($koneksi, $_POST['txtpanggilan']);    
+	$txtlat= mysqli_real_escape_string($koneksi, $_POST['txtlat']);    
+	$txtlong= mysqli_real_escape_string($koneksi, $_POST['txtlong']);    
+	$txtpatokan= mysqli_real_escape_string($koneksi, $_POST['txtpatokan']);       
     
-	$cbopot= $_POST['cbopot'];           
+	$cbopot= mysqli_real_escape_string($koneksi, $_POST['cbopot']);           
     
 	mysqli_query($koneksi,"UPDATE tblpelanggan 
                         SET namapelanggan='$txtnama', 

@@ -33,11 +33,11 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $tgl_pilih=$_GET['stgl'];
-        $txtkey= $_GET['_key'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -142,20 +142,20 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {	
-			$tgl_pilih= $_POST['txttgl'];
+			$tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['txttgl']);
             
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('stok_masuk_add_item_cari.php?stgl=$tgl_pilih&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$tgl_pilih= $_POST['txttgl'];
+			$tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['txttgl']);
             
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('stok_masuk_add_item_cari.php?stgl=$tgl_pilih&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";
         }
 

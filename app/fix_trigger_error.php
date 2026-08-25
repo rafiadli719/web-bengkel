@@ -100,7 +100,7 @@ if($result && mysqli_num_rows($result) > 0) {
 
 // Handle drop trigger
 if(isset($_POST['drop_trigger'])) {
-    $trigger_name = $_POST['drop_trigger'];
+    $trigger_name = mysqli_real_escape_string($koneksi, $_POST['drop_trigger']);
     echo "<hr>";
     echo "<h3>4. DROP TRIGGER:</h3>";
     

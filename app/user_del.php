@@ -1,7 +1,7 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$id=$_GET['kd'];        
+	$id=mysqli_real_escape_string($koneksi, $_GET['kd']);        
 	mysqli_query($koneksi,"UPDATE tbuser 
                         SET status_row='1'  
                         WHERE id='$id'");

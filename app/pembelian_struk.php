@@ -1,8 +1,8 @@
 <?php
     include "../config/koneksi.php";
     include "_template/_nota_pdf_parts.php";
-	$nobl = $_GET['snobl'];
-	$mode = isset($_GET['mode']) ? $_GET['mode'] : '';
+	$nobl = mysqli_real_escape_string($koneksi, $_GET['snobl']);
+	$mode = isset($_GET['mode']) ? mysqli_real_escape_string($koneksi, $_GET['mode']) : '';
     
 // Data Perusahaan ===========
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");

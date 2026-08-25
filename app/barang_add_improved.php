@@ -24,20 +24,20 @@ if (empty($_SESSION['_iduser'])) {
 
     // Process form submission
     if (isset($_POST['btnsimpan'])) {
-        $tipe_item = $_POST['tipe_item'];
-        $nama_item = $_POST['txtnama'];
-        $jenis = $_POST['cbojenis'];
-        $satuan = $_POST['cbosatuan'];
-        $harga_beli = $_POST['txthargabeli'];
-        $harga_jual = $_POST['txthargajual'];
+        $tipe_item = mysqli_real_escape_string($koneksi, $_POST['tipe_item']);
+        $nama_item = mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+        $jenis = mysqli_real_escape_string($koneksi, $_POST['cbojenis']);
+        $satuan = mysqli_real_escape_string($koneksi, $_POST['cbosatuan']);
+        $harga_beli = mysqli_real_escape_string($koneksi, $_POST['txthargabeli']);
+        $harga_jual = mysqli_real_escape_string($koneksi, $_POST['txthargajual']);
         $supplier = $_POST['cbosupplier'] ?? '';
         $rak_barang = $_POST['cborak'] ?? '';
         
         if ($tipe_item == 'ORI') {
             // ORI (Genuine Part) Processing
-            $merek = $_POST['cbomerek'];
-            $kode_part = $_POST['txtkodepart'];
-            $nama_resmi = $_POST['txtnamaresmi'];
+            $merek = mysqli_real_escape_string($koneksi, $_POST['cbomerek']);
+            $kode_part = mysqli_real_escape_string($koneksi, $_POST['txtkodepart']);
+            $nama_resmi = mysqli_real_escape_string($koneksi, $_POST['txtnamaresmi']);
             
             // Validate if part code already exists
             $check_query = mysqli_query($koneksi, "SELECT COUNT(*) as count FROM tblitem WHERE noitem='$kode_part'");
@@ -65,9 +65,9 @@ if (empty($_SESSION['_iduser'])) {
             }
         } else {
             // NON-ORI (Aftermarket/Imitasi) Processing
-            $penggunaan_motor = $_POST['txtpenggunaan'];
-            $merek_tipe = $_POST['txtmerektipe'];
-            $kategori_rak = $_POST['cbokategorirak'];
+            $penggunaan_motor = mysqli_real_escape_string($koneksi, $_POST['txtpenggunaan']);
+            $merek_tipe = mysqli_real_escape_string($koneksi, $_POST['txtmerektipe']);
+            $kategori_rak = mysqli_real_escape_string($koneksi, $_POST['cbokategorirak']);
             
             // Generate auto code IM-XXYYYY
             $prefix = "IM";

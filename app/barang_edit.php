@@ -103,7 +103,7 @@ if (empty($_SESSION['_iduser'])) {
     }
 
     // Get item data
-    $kdbrg = $_GET['kd'];
+    $kdbrg = mysqli_real_escape_string($koneksi, $_GET['kd']);
     $cari_kd = mysqli_query($koneksi, "SELECT * FROM tblitem WHERE noitem='$kdbrg'");
     $tm_cari = mysqli_fetch_array($cari_kd);
     $kodebarcode = $tm_cari['kodebarcode'];

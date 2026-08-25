@@ -32,7 +32,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------				        
         
-		$no_service=$_GET['snoserv'];
+		$no_service=mysqli_real_escape_string($koneksi, $_GET['snoserv']);
         $txtcaribrg=$_GET['kd'] ?? '';
         $txtcarisrv=$_GET['kdjasa'] ?? '';
         $txtcariwo=$_GET['kdwo'] ?? '';
@@ -133,8 +133,8 @@
 
         // Update Status Servis
         if(isset($_POST['btnupdatestatus'])) {
-            $no_service = $_POST['txtnosrv'];
-            $status_servis_baru = $_POST['cbostatus'];
+            $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+            $status_servis_baru = mysqli_real_escape_string($koneksi, $_POST['cbostatus']);
             
             mysqli_query($koneksi,"UPDATE tblservice
                                    SET status_servis='$status_servis_baru'
@@ -146,11 +146,11 @@
 
         // Add Work Order
         if(isset($_POST['btnaddworkorder'])) {
-            $no_service = $_POST['txtnosrv'];
-            $kode_wo = $_POST['txtcariwo'];
+            $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+            $kode_wo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
             
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);
 
             if($kode_wo != '') {
                 // Check if work order exists
@@ -196,8 +196,8 @@
 
         // Update Status Work Order
         if(isset($_POST['btnupdatestatuswo'])) {
-            $wo_id = $_POST['wo_id'];
-            $status_wo = $_POST['status_wo'];
+            $wo_id = mysqli_real_escape_string($koneksi, $_POST['wo_id']);
+            $status_wo = mysqli_real_escape_string($koneksi, $_POST['status_wo']);
             $keterangan = $_POST['keterangan_wo'] ?? '';
             
             mysqli_query($koneksi,"UPDATE tbservis_workorder 
@@ -210,15 +210,15 @@
         }
                 
 		if(isset($_POST['btnaddkeluhan'])) {				
-			$no_service= $_POST['txtnosrv'];	
-			$txtkeluhan= $_POST['txtkeluhan'];	
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);	
+			$txtkeluhan= mysqli_real_escape_string($koneksi, $_POST['txtkeluhan']);	
 
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];     
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);     
 
-			$txtcarisrv= $_POST['txtcarisrv'];	
-            $txtcaribrg= $_POST['txtcaribrg'];
-            $txtcariwo= $_POST['txtcariwo'];
+			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);	
+            $txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
 
             mysqli_query($koneksi,"INSERT INTO tbservis_keluhan_status 
                             (no_service, keluhan, status_pengerjaan) 
@@ -231,8 +231,8 @@
 
         // Update Status Keluhan
         if(isset($_POST['btnupdatestatuskeluhan'])) {
-            $keluhan_id = $_POST['keluhan_id'];
-            $status_keluhan = $_POST['status_keluhan'];
+            $keluhan_id = mysqli_real_escape_string($koneksi, $_POST['keluhan_id']);
+            $status_keluhan = mysqli_real_escape_string($koneksi, $_POST['status_keluhan']);
             $keterangan = $_POST['keterangan_keluhan'] ?? '';
             
             mysqli_query($koneksi,"UPDATE tbservis_keluhan_status 
@@ -246,13 +246,13 @@
 
         // Search Work Order
         if(isset($_POST['btncariwo'])) {
-            $no_service= $_POST['txtnosrv'];
-            $txtcariwo= $_POST['txtcariwo'];
-            $txtcarisrv= $_POST['txtcarisrv'];
-            $txtcaribrg= $_POST['txtcaribrg'];
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
+            $txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);
+            $txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
 
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);
                                             
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             count(*) as tot  
@@ -278,16 +278,16 @@
         }
 
 		if(isset($_POST['btnaddpengerjaan'])) {				
-			$no_service= $_POST['txtnosrv'];	
-			$txtitempengerjaan= $_POST['txtitempengerjaan'];	
-			$cbomekanik= $_POST['cbomekanik'];	            
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);	
+			$txtitempengerjaan= mysqli_real_escape_string($koneksi, $_POST['txtitempengerjaan']);	
+			$cbomekanik= mysqli_real_escape_string($koneksi, $_POST['cbomekanik']);	            
 
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];            
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);            
 
-			$txtcarisrv= $_POST['txtcarisrv'];	
-            $txtcaribrg= $_POST['txtcaribrg'];
-            $txtcariwo= $_POST['txtcariwo'];
+			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);	
+            $txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
             
             mysqli_query($koneksi,"INSERT INTO tbservis_pengerjaan 
                             (no_service, item_pengerjaan, kd_mekanik) 
@@ -299,14 +299,14 @@
         }        
 
 		if(isset($_POST['btncarisrv'])) {	
-            $no_service= $_POST['txtnosrv'];			
-			$txtcarisrv= $_POST['txtcarisrv'];	
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);	
 
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];            
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);            
 
-            $txtcaribrg= $_POST['txtcaribrg'];
-            $txtcariwo= $_POST['txtcariwo'];       
+            $txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);       
                                             
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             count(*) as tot  
@@ -357,15 +357,15 @@
         }        
 
         if(isset($_POST['btnaddsrv'])) {	
-            $no_service= $_POST['txtnosrv'];			
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];           
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);           
  
-			$txtkdsrv= $_POST['txtcarisrv'];
-			$txtpotsrv= $_POST['txtpotsrv'];
+			$txtkdsrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);
+			$txtpotsrv= mysqli_real_escape_string($koneksi, $_POST['txtpotsrv']);
  
-            $txtcaribrg= $_POST['txtcaribrg'];
-            $txtcariwo= $_POST['txtcariwo'];      
+            $txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);      
                        
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             nama_wo, waktu, harga 
@@ -419,14 +419,14 @@
         }                  
 
 		if(isset($_POST['btncari'])) {				
-            $no_service= $_POST['txtnosrv'];			
-			$txtcaribrg= $_POST['txtcaribrg'];	
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
 
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];            
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);            
                         
-			$txtcarisrv= $_POST['txtcarisrv'];
-            $txtcariwo= $_POST['txtcariwo'];
+			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -476,16 +476,16 @@
         }            
 
         if(isset($_POST['btnadd'])) {	
-            $no_service= $_POST['txtnosrv'];			
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];           
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);           
             
-			$txtkdbarang= $_POST['txtcaribrg'];
-			$txtqty= $_POST['txtqty'];
-			$txtpot= $_POST['txtpot'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+			$txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
 
-			$txtcarisrv= $_POST['txtcarisrv'];
-            $txtcariwo= $_POST['txtcariwo'];
+			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);
+            $txtcariwo= mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargajual FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -535,14 +535,14 @@
         }           
 
         if(isset($_POST['btnsimpan'])) {	
-            $no_service= $_POST['txtnosrv'];			
-            $km_skr=$_POST['txtkm_skr'];
-            $km_berikut=$_POST['txtkm_next'];    
+            $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+            $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
+            $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);    
 
-            $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
-            $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
-            $txtpajak_persen= $_POST['txtpajak_persen'];   
-            $bayar= $_POST['txtbayar'];   
+            $txtpotfaktur_persen= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);  
+            $txtpotfaktur_nom= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);   
+            $txtpajak_persen= mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);   
+            $bayar= mysqli_real_escape_string($koneksi, $_POST['txtbayar']);   
                 
             // == Total dari Item & Waktu Service ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot, 

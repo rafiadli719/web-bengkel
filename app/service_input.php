@@ -34,7 +34,7 @@
 		$thn_skr=date('Y');
 		$tanggal_skr=date('d/m/Y');	
         
-		//$nobl=$_GET['nojl'];
+		//$nobl=mysqli_real_escape_string($koneksi, $_GET['nojl']);
         $kode_pelanggan="A 5568 CU";
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         namapelanggan 

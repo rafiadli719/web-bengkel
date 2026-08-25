@@ -255,7 +255,7 @@ function updateDatabase($koneksi, &$logs, &$success_count, &$skip_count, &$error
 
 // Check if form submitted
 if (isset($_POST['action'])) {
-    $action = $_POST['action'];
+    $action = mysqli_real_escape_string($koneksi, $_POST['action']);
 
     if ($action == 'update') {
         // Run update

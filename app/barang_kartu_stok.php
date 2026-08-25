@@ -33,7 +33,7 @@
 		$cbobulan=date('m');
 		$thn_skr=date('Y');
 
-		$kdbrg=$_GET['kd'];
+		$kdbrg=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         * FROM tblitem 
 										WHERE noitem='$kdbrg'");

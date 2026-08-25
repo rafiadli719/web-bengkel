@@ -31,7 +31,7 @@
         
 		$tgl_skr=date('d/m/Y');
         
-		$nokm=$_GET['kd'];
+		$nokm=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
                                         kode_km, kd_cabang, user, jenis, 

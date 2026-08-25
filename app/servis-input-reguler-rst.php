@@ -44,7 +44,7 @@
     $tipe_cabang = $tm_cari ? $tm_cari['tipe_cabang'] : '';
     // --------------------
 
-    $no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : '';
+    $no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : '';
     $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
     $txtcarisrv=mysqli_real_escape_string($koneksi, $_GET['kdjasa'] ?? '');
     $txtcariwo=mysqli_real_escape_string($koneksi, $_GET['kdwo'] ?? '');
@@ -451,8 +451,8 @@
 
     // ========== HANDLER: ADD KELUHAN TO SPK ==========
     if(isset($_POST['btnaddkeluhan'])) {
-        $no_service = $_POST['txtnosrv'];
-        $txtkeluhan = $_POST['txtkeluhan'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan']);
 
         $km_skr = $_POST['txtkm_skr'] ?? 0;
         $km_berikut = $_POST['txtkm_next'] ?? 0;
@@ -492,8 +492,8 @@
 
     // ========== HANDLER: SEARCH WORKORDER ==========
     if(isset($_POST['btncariwo'])) {
-        $no_service = $_POST['txtnosrv'];
-        $txtcariwo = $_POST['txtcariwo'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $txtcariwo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
         $txtcarisrv = $_POST['txtcarisrv'] ?? '';
         $txtcaribrg = $_POST['txtcaribrg'] ?? '';
 
@@ -513,8 +513,8 @@
 
     // ========== HANDLER: ADD WORKORDER TO SPK ==========
     if(isset($_POST['btnaddworkorder'])) {
-        $no_service = $_POST['txtnosrv'];
-        $kode_wo = $_POST['txtcariwo'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $kode_wo = mysqli_real_escape_string($koneksi, $_POST['txtcariwo']);
 
         $km_skr = $_POST['txtkm_skr'] ?? 0;
         $km_berikut = $_POST['txtkm_next'] ?? 0;

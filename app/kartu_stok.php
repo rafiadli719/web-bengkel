@@ -47,8 +47,8 @@
         if(isset($_POST['btnrst'])) {
             $sudah_cari     = true;
             $no_item_filter = mysqli_real_escape_string($koneksi, trim($_POST['no_item'] ?? ''));
-            $tgl_dari       = $_POST['id-date-picker-1'];
-            $tgl_sampai     = $_POST['id-date-picker-2'];
+            $tgl_dari       = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_sampai     = mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);
             $tgl_dari_eng   = ubahTgl_KS($tgl_dari);
             $tgl_sampai_eng = ubahTgl_KS($tgl_sampai);
 

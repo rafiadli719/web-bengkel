@@ -7,8 +7,8 @@ if (empty($_SESSION['_iduser'])) {
 
 include "../config/koneksi.php";
 
-$no_service = isset($_GET['snoserv']) ? $_GET['snoserv'] : (isset($_GET['no_service']) ? $_GET['no_service'] : '');
-$tab = isset($_GET['tab']) ? $_GET['tab'] : '';
+$no_service = isset($_GET['snoserv']) ? mysqli_real_escape_string($koneksi, $_GET['snoserv']) : (isset($_GET['no_service']) ? mysqli_real_escape_string($koneksi, $_GET['no_service']) : '');
+$tab = isset($_GET['tab']) ? mysqli_real_escape_string($koneksi, $_GET['tab']) : '';
 
 if (empty($no_service)) {
     header('Location: index.php');

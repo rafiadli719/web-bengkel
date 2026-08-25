@@ -292,7 +292,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'get_recommended_parts_for_temua
             throw new Exception("Database connection not available");
         }
 
-        $temuan_raw = isset($_GET['temuan']) ? $_GET['temuan'] : '';
+        $temuan_raw = isset($_GET['temuan']) ? mysqli_real_escape_string($koneksi, $_GET['temuan']) : '';
         $temuan_text = strtolower(trim(mysqli_real_escape_string($koneksi, $temuan_raw)));
         $response = [
             'strategy' => null,
@@ -899,7 +899,7 @@ if(isset($_POST['btnaddtemuan'])) {
         // Part masuk ke tbservis_penawaran_part dengan link ke temuan
         // =====================================================
         if(isset($_POST['selected_parts_payload']) && !empty($_POST['selected_parts_payload'])) {
-            $payload_json = $_POST['selected_parts_payload'];
+            $payload_json = mysqli_real_escape_string($koneksi, $_POST['selected_parts_payload']);
             $items = json_decode($payload_json, true);
             if(is_array($items)) {
                 foreach($items as $it) {
@@ -976,7 +976,7 @@ if(isset($_POST['btnaddtemuan'])) {
             mysqli_query($koneksi, "ALTER TABLE `tbservis_penawaran_jasa` ADD INDEX `idx_service_status` (`no_service`, `status_penawaran`)");
         }
         if(isset($_POST['selected_jasa_payload']) && !empty($_POST['selected_jasa_payload'])) {
-            $jasa_json = $_POST['selected_jasa_payload'];
+            $jasa_json = mysqli_real_escape_string($koneksi, $_POST['selected_jasa_payload']);
             $jasa_items = json_decode($jasa_json, true);
             if(is_array($jasa_items)) {
                 foreach($jasa_items as $jasa) {

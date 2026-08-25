@@ -8,7 +8,7 @@ session_start();
 require_once '../config/koneksi.php';
 
 // Get no_service
-$no_service = isset($_GET['no_service']) ? $_GET['no_service'] : '';
+$no_service = isset($_GET['no_service']) ? mysqli_real_escape_string($koneksi, $_GET['no_service']) : '';
 
 if(empty($no_service)) {
     die('Nomor service tidak ditemukan');

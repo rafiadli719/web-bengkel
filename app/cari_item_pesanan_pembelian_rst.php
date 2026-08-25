@@ -33,11 +33,11 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $txtkey= $_GET['_key'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
-        $txtnoorder= $_GET['_nopesan'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
+        $txtnoorder= mysqli_real_escape_string($koneksi, $_GET['_nopesan']);
         
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -148,18 +148,18 @@
         }
     
 		if(isset($_POST['btnasc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
-			$txtnoorder= $_POST['txtnoorder'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
+			$txtnoorder= mysqli_real_escape_string($koneksi, $_POST['txtnoorder']);
 			echo"<script>window.location=('cari_item_pesanan_pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&_nopesan=$txtnoorder');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
-            $txtnoorder= $_POST['txtnoorder'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
+            $txtnoorder= mysqli_real_escape_string($koneksi, $_POST['txtnoorder']);
 			echo"<script>window.location=('cari_item_pesanan_pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&_nopesan=$txtnoorder');</script>";            
         }
 ?>

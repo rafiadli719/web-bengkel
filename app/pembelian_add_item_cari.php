@@ -33,14 +33,14 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-        $tgl_pilih=$_GET['stgl'];
-        $cbo_supplier=$_GET['ssup'];
-        $spesan=$_GET['spesan'];
+        $tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+        $cbo_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);
+        $spesan=mysqli_real_escape_string($koneksi, $_GET['spesan']);
         
-        $txtkey= $_GET['_key'];
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key']);
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -145,24 +145,24 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {	
-			$tgl_pilih= $_POST['txttgl'];
-			$cbo_supplier= $_POST['txtsup'];
-			$txtpesan= $_POST['txtpesan'];                        
+			$tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['txttgl']);
+			$cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['txtsup']);
+			$txtpesan= mysqli_real_escape_string($koneksi, $_POST['txtpesan']);                        
             
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('pembelian_add_item_cari.php?stgl=$tgl_pilih&ssup=$cbo_supplier&spesan=$txtpesan&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";
         }
 
 		if(isset($_POST['btndesc'])) {				
-			$tgl_pilih= $_POST['txttgl'];
-			$cbo_supplier= $_POST['txtsup'];
-			$txtpesan= $_POST['txtpesan'];            
+			$tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['txttgl']);
+			$cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['txtsup']);
+			$txtpesan= mysqli_real_escape_string($koneksi, $_POST['txtpesan']);            
             
-			$txtkey= $_POST['txtkey'];	
-			$cbocari= $_POST['cbocari'];	
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('pembelian_add_item_cari.php?stgl=$tgl_pilih&ssup=$cbo_supplier&spesan=$txtpesan&_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";
         }
 

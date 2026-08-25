@@ -32,11 +32,11 @@ if(empty($_SESSION['_iduser'])){
     $tipe_cabang=$tm_cari['tipe_cabang'];
 
     // Filter
-    $filter_type = isset($_GET['type']) ? $_GET['type'] : 'all'; // kirim, terima, all
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : 'all';
+    $filter_type = isset($_GET['type']) ? mysqli_real_escape_string($koneksi, $_GET['type']) : 'all'; // kirim, terima, all
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'all';
     $filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : '';
-    $filter_tgl_dari = isset($_GET['tgl_dari']) ? $_GET['tgl_dari'] : date('Y-m-d', strtotime('-3 months'));
-    $filter_tgl_sampai = isset($_GET['tgl_sampai']) ? $_GET['tgl_sampai'] : date('Y-m-d');
+    $filter_tgl_dari = isset($_GET['tgl_dari']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_dari']) : date('Y-m-d', strtotime('-3 months'));
+    $filter_tgl_sampai = isset($_GET['tgl_sampai']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_sampai']) : date('Y-m-d');
 
     // Pagination
     $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 15;

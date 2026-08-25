@@ -38,7 +38,7 @@ if(empty($_SESSION['_iduser'])){
 
     // Search
     $search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : 'open';
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'open';
 ?>
 
 <!DOCTYPE html>

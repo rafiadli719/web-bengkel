@@ -11,7 +11,7 @@ include "../config/koneksi.php";
 // Handle individual item update via AJAX
 if(isset($_POST['ajax_update_item'])) {
     $noitem = mysqli_real_escape_string($koneksi, $_POST['noitem']);
-    $exclude_raw = $_POST['exclude_value']; // Expecting '0', '1', or 'NULL'
+    $exclude_raw = mysqli_real_escape_string($koneksi, $_POST['exclude_value']); // Expecting '0', '1', or 'NULL'
     
     // Handle NULL value for reset
     if($exclude_raw === 'NULL' || $exclude_raw === 'null') {

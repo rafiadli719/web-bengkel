@@ -29,11 +29,11 @@
 		$tipe_cabang=$tm_cari['tipe_cabang'];	
 		// --------------------        
 
-		$no_service = $_GET['snoserv'];
+		$no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
 		$txtkey= mysqli_real_escape_string($koneksi, $_GET['_key'] ?? '');
-		$txtcari= $_GET['_cari'];
-		$txturut= $_GET['_urut'];
-		$txtflt= $_GET['_flt'];
+		$txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+		$txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+		$txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 		$only_applicable = intval($_GET['only_applicable'] ?? 0);
 		$tab_param = $_GET['_tab'] ?? 'items'; // Get tab parameter, default to items
 		$from_page = $_GET['_from'] ?? 'reguler'; // Track which page user came from: reguler, rst, jemput, jemput-rst
@@ -280,22 +280,22 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {	
-			$no_service= $_POST['txtnosrv'];
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
                         
-			$txtkey= $_POST['txtkey'];
-			$cbocari= $_POST['cbocari'];
-			$cbourut= $_POST['cbourut'];
-            $only_applicable_js = isset($_GET['only_applicable']) ? $_GET['only_applicable'] : '0';
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
+            $only_applicable_js = isset($_GET['only_applicable']) ? mysqli_real_escape_string($koneksi, $_GET['only_applicable']) : '0';
             echo"<script>window.location=('servis-add-item-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=asc&only_applicable=" . urlencode($only_applicable_js) . "');</script>";
         }
 
 		if(isset($_POST['btndesc'])) {
-			$no_service= $_POST['txtnosrv'];
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
 
-			$txtkey= $_POST['txtkey'];
-			$cbocari= $_POST['cbocari'];
-			$cbourut= $_POST['cbourut'];
-            $only_applicable_js = isset($_GET['only_applicable']) ? $_GET['only_applicable'] : '0';
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
+            $only_applicable_js = isset($_GET['only_applicable']) ? mysqli_real_escape_string($koneksi, $_GET['only_applicable']) : '0';
             echo"<script>window.location=('servis-add-item-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=desc&only_applicable=" . urlencode($only_applicable_js) . "');</script>";
         }
 	}

@@ -21,7 +21,7 @@ require_once 'class_whatsapp_automation.php';
 header('Content-Type: application/json');
 
 // Get no_service
-$no_service = isset($_GET['no_service']) ? $_GET['no_service'] : '';
+$no_service = isset($_GET['no_service']) ? mysqli_real_escape_string($koneksi, $_GET['no_service']) : '';
 
 if(empty($no_service)) {
     echo json_encode(['success' => false, 'message' => 'Nomor service tidak ditemukan']);

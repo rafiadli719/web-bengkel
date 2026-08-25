@@ -11,9 +11,9 @@
 	}
     
 	$txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 	    
-	$txtkd= $_POST['txtkd'];
-	$txtsaldo= $_POST['txtsaldo'];
-	//$txtnote= $_POST['txtnote'];    
+	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+	$txtsaldo= mysqli_real_escape_string($koneksi, $_POST['txtsaldo']);
+	//$txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);    
     
 //	mysqli_query($koneksi,"INSERT INTO tbsaldo_hutang 
 //                            (nosupplier, tanggal, saldo_awal, keterangan) 

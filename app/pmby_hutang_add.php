@@ -41,8 +41,8 @@
                 carabayar='Kredit'";
                 
         if(isset($_POST['btncari_pesanan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $no_supplier= $_POST['cbosupplier'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $no_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
             $sql_cari="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
             FROM tblpembelian_header 
                     WHERE 
@@ -52,12 +52,12 @@
                     jumlah_bayar>0";            
         }
         if(isset($_POST['btnsimpan'])) {
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $no_supplier= $_POST['cbosupplier'];
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $no_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
 
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
-                $nip=$_POST["hapus"][$i];
+                $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
                 $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpembelian_header WHERE notransaksi='$nip'");
                 $tag = 0;
                 if ($qtag) {

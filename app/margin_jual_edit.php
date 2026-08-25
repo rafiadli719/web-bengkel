@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$id=$_GET['kd'];
+		$id=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         jenis, margin, marginplus, bulat 
 										FROM tbhargajual 

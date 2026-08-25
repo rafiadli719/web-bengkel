@@ -16,11 +16,11 @@ $_nama = $_SESSION['_nama'];
 $foto_user = $_SESSION['_foto'];
 
 // Filters
-$filter_tipe = isset($_GET['tipe']) ? $_GET['tipe'] : '';
-$filter_status = isset($_GET['status']) ? $_GET['status'] : '';
-$filter_merek = isset($_GET['merek']) ? $_GET['merek'] : '';
-$filter_kategori = isset($_GET['kategori']) ? $_GET['kategori'] : '';
-$search = isset($_GET['search']) ? $_GET['search'] : '';
+$filter_tipe = isset($_GET['tipe']) ? mysqli_real_escape_string($koneksi, $_GET['tipe']) : '';
+$filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : '';
+$filter_merek = isset($_GET['merek']) ? mysqli_real_escape_string($koneksi, $_GET['merek']) : '';
+$filter_kategori = isset($_GET['kategori']) ? mysqli_real_escape_string($koneksi, $_GET['kategori']) : '';
+$search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
 
 // Pagination
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;

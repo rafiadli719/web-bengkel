@@ -26,7 +26,7 @@
 		$LastID=FormatNoTrans(OtomatisID());	
         
         $txtcaribrg= trim($_GET['kd']);
-        $cbosupplier= $_GET['kdsup'];
+        $cbosupplier= mysqli_real_escape_string($koneksi, $_GET['kdsup']);
 
         $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
                                         FROM view_cari_item 
@@ -37,8 +37,8 @@
         //$txtharga_jual=$tm_cari['harga_jual'];              
         
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtkdbarang'];
-			$txtqty= $_POST['txtqty'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtkdbarang']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);

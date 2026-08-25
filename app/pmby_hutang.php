@@ -73,10 +73,10 @@
         }
         
         if(isset($_REQUEST['btnasc']) || isset($_REQUEST['btndesc'])) {
-            $txtkey = isset($_REQUEST['txtkey']) ? $_REQUEST['txtkey'] : "";
-            $cbocari = isset($_REQUEST['cbocari']) ? $_REQUEST['cbocari'] : "";
-            $cbourut = isset($_REQUEST['cbourut']) ? $_REQUEST['cbourut'] : "";
-            $txttgl_periode = isset($_REQUEST['txttgl_periode']) ? $_REQUEST['txttgl_periode'] : "";
+            $txtkey = isset($_REQUEST['txtkey']) ? mysqli_real_escape_string($koneksi, $_REQUEST['txtkey']) : "";
+            $cbocari = isset($_REQUEST['cbocari']) ? mysqli_real_escape_string($koneksi, $_REQUEST['cbocari']) : "";
+            $cbourut = isset($_REQUEST['cbourut']) ? mysqli_real_escape_string($koneksi, $_REQUEST['cbourut']) : "";
+            $txttgl_periode = isset($_REQUEST['txttgl_periode']) ? mysqli_real_escape_string($koneksi, $_REQUEST['txttgl_periode']) : "";
             
             // Build Where Clause
             if(!empty($txtkey)) {

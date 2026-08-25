@@ -33,7 +33,7 @@ if(empty($_SESSION['_iduser'])){
     $tipe_cabang=$tm_cari['tipe_cabang'];
 
     // Filter
-    $filter_status = isset($_GET['status']) ? $_GET['status'] : 'pending';
+    $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'pending';
     $filter_cabang = isset($_GET['cabang']) ? mysqli_real_escape_string($koneksi, $_GET['cabang']) : '';
 ?>
 

@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nosupplier=$_GET['kd'];
+		$nosupplier=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT * FROM tblsupplier 
                                         WHERE nosupplier='$nosupplier'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	

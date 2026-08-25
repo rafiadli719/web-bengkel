@@ -189,7 +189,7 @@ if(empty($_SESSION['_iduser'])){
     }
 
     // Get kode keluhan from URL
-    $kode_keluhan = isset($_GET['kode']) ? $_GET['kode'] : '';
+    $kode_keluhan = isset($_GET['kode']) ? mysqli_real_escape_string($koneksi, $_GET['kode']) : '';
     if(empty($kode_keluhan)) {
         echo "<script>alert('Kode keluhan tidak ditemukan!'); window.location='master-keluhan.php';</script>";
         exit;
@@ -205,18 +205,18 @@ if(empty($_SESSION['_iduser'])){
 
     // Handle form submissions
     if(isset($_POST['btnsimpan'])) {
-        $tipe_proses = $_POST['tipe_proses'];
-        $nama_proses = $_POST['nama_proses'];
-        $deskripsi = $_POST['deskripsi'];
-        $estimasi_waktu = $_POST['estimasi_waktu'];
-        $harga_estimasi = $_POST['harga_estimasi'];
+        $tipe_proses = mysqli_real_escape_string($koneksi, $_POST['tipe_proses']);
+        $nama_proses = mysqli_real_escape_string($koneksi, $_POST['nama_proses']);
+        $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+        $estimasi_waktu = mysqli_real_escape_string($koneksi, $_POST['estimasi_waktu']);
+        $harga_estimasi = mysqli_real_escape_string($koneksi, $_POST['harga_estimasi']);
         $wajib = isset($_POST['wajib']) ? '1' : '0';
-        $urutan = $_POST['urutan'];
-        $kode_item = $_POST['kode_item'];
+        $urutan = mysqli_real_escape_string($koneksi, $_POST['urutan']);
+        $kode_item = mysqli_real_escape_string($koneksi, $_POST['kode_item']);
         
         if(isset($_POST['id']) && !empty($_POST['id'])) {
             // Update
-            $id = $_POST['id'];
+            $id = mysqli_real_escape_string($koneksi, $_POST['id']);
             mysqli_query($koneksi,"UPDATE tbkeluhan_proses SET 
                                   tipe_proses='$tipe_proses',
                                   nama_proses='$nama_proses',
@@ -239,7 +239,7 @@ if(empty($_SESSION['_iduser'])){
     }
 
     if(isset($_GET['del'])) {
-        $id = $_GET['del'];
+        $id = mysqli_real_escape_string($koneksi, $_GET['del']);
         mysqli_query($koneksi,"UPDATE tbkeluhan_proses SET status_aktif='0' WHERE id='$id'");
         echo "<script>alert('Data proses berhasil dihapus!'); window.location='keluhan-proses.php?kode=$kode_keluhan';</script>";
     }

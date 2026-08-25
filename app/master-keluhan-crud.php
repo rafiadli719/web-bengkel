@@ -37,7 +37,7 @@ if(empty($_SESSION['_iduser'])){
 
     // Handle CRUD Operations
     if(isset($_POST['action'])) {
-        $action = $_POST['action'];
+        $action = mysqli_real_escape_string($koneksi, $_POST['action']);
         
         if($action == 'add') {
             $kode_keluhan = mysqli_real_escape_string($koneksi, $_POST['kode_keluhan']);
@@ -83,7 +83,7 @@ if(empty($_SESSION['_iduser'])){
         }
         
         if($action == 'delete') {
-            $id = $_POST['id'];
+            $id = mysqli_real_escape_string($koneksi, $_POST['id']);
             
             // Soft delete
             $query = "UPDATE tbmaster_keluhan SET status_aktif='0' WHERE id='$id'";
@@ -96,7 +96,7 @@ if(empty($_SESSION['_iduser'])){
         }
         
         if($action == 'activate') {
-            $id = $_POST['id'];
+            $id = mysqli_real_escape_string($koneksi, $_POST['id']);
             
             $query = "UPDATE tbmaster_keluhan SET status_aktif='1' WHERE id='$id'";
             
@@ -159,9 +159,9 @@ if(empty($_SESSION['_iduser'])){
     $offset = ($page - 1) * $limit;
     
     // Search filter
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-    $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : '';
-    $status_filter = isset($_GET['status']) ? $_GET['status'] : '';
+    $search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
+    $kategori_filter = isset($_GET['kategori']) ? mysqli_real_escape_string($koneksi, $_GET['kategori']) : '';
+    $status_filter = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : '';
     
     $where_conditions = [];
     if($search) {

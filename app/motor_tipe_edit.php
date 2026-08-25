@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$kode_tipe=$_GET['kd'];
+		$kode_tipe=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbtipe_motor 
                                         WHERE kode_tipe='$kode_tipe'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	

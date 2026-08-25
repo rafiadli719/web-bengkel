@@ -41,15 +41,15 @@
         $tgl_pilih=date('d/m/Y');
         $cbo_supplier="";
         $nopesanan="";
-        $no_do= isset($_GET['do']) ? $_GET['do'] : '';
+        $no_do= isset($_GET['do']) ? mysqli_real_escape_string($koneksi, $_GET['do']) : '';
         $cbocarabyr_form = 'Tunai';
         $txtsyarat_form = '';
         $tot="0";
         $total_qty_beli="0";
         $total_qty_order="0";
 
-        if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
-        if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+        if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); }
+        if(isset($_POST['txtsyarat'])) { $txtsyarat_form = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); }
         if($cbocarabyr_form!=='Tunai' && $cbocarabyr_form!=='Kredit') { $cbocarabyr_form = 'Tunai'; }
 
         // Handle auto-load from PO via GET parameter
@@ -129,12 +129,12 @@
         }
 
 		if(isset($_POST['btncari_pesanan'])) {
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
-            $nopesanan= $_POST['txtnopesanan'];
-            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
-            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); }
 
             // == Cari Data Pesanan ==
             if($nopesanan<>'') {
@@ -216,12 +216,12 @@
         }
         
 		if(isset($_POST['btncari'])) {				
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
-            $nopesanan= $_POST['txtnopesanan'];
-            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
-            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); }
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -265,14 +265,14 @@
         }            
 
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtcaribrg'];
-			$txtqty= $_POST['txtqty'];
-            $txtpot= $_POST['txtpot'];
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
-            $nopesanan= $_POST['txtnopesanan'];
-            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = $_POST['cbocarabyr']; }
-            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = $_POST['txtsyarat']; }
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+            $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+            if(isset($_POST['cbocarabyr'])) { $cbocarabyr_form = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); }
+            if(isset($_POST['txtsyarat'])) { $txtsyarat_form = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); }
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -329,7 +329,7 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= $_POST['txttotal_harga'];            
+            $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);            
             if($txttotal_harga=='0') {
                 echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pembelian_add.php');</script>";                            
             } else {
@@ -374,23 +374,23 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $nopesanan= $_POST['txtnopesanan'];
-                $cbosupplier= $_POST['cbosupplier'];
-                $txttotal_harga= $_POST['txttotal_harga'];
-                $cbocarabyr= isset($_POST['cbocarabyr']) ? $_POST['cbocarabyr'] : 'Tunai';
+                $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+                $cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+                $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
+                $cbocarabyr= isset($_POST['cbocarabyr']) ? mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']) : 'Tunai';
                 if($cbocarabyr!=='Tunai' && $cbocarabyr!=='Kredit') { $cbocarabyr = 'Tunai'; }
-                $txtsyarat= isset($_POST['txtsyarat']) ? $_POST['txtsyarat'] : '';                                
-                $txtnote= $_POST['txtnote'];
-                $txtno_faktur= $_POST['txtno_faktur'];
+                $txtsyarat= isset($_POST['txtsyarat']) ? mysqli_real_escape_string($koneksi, $_POST['txtsyarat']) : '';                                
+                $txtnote= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+                $txtno_faktur= mysqli_real_escape_string($koneksi, $_POST['txtno_faktur']);
                 $txttgl_faktur= isset($_POST['id-date-picker-faktur']) ? ubahformatTgl($_POST['id-date-picker-faktur']) : '';                                                
-                $txtpotfaktur_persen= $_POST['txtpotfaktur_persen'];  
-                $txtpotfaktur_nom= $_POST['txtpotfaktur_nom'];   
-                $txtpajak_persen= $_POST['txtpajak_persen'];   
-                $txtpajak_nom= $_POST['txtpajak_nom'];   
-                $txtnet= $_POST['txtnet'];   
-                $txtdp= $_POST['txtdp'];   
-                $txtkekurangan= $_POST['txtkekurangan'];
-                $no_do = isset($_POST['no_do']) ? $_POST['no_do'] : '';
+                $txtpotfaktur_persen= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);  
+                $txtpotfaktur_nom= mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);   
+                $txtpajak_persen= mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);   
+                $txtpajak_nom= mysqli_real_escape_string($koneksi, $_POST['txtpajak_nom']);   
+                $txtnet= mysqli_real_escape_string($koneksi, $_POST['txtnet']);   
+                $txtdp= mysqli_real_escape_string($koneksi, $_POST['txtdp']);   
+                $txtkekurangan= mysqli_real_escape_string($koneksi, $_POST['txtkekurangan']);
+                $no_do = isset($_POST['no_do']) ? mysqli_real_escape_string($koneksi, $_POST['no_do']) : '';
 
                 $syarat_hari = (int)toNumber($txtsyarat);
                 if($cbocarabyr=='Kredit' && $syarat_hari<=0) {

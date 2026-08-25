@@ -18,7 +18,7 @@ include "_include_kategori_member.php";
 
 // Get parameter
 $no_pelanggan = isset($_GET['no_pelanggan']) ? mysqli_real_escape_string($koneksi, $_GET['no_pelanggan']) : '';
-$mode = isset($_GET['mode']) ? $_GET['mode'] : 'compact'; // compact atau full
+$mode = isset($_GET['mode']) ? mysqli_real_escape_string($koneksi, $_GET['mode']) : 'compact'; // compact atau full
 
 // Validasi
 if (empty($no_pelanggan)) {

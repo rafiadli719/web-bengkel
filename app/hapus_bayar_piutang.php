@@ -1,10 +1,10 @@
 <?php
 	include "../config/koneksi.php";
 
-	$nobyr = $_GET['nobyr'];
-	$nobl = $_GET['nobl'];
-	$stgl = $_GET['stgl'];
-	$ssup = $_GET['ssup'];
+	$nobyr = mysqli_real_escape_string($koneksi, $_GET['nobyr']);
+	$nobl = mysqli_real_escape_string($koneksi, $_GET['nobl']);
+	$stgl = mysqli_real_escape_string($koneksi, $_GET['stgl']);
+	$ssup = mysqli_real_escape_string($koneksi, $_GET['ssup']);
     
 	$modal=mysqli_query($koneksi,"Delete FROM tblpiutang_detail 
     WHERE no_transaksi='$nobyr' and no_penjualan='$nobl'");

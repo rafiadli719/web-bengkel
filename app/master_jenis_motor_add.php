@@ -234,7 +234,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="jenis" name="jenis" class="form-control"
 																placeholder="Otomatis dibuat dari keterangan" maxlength="50"
-																value="<?php echo isset($_POST['jenis']) ? $_POST['jenis'] : ''; ?>" required />
+																value="<?php echo isset($_POST['jenis']) ? mysqli_real_escape_string($koneksi, $_POST['jenis']) : ''; ?>" required />
 														<span class="help-block">
 															<strong>Otomatis dibuat dari keterangan</strong> - dapat diedit (1 kata, tanpa spasi)
 														</span>

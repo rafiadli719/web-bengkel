@@ -111,7 +111,7 @@ if (isset($_GET['restore'])) {
 // Filter parameters
 $filter_kategori = mysqli_real_escape_string($koneksi, trim($_GET['kategori'] ?? ''));
 $filter_urgensi = mysqli_real_escape_string($koneksi, trim($_GET['urgensi'] ?? ''));
-$filter_status = isset($_GET['status']) ? $_GET['status'] : 'active';
+$filter_status = isset($_GET['status']) ? mysqli_real_escape_string($koneksi, $_GET['status']) : 'active';
 $q = mysqli_real_escape_string($koneksi, trim($_GET['q'] ?? ''));
 
 $where = 'WHERE 1=1';

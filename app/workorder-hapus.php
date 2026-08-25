@@ -6,8 +6,8 @@ if(empty($_SESSION['_iduser'])){
     $kd_cabang = $_SESSION['_cabang'];
     include "../config/koneksi.php";
 
-    $woid = $_GET['woid'];
-    $snoserv = $_GET['snoserv'];
+    $woid = mysqli_real_escape_string($koneksi, $_GET['woid']);
+    $snoserv = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
 
     // Get work order info before deleting
     $get_wo = mysqli_query($koneksi,"SELECT kode_wo FROM tbservis_workorder WHERE id='$woid'");

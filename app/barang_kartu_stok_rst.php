@@ -29,10 +29,10 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------        
     
-        $cbobulan= $_POST['cbobulan'];        
-        $cbotahun= $_POST['cbotahun'];                
-		$kdbrg=$_POST['txtkd'];
-        $cbocabang= $_POST['cbocabang'];
+        $cbobulan= mysqli_real_escape_string($koneksi, $_POST['cbobulan']);        
+        $cbotahun= mysqli_real_escape_string($koneksi, $_POST['cbotahun']);                
+		$kdbrg=mysqli_real_escape_string($koneksi, $_POST['txtkd']);
+        $cbocabang= mysqli_real_escape_string($koneksi, $_POST['cbocabang']);
                 
         if($cbocabang=='') {
             $ketcabang="Semua Cabang";

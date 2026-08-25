@@ -22,7 +22,7 @@ if(empty($_SESSION['_iduser'])){
     exit;
 }
 
-$action = isset($_POST['action']) ? $_POST['action'] : '';
+$action = isset($_POST['action']) ? mysqli_real_escape_string($koneksi, $_POST['action']) : '';
 
 try {
     if($action == 'getList') {

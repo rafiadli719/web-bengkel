@@ -176,7 +176,7 @@ if(isset($_POST['btnsimpan']) || isset($_POST['btnupdatemekanik'])) {
             // Determine redirect page
             $redirect_page = 'service-add.php';
             if(isset($_POST['redirect_to'])) {
-                $redirect_page = $_POST['redirect_to'];
+                $redirect_page = mysqli_real_escape_string($koneksi, $_POST['redirect_to']);
             } elseif(strpos($_SERVER['HTTP_REFERER'], 'service-bayar') !== false) {
                 $redirect_page = 'service-bayar.php';
             } elseif(strpos($_SERVER['HTTP_REFERER'], 'service-garansi') !== false) {

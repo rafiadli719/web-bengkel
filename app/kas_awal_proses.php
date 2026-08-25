@@ -11,10 +11,10 @@
 	}
     
 	$txttgl = ubahformatTgl($_POST['id-date-picker-1']); 
-	$txtcabang= $_POST['txtcabang'];
-    $txtuser= $_POST['txtuser']; 
-	$jam= $_POST['timepicker1']; 
-    $total= $_POST['total'];
+	$txtcabang= mysqli_real_escape_string($koneksi, $_POST['txtcabang']);
+    $txtuser= mysqli_real_escape_string($koneksi, $_POST['txtuser']); 
+	$jam= mysqli_real_escape_string($koneksi, $_POST['timepicker1']); 
+    $total= mysqli_real_escape_string($koneksi, $_POST['total']);
 
     include "function_kasir.php";
     $LastID=FormatNoTrans(OtomatisID());	

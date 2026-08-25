@@ -42,7 +42,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$kdcabang=$_GET['kd'];
+		$kdcabang=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_cabang, 
                                         tipe_cabang 

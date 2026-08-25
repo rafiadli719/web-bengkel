@@ -30,7 +30,7 @@
     // --------------------
 
 		// Ambil data yang akan dihapus untuk preview
-		$kd = $_GET['kd'];
+		$kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$action = $_GET['action'] ?? 'delete';
 
 		$sql_preview = mysqli_query($koneksi, "SELECT * FROM tblnamabarang WHERE id='$kd'");

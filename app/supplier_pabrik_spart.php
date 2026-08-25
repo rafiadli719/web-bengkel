@@ -34,7 +34,7 @@
 		$thn_skr=date('Y');
         
         $id_pabrik="";
-		$nosupplier=$_GET['kd'];
+		$nosupplier=mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$cari_kd=mysqli_query($koneksi,"SELECT * FROM tblsupplier 
                                         WHERE nosupplier='$nosupplier'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
@@ -42,7 +42,7 @@
         $sql_view="SELECT * from tblsupplier_spart WHERE nosupplier='$nosupplier'";
         
         if(isset($_POST['btnsimpan'])) {
-            $cbopabrik= $_POST['cbopabrik'];            
+            $cbopabrik= mysqli_real_escape_string($koneksi, $_POST['cbopabrik']);            
             mysqli_query($koneksi,"INSERT INTO tblsupplier_spart    
                             (nosupplier, id_pabrik) 
                             VALUES 

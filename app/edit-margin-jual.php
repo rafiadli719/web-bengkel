@@ -29,8 +29,8 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $sid = $_GET['sid'];
-        $nopesanan = $_GET['nopesanan'];
+        $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
+        $nopesanan = mysqli_real_escape_string($koneksi, $_GET['nopesanan']);
         
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, 
@@ -54,7 +54,7 @@
         $hargapokok=$tm_cari['hargapokok'];
         
         if(isset($_POST['btnsimpan'])) {
-            $txtmargin= $_POST['txtmargin'];
+            $txtmargin= mysqli_real_escape_string($koneksi, $_POST['txtmargin']);
             $txtmarginplus=$txtmargin+100;
             
             $txthargamargin=$hargapokok*($txtmarginplus/100);

@@ -38,7 +38,7 @@
         $thn_skr=date('Y');
         $thn=substr($thn_skr,2,2);
     
-		$nopesanan=$_GET['nopesanan'];        
+		$nopesanan=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);        
 		$cari_kd=mysqli_query($koneksi,"SELECT *,  
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tblorderjual_header 
@@ -113,16 +113,16 @@
                     return $satukan;
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
-            $cbocarabyr = $_POST['cbocarabyr']; 
-            $txtsyarat = $_POST['txtsyarat']; 
-            $txtnote = $_POST['txtnote']; 
+            $cbocarabyr = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); 
+            $txtsyarat = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); 
+            $txtnote = mysqli_real_escape_string($koneksi, $_POST['txtnote']); 
 
-            $txtsubtotal = $_POST['txtsubtotal'];
-            $txtpotfaktur_persen = $_POST['txtpotfaktur_persen'];
-            $txtpotfaktur_nom = $_POST['txtpotfaktur_nom'];
-            $txtpajak_persen = $_POST['txtpajak_persen'];            
-            $txtnet = $_POST['txtnet'];
-            $txtdp = $_POST['txtdp'];
+            $txtsubtotal = mysqli_real_escape_string($koneksi, $_POST['txtsubtotal']);
+            $txtpotfaktur_persen = mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_persen']);
+            $txtpotfaktur_nom = mysqli_real_escape_string($koneksi, $_POST['txtpotfaktur_nom']);
+            $txtpajak_persen = mysqli_real_escape_string($koneksi, $_POST['txtpajak_persen']);            
+            $txtnet = mysqli_real_escape_string($koneksi, $_POST['txtnet']);
+            $txtdp = mysqli_real_escape_string($koneksi, $_POST['txtdp']);
             $sisa = $txtnet-$txtdp;
             $total_pajak=($txtpajak_persen/100)*$txtsubtotal;
 

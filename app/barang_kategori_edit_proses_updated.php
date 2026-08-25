@@ -8,11 +8,11 @@ if (empty($_SESSION['_iduser'])) {
 include "../config/koneksi.php";
 
 // Ambil data dari form
-$id = $_POST['txtid'];
+$id = mysqli_real_escape_string($koneksi, $_POST['txtid']);
 $kategori = strtoupper(trim($_POST['txtkategori']));
 $nama = strtoupper(trim($_POST['txtnama']));
 $keterangan = strtoupper(trim($_POST['txtketerangan']));
-$margin_sesuai_jenis = $_POST['margin_sesuai_jenis'];
+$margin_sesuai_jenis = mysqli_real_escape_string($koneksi, $_POST['margin_sesuai_jenis']);
 $margin_kategori = $_POST['txtmargin'] ?? null;
 
 // Validasi input

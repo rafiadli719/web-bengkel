@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nobyr=$_GET['nobyr'];
+		$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_supplier, user 
                                         FROM tblhutang_header 

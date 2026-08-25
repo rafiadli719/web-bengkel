@@ -29,11 +29,11 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $no_service = $_GET['snoserv'];
+        $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv']);
         $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key'] ?? '');
-        $txtcari= $_GET['_cari'];
-        $txturut= $_GET['_urut'];
-        $txtflt= $_GET['_flt'];
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
         $tab_param = $_GET['_tab'] ?? 'jasa'; // Get tab parameter, default to jasa
         $kd="";
 
@@ -124,20 +124,20 @@
         $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
     
 		if(isset($_POST['btnasc'])) {
-			$no_service= $_POST['txtnosrv'];
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
 
-			$txtkey= $_POST['txtkey'];
-			$cbocari= $_POST['cbocari'];
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('servis-add-jemput-jasa-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=asc');</script>";
         }
 
 		if(isset($_POST['btndesc'])) {
-			$no_service= $_POST['txtnosrv'];
+			$no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
 
-			$txtkey= $_POST['txtkey'];
-			$cbocari= $_POST['cbocari'];
-			$cbourut= $_POST['cbourut'];
+			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);
+			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);
+			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
             echo"<script>window.location=('servis-add-jemput-jasa-cari.php?snoserv=" . urlencode($no_service) . "&_key=" . urlencode($txtkey) . "&_cari=" . urlencode($cbocari) . "&_urut=" . urlencode($cbourut) . "&_flt=desc');</script>";
         }
 

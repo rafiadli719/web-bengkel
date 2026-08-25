@@ -42,8 +42,8 @@
         $cbo_supplier="";
         $msg = '';
         // Ambil PR dari GET terlebih dahulu, fallback ke POST agar persist saat submit form
-        $no_pr = isset($_GET['pr']) ? $_GET['pr'] : (isset($_POST['no_pr']) ? $_POST['no_pr'] : "");
-        $force = isset($_GET['force']) ? $_GET['force'] : '';
+        $no_pr = isset($_GET['pr']) ? mysqli_real_escape_string($koneksi, $_GET['pr']) : (isset($_POST['no_pr']) ? mysqli_real_escape_string($koneksi, $_POST['no_pr']) : "");
+        $force = isset($_GET['force']) ? mysqli_real_escape_string($koneksi, $_GET['force']) : '';
         $tot="0";
 
         // Prefill item dari PR jika parameter ?pr=... ada.
@@ -91,9 +91,9 @@
         }
 
 		if(isset($_POST['btncari'])) {				
-			$txtcaribrg= $_POST['txtcaribrg'];	
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);	
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -128,10 +128,10 @@
         }            
 
         if(isset($_POST['btnadd'])) {	
-			$txtkdbarang= $_POST['txtcaribrg'];
-			$txtqty= $_POST['txtqty'];
-            $tgl_pilih= $_POST['id-date-picker-1'];
-            $cbo_supplier= $_POST['cbosupplier'];
+			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
             
             $cari_kd=mysqli_query($koneksi,"SELECT hargapokok FROM tblitem WHERE noitem='$txtkdbarang'");			
             $tm_cari=mysqli_fetch_array($cari_kd);
@@ -191,7 +191,7 @@
         }     
 
         if(isset($_POST['btnsimpan'])) {
-            $txttotal_harga= isset($_POST['txttotal_harga']) ? $_POST['txttotal_harga'] : '0';           
+            $txttotal_harga= isset($_POST['txttotal_harga']) ? mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']) : '0';           
             $cbosupplier= isset($_POST['cbosupplier']) ? trim($_POST['cbosupplier']) : '';
             if($cbosupplier===''){
                 $msg = 'Supplier wajib dipilih.';
@@ -209,11 +209,11 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
-                $txtnopesanan= $_POST['txtnopesanan'];
-                $no_pr = isset($_POST['no_pr']) ? $_POST['no_pr'] : '';
-                $cbosupplier= $_POST['cbosupplier'];
+                $txtnopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
+                $no_pr = isset($_POST['no_pr']) ? mysqli_real_escape_string($koneksi, $_POST['no_pr']) : '';
+                $cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
                 $cbo_supplier = $cbosupplier;
-                $txttotal_harga= $_POST['txttotal_harga'];
+                $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
 
                 if($no_pr!=''){
                     $no_pr_esc = mysqli_real_escape_string($koneksi, $no_pr);

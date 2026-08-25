@@ -1,12 +1,12 @@
 <?php
 	include "../config/koneksi.php";
 	
-	$nobyr= $_POST['txtnobyr'];
-	$nobl= $_POST['txtnobl'];
-	$txtbyr= $_POST['txtbyr'];
+	$nobyr= mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
+	$nobl= mysqli_real_escape_string($koneksi, $_POST['txtnobl']);
+	$txtbyr= mysqli_real_escape_string($koneksi, $_POST['txtbyr']);
 
-	$txttgl= $_POST['txttgl'];
-	$txtsup= $_POST['txtsup'];    
+	$txttgl= mysqli_real_escape_string($koneksi, $_POST['txttgl']);
+	$txtsup= mysqli_real_escape_string($koneksi, $_POST['txtsup']);    
     
 	mysqli_query($koneksi,"UPDATE tblhutang_detail 
 							SET jumlah_bayar='$txtbyr' 

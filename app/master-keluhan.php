@@ -47,7 +47,7 @@ if(empty($_SESSION['_iduser'])){
     // Handle Approval (untuk user pusat)
     if(isset($_POST['btnapprove'])) {
         $id = mysqli_real_escape_string($koneksi, $_POST['id']);
-        $action = $_POST['action']; // 'approve' atau 'reject'
+        $action = mysqli_real_escape_string($koneksi, $_POST['action']); // 'approve' atau 'reject'
         $rejection_reason = isset($_POST['rejection_reason']) ? mysqli_real_escape_string($koneksi, $_POST['rejection_reason']) : '';
         
         if($action == 'approve') {
@@ -73,7 +73,7 @@ if(empty($_SESSION['_iduser'])){
     }
 
     if(isset($_GET['del'])) {
-        $id = $_GET['del'];
+        $id = mysqli_real_escape_string($koneksi, $_GET['del']);
         mysqli_query($koneksi,"UPDATE tbmaster_keluhan SET status_aktif='0' WHERE id='$id'");
         echo "<script>alert('Data berhasil dihapus!'); window.location='master-keluhan.php';</script>";
     }

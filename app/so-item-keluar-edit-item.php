@@ -29,7 +29,7 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $sid = $_GET['sid'];
+        $sid = mysqli_real_escape_string($koneksi, $_GET['sid']);
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, harga, total, 
                                         stok_sistem, penyesuaian 
@@ -51,8 +51,8 @@
         $namaitem=$tm_cari['namaitem'];
 
         if(isset($_POST['btnsimpan'])) {            
-            $txtso= $_POST['txtso'];
-            $txtpenyesuaian= $_POST['txtpenyesuaian'];
+            $txtso= mysqli_real_escape_string($koneksi, $_POST['txtso']);
+            $txtpenyesuaian= mysqli_real_escape_string($koneksi, $_POST['txtpenyesuaian']);
 
             mysqli_query($koneksi,"UPDATE 
                                     tbitem_keluar_detail 

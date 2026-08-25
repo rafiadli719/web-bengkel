@@ -241,7 +241,7 @@
 													<div class="col-sm-9">
 														<input type="text" id="kode" name="kode" class="form-control"
 																placeholder="Otomatis dibuat dari keterangan" maxlength="3"
-																value="<?php echo isset($_POST['kode']) ? $_POST['kode'] : ''; ?>" required />
+																value="<?php echo isset($_POST['kode']) ? mysqli_real_escape_string($koneksi, $_POST['kode']) : ''; ?>" required />
 														<span class="help-block">
 															<strong>Otomatis dibuat dari keterangan</strong> - dapat diedit jika diperlukan (3 digit huruf)
 														</span>
@@ -256,7 +256,7 @@
 														<div class="input-group">
 															<input type="text" id="persentase" name="persentase" class="form-control"
 																	placeholder="0"
-																	value="<?php echo isset($_POST['persentase']) ? $_POST['persentase'] : ''; ?>" required />
+																	value="<?php echo isset($_POST['persentase']) ? mysqli_real_escape_string($koneksi, $_POST['persentase']) : ''; ?>" required />
 															<span class="input-group-addon">%</span>
 														</div>
 														<span class="help-block">

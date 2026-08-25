@@ -1,9 +1,9 @@
 <?php
 	include "../config/koneksi.php";
 	    
-	$txtid= $_POST['txtid'];
-	$txtnama= $_POST['txtnama'];
-    $cbolevel= $_POST['cbolevel'];
+	$txtid= mysqli_real_escape_string($koneksi, $_POST['txtid']);
+	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
     $txtalamat= mysqli_real_escape_string($koneksi, $_POST['txtalamat'] ?? '');
     $txtgooglemaps= mysqli_real_escape_string($koneksi, $_POST['txtgooglemaps'] ?? '');
     $txtlat= mysqli_real_escape_string($koneksi, $_POST['txtlat'] ?? '');

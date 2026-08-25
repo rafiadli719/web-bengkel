@@ -62,7 +62,7 @@
     // --------------------
 
     // Fallback if index.php passes no_service instead of snoserv
-    if (empty($no_service) && isset($_GET['no_service'])) { $no_service = $_GET['no_service']; }
+    if (empty($no_service) && isset($_GET['no_service'])) { $no_service = mysqli_real_escape_string($koneksi, $_GET['no_service']); }
 
     // Guard: redirect to RST page if service already finished/paid
     if (!empty($no_service)) {
@@ -584,8 +584,8 @@
 
     // ========== HANDLER: ADD KELUHAN TO SPK (GARANSI) ==========
     if(isset($_POST['btnaddkeluhan'])) {
-        $no_service = $_POST['txtnosrv'];
-        $txtkeluhan = $_POST['txtkeluhan'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
+        $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan']);
 
         $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
         $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);

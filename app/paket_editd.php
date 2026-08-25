@@ -29,9 +29,9 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-        $no_wo=$_GET['kdwo'];
-        $txtcarijasa=$_GET['kdjasa'];
-        $txtcaribrg=$_GET['kd'];
+        $no_wo=mysqli_real_escape_string($koneksi, $_GET['kdwo']);
+        $txtcarijasa=mysqli_real_escape_string($koneksi, $_GET['kdjasa']);
+        $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd']);
         
     // WO Header --------------
         $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -72,8 +72,8 @@
         }
 
 		if(isset($_POST['btncarijasa'])) {				
-            $no_wo= $_POST['txtkdwo'];
-			$txtcarijasa= $_POST['txtcarijasa'];	            
+            $no_wo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
+			$txtcarijasa= mysqli_real_escape_string($koneksi, $_POST['txtcarijasa']);	            
             $txtcaribrg="";
         
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
@@ -101,9 +101,9 @@
         }     
 
 		if(isset($_POST['btncari'])) {				
-            $no_wo= $_POST['txtkdwo'];            
+            $no_wo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);            
 			$txtcarijasa=""; 	            
-            $txtcaribrg=$_POST['txtcaribrg'];
+            $txtcaribrg=mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
         
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -130,10 +130,10 @@
         }   
         
         if(isset($_POST['btnaddjasa'])) {	
-            $no_wo= $_POST['txtkdwo'];
-			$txtcarijasa= $_POST['txtcarijasa'];
+            $no_wo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
+			$txtcarijasa= mysqli_real_escape_string($koneksi, $_POST['txtcarijasa']);
             $txtcaribrg="";	            
-			$txtqtyjasa= $_POST['txtqtyjasa'];
+			$txtqtyjasa= mysqli_real_escape_string($koneksi, $_POST['txtqtyjasa']);
 
             if($txtcarijasa<>'') {    
                 $data = mysqli_query($koneksi,"SELECT * FROM tbworkorderdetail 
@@ -182,10 +182,10 @@
         }   
 
         if(isset($_POST['btnadd'])) {	
-            $no_wo= $_POST['txtkdwo'];
-			$txtcaribrg= $_POST['txtcaribrg'];
+            $no_wo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
 			$txtcarijasa= "";
-			$txtqty= $_POST['txtqty'];
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
 
             if($txtcaribrg<>'') {    
                 $data = mysqli_query($koneksi,"SELECT * FROM tbworkorderdetail 
@@ -252,7 +252,7 @@
         }   
         
         if(isset($_POST['btnsimpan'])) {
-            $no_wo= $_POST['txtkdwo'];
+            $no_wo= mysqli_real_escape_string($koneksi, $_POST['txtkdwo']);
 
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             sum(total) as tot 

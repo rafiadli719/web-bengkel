@@ -30,7 +30,7 @@
     // --------------------
 
 		// Ambil data yang akan diedit
-		$kd = $_GET['kd'];
+		$kd = mysqli_real_escape_string($koneksi, $_GET['kd']);
 		$sql_edit = mysqli_query($koneksi, "SELECT * FROM tblitemsatuan WHERE id='$kd'");
 		$data_edit = mysqli_fetch_array($sql_edit);
 
@@ -264,7 +264,7 @@
 														<input type="text" id="satuan" name="satuan" class="form-control"
 															placeholder="Masukkan kode satuan baru..."
 															maxlength="3"
-															value="<?php echo isset($_POST['satuan']) ? $_POST['satuan'] : $data_edit['satuan']; ?>" required />
+															value="<?php echo isset($_POST['satuan']) ? mysqli_real_escape_string($koneksi, $_POST['satuan']) : $data_edit['satuan']; ?>" required />
 														<span class="help-block">
 															<strong>Maksimal 3 karakter, tanpa spasi</strong>, otomatis huruf besar
 														</span>
@@ -279,7 +279,7 @@
 														<input type="text" id="namasatuan" name="namasatuan" class="form-control"
 															placeholder="Masukkan nama satuan baru..."
 															maxlength="30"
-															value="<?php echo isset($_POST['namasatuan']) ? $_POST['namasatuan'] : $data_edit['namasatuan']; ?>" required />
+															value="<?php echo isset($_POST['namasatuan']) ? mysqli_real_escape_string($koneksi, $_POST['namasatuan']) : $data_edit['namasatuan']; ?>" required />
 														<span class="help-block">Muncul nama dari data awal, namun masih bisa diubah</span>
 													</div>
 												</div>
@@ -291,7 +291,7 @@
 													<div class="col-sm-9">
 														<textarea id="keterangan" name="keterangan" class="form-control" rows="3"
 															placeholder="Masukkan keterangan baru..."
-															required><?php echo isset($_POST['keterangan']) ? $_POST['keterangan'] : $data_edit['keterangan']; ?></textarea>
+															required><?php echo isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : $data_edit['keterangan']; ?></textarea>
 														<span class="help-block">Muncul keterangan dari data awal, namun masih bisa diubah</span>
 													</div>
 												</div>

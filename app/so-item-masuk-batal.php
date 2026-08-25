@@ -1,8 +1,8 @@
 <?php
 	include "../config/koneksi.php";
 
-	$suser = $_GET['suser'];
-    $scabang = $_GET['scabang'];
+	$suser = mysqli_real_escape_string($koneksi, $_GET['suser']);
+    $scabang = mysqli_real_escape_string($koneksi, $_GET['scabang']);
     
 	$modal=mysqli_query($koneksi,"Delete 
                                     FROM tbitem_masuk_detail 

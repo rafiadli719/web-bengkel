@@ -1,7 +1,7 @@
 <?php
 	include "../config/koneksi.php";
 
-	$sid = $_GET['sid'];    
+	$sid = mysqli_real_escape_string($koneksi, $_GET['sid']);    
 	$modal=mysqli_query($koneksi,"Delete 
                                     FROM tbitem_masuk_detail 
                                     WHERE 

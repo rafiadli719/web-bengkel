@@ -61,9 +61,9 @@
 
         // Proses simpan work order
         if(isset($_POST['btnsimpan'])) {
-            $kode_wo = $_POST['kode_wo'];
-            $nama_wo = $_POST['nama_wo'];
-            $keterangan = $_POST['keterangan'];
+            $kode_wo = mysqli_real_escape_string($koneksi, $_POST['kode_wo']);
+            $nama_wo = mysqli_real_escape_string($koneksi, $_POST['nama_wo']);
+            $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
 
             // Hitung total waktu dan harga dari detail
             $total_waktu_calc = 0;
@@ -105,9 +105,9 @@
 
         // Proses tambah jasa
         if(isset($_POST['btnaddjasa'])) {
-            $kode_wo = $_POST['kode_wo'];
-            $kode_jasa = $_POST['kode_jasa'];
-            $harga_jasa = $_POST['harga_jasa'];
+            $kode_wo = mysqli_real_escape_string($koneksi, $_POST['kode_wo']);
+            $kode_jasa = mysqli_real_escape_string($koneksi, $_POST['kode_jasa']);
+            $harga_jasa = mysqli_real_escape_string($koneksi, $_POST['harga_jasa']);
             
             // Get waktu jasa
             $jasa_query = mysqli_query($koneksi,"SELECT waktu FROM tbworkorderheader WHERE kode_wo='$kode_jasa'");
@@ -124,9 +124,9 @@
 
         // Proses tambah barang
         if(isset($_POST['btnaddbarang'])) {
-            $kode_wo = $_POST['kode_wo'];
-            $kode_barang = $_POST['kode_barang'];
-            $jumlah = $_POST['jumlah'];
+            $kode_wo = mysqli_real_escape_string($koneksi, $_POST['kode_wo']);
+            $kode_barang = mysqli_real_escape_string($koneksi, $_POST['kode_barang']);
+            $jumlah = mysqli_real_escape_string($koneksi, $_POST['jumlah']);
             $is_gratis = isset($_POST['is_gratis']) ? 1 : 0;
             $harga_barang = $is_gratis ? 0 : $_POST['harga_barang'];
             $total = $is_gratis ? 0 : ($jumlah * $harga_barang);
@@ -141,8 +141,8 @@
 
         // Proses tambah kombinasi work order (tipe=3)
         if(isset($_POST['btnaddkombinasi'])) {
-            $kode_wo = $_POST['kode_wo'];
-            $kode_wo_anak = $_POST['kode_wo_kombinasi'];
+            $kode_wo = mysqli_real_escape_string($koneksi, $_POST['kode_wo']);
+            $kode_wo_anak = mysqli_real_escape_string($koneksi, $_POST['kode_wo_kombinasi']);
 
             if($kode_wo_anak == $kode_wo) {
                 echo"<script>window.alert('Work Order tidak boleh mengombinasikan dirinya sendiri!');

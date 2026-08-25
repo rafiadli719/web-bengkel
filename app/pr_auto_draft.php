@@ -29,7 +29,7 @@ $kd_cabang_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
 
 // Generate draft PR dari item terpilih
 if(isset($_POST['btngenerate']) && !empty($_POST['pilih'])){
-    $items = $_POST['pilih'];
+    $items = mysqli_real_escape_string($koneksi, $_POST['pilih']);
     $tgl_now = date('Y-m-d');
     $no_gen = '';
     if (mysqli_query($koneksi, "CALL sp_generate_no_pr('".$kd_cabang_esc."', @p_no_pr)")) {

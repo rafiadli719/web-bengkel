@@ -36,12 +36,12 @@
 		include "funcion_wo.php";
 		$LastID=FormatNoTrans(OtomatisID());		 
 
-        $txtnamawo=$_GET['snamawo'];
-        $txtketwo=$_GET['sketwo'];
-        $txtwaktu= $_GET['swaktu'];
+        $txtnamawo=mysqli_real_escape_string($koneksi, $_GET['snamawo']);
+        $txtketwo=mysqli_real_escape_string($koneksi, $_GET['sketwo']);
+        $txtwaktu= mysqli_real_escape_string($koneksi, $_GET['swaktu']);
         
-        $txtcarijasa=$_GET['kdjasa'];
-        $txtcaribrg=$_GET['kd'];
+        $txtcarijasa=mysqli_real_escape_string($koneksi, $_GET['kdjasa']);
+        $txtcaribrg=mysqli_real_escape_string($koneksi, $_GET['kd']);
 
         if($txtcarijasa=='') {
             $txtnamajasa="";        
@@ -68,11 +68,11 @@
         }
 
 		if(isset($_POST['btncarijasa'])) {				
-            $txtnamawo= $_POST['txtnamawo'];
-            $txtketwo= $_POST['txtnote'];
-            $txtwaktu= $_POST['txtwaktu'];
+            $txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+            $txtketwo= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+            $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
             
-			$txtcarijasa= $_POST['txtcarijasa'];	            
+			$txtcarijasa= mysqli_real_escape_string($koneksi, $_POST['txtcarijasa']);	            
             $txtcaribrg="";
         
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
@@ -100,12 +100,12 @@
         }     
 
 		if(isset($_POST['btncari'])) {				
-            $txtnamawo= $_POST['txtnamawo'];
-            $txtketwo= $_POST['txtnote'];
-            $txtwaktu= $_POST['txtwaktu'];
+            $txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+            $txtketwo= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+            $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
             
 			$txtcarijasa=""; 	            
-            $txtcaribrg=$_POST['txtcaribrg'];
+            $txtcaribrg=mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
         
             $cari_kd=mysqli_query($koneksi,"SELECT count(noitem) as tot 
                                             FROM view_cari_item 
@@ -132,12 +132,12 @@
         }   
         
         if(isset($_POST['btnaddjasa'])) {	
-            $txtnamawo= $_POST['txtnamawo'];
-            $txtketwo= $_POST['txtnote'];
-            $txtwaktu= $_POST['txtwaktu'];
-			$txtcarijasa= $_POST['txtcarijasa'];
+            $txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+            $txtketwo= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+            $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
+			$txtcarijasa= mysqli_real_escape_string($koneksi, $_POST['txtcarijasa']);
             $txtcaribrg="";	            
-			$txtqtyjasa= $_POST['txtqtyjasa'];
+			$txtqtyjasa= mysqli_real_escape_string($koneksi, $_POST['txtqtyjasa']);
 
             if($txtcarijasa<>'') {    
                 $data = mysqli_query($koneksi,"SELECT * FROM tbworkorderdetail 
@@ -186,12 +186,12 @@
         }   
 
         if(isset($_POST['btnadd'])) {	
-            $txtnamawo= $_POST['txtnamawo'];
-            $txtketwo= $_POST['txtnote'];
-            $txtwaktu= $_POST['txtwaktu'];
-			$txtcaribrg= $_POST['txtcaribrg'];
+            $txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+            $txtketwo= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+            $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
+			$txtcaribrg= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
 			$txtcarijasa= "";
-			$txtqty= $_POST['txtqty'];
+			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
 
             if($txtcaribrg<>'') {    
                 $data = mysqli_query($koneksi,"SELECT * FROM tbworkorderdetail 
@@ -258,9 +258,9 @@
         }   
         
         if(isset($_POST['btnsimpan'])) {
-            $txtnamawo= $_POST['txtnamawo'];
-            $txtketwo= $_POST['txtnote'];
-            $txtwaktu= $_POST['txtwaktu'];
+            $txtnamawo= mysqli_real_escape_string($koneksi, $_POST['txtnamawo']);
+            $txtketwo= mysqli_real_escape_string($koneksi, $_POST['txtnote']);
+            $txtwaktu= mysqli_real_escape_string($koneksi, $_POST['txtwaktu']);
 
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             sum(total) as tot 

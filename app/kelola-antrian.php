@@ -41,9 +41,9 @@ if(empty($_SESSION['_iduser'])){
     // HANDLER: UPDATE STATUS ANTRIAN
     // ========================================
     if(isset($_POST['btnupdatestatus'])) {
-        $id_antrian = $_POST['id_antrian'];
-        $new_status = $_POST['new_status'];
-        $no_service = $_POST['no_service_update'];
+        $id_antrian = mysqli_real_escape_string($koneksi, $_POST['id_antrian']);
+        $new_status = mysqli_real_escape_string($koneksi, $_POST['new_status']);
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['no_service_update']);
 
         $update_fields = "status_antrian='$new_status'";
 
@@ -80,9 +80,9 @@ if(empty($_SESSION['_iduser'])){
     // HANDLER: BATALKAN ANTRIAN
     // ========================================
     if(isset($_POST['btnbatalkan'])) {
-        $id_antrian = $_POST['id_antrian'];
+        $id_antrian = mysqli_real_escape_string($koneksi, $_POST['id_antrian']);
         $alasan_batal = mysqli_real_escape_string($koneksi, $_POST['alasan_batal']);
-        $no_service = $_POST['no_service_update'];
+        $no_service = mysqli_real_escape_string($koneksi, $_POST['no_service_update']);
 
         mysqli_query($koneksi, "UPDATE tb_antrian_servis
                                SET status_antrian='batal',
@@ -104,10 +104,10 @@ if(empty($_SESSION['_iduser'])){
     }
 
     // Filter parameters
-    $filter_tanggal = isset($_GET['filter_tanggal']) ? $_GET['filter_tanggal'] : date('Y-m-d');
-    $filter_status = isset($_GET['filter_status']) ? $_GET['filter_status'] : 'all';
-    $filter_prioritas = isset($_GET['filter_prioritas']) ? $_GET['filter_prioritas'] : 'all';
-    $search_keyword = isset($_GET['search']) ? $_GET['search'] : '';
+    $filter_tanggal = isset($_GET['filter_tanggal']) ? mysqli_real_escape_string($koneksi, $_GET['filter_tanggal']) : date('Y-m-d');
+    $filter_status = isset($_GET['filter_status']) ? mysqli_real_escape_string($koneksi, $_GET['filter_status']) : 'all';
+    $filter_prioritas = isset($_GET['filter_prioritas']) ? mysqli_real_escape_string($koneksi, $_GET['filter_prioritas']) : 'all';
+    $search_keyword = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
 
     // Build WHERE clause
     $where_clauses = ["a.tanggal='$filter_tanggal'"];

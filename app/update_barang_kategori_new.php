@@ -8,7 +8,7 @@ if (empty($_SESSION['_iduser'])) {
 include "../config/koneksi.php";
 
 // Ambil data dari form
-$id = $_POST['txtid'];
+$id = mysqli_real_escape_string($koneksi, $_POST['txtid']);
 $keterangan = strtoupper(trim($_POST['txtketerangan']));
 
 // Validasi input

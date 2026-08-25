@@ -47,8 +47,8 @@
 
         
 		if(isset($_POST['btnrst'])) {				
-            $tgl_pilih_dari= $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai= $_POST['id-date-picker-2'];            
+            $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
 
             $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
             $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
@@ -66,15 +66,15 @@
         }     
 
 		if(isset($_POST['btnpilih'])) {				
-            $tgl_pilih_dari= $_POST['id-date-picker-1'];
-            $tgl_pilih_sampai= $_POST['id-date-picker-2'];            
+            $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
+            $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
 
             $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
             $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
             
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
-                $nip=$_POST["hapus"][$i];
+                $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 sum(masuk-keluar) as saldo 

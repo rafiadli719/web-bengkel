@@ -338,9 +338,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'add':
-                $kode_bank = $_POST['kode_bank'];
-                $nama_bank = $_POST['nama_bank'];
-                $keterangan = $_POST['keterangan'];
+                $kode_bank = mysqli_real_escape_string($koneksi, $_POST['kode_bank']);
+                $nama_bank = mysqli_real_escape_string($koneksi, $_POST['nama_bank']);
+                $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
                 
                 $sql = "INSERT INTO master_bank (kode_bank, nama_bank, keterangan) 
                         VALUES ('$kode_bank', '$nama_bank', '$keterangan')";
@@ -353,10 +353,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'edit':
-                $id = $_POST['id'];
-                $kode_bank = $_POST['kode_bank'];
-                $nama_bank = $_POST['nama_bank']; 
-                $keterangan = $_POST['keterangan'];
+                $id = mysqli_real_escape_string($koneksi, $_POST['id']);
+                $kode_bank = mysqli_real_escape_string($koneksi, $_POST['kode_bank']);
+                $nama_bank = mysqli_real_escape_string($koneksi, $_POST['nama_bank']); 
+                $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
                 
                 $sql = "UPDATE master_bank SET 
                         kode_bank='$kode_bank', 
@@ -372,8 +372,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'toggle_status':
-                $id = $_POST['id'];
-                $status = $_POST['status'];
+                $id = mysqli_real_escape_string($koneksi, $_POST['id']);
+                $status = mysqli_real_escape_string($koneksi, $_POST['status']);
                 
                 $sql = "UPDATE master_bank SET is_aktif=$status WHERE id=$id";
                 

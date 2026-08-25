@@ -33,7 +33,7 @@
 		$bulan_skr=date('m');
 		$thn_skr=date('Y');
 
-		$nopesanan=$_GET['nopesanan'];
+		$nopesanan=mysqli_real_escape_string($koneksi, $_GET['nopesanan']);
 		$stmt=mysqli_prepare($koneksi,"SELECT
                                         tanggal, no_supplier, user
                                         FROM tblorder_header

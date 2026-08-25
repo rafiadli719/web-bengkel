@@ -29,9 +29,9 @@
         $tipe_cabang=$tm_cari['tipe_cabang'];	
     // --------------------
     
-		$nobyr=$_GET['nobyr'];
-		$tgl_pilih=$_GET['stgl'];
-		$no_supplier=$_GET['ssup'];        
+		$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
+		$tgl_pilih=mysqli_real_escape_string($koneksi, $_GET['stgl']);
+		$no_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);        
                                         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         sum(jumlah_bayar) as tot 
@@ -62,11 +62,11 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($tgl_pilih); 
-                //$txtnobyr= $_POST['txtnobyr'];
-                //$nopelanggan=$_POST['txtkey'];
+                //$txtnobyr= mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
+                //$nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
 
-		//$nobyr=$_GET['nobyr'];
-		//$no_supplier=$_GET['ssup'];        
+		//$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
+		//$no_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);        
         
                 mysqli_query($koneksi,"INSERT INTO tblhutang_header    
                             (no_transaksi, tanggal, no_supplier, 

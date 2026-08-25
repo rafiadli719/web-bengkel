@@ -165,7 +165,7 @@ try {
     // =========================================
     if($jenis_perbaikan == 'penggantian_part') {
         // Check if ada part yang dipilih
-        $selected_parts = isset($_POST['selected_parts']) ? $_POST['selected_parts'] : array();
+        $selected_parts = isset($_POST['selected_parts']) ? mysqli_real_escape_string($koneksi, $_POST['selected_parts']) : array();
 
         if(count($selected_parts) > 0) {
             // Loop insert penawaran part

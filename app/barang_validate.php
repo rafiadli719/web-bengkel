@@ -120,7 +120,7 @@ if (empty($_SESSION['_iduser'])) {
 
     // Process validation action
     if (isset($_POST['action'])) {
-        $action = $_POST['action'];
+        $action = mysqli_real_escape_string($koneksi, $_POST['action']);
         $validation_notes = $_POST['validation_notes'] ?? '';
 
         if ($action == 'validate') {
