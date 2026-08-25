@@ -43,14 +43,23 @@
         
         // Pagination variables
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
+        if ($limit < 1) {
+            $limit = 5;
+        }
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($page < 1) {
+            $page = 1;
+        }
         $offset = ($page - 1) * $limit;
-        
+
         // Count total records
         $count_query = "SELECT COUNT(*) as total FROM view_pembayaran_piutang WHERE kd_cabang='$kd_cabang'";
         $count_result = mysqli_query($koneksi, $count_query);
         $total_records = mysqli_fetch_array($count_result)['total'];
-        $total_pages = ceil($total_records / $limit);
+        $total_pages = (int)ceil($total_records / $limit);
+        if ($total_pages < 1) {
+            $total_pages = 1;
+        }
         
         $hasil_cari = "Menampilkan data terbaru - Total: $total_records data (Halaman $page dari $total_pages)";
                 
@@ -299,8 +308,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php 
+                                    <?php
                                         $sql = mysqli_query($koneksi,$sql_query);
+                                        if (mysqli_num_rows($sql) < 1) {
+                                    ?>
+                                        <tr>
+                                            <td colspan="6" class="center">Data tidak ditemukan</td>
+                                        </tr>
+                                    <?php
+                                        }
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             //$status_order=$tampil['status'];
 					//				if($status_order=='0') {
@@ -328,8 +344,8 @@
                                             </td>														
                                             <td><?php echo $tampil['no_transaksi']?></td>														
                                             <td class="center"><?php echo $tampil['tanggal']?></td>	
-                                            <td><?php echo $tampil['no_supplier']?></td>														
-                                            <td><?php echo $tampil['namasupplier']?></td>
+                                            <td><?php echo $tampil['no_pelanggan']?></td>
+                                            <td><?php echo $tampil['namapelanggan']?></td>
                                             <td align="right"><?php echo number_format($tampil['total_bayar'],0)?></td>														                                                        													                                                        
                                         </tr>
 
