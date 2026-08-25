@@ -40,7 +40,7 @@
         $txtflt="asc";
         $tipebtn1="btn-danger";
         $tipebtn2="btn-info";
-        $hasil_cari="Hasil Pencarian ditemukan 0 data";
+        $hasil_cari="Silakan isi kata kunci di atas lalu klik Ascending/Descending untuk menampilkan data transaksi pembelian.";
                 
         $sql_query="SELECT * FROM view_pembelian_header 
                             WHERE 
