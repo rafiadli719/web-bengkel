@@ -46,23 +46,12 @@ if(empty($_SESSION['_iduser'])){
     // Handle search
     if(isset($_POST['btncari'])) {
         $search_query = mysqli_real_escape_string($koneksi, $_POST['txtsearch']);
-        
+
         if(!empty($search_query)) {
-            $where_clause = "WHERE (s.no_service LIKE '%$search_query%') OR 
-                                   (s.no_pelanggan LIKE '%$search_query%') OR 
-                                   (s.no_polisi LIKE '%$search_query%') OR 
+            $where_clause = "WHERE (s.no_service LIKE '%$search_query%') OR
+                                   (s.no_pelanggan LIKE '%$search_query%') OR
+                                   (s.no_polisi LIKE '%$search_query%') OR
                                    (p.namapelanggan LIKE '%$search_query%')";
-            
-            // Count results
-            $count_sql = "SELECT COUNT(*) as total 
-                         FROM tblservice s
-                         LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-                         $where_clause";
-            $count_result = mysqli_query($koneksi, $count_sql);
-            $count_data = mysqli_fetch_assoc($count_result);
-            $total_found = $count_data['total'];
-            
-            $hasil = "Ditemukan $total_found data servis";
         }
     }
 
@@ -82,6 +71,20 @@ if(empty($_SESSION['_iduser'])){
         } else {
             $where_clause .= " AND $cabang_cond";
         }
+    }
+
+    // Hitung total (setelah where_clause final, termasuk isolasi cabang) - biar pesan di bawah
+    // jujur soal LIMIT 100 di query utama, bukan diam-diam kepotong.
+    $count_sql = "SELECT COUNT(*) as total FROM tblservice s LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan $where_clause";
+    $count_result = mysqli_query($koneksi, $count_sql);
+    $total_found = mysqli_fetch_assoc($count_result)['total'];
+
+    if (!empty($search_query)) {
+        $hasil = "Ditemukan $total_found data servis" . ($total_found > 100 ? " (menampilkan 100 terbaru, persempit pencarian untuk hasil lebih spesifik)" : "");
+    } elseif ($filter_type === 'garansi') {
+        $hasil .= $total_found > 100 ? " (menampilkan 100 terbaru dari $total_found data)" : "";
+    } else {
+        $hasil = "Data Servis (" . ($total_found > 100 ? "100 data terbaru dari $total_found" : "$total_found data") . ")";
     }
 
     // Main query (include robust computed total for display)

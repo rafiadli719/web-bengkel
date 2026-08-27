@@ -41,31 +41,34 @@ if(empty($_SESSION['_iduser'])){
     // Initialize search variables
     $search_query = '';
     $where_clause = '';
-    $hasil = "Data Service Garansi";
-    
+
     // Handle search
     if(isset($_POST['btncari'])) {
         $search_query = mysqli_real_escape_string($koneksi, $_POST['txtsearch']);
-        
+
         if(!empty($search_query)) {
-            $where_clause = "WHERE (s.no_service LIKE '%$search_query%') OR 
-                                   (s.no_pelanggan LIKE '%$search_query%') OR 
-                                   (s.no_polisi LIKE '%$search_query%') OR 
+            $where_clause = "WHERE (s.no_service LIKE '%$search_query%') OR
+                                   (s.no_pelanggan LIKE '%$search_query%') OR
+                                   (s.no_polisi LIKE '%$search_query%') OR
                                    (p.namapelanggan LIKE '%$search_query%')";
-            
-            // Count results
-            $count_sql = "SELECT COUNT(*) as total 
-                         FROM tblservice s
-                         LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-                         $where_clause AND s.status_servis IN ('bayar', 'selesai')";
-            $count_result = mysqli_query($koneksi, $count_sql);
-            $count_data = mysqli_fetch_assoc($count_result);
-            $total_found = $count_data['total'];
-            
-            $hasil = "Ditemukan $total_found data service garansi";
         }
     }
-    
+
+    // Count results (query utama di bawah dibatasi LIMIT 100 - hitung total dulu biar
+    // pesan ke user jujur soal itu, bukan diam-diam kepotong)
+    $count_sql = "SELECT COUNT(*) as total
+                 FROM tblservice s
+                 LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
+                 $where_clause " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status_servis IN ('bayar', 'selesai')";
+    $count_result = mysqli_query($koneksi, $count_sql);
+    $total_found = mysqli_fetch_assoc($count_result)['total'];
+
+    if (!empty($search_query)) {
+        $hasil = "Ditemukan $total_found data service garansi" . ($total_found > 100 ? " (menampilkan 100 terbaru, persempit pencarian untuk hasil lebih spesifik)" : "");
+    } else {
+        $hasil = "Data Service Garansi (" . ($total_found > 100 ? "100 data terbaru dari $total_found" : "$total_found data") . ")";
+    }
+
     // Main query - Only show completed services (status 3 or 4) for warranty
     // Totals di-JOIN sekali, menghindari N+1 queries di loop
     // F1-A: masa garansi dinamis per tier member pelanggan (jawaban A3, 2026-07-04),
