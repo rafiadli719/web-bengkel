@@ -1354,6 +1354,24 @@ $("#txtdp").val(net);
     });
 </script>
 
+<script type="text/javascript">
+    // Field wajib (Supplier) ada di tab "purchase-details", tapi tab default aktif
+    // pas halaman ini kebuka adalah "purchase-items" - browser gak bisa fokus ke
+    // field yang ketutup tab non-aktif, submit gagal diam-diam. Fix: pas ada field
+    // invalid, pindah ke tab yang isinya duluan. Pola sama kayak pelanggan_add.php.
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+            var $invalid = $(this).find(':invalid').first();
+            if ($invalid.length) {
+                var $pane = $invalid.closest('.tab-pane');
+                if ($pane.length) {
+                    $('.nav-tabs a[href="#' + $pane.attr('id') + '"]').tab('show');
+                }
+            }
+        });
+    });
+</script>
+
 	</body>
 </html>
 
