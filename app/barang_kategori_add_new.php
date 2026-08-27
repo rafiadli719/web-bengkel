@@ -263,7 +263,7 @@ if (empty($_SESSION['_iduser'])) {
                                 <a href="#">Daftar Item</a>
                             </li>                                                        
                             <li>
-                                <a href="barang_kategori_new.php">Master Kategori Item</a>
+                                <a href="barang_kategori.php">Master Kategori Item</a>
                             </li>                                                                                    
                             <li class="active">Input Kategori Item Baru</li>
                         </ul><!-- /.breadcrumb -->
@@ -383,7 +383,7 @@ if (empty($_SESSION['_iduser'])) {
                                                             <?php endif; ?>
                                                         </button>
                                                              
-                                                        <button class="btn btn-default btn-lg" type="button" onclick="window.location.href='barang_kategori_new.php'">
+                                                        <button class="btn btn-default btn-lg" type="button" onclick="window.location.href='barang_kategori.php'">
                                                             <i class="ace-icon fa fa-list bigger-110"></i>
                                                             LIHAT DAFTAR KATEGORI ITEM
                                                         </button>

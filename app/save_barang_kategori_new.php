@@ -83,7 +83,7 @@ if (mysqli_query($koneksi, $insert_query)) {
     }
     
     $_SESSION['success'] = 'Kategori Item "' . $kategori . '" berhasil ditambahkan!' . $accurate_sync_result;
-    header("location:barang_kategori_new.php");
+    header("location:barang_kategori.php");
 } else {
     $_SESSION['error'] = 'Gagal menyimpan data: ' . mysqli_error($koneksi);
     header("location:barang_kategori_add_new.php");
