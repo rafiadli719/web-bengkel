@@ -8,7 +8,7 @@ ke FIT MOTOR Web Base sebagai modul **Keuangan > Kasir**, satu DB
 (`fitmotor_dbbengkel`) satu app, big-bang cutover.
 
 **Architecture:** Rename+migrate 26 tabel transaksional/master web_kasir
-ke prefix `tblkasir_*` di `fitmotor_dbbengkel`, drop 4 tabel bridge HPP
+ke prefix `*_closing_kasir` di `fitmotor_dbbengkel`, drop 4 tabel bridge HPP
 + 3 tabel app-lama yang tidak relevan, port ~140 file PHP ke
 `app/_keuangan/kasir/` pakai koneksi & session fitmotor, mapping role
 lama ke RBAC (`tb_user_roles`/`tb_permissions`) fitmotor, lalu drop 7
@@ -26,7 +26,7 @@ PHPUnit/Playwright config (belum ada di repo).
 
 ## Global Constraints
 
-- Semua tabel baru di `fitmotor_dbbengkel`, prefix `tblkasir_*`.
+- Semua tabel baru di `fitmotor_dbbengkel`, suffix `*_closing_kasir` (nama tabel asli dipertahankan).
 - FK `kode_cabang` baru → HARUS pakai `tbcabang.cabang_ref_kode` (bukan
   `tbcabang.kode_cabang`) — dua kolom beda arti, jangan tertukar.
 - FK `kode_karyawan` baru → `tbuser.kode_karyawan`.
@@ -142,15 +142,15 @@ git commit -m "chore: backup fitmotor_dbbengkel sebelum merge modul kasir"
 
 ---
 
-## Task 2: DDL — tabel master/independen `tblkasir_*`
+## Task 2: DDL — tabel master/independen `*_closing_kasir`
 
 **Files:**
 - Create: `docs/sql/tblkasir_schema_master.sql`
 
 **Interfaces:**
-- Produces: 4 tabel baru di `fitmotor_dbbengkel` — `tblkasir_master_akun`,
-  `tblkasir_master_transaksi`, `tblkasir_rekening_cabang`,
-  `tblkasir_kas_awal_config` — dipakai Task 4 (migrasi data) dan semua
+- Produces: 4 tabel baru di `fitmotor_dbbengkel` — `master_akun_closing_kasir`,
+  `master_nama_transaksi_closing_kasir`, `master_rekening_cabang_closing_kasir`,
+  `kas_awal_config_closing_kasir` — dipakai Task 4 (migrasi data) dan semua
   task file-porting berikutnya.
 
 - [ ] **Step 1: Ambil DDL asli dari sumber**
@@ -171,14 +171,14 @@ Run via php.exe (path sama seperti Task 1), simpan output ke
 - [ ] **Step 2: Edit DDL — rename tabel & tambah FK**
 
 Buka `docs/sql/tblkasir_schema_master.sql`, untuk tiap `CREATE TABLE`:
-1. Ganti nama tabel: `master_akun`→`tblkasir_master_akun`,
-   `master_nama_transaksi`→`tblkasir_master_transaksi`,
-   `master_rekening_cabang`→`tblkasir_rekening_cabang`,
-   `kas_awal_config`→`tblkasir_kas_awal_config`.
+1. Ganti nama tabel: `master_akun`→`master_akun_closing_kasir`,
+   `master_nama_transaksi`→`master_nama_transaksi_closing_kasir`,
+   `master_rekening_cabang`→`master_rekening_cabang_closing_kasir`,
+   `kas_awal_config`→`kas_awal_config_closing_kasir`.
 2. Kalau `master_rekening_cabang` punya kolom `kode_cabang`, tambahkan
    di akhir definisi tabel:
    ```sql
-   , CONSTRAINT fk_tblkasir_rekening_cabang FOREIGN KEY (kode_cabang) REFERENCES tbcabang(cabang_ref_kode)
+   , CONSTRAINT fk_master_rekening_cabang_closing_kasir FOREIGN KEY (kode_cabang) REFERENCES tbcabang(cabang_ref_kode)
    ```
 3. Ganti `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4` (atau apapun charset
    aslinya) jadi `ENGINE=InnoDB DEFAULT CHARSET=latin1` — samakan
@@ -200,7 +200,7 @@ Buka `docs/sql/tblkasir_schema_master.sql`, untuk tiap `CREATE TABLE`:
 <?php
 // _tmp_verify_ddl.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-foreach(['tblkasir_master_akun','tblkasir_master_transaksi','tblkasir_rekening_cabang','tblkasir_kas_awal_config'] as $t){
+foreach(['master_akun_closing_kasir','master_nama_transaksi_closing_kasir','master_rekening_cabang_closing_kasir','kas_awal_config_closing_kasir'] as $t){
     $r = mysqli_query($c, "SELECT COUNT(*) n FROM `$t`");
     $row = mysqli_fetch_assoc($r);
     echo "$t: ".($row === null ? "TIDAK ADA/ERROR" : "OK, ".$row['n']." baris")."\n";
@@ -214,30 +214,30 @@ data masuk di Task 4).
 ```bash
 rm -f _tmp_show_create.php _tmp_verify_ddl.php
 git add docs/sql/tblkasir_schema_master.sql
-git commit -m "feat(keuangan-kasir): DDL tabel master tblkasir_*"
+git commit -m "feat(keuangan-kasir): DDL tabel master *_closing_kasir"
 ```
 
 ---
 
-## Task 3: DDL — tabel transaksional `tblkasir_*`
+## Task 3: DDL — tabel transaksional `*_closing_kasir`
 
 **Files:**
 - Create: `docs/sql/tblkasir_schema_transaksi.sql`
 
 **Interfaces:**
-- Consumes: `tblkasir_master_akun`, `tblkasir_master_transaksi` (Task 2) sebagai target FK `kode_akun`.
-- Produces: 18 tabel — `tblkasir_transaksi`, `tblkasir_closing_group`,
-  `tblkasir_closing_detail`, `tblkasir_closing_revisi`,
-  `tblkasir_kas_awal`, `tblkasir_kas_akhir`,
-  `tblkasir_kas_awal_detail`, `tblkasir_kas_akhir_detail`,
-  `tblkasir_pemasukan`, `tblkasir_pemasukan_pusat`,
-  `tblkasir_pengeluaran`, `tblkasir_pengeluaran_pusat`,
-  `tblkasir_setoran_bank`, `tblkasir_setoran_bank_detail`,
-  `tblkasir_setoran_keuangan`, `tblkasir_pengambilan_setoran`,
-  `tblkasir_pengambilan_setoran_log`,
-  `tblkasir_pengambilan_setoran_pembayaran`,
-  `tblkasir_serah_terima`, `tblkasir_konfirmasi_buka`,
-  `tblkasir_audit_log` — dipakai Task 5-7 (migrasi data).
+- Consumes: `master_akun_closing_kasir`, `master_nama_transaksi_closing_kasir` (Task 2) sebagai target FK `kode_akun`.
+- Produces: 18 tabel — `kasir_transactions_closing_kasir`, `closing_transaction_groups_closing_kasir`,
+  `closing_transaction_details_closing_kasir`, `closing_revision_requests_closing_kasir`,
+  `kas_awal_closing_kasir`, `kas_akhir_closing_kasir`,
+  `detail_kas_awal_closing_kasir`, `detail_kas_akhir_closing_kasir`,
+  `pemasukan_kasir_closing_kasir`, `pemasukan_pusat_closing_kasir`,
+  `pengeluaran_kasir_closing_kasir`, `pengeluaran_pusat_closing_kasir`,
+  `setoran_ke_bank_closing_kasir`, `setoran_ke_bank_detail_closing_kasir`,
+  `setoran_keuangan_closing_kasir`, `pengambilan_setoran_closing_kasir`,
+  `pengambilan_setoran_edit_log_closing_kasir`,
+  `pengambilan_setoran_pembayaran_closing_kasir`,
+  `serah_terima_kasir_closing_kasir`, `konfirmasi_buka_transaksi_closing_kasir`,
+  `audit_log_closing_kasir` — dipakai Task 5-7 (migrasi data).
 
 - [ ] **Step 1: Ambil DDL asli**
 
@@ -251,9 +251,9 @@ Untuk tiap `CREATE TABLE`, rename sesuai mapping spec §3.1. Tambahkan
 FK di tabel yang punya kolom `kode_cabang`/`kode_karyawan`/`kode_akun`:
 
 ```sql
--- contoh untuk tblkasir_transaksi
-ALTER TABLE tblkasir_transaksi
-  ADD CONSTRAINT fk_tblkasir_transaksi_karyawan FOREIGN KEY (kode_karyawan) REFERENCES tbuser(kode_karyawan);
+-- contoh untuk kasir_transactions_closing_kasir
+ALTER TABLE kasir_transactions_closing_kasir
+  ADD CONSTRAINT fk_kasir_transactions_closing_kasir_karyawan FOREIGN KEY (kode_karyawan) REFERENCES tbuser(kode_karyawan);
 ```
 Terapkan pola sama untuk semua tabel yang punya kolom itu (referensi
 kolom persis dari hasil dump Task 3 Step 1, JANGAN asumsi nama kolom —
@@ -270,7 +270,7 @@ Expected: semua "OK, 0 baris".
 
 ```bash
 git add docs/sql/tblkasir_schema_transaksi.sql
-git commit -m "feat(keuangan-kasir): DDL tabel transaksional tblkasir_*"
+git commit -m "feat(keuangan-kasir): DDL tabel transaksional *_closing_kasir"
 ```
 
 ---
@@ -281,7 +281,7 @@ git commit -m "feat(keuangan-kasir): DDL tabel transaksional tblkasir_*"
 - Create: `_tmp_migrate_kasir_master.php` (disposable)
 
 **Interfaces:**
-- Consumes: `tblkasir_master_akun`, `tblkasir_master_transaksi`, `tblkasir_rekening_cabang`, `tblkasir_kas_awal_config` (Task 2).
+- Consumes: `master_akun_closing_kasir`, `master_nama_transaksi_closing_kasir`, `master_rekening_cabang_closing_kasir`, `kas_awal_config_closing_kasir` (Task 2).
 - Produces: data ter-copy 1:1, dipakai FK oleh Task 5-7.
 
 - [ ] **Step 1: Tulis script migrasi**
@@ -309,20 +309,20 @@ function copyTable($src, $dst, $srcTable, $dstTable){
     echo "$srcTable -> $dstTable: $n baris masuk, $errors error\n";
 }
 
-copyTable($src, $dst, 'master_akun', 'tblkasir_master_akun');
-copyTable($src, $dst, 'master_nama_transaksi', 'tblkasir_master_transaksi');
-copyTable($src, $dst, 'master_rekening_cabang', 'tblkasir_rekening_cabang');
-copyTable($src, $dst, 'kas_awal_config', 'tblkasir_kas_awal_config');
+copyTable($src, $dst, 'master_akun', 'master_akun_closing_kasir');
+copyTable($src, $dst, 'master_nama_transaksi', 'master_nama_transaksi_closing_kasir');
+copyTable($src, $dst, 'master_rekening_cabang', 'master_rekening_cabang_closing_kasir');
+copyTable($src, $dst, 'kas_awal_config', 'kas_awal_config_closing_kasir');
 ```
 
 - [ ] **Step 2: Jalankan & verifikasi count**
 
 Run via php.exe. Expected output 4 baris, error count = 0 di semuanya:
 ```
-master_akun -> tblkasir_master_akun: 34 baris masuk, 0 error
-master_nama_transaksi -> tblkasir_master_transaksi: 159 baris masuk, 0 error
-master_rekening_cabang -> tblkasir_rekening_cabang: N baris masuk, 0 error
-kas_awal_config -> tblkasir_kas_awal_config: N baris masuk, 0 error
+master_akun -> master_akun_closing_kasir: 34 baris masuk, 0 error
+master_nama_transaksi -> master_nama_transaksi_closing_kasir: 159 baris masuk, 0 error
+master_rekening_cabang -> master_rekening_cabang_closing_kasir: N baris masuk, 0 error
+kas_awal_config -> kas_awal_config_closing_kasir: N baris masuk, 0 error
 ```
 Kalau ada error > 0, baca pesan error (biasanya FK violation — cek
 apakah semua `kode_cabang` di `master_rekening_cabang` valid, sama
@@ -332,7 +332,7 @@ pola validasi Task 1).
 
 ```bash
 rm -f _tmp_migrate_kasir_master.php
-git commit --allow-empty -m "chore(keuangan-kasir): migrasi data master tblkasir_* selesai"
+git commit --allow-empty -m "chore(keuangan-kasir): migrasi data master *_closing_kasir selesai"
 ```
 (commit `--allow-empty` karena tidak ada file kode yang berubah — data
 DB, bukan tracked di git; commit ini jadi penanda checkpoint di history)
@@ -346,7 +346,7 @@ DB, bukan tracked di git; commit ini jadi penanda checkpoint di history)
 
 **Interfaces:**
 - Consumes: `copyTable()` helper pattern dari Task 4 (didefinisikan ulang di file ini — task terpisah dieksekusi worker berbeda, tidak bisa import file disposable task lain).
-- Produces: `tblkasir_kas_awal` (2224 baris), `tblkasir_kas_akhir` (2213 baris), `tblkasir_kas_awal_detail`, `tblkasir_kas_akhir_detail`, `tblkasir_transaksi` (2222 baris) terisi — dipakai Task 6 (closing) via FK `kode_transaksi`.
+- Produces: `kas_awal_closing_kasir` (2224 baris), `kas_akhir_closing_kasir` (2213 baris), `detail_kas_awal_closing_kasir`, `detail_kas_akhir_closing_kasir`, `kasir_transactions_closing_kasir` (2222 baris) terisi — dipakai Task 6 (closing) via FK `kode_transaksi`.
 
 - [ ] **Step 1: Tulis & jalankan script**
 
@@ -356,11 +356,11 @@ persis), lalu panggil urutan ini (urutan WAJIB — `kas_awal` sebelum
 mereferensi `kas_awal.kode_transaksi`):
 
 ```php
-copyTable($src, $dst, 'kas_awal', 'tblkasir_kas_awal');
-copyTable($src, $dst, 'detail_kas_awal', 'tblkasir_kas_awal_detail');
-copyTable($src, $dst, 'kas_akhir', 'tblkasir_kas_akhir');
-copyTable($src, $dst, 'detail_kas_akhir', 'tblkasir_kas_akhir_detail');
-copyTable($src, $dst, 'kasir_transactions', 'tblkasir_transaksi');
+copyTable($src, $dst, 'kas_awal', 'kas_awal_closing_kasir');
+copyTable($src, $dst, 'detail_kas_awal', 'detail_kas_awal_closing_kasir');
+copyTable($src, $dst, 'kas_akhir', 'kas_akhir_closing_kasir');
+copyTable($src, $dst, 'detail_kas_akhir', 'detail_kas_akhir_closing_kasir');
+copyTable($src, $dst, 'kasir_transactions', 'kasir_transactions_closing_kasir');
 ```
 
 - [ ] **Step 2: Verifikasi count cocok persis dengan sumber**
@@ -371,9 +371,9 @@ copyTable($src, $dst, 'kasir_transactions', 'tblkasir_transaksi');
 $src = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_maintance-beta');
 $dst = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
 $pairs = [
-    ['kas_awal','tblkasir_kas_awal'],
-    ['kas_akhir','tblkasir_kas_akhir'],
-    ['kasir_transactions','tblkasir_transaksi'],
+    ['kas_awal','kas_awal_closing_kasir'],
+    ['kas_akhir','kas_akhir_closing_kasir'],
+    ['kasir_transactions','kasir_transactions_closing_kasir'],
 ];
 foreach($pairs as [$s,$d]){
     $rs = mysqli_fetch_assoc(mysqli_query($src, "SELECT COUNT(*) n FROM `$s`"));
@@ -396,7 +396,7 @@ $dst = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbeng
 $r = mysqli_query($src, "SELECT kode_transaksi, kas_awal, kas_akhir, omset FROM kasir_transactions ORDER BY RAND() LIMIT 5");
 while($row = mysqli_fetch_assoc($r)){
     $kt = $row['kode_transaksi'];
-    $r2 = mysqli_query($dst, "SELECT kas_awal, kas_akhir, omset FROM tblkasir_transaksi WHERE kode_transaksi = '".mysqli_real_escape_string($dst,$kt)."'");
+    $r2 = mysqli_query($dst, "SELECT kas_awal, kas_akhir, omset FROM kasir_transactions_closing_kasir WHERE kode_transaksi = '".mysqli_real_escape_string($dst,$kt)."'");
     $row2 = mysqli_fetch_assoc($r2);
     $match = ($row2 && $row['kas_awal']==$row2['kas_awal'] && $row['kas_akhir']==$row2['kas_akhir'] && $row['omset']==$row2['omset']) ? "MATCH" : "MISMATCH!";
     echo "$kt: $match\n";
@@ -419,18 +419,18 @@ git commit --allow-empty -m "chore(keuangan-kasir): migrasi kas_awal/kas_akhir/k
 - Create: `_tmp_migrate_kasir_closing.php` (disposable)
 
 **Interfaces:**
-- Consumes: `tblkasir_transaksi` (Task 5) untuk FK `transaction_id`/`kode_transaksi`.
-- Produces: `tblkasir_closing_group`, `tblkasir_closing_detail`, `tblkasir_closing_revisi`, `tblkasir_konfirmasi_buka`, `tblkasir_audit_log`.
+- Consumes: `kasir_transactions_closing_kasir` (Task 5) untuk FK `transaction_id`/`kode_transaksi`.
+- Produces: `closing_transaction_groups_closing_kasir`, `closing_transaction_details_closing_kasir`, `closing_revision_requests_closing_kasir`, `konfirmasi_buka_transaksi_closing_kasir`, `audit_log_closing_kasir`.
 
 - [ ] **Step 1: Tulis & jalankan script**
 
 Sama `copyTable()` pattern, urutan (group sebelum detail — FK):
 ```php
-copyTable($src, $dst, 'closing_transaction_groups', 'tblkasir_closing_group');
-copyTable($src, $dst, 'closing_transaction_details', 'tblkasir_closing_detail');
-copyTable($src, $dst, 'closing_revision_requests', 'tblkasir_closing_revisi');
-copyTable($src, $dst, 'konfirmasi_buka_transaksi', 'tblkasir_konfirmasi_buka');
-copyTable($src, $dst, 'audit_log', 'tblkasir_audit_log');
+copyTable($src, $dst, 'closing_transaction_groups', 'closing_transaction_groups_closing_kasir');
+copyTable($src, $dst, 'closing_transaction_details', 'closing_transaction_details_closing_kasir');
+copyTable($src, $dst, 'closing_revision_requests', 'closing_revision_requests_closing_kasir');
+copyTable($src, $dst, 'konfirmasi_buka_transaksi', 'konfirmasi_buka_transaksi_closing_kasir');
+copyTable($src, $dst, 'audit_log', 'audit_log_closing_kasir');
 ```
 
 - [ ] **Step 2: Verifikasi count** (pola sama Task 5 Step 2, 5 pasang tabel)
@@ -450,23 +450,23 @@ git commit --allow-empty -m "chore(keuangan-kasir): migrasi closing/revisi/audit
 - Create: `_tmp_migrate_kasir_keuangan.php` (disposable)
 
 **Interfaces:**
-- Consumes: `tblkasir_master_akun` (Task 4) untuk FK `kode_akun`.
-- Produces: `tblkasir_pemasukan` (1723 baris), `tblkasir_pemasukan_pusat`, `tblkasir_pengeluaran` (**22156 baris — tabel terbesar, migrasi ini paling lama**), `tblkasir_pengeluaran_pusat`, `tblkasir_setoran_bank` (337 baris), `tblkasir_setoran_bank_detail`, `tblkasir_setoran_keuangan`, `tblkasir_pengambilan_setoran`, `tblkasir_pengambilan_setoran_log`, `tblkasir_pengambilan_setoran_pembayaran`, `tblkasir_serah_terima`.
+- Consumes: `master_akun_closing_kasir` (Task 4) untuk FK `kode_akun`.
+- Produces: `pemasukan_kasir_closing_kasir` (1723 baris), `pemasukan_pusat_closing_kasir`, `pengeluaran_kasir_closing_kasir` (**22156 baris — tabel terbesar, migrasi ini paling lama**), `pengeluaran_pusat_closing_kasir`, `setoran_ke_bank_closing_kasir` (337 baris), `setoran_ke_bank_detail_closing_kasir`, `setoran_keuangan_closing_kasir`, `pengambilan_setoran_closing_kasir`, `pengambilan_setoran_edit_log_closing_kasir`, `pengambilan_setoran_pembayaran_closing_kasir`, `serah_terima_kasir_closing_kasir`.
 
 - [ ] **Step 1: Tulis & jalankan script**
 
 ```php
-copyTable($src, $dst, 'pemasukan_kasir', 'tblkasir_pemasukan');
-copyTable($src, $dst, 'pemasukan_pusat', 'tblkasir_pemasukan_pusat');
-copyTable($src, $dst, 'pengeluaran_kasir', 'tblkasir_pengeluaran');
-copyTable($src, $dst, 'pengeluaran_pusat', 'tblkasir_pengeluaran_pusat');
-copyTable($src, $dst, 'setoran_ke_bank', 'tblkasir_setoran_bank');
-copyTable($src, $dst, 'setoran_ke_bank_detail', 'tblkasir_setoran_bank_detail');
-copyTable($src, $dst, 'setoran_keuangan', 'tblkasir_setoran_keuangan');
-copyTable($src, $dst, 'pengambilan_setoran', 'tblkasir_pengambilan_setoran');
-copyTable($src, $dst, 'pengambilan_setoran_edit_log', 'tblkasir_pengambilan_setoran_log');
-copyTable($src, $dst, 'pengambilan_setoran_pembayaran', 'tblkasir_pengambilan_setoran_pembayaran');
-copyTable($src, $dst, 'serah_terima_kasir', 'tblkasir_serah_terima');
+copyTable($src, $dst, 'pemasukan_kasir', 'pemasukan_kasir_closing_kasir');
+copyTable($src, $dst, 'pemasukan_pusat', 'pemasukan_pusat_closing_kasir');
+copyTable($src, $dst, 'pengeluaran_kasir', 'pengeluaran_kasir_closing_kasir');
+copyTable($src, $dst, 'pengeluaran_pusat', 'pengeluaran_pusat_closing_kasir');
+copyTable($src, $dst, 'setoran_ke_bank', 'setoran_ke_bank_closing_kasir');
+copyTable($src, $dst, 'setoran_ke_bank_detail', 'setoran_ke_bank_detail_closing_kasir');
+copyTable($src, $dst, 'setoran_keuangan', 'setoran_keuangan_closing_kasir');
+copyTable($src, $dst, 'pengambilan_setoran', 'pengambilan_setoran_closing_kasir');
+copyTable($src, $dst, 'pengambilan_setoran_edit_log', 'pengambilan_setoran_edit_log_closing_kasir');
+copyTable($src, $dst, 'pengambilan_setoran_pembayaran', 'pengambilan_setoran_pembayaran_closing_kasir');
+copyTable($src, $dst, 'serah_terima_kasir', 'serah_terima_kasir_closing_kasir');
 ```
 
 Catatan performa: `pengeluaran_kasir` 22156 baris row-by-row INSERT bisa
@@ -491,7 +491,7 @@ git commit --allow-empty -m "chore(keuangan-kasir): migrasi pemasukan/pengeluara
 - Modify: `docs/superpowers/specs/2026-09-03-merge-modul-kasir-keuangan-design.md` (isi jawaban ambiguitas §4)
 
 **Interfaces:**
-- Produces: keputusan tertulis (drop, atau migrasi ke `tblkasir_keping` / gabung `tbkas_kasir_detail`).
+- Produces: keputusan tertulis (drop, atau migrasi ke `keping_closing_kasir` / gabung `tbkas_kasir_detail`).
 
 - [ ] **Step 1: Bandingkan struktur & isi**
 
@@ -511,7 +511,7 @@ $r = mysqli_query($dst, "SHOW COLUMNS FROM tbkas_kasir_detail"); while($row=mysq
 - [ ] **Step 2: Putuskan berdasar hasil**
 
 Kalau `keping` adalah master pecahan uang (Rp 1000/2000/5000/dst, statis,
-tidak berubah) → migrasi jadi `tblkasir_keping` (tabel master kecil,
+tidak berubah) → migrasi jadi `keping_closing_kasir` (tabel master kecil,
 pola sama Task 4). Kalau ternyata kosong/tidak dipakai fitur aktif →
 drop, catat alasan di spec §4.
 
@@ -533,7 +533,7 @@ git commit -m "docs(keuangan-kasir): keputusan final tabel keping"
 - Create: `docs/sql/tblkasir_views.sql`
 
 **Interfaces:**
-- Consumes: semua tabel `tblkasir_*` dari Task 2-7 (VIEW ini query dari situ).
+- Consumes: semua tabel `*_closing_kasir` dari Task 2-7 (VIEW ini query dari situ).
 - Produces: 10 VIEW baru di `fitmotor_dbbengkel`, dipakai laporan/UI modul keuangan-kasir.
 
 - [ ] **Step 1: Ambil definisi VIEW asli**
@@ -554,12 +554,12 @@ Simpan ke `docs/sql/tblkasir_views.sql`, `rm -f _tmp_show_view.php`.
 - [ ] **Step 2: Edit — ganti semua nama tabel & VIEW sesuai mapping**
 
 Di tiap `CREATE VIEW`, ganti:
-1. Nama VIEW itu sendiri: prefix jadi `view_kasir_*` (contoh
-   `view_pemasukan_kasir` → `view_kasir_pemasukan`), konsisten sama
+1. Nama VIEW itu sendiri: suffix jadi `*_closing_kasir` (nama VIEW asli dipertahankan, contoh
+   `view_pemasukan_kasir` → `view_pemasukan_kasir_closing_kasir`), konsisten sama
    pola VIEW fitmotor yang sudah ada (`view_penjualan_header`, dst —
    prefix `view_`, bukan `v_`).
 2. Semua nama tabel di `FROM`/`JOIN` sesuai mapping tabel spec §3.1
-   (`kasir_transactions`→`tblkasir_transaksi`, dst).
+   (`kasir_transactions`→`kasir_transactions_closing_kasir`, dst).
 
 - [ ] **Step 3: Eksekusi & verifikasi**
 
@@ -570,7 +570,7 @@ Di tiap `CREATE VIEW`, ganti:
 <?php
 // _tmp_verify_views.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-foreach(['view_kasir_transaksi_selisih','view_kasir_dikembalikan_cs','view_kasir_perlu_validasi','view_kasir_pemasukan_combined','view_kasir_pemasukan','view_kasir_pemasukan_pusat','view_kasir_pemasukan_with_closing','view_kasir_pengeluaran','view_kasir_pengeluaran_pusat','view_kasir_setoran_with_closing'] as $v){
+foreach(['v_transaksi_ada_selisih_closing_kasir','v_transaksi_dikembalikan_cs_closing_kasir','v_transaksi_perlu_validasi_closing_kasir','view_pemasukan_combined_closing_kasir','view_pemasukan_kasir_closing_kasir','view_pemasukan_pusat_closing_kasir','view_pemasukan_with_closing_closing_kasir','view_pengeluaran_kasir_closing_kasir','view_pengeluaran_pusat_closing_kasir','view_setoran_with_closing_closing_kasir'] as $v){
     $r = mysqli_query($c, "SELECT COUNT(*) n FROM `$v`");
     echo "$v: ".($r ? "OK, ".mysqli_fetch_assoc($r)['n']." baris" : "ERROR: ".mysqli_error($c))."\n";
 }
@@ -644,7 +644,7 @@ git commit --allow-empty -m "feat(keuangan-kasir): seed permission RBAC modul ka
 - Create: `app/_keuangan/kasir/koneksi_kasir.php` (helper include, replace `config.php` web_kasir)
 
 **Interfaces:**
-- Consumes: `tblkasir_kas_awal`, `tblkasir_kas_akhir`, `tblkasir_kas_awal_detail`, `tblkasir_kas_akhir_detail` (Task 5); `$koneksi` dari `app/koneksi.php` fitmotor; `$_SESSION['_cabang']`, session `kode_karyawan` (nama variabel exact — verifikasi dulu di Step 1, JANGAN asumsi).
+- Consumes: `kas_awal_closing_kasir`, `kas_akhir_closing_kasir`, `detail_kas_awal_closing_kasir`, `detail_kas_akhir_closing_kasir` (Task 5); `$koneksi` dari `app/koneksi.php` fitmotor; `$_SESSION['_cabang']`, session `kode_karyawan` (nama variabel exact — verifikasi dulu di Step 1, JANGAN asumsi).
 
 - [ ] **Step 1: Cari nama variabel session login fitmotor yang eksis**
 
@@ -680,7 +680,7 @@ if (empty($_SESSION['_cabang'])) {
     header('Location: /aplikasi/app/login.php'); // sesuaikan path login fitmotor yang benar
     exit;
 }
-$kode_cabang_aktif = $_SESSION['_cabang']; // ini cabang_ref_kode, dipakai semua query tblkasir_*
+$kode_cabang_aktif = $_SESSION['_cabang']; // ini cabang_ref_kode, dipakai semua query *_closing_kasir
 $kode_karyawan_aktif = $_SESSION['kode_karyawan'] ?? null; // ganti sesuai temuan Step 1 kalau nama beda
 ?>
 ```
@@ -689,8 +689,8 @@ $kode_karyawan_aktif = $_SESSION['kode_karyawan'] ?? null; // ganti sesuai temua
 
 Port logic dari file sumber (Step 2), ganti:
 - `require 'config.php'` → `require_once 'koneksi_kasir.php'`
-- Semua `INSERT INTO kas_awal` → `INSERT INTO tblkasir_kas_awal`
-- Semua `INSERT INTO detail_kas_awal` → `INSERT INTO tblkasir_kas_awal_detail`
+- Semua `INSERT INTO kas_awal` → `INSERT INTO kas_awal_closing_kasir`
+- Semua `INSERT INTO detail_kas_awal` → `INSERT INTO detail_kas_awal_closing_kasir`
 - Kolom `kode_cabang` di query pakai `$kode_cabang_aktif` (bukan dari
   session/table `cabang`/`users` lama)
 - Kolom `kode_karyawan` di query pakai `$kode_karyawan_aktif`
@@ -698,12 +698,12 @@ Port logic dari file sumber (Step 2), ganti:
 Struktur query INSERT (contoh, sesuaikan kolom exact dengan hasil
 `SHOW COLUMNS` Task 3):
 ```php
-$stmt = mysqli_prepare($koneksi, "INSERT INTO tblkasir_kas_awal (kode_transaksi, total_nilai, tanggal, waktu, status, kode_karyawan) VALUES (?, ?, CURDATE(), CURTIME(), 'on proses', ?)");
+$stmt = mysqli_prepare($koneksi, "INSERT INTO kas_awal_closing_kasir (kode_transaksi, total_nilai, tanggal, waktu, status, kode_karyawan) VALUES (?, ?, CURDATE(), CURTIME(), 'on proses', ?)");
 mysqli_stmt_bind_param($stmt, 'sds', $kode_transaksi, $total_nilai, $kode_karyawan_aktif);
 mysqli_stmt_execute($stmt);
 ```
 
-- [ ] **Step 5: Tulis `app/_keuangan/kasir/kas_akhir.php`** (pola sama Step 4, target `tblkasir_kas_akhir`/`tblkasir_kas_akhir_detail`)
+- [ ] **Step 5: Tulis `app/_keuangan/kasir/kas_akhir.php`** (pola sama Step 4, target `kas_akhir_closing_kasir`/`detail_kas_akhir_closing_kasir`)
 
 - [ ] **Step 6: Smoke test manual via Claude-in-Chrome**
 
@@ -714,7 +714,7 @@ cuma tampilan UI — lihat memory `feedback_wajib_alur_kerja_5_langkah`):
 <?php
 // _tmp_verify_kas_awal_test.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-$r = mysqli_query($c, "SELECT * FROM tblkasir_kas_awal ORDER BY id DESC LIMIT 1");
+$r = mysqli_query($c, "SELECT * FROM kas_awal_closing_kasir ORDER BY id DESC LIMIT 1");
 echo json_encode(mysqli_fetch_assoc($r), JSON_PRETTY_PRINT)."\n";
 ```
 Expected: baris baru muncul dengan `kode_karyawan` & nominal sesuai
@@ -737,7 +737,7 @@ git commit -m "feat(keuangan-kasir): port kas awal/akhir (buka-tutup shift)"
 - Create: `app/_keuangan/kasir/pengeluaran.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php` (Task 11), `tblkasir_pemasukan`, `tblkasir_pengeluaran`, `tblkasir_master_akun`, `tblkasir_master_transaksi` (Task 4/7).
+- Consumes: `koneksi_kasir.php` (Task 11), `pemasukan_kasir_closing_kasir`, `pengeluaran_kasir_closing_kasir`, `master_akun_closing_kasir`, `master_nama_transaksi_closing_kasir` (Task 4/7).
 
 - [ ] **Step 1: Baca file sumber** (`pemasukan_kasir1.php`/`edit_pemasukan1.php`/`kas_masuk_add.php`-setara — cek nama exact via `ls` sumber dulu, JANGAN asumsi nama file, banyak varian `_asli`/`1`/`_fixed` di source seperti terlihat waktu investigasi)
 
@@ -747,9 +747,9 @@ ls "/mnt/c/laragon/www/web_kasir/website_kasir" | grep -i "pemasukan\|pengeluara
 Pilih file aktif (bukan `_asli`/`1`/`_fixed`/`.bak` — cek yang direferensikan `sidebar.php`, itu yang aktif dipakai; file bernomor/varian biasanya legacy/orphan sama polanya kayak fitmotor).
 
 - [ ] **Step 2: Tulis `pemasukan.php`** — pola sama Task 11 Step 4, target
-`tblkasir_pemasukan`, kolom `kode_akun` FK ke `tblkasir_master_akun`.
+`pemasukan_kasir_closing_kasir`, kolom `kode_akun` FK ke `master_akun_closing_kasir`.
 
-- [ ] **Step 3: Tulis `pengeluaran.php`** — target `tblkasir_pengeluaran`.
+- [ ] **Step 3: Tulis `pengeluaran.php`** — target `pengeluaran_kasir_closing_kasir`.
 
 - [ ] **Step 4: Smoke test + verifikasi DB** (pola sama Task 11 Step 6)
 
@@ -770,28 +770,28 @@ git commit -m "feat(keuangan-kasir): port pemasukan/pengeluaran kasir"
 - Create: `app/_keuangan/kasir/validasi_keuangan_pusat.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, `tblkasir_transaksi`, `tblkasir_closing_group`, `tblkasir_closing_detail`, `tblkasir_closing_revisi` (Task 5/6).
+- Consumes: `koneksi_kasir.php`, `kasir_transactions_closing_kasir`, `closing_transaction_groups_closing_kasir`, `closing_transaction_details_closing_kasir`, `closing_revision_requests_closing_kasir` (Task 5/6).
 
 - [ ] **Step 1: Baca file sumber** (`close_transaksi.php`, `close_transaksi1.php`, `admin_closing_revision.php`, `closing_revision_request.php`, `closing_revision_helpers.php` — file terbesar di source, 141KB/38KB/15KB/12.5KB/22.8KB, port bertahap per fungsi, JANGAN port sekaligus 1 file raksasa — pecah sesuai tanggung jawab: closing biasa vs revisi vs helper)
 
 - [ ] **Step 2: Tulis `closing.php`** — logic grouping "dipinjam/meminjam"
-antar kasir dalam 1 hari, insert `tblkasir_closing_group` +
-`tblkasir_closing_detail`, update `deposit_status` di
-`tblkasir_transaksi`.
+antar kasir dalam 1 hari, insert `closing_transaction_groups_closing_kasir` +
+`closing_transaction_details_closing_kasir`, update `deposit_status` di
+`kasir_transactions_closing_kasir`.
 
 - [ ] **Step 3: Tulis `closing_revisi.php`** — port dari
 `closing_revision_request.php` + `closing_revision_helpers.php`, target
-`tblkasir_closing_revisi`.
+`closing_revision_requests_closing_kasir`.
 
 - [ ] **Step 4: Tulis `validasi_keuangan_pusat.php`** — update
-`deposit_status`/`deposit_difference_status` di `tblkasir_transaksi`
+`deposit_status`/`deposit_difference_status` di `kasir_transactions_closing_kasir`
 sesuai enum yang sudah ada (`Sudah Disetor ke Keuangan`, `Validasi
 Keuangan OK`, dst — pakai value enum PERSIS dari `SHOW COLUMNS` Task 3,
 jangan bikin value baru).
 
 - [ ] **Step 5: Smoke test + verifikasi DB** (pola sama Task 11 Step 6,
-cek `tblkasir_closing_group.total_closing` matching sum
-`tblkasir_closing_detail.nominal`)
+cek `closing_transaction_groups_closing_kasir.total_closing` matching sum
+`closing_transaction_details_closing_kasir.nominal`)
 
 - [ ] **Step 6: Commit**
 
@@ -810,14 +810,14 @@ git commit -m "feat(keuangan-kasir): port closing, revisi closing, validasi keua
 - Create: `app/_keuangan/kasir/serah_terima.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, `tblkasir_setoran_bank`(+detail), `tblkasir_pengambilan_setoran`(+log/pembayaran), `tblkasir_serah_terima`, `tblkasir_rekening_cabang` (Task 2/4/7).
+- Consumes: `koneksi_kasir.php`, `setoran_ke_bank_closing_kasir`(+detail), `pengambilan_setoran_closing_kasir`(+log/pembayaran), `serah_terima_kasir_closing_kasir`, `master_rekening_cabang_closing_kasir` (Task 2/4/7).
 
 - [ ] **Step 1: Baca file sumber** (`api_setor_bank_pengambilan.php`,
 `api_edit_nominal_pengambilan.php`, `api_pelunasan_manual.php`,
 `api_validate_pelunasan_document.php`, `services/pelunasan_hutang/`)
 
 - [ ] **Step 2-4: Tulis ketiga file** — pola sama task sebelumnya,
-target tabel `tblkasir_setoran_bank`/`tblkasir_pengambilan_setoran`/`tblkasir_serah_terima`.
+target tabel `setoran_ke_bank_closing_kasir`/`pengambilan_setoran_closing_kasir`/`serah_terima_kasir_closing_kasir`.
 
 - [ ] **Step 5: Smoke test + verifikasi DB**
 
@@ -909,7 +909,7 @@ validasi setoran → setor ke bank. Screenshot tiap langkah.
 <?php
 // _tmp_verify_e2e.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-$r = mysqli_query($c, "SELECT kode_transaksi, kode_cabang, deposit_status, omset FROM tblkasir_transaksi WHERE tanggal_transaksi = CURDATE() ORDER BY id DESC");
+$r = mysqli_query($c, "SELECT kode_transaksi, kode_cabang, deposit_status, omset FROM kasir_transactions_closing_kasir WHERE tanggal_transaksi = CURDATE() ORDER BY id DESC");
 while($row = mysqli_fetch_assoc($r)) echo json_encode($row)."\n";
 ```
 Expected: transaksi hari ini muncul dengan `kode_cabang` benar, `deposit_status` berubah sesuai alur yang dijalankan.
@@ -1059,7 +1059,7 @@ Update `MEMORY.md` index dengan satu baris pointer.
 - Create: `app/_keuangan/kasir/dashboard.php` (source: `admin_dashboard.php` di web_kasir, satu-satunya dashboard aktif — dilink `includes/sidebar.php`)
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php` (Task 11), `tblkasir_transaksi` (Task 5), `tbuser`/RBAC (Task 10) buat cek role.
+- Consumes: `koneksi_kasir.php` (Task 11), `kasir_transactions_closing_kasir` (Task 5), `tbuser`/RBAC (Task 10) buat cek role.
 
 - [ ] **Step 1: Baca file sumber**
 
@@ -1069,21 +1069,21 @@ grep -n "SELECT\|FROM \|function " "/mnt/c/laragon/www/web_kasir/website_kasir/a
 Catat: query cek role (`SELECT role FROM users WHERE kode_karyawan = ?`
 di source — ganti ke cek permission RBAC Task 10, bukan tabel `users`
 lama), query rekap `kasir_transactions` per cabang/tanggal (ganti ke
-`tblkasir_transaksi`), dan query distinct cabang (ganti ke join
+`kasir_transactions_closing_kasir`), dan query distinct cabang (ganti ke join
 `tbcabang` via `cabang_ref_kode`, bukan `DISTINCT nama_cabang` manual
 dari data transaksi).
 
 - [ ] **Step 2: Tulis `dashboard.php`**
 
 Port logic, ganti semua referensi seperti pola task sebelumnya
-(`kasir_transactions`→`tblkasir_transaksi`, cek role via RBAC fitmotor,
+(`kasir_transactions`→`kasir_transactions_closing_kasir`, cek role via RBAC fitmotor,
 `kode_cabang` pakai `$kode_cabang_aktif` dari `koneksi_kasir.php`).
 
 - [ ] **Step 3: Smoke test + verifikasi DB**
 
 Login role admin keuangan & role kasir cabang via Claude-in-Chrome,
 buka dashboard, pastikan rekap omset/closing per cabang tampil dan
-angkanya cocok dengan query manual ke `tblkasir_transaksi` (bandingkan
+angkanya cocok dengan query manual ke `kasir_transactions_closing_kasir` (bandingkan
 `SUM(omset)` hari berjalan).
 
 - [ ] **Step 4: Jadikan `dashboard.php` landing page modul**
@@ -1234,12 +1234,12 @@ git commit --allow-empty -m "feat(keuangan-kasir): tambah tbuser.kode_kasir buat
 - Create: `app/_keuangan/kasir/input_penjualan_servis.php`
 
 **Interfaces:**
-- Consumes: `tblkasir_master_akun` pola sama tabel lain; `koneksi_kasir.php` (Task 11).
-- Produces: `tblkasir_data_penjualan`, `tblkasir_data_servis` — dipakai cross-check manual kasir vs sistem.
+- Consumes: `master_akun_closing_kasir` pola sama tabel lain; `koneksi_kasir.php` (Task 11).
+- Produces: `data_penjualan_closing_kasir`, `data_servis_closing_kasir` — dipakai cross-check manual kasir vs sistem.
 
 - [ ] **Step 1: DDL** — pola sama Task 3, ambil `SHOW CREATE TABLE` dari
-`data_penjualan`/`data_servis` sumber, rename ke `tblkasir_data_penjualan`/
-`tblkasir_data_servis`, tambah FK `kode_cabang`→`tbcabang.cabang_ref_kode`,
+`data_penjualan`/`data_servis` sumber, rename ke `data_penjualan_closing_kasir`/
+`data_servis_closing_kasir`, tambah FK `kode_cabang`→`tbcabang.cabang_ref_kode`,
 `kode_karyawan`→`tbuser.kode_karyawan`.
 
 - [ ] **Step 2: Migrasi data** — pola `copyTable()` sama Task 4-7.
@@ -1250,8 +1250,8 @@ git commit --allow-empty -m "feat(keuangan-kasir): tambah tbuser.kode_kasir buat
 grep -n "SELECT \|FROM \|INSERT INTO" "/mnt/c/laragon/www/web_kasir/website_kasir/input_penjualan_servis.php"
 ```
 Port ke `app/_keuangan/kasir/input_penjualan_servis.php`, ganti target
-tabel `data_penjualan`/`data_servis` → `tblkasir_data_penjualan`/
-`tblkasir_data_servis`, koneksi pakai `koneksi_kasir.php`.
+tabel `data_penjualan`/`data_servis` → `data_penjualan_closing_kasir`/
+`data_servis_closing_kasir`, koneksi pakai `koneksi_kasir.php`.
 
 - [ ] **Step 4: Smoke test + verifikasi DB, commit**
 
@@ -1268,7 +1268,7 @@ git commit -m "feat(keuangan-kasir): port input manual penjualan/servis harian"
 - Create: `app/_keuangan/kasir/index_kasir.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php` (Task 11), `tblkasir_transaksi`, `tblkasir_kas_awal/akhir` (Task 5), `tbuser.kode_kasir` (Task 22).
+- Consumes: `koneksi_kasir.php` (Task 11), `kasir_transactions_closing_kasir`, `kas_awal_closing_kasir/akhir` (Task 5), `tbuser.kode_kasir` (Task 22).
 
 - [ ] **Step 1: Baca file sumber**
 
@@ -1278,7 +1278,7 @@ grep -n "SELECT \|FROM \|function " "/mnt/c/laragon/www/web_kasir/website_kasir/
 
 - [ ] **Step 2: Port** — ini landing page role `kasir`/`user` (beda dari
 `dashboard.php` Task 20 yang buat admin). Ganti semua referensi tabel
-sesuai mapping §3.1, cek status shift aktif (`tblkasir_kas_awal.status
+sesuai mapping §3.1, cek status shift aktif (`kas_awal_closing_kasir.status
 = 'on proses'`) buat kasir yang login, tampilkan tombol buka/tutup
 kasir sesuai status.
 
@@ -1422,7 +1422,7 @@ git commit -m "feat(keuangan-kasir): port OCR pipeline pelunasan hutang"
 - Create: `app/_keuangan/kasir/hapus_keuangan_pusat.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, `tblkasir_pemasukan_pusat`, `tblkasir_pengeluaran_pusat`, `tblkasir_master_akun` (Task 4/7).
+- Consumes: `koneksi_kasir.php`, `pemasukan_pusat_closing_kasir`, `pengeluaran_pusat_closing_kasir`, `master_akun_closing_kasir` (Task 4/7).
 
 - [ ] **Step 1: Baca file sumber (100KB, port bertahap per fungsi — JANGAN sekaligus)**
 
@@ -1450,7 +1450,7 @@ git commit -m "feat(keuangan-kasir): port modul keuangan pusat"
 - Create: `app/_keuangan/kasir/setoran_keuangan_cs.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, `tblkasir_setoran_bank`(+detail), `tblkasir_pengambilan_setoran`(+log/pembayaran), OCR service (Task 26).
+- Consumes: `koneksi_kasir.php`, `setoran_ke_bank_closing_kasir`(+detail), `pengambilan_setoran_closing_kasir`(+log/pembayaran), OCR service (Task 26).
 
 **PENTING**: `setoran_keuangan.php` (434KB) itu file TERBESAR di seluruh
 projek — JANGAN port sekaligus 1 file. Pecah per fungsi/tab UI, commit
@@ -1499,7 +1499,7 @@ git commit --allow-empty -m "feat(keuangan-kasir): port setoran_keuangan selesai
 - Create: `app/_keuangan/kasir/keping.php` (tergantung keputusan Task 8)
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, `tblkasir_master_akun`, `tblkasir_master_transaksi`, `tblkasir_rekening_cabang` (Task 2/4).
+- Consumes: `koneksi_kasir.php`, `master_akun_closing_kasir`, `master_nama_transaksi_closing_kasir`, `master_rekening_cabang_closing_kasir` (Task 2/4).
 
 - [ ] **Step 1-4: Port tiap file** — pola sama task porting lain, CRUD
 sederhana (list/tambah/edit/hapus), target tabel sesuai mapping §3.1.
@@ -1522,7 +1522,7 @@ git commit -m "feat(keuangan-kasir): port CRUD master data admin"
 - Create: `app/_keuangan/kasir/export/pdf.php` (konsolidasi `export_pdf_closing_kasir.php`, `export_pdf_setoran.php`, `generate_pdf.php`, `ganerate_pdf_admin.php`, `print_closing_kasir.php`, `print_serah_terima_pengambilan.php`)
 
 **Interfaces:**
-- Consumes: `phpoffice/phpspreadsheet`/`tecnickcom/tcpdf` (Task 25), semua tabel `tblkasir_*` sesuai jenis laporan.
+- Consumes: `phpoffice/phpspreadsheet`/`tecnickcom/tcpdf` (Task 25), semua tabel `*_closing_kasir` sesuai jenis laporan.
 
 - [ ] **Step 1: Baca tiap 17 file sumber, kelompokkan by jenis laporan & format**
 
@@ -1540,7 +1540,7 @@ mapping §3.1.
 - [ ] **Step 3: Tulis `export/pdf.php`** — pakai `TCPDF`, pola sama Step 2.
 
 - [ ] **Step 4: Smoke test tiap jenis laporan** — generate & buka hasil
-file Excel/PDF, cek data cocok dengan query manual ke `tblkasir_*`.
+file Excel/PDF, cek data cocok dengan query manual ke `*_closing_kasir`.
 
 - [ ] **Step 5: Commit**
 
@@ -1560,7 +1560,7 @@ git commit -m "feat(keuangan-kasir): port laporan/export excel & pdf (konsolidas
 - Create: `app/_keuangan/kasir/view_transaksi_admin.php`
 
 **Interfaces:**
-- Consumes: `koneksi_kasir.php`, semua tabel `tblkasir_*` transaksional (Task 5-7), view Task 9.
+- Consumes: `koneksi_kasir.php`, semua tabel `*_closing_kasir` transaksional (Task 5-7), view Task 9.
 
 - [ ] **Step 1-4: Port tiap file** — pola sama task porting lain, query
 laporan/monitoring read-only, ganti tabel sesuai mapping §3.1, prefer
@@ -1584,7 +1584,7 @@ git commit -m "feat(keuangan-kasir): port monitoring & riwayat transaksi"
 
 **Interfaces:**
 - Consumes: path lama di kolom `pengambilan_setoran.mutasi_dokumen_path` (Task 7 hasil migrasi).
-- Produces: file fisik pindah, kolom path di `tblkasir_pengambilan_setoran` diupdate ke path baru.
+- Produces: file fisik pindah, kolom path di `pengambilan_setoran_closing_kasir` diupdate ke path baru.
 
 - [ ] **Step 1: Copy fisik file**
 
@@ -1599,14 +1599,14 @@ cp -r "/mnt/c/laragon/www/web_kasir/website_kasir/uploads/pelunasan_hutang/"* ap
 <?php
 // _tmp_migrate_uploads.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM tblkasir_pengambilan_setoran WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
+$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM pengambilan_setoran_closing_kasir WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
 $n = 0;
 while($row = mysqli_fetch_assoc($r)){
     $old = $row['mutasi_dokumen_path'];
     $newPath = str_replace('uploads/pelunasan_hutang', 'uploads/kasir/pelunasan_hutang', $old);
     $id = (int)$row['id'];
     $esc = mysqli_real_escape_string($c, $newPath);
-    mysqli_query($c, "UPDATE tblkasir_pengambilan_setoran SET mutasi_dokumen_path = '$esc' WHERE id = $id");
+    mysqli_query($c, "UPDATE pengambilan_setoran_closing_kasir SET mutasi_dokumen_path = '$esc' WHERE id = $id");
     $n++;
 }
 echo "$n path terupdate\n";
@@ -1618,7 +1618,7 @@ echo "$n path terupdate\n";
 <?php
 // _tmp_verify_uploads.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM tblkasir_pengambilan_setoran WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
+$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM pengambilan_setoran_closing_kasir WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
 $missing = 0;
 while($row = mysqli_fetch_assoc($r)){
     $full = __DIR__ . '/' . $row['mutasi_dokumen_path'];
@@ -1744,7 +1744,7 @@ git commit --allow-empty -m "docs(keuangan-kasir): konfirmasi masterkey.php reti
   lingkungan nyata (path binary, nama variabel session existing), sudah
   dikasih command persis buat nemuinnya, bukan "tambahkan validasi yang
   sesuai" generik.
-- **Type/nama consistency:** nama tabel target (`tblkasir_*`) dipakai
+- **Type/nama consistency:** nama tabel target (`*_closing_kasir`) dipakai
   konsisten Task 2 → Task 18; nama fungsi helper `copyTable()`
   didefinisikan ulang tiap task migrasi data (Task 4-7) karena tiap
   task dieksekusi subagent terpisah yang gak bisa import file

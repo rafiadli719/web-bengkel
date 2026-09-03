@@ -49,39 +49,39 @@ HPP-nya.
 
 ## 3. Arsitektur Target
 
-### 3.1 Skema Database — rename tabel web_kasir → prefix `tbl` standar fitmotor
+### 3.1 Skema Database — tabel web_kasir masuk `fitmotor_dbbengkel`, dibedakan pakai suffix `_closing_kasir`
 
-Semua masuk `fitmotor_dbbengkel`. Prefix baru: `tblkasir_*`.
+Semua masuk `fitmotor_dbbengkel`. Suffix baru: `*_closing_kasir` (nama asli dipertahankan, cuma ditambah suffix) — bukan skema rename konseptual (keputusan direvisi 2026-09-03, Rafi: "gak mengubah proses/struktur"). Nama tabel sumber web_kasir dipertahankan APA ADANYA, cuma ditempel `_closing_kasir` di belakang buat bedain dari tabel fitmotor yang konsepnya mirip (mis. `data_penjualan` (kasir) vs `tblpenjualan_header` (fitmotor) — bukan `tblpenjualan_closing_kasir`, karena nama sumbernya memang `data_penjualan`, bukan `tblpenjualan`). Ini juga bikin proses porting ~180 file PHP lebih aman: query di dalam kode cukup tempel `_closing_kasir` di nama tabel, TANPA perlu mikir ulang nama baru — turunin resiko salah ketik/salah mapping pas refactor massal.
 
 | Tabel lama (web_kasir) | Tabel baru (fitmotor) | Catatan |
 |---|---|---|
 | `cabang` | — (drop) | pakai `tbcabang.cabang_ref_kode` langsung |
 | `users` | — (drop) | pakai `tbuser` + RBAC fitmotor |
-| `kasir_transactions` | `tblkasir_transaksi` | tabel transaksional utama, 2222 baris |
-| `closing_transaction_groups` | `tblkasir_closing_group` | |
-| `closing_transaction_details` | `tblkasir_closing_detail` | |
-| `closing_revision_requests` | `tblkasir_closing_revisi` | |
-| `kas_awal` | `tblkasir_kas_awal` | 2224 baris |
-| `kas_akhir` | `tblkasir_kas_akhir` | 2213 baris |
-| `detail_kas_awal` | `tblkasir_kas_awal_detail` | |
-| `detail_kas_akhir` | `tblkasir_kas_akhir_detail` | |
-| `pemasukan_kasir` | `tblkasir_pemasukan` | 1723 baris |
-| `pemasukan_pusat` | `tblkasir_pemasukan_pusat` | |
-| `pengeluaran_kasir` | `tblkasir_pengeluaran` | 22156 baris — tabel terbesar |
-| `pengeluaran_pusat` | `tblkasir_pengeluaran_pusat` | |
-| `setoran_ke_bank` | `tblkasir_setoran_bank` | 337 baris |
-| `setoran_ke_bank_detail` | `tblkasir_setoran_bank_detail` | |
-| `setoran_keuangan` | `tblkasir_setoran_keuangan` | |
-| `pengambilan_setoran` | `tblkasir_pengambilan_setoran` | |
-| `pengambilan_setoran_edit_log` | `tblkasir_pengambilan_setoran_log` | |
-| `pengambilan_setoran_pembayaran` | `tblkasir_pengambilan_setoran_pembayaran` | |
-| `serah_terima_kasir` | `tblkasir_serah_terima` | |
-| `master_akun` | `tblkasir_master_akun` | 34 baris |
-| `master_nama_transaksi` | `tblkasir_master_transaksi` | 159 baris |
-| `master_rekening_cabang` | `tblkasir_rekening_cabang` | |
-| `kas_awal_config` | `tblkasir_kas_awal_config` | |
-| `konfirmasi_buka_transaksi` | `tblkasir_konfirmasi_buka` | |
-| `audit_log` | `tblkasir_audit_log` | |
+| `kasir_transactions` | `kasir_transactions_closing_kasir` | tabel transaksional utama, 2222 baris |
+| `closing_transaction_groups` | `closing_transaction_groups_closing_kasir` | |
+| `closing_transaction_details` | `closing_transaction_details_closing_kasir` | |
+| `closing_revision_requests` | `closing_revision_requests_closing_kasir` | |
+| `kas_awal` | `kas_awal_closing_kasir` | 2224 baris |
+| `kas_akhir` | `kas_akhir_closing_kasir` | 2213 baris |
+| `detail_kas_awal` | `detail_kas_awal_closing_kasir` | |
+| `detail_kas_akhir` | `detail_kas_akhir_closing_kasir` | |
+| `pemasukan_kasir` | `pemasukan_kasir_closing_kasir` | 1723 baris |
+| `pemasukan_pusat` | `pemasukan_pusat_closing_kasir` | |
+| `pengeluaran_kasir` | `pengeluaran_kasir_closing_kasir` | 22156 baris — tabel terbesar |
+| `pengeluaran_pusat` | `pengeluaran_pusat_closing_kasir` | |
+| `setoran_ke_bank` | `setoran_ke_bank_closing_kasir` | 337 baris |
+| `setoran_ke_bank_detail` | `setoran_ke_bank_detail_closing_kasir` | |
+| `setoran_keuangan` | `setoran_keuangan_closing_kasir` | |
+| `pengambilan_setoran` | `pengambilan_setoran_closing_kasir` | |
+| `pengambilan_setoran_edit_log` | `pengambilan_setoran_edit_log_closing_kasir` | |
+| `pengambilan_setoran_pembayaran` | `pengambilan_setoran_pembayaran_closing_kasir` | |
+| `serah_terima_kasir` | `serah_terima_kasir_closing_kasir` | |
+| `master_akun` | `master_akun_closing_kasir` | 34 baris |
+| `master_nama_transaksi` | `master_nama_transaksi_closing_kasir` | 159 baris |
+| `master_rekening_cabang` | `master_rekening_cabang_closing_kasir` | |
+| `kas_awal_config` | `kas_awal_config_closing_kasir` | |
+| `konfirmasi_buka_transaksi` | `konfirmasi_buka_transaksi_closing_kasir` | |
+| `audit_log` | `audit_log_closing_kasir` | |
 | `keping` | *(cek dulu)* | verifikasi dulu apa dupe `tbkas_kasir_detail` fitmotor sebelum putuskan nama |
 | `hpp_api_keys`, `hpp_bypass`, `hpp_bypass_request`, `hpp_sync_log`, `hpp_sync_status` | **DROP** | bridge API mati, HPP diakses langsung via query same-DB |
 | `dynamic_sidebars`, `user_sidebar_settings` | **DROP** | spesifik app lama, gak relevan di fitmotor |
