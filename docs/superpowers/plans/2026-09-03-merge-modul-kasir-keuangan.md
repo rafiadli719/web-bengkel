@@ -987,19 +987,26 @@ git commit -m "chore(keuangan-kasir): cutover — matikan web_kasir lama, hapus 
 **Interfaces:**
 - Consumes: Task 17 harus sudah cutover sukses (jeda minimal beberapa hari operasional, bukan langsung sesudah Task 17 — keputusan waktu ada di Rafi, task ini dieksekusi terpisah saat diminta).
 
-- [ ] **Step 1: Dump 7 tabel kasir mati fitmotor**
+**Verifikasi 2026-09-03**: selain 7 tabel "kas kasir" awal, `tb_bank`
+(0 pemakaian via `rg -l "tb_bank\b" app --glob "*.php"`) dan
+`master_bank` (1 file `app/master_bank.php`, TAPI gak ada di
+`menu_config.php` → halaman yatim) juga overlap konsepnya sama
+`master_rekening_cabang_closing_kasir` — ditambahkan ke daftar drop,
+total 9 tabel + 1 file tambahan.
+
+- [ ] **Step 1: Dump 9 tabel kasir mati fitmotor**
 
 ```bash
-"/mnt/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe" -h localhost -u fitmotor_LOGIN -pSayalupa12 fitmotor_dbbengkel tbkas_kasir_header tbkas_kasir_detail tbkas_kasir tblakunkas tbakun tbakun_pos tblkas_keluar_masuk > backups/tbkas_kasir_legacy_dump_$(date +%Y%m%d_%H%M%S).sql
+"/mnt/c/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysqldump.exe" -h localhost -u fitmotor_LOGIN -pSayalupa12 fitmotor_dbbengkel tbkas_kasir_header tbkas_kasir_detail tbkas_kasir tblakunkas tbakun tbakun_pos tblkas_keluar_masuk tb_bank master_bank > backups/tbkas_kasir_legacy_dump_$(date +%Y%m%d_%H%M%S).sql
 ```
 
-- [ ] **Step 2: Drop 7 tabel**
+- [ ] **Step 2: Drop 9 tabel**
 
 ```php
 <?php
 // _tmp_drop_legacy_kasir.php — disposable
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
-foreach(['tbkas_kasir_header','tbkas_kasir_detail','tbkas_kasir','tblakunkas','tbakun','tbakun_pos','tblkas_keluar_masuk'] as $t){
+foreach(['tbkas_kasir_header','tbkas_kasir_detail','tbkas_kasir','tblakunkas','tbakun','tbakun_pos','tblkas_keluar_masuk','tb_bank','master_bank'] as $t){
     $ok = mysqli_query($c, "DROP TABLE IF EXISTS `$t`");
     echo "$t: ".($ok ? "dropped" : mysqli_error($c))."\n";
 }
@@ -1010,7 +1017,7 @@ foreach(['tbkas_kasir_header','tbkas_kasir_detail','tbkas_kasir','tblakunkas','t
 ```bash
 mkdir -p archive/legacy-kasir-lama
 git mv "app/kas kasir" archive/legacy-kasir-lama/
-git mv app/kas_awal.php app/kas_akhir.php app/kas_awal_proses.php app/kas_akhir_proses.php archive/legacy-kasir-lama/ 2>&1 || true
+git mv app/kas_awal.php app/kas_akhir.php app/kas_awal_proses.php app/kas_akhir_proses.php app/master_bank.php archive/legacy-kasir-lama/ 2>&1 || true
 ```
 (pakai `git mv` biar history rename kedeteksi git, bukan delete+create
 baru — pola yang sudah dipakai project ini, lihat memory

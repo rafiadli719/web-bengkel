@@ -176,14 +176,28 @@ didrop) sampai cutover dinyatakan sukses beberapa hari.
 
 ### 3.6 Tabel kasir lama fitmotor (dead code) — langkah terpisah
 
+Diverifikasi 2026-09-03 (permintaan Rafi "cek struktur tabel yang sama"):
+selain 7 tabel "kas kasir" awal, ketemu 2 tabel tambahan yang juga
+mati & konsepnya digantikan modul kasir baru —
+`tb_bank`/`master_bank` (0 pemakaian di kode via `rg`, `master_bank.php`
+juga gak ada di `menu_config.php` → halaman yatim), digantikan
+`master_rekening_cabang_closing_kasir`. Total **9 tabel**:
+
 Setelah cutover modul baru sukses (bukan bareng window migrasi utama):
 1. Dump `tbkas_kasir_header`, `tbkas_kasir_detail`, `tbkas_kasir`,
-   `tblakunkas`, `tbakun`, `tbakun_pos`, `tblkas_keluar_masuk` ke
-   `backups/`.
-2. `DROP TABLE` ketujuh tabel itu.
+   `tblakunkas`, `tbakun`, `tbakun_pos`, `tblkas_keluar_masuk`, `tb_bank`,
+   `master_bank` ke `backups/`.
+2. `DROP TABLE` kesembilan tabel itu.
 3. Archive file PHP mati (`app/kas kasir/*.php`, `app/kas_awal.php`,
-   `app/kas_akhir.php`, dst yang gak ada di menu_config.php) ke
-   `archive/` — pola arsip yang sudah dipakai di repo ini.
+   `app/kas_akhir.php`, `app/master_bank.php`, dst yang gak ada di
+   menu_config.php) ke `archive/` — pola arsip yang sudah dipakai di
+   repo ini.
+
+**Catatan terpisah (di luar scope merge ini)**: `tbcara_bayar` dan
+`tbjenis_bayar` juga ketemu 0 pemakaian via `rg`, tapi BUKAN digantikan
+modul kasir (kasir gak punya master metode bayar sendiri, pakai ENUM
+inline) — dead code kebetulan, dilaporkan ke Rafi sebagai temuan
+terpisah, tidak masuk Task 18.
 
 ### 3.7 Testing
 
