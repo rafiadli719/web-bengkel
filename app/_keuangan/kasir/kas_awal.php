@@ -43,7 +43,7 @@ if (isset($_GET['kode_transaksi'])) {
     if ($transaksi_data_edit && userCanAccessTransaction($pdo, $legacy_session_kasir, $transaksi_data_edit)) {
         // Set session untuk melanjutkan transaksi yang sudah ada
         $_SESSION['selected_date'] = $transaksi_data_edit['tanggal_transaksi'];
-        $_SESSION['kas_awal_closing_kasir'] = $transaksi_data_edit['kas_awal']; // kolom asli kasir_transactions_closing_kasir tetap 'kas_awal', bukan ikut suffix tabel
+        $_SESSION['kas_awal'] = $transaksi_data_edit['kas_awal']; // kolom asli kasir_transactions_closing_kasir tetap 'kas_awal', bukan ikut suffix tabel
         $_SESSION['kode_transaksi_edit'] = $kode_transaksi_edit;
     } else {
         $transaksi_data_edit = null;
@@ -448,8 +448,8 @@ while (true) {
 
 // ** Part 3: Starting Cash and Cash Entry Processing **
 $error_message = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal_closing_kasir'])) {
-    $kas_awal_closing_kasir = isset($_POST['kas_awal_closing_kasir']) ? $_POST['kas_awal_closing_kasir'] : 0;
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal'])) {
+    $kas_awal = isset($_POST['kas_awal']) ? $_POST['kas_awal'] : 0;
     $waktu = '08:00:00'; // Default time set to 8:00 AM
 
     $kepingFilled = false;
@@ -465,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal_closing_kasir
         }
     }
 
-    if ($kas_awal_closing_kasir == 0 || !$kepingFilled) {
+    if ($kas_awal == 0 || !$kepingFilled) {
         $error_message = "Total starting cash cannot be 0, and at least one coin entry must be filled.";
     } else {
         try {
@@ -478,13 +478,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal_closing_kasir
             }
             $current_branch = ['kode_cabang' => $kode_cabang, 'nama_cabang' => $nama_cabang];
 
-            // Insert into kas_awal_closing_kasir table
-            $sql_kas_awal = "INSERT INTO kas_awal_closing_kasir (kode_transaksi, kode_karyawan, total_nilai, tanggal, waktu) 
+            // Insert into kas_awal table
+            $sql_kas_awal = "INSERT INTO kas_awal (kode_transaksi, kode_karyawan, total_nilai, tanggal, waktu) 
                              VALUES (:kode_transaksi, :kode_karyawan, :total_nilai, :tanggal, :waktu)";
             $stmt_kas_awal = $pdo->prepare($sql_kas_awal);
             $stmt_kas_awal->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
             $stmt_kas_awal->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR);
-            $stmt_kas_awal->bindParam(':total_nilai', $kas_awal_closing_kasir, PDO::PARAM_STR);
+            $stmt_kas_awal->bindParam(':total_nilai', $kas_awal, PDO::PARAM_STR);
             $stmt_kas_awal->bindParam(':tanggal', $tanggal_transaksi_baru, PDO::PARAM_STR);
             $stmt_kas_awal->bindParam(':waktu', $waktu, PDO::PARAM_STR);
             $stmt_kas_awal->execute();
@@ -493,7 +493,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal_closing_kasir
             if (isset($_POST['keping_closing_kasir']) && is_array($_POST['keping_closing_kasir'])) {
                 foreach ($_POST['keping_closing_kasir'] as $nominal => $jumlah_keping) {
                     if ($jumlah_keping > 0) {
-                        $sql_detail_kas_awal = "INSERT INTO detail_kas_awal_closing_kasir (kode_transaksi, nominal, jumlah_keping) 
+                        $sql_detail_kas_awal = "INSERT INTO detail_kas_awal (kode_transaksi, nominal, jumlah_keping) 
                                                 VALUES (:kode_transaksi, :nominal, :jumlah_keping)";
                         $stmt_detail = $pdo->prepare($sql_detail_kas_awal);
                         $stmt_detail->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
@@ -506,11 +506,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal_closing_kasir
 
             // PERBAIKAN: Insert into kasir_transactions_closing_kasir table dengan validasi branch yang ketat
             $sql_trans = "INSERT INTO kasir_transactions_closing_kasir (kode_karyawan, kode_transaksi, kas_awal, tanggal_transaksi, status, kode_cabang, nama_cabang)
-                          VALUES (:kode_karyawan, :kode_transaksi, :kas_awal_closing_kasir, :tanggal_transaksi, 'on proses', :kode_cabang, :nama_cabang)";
+                          VALUES (:kode_karyawan, :kode_transaksi, :kas_awal, :tanggal_transaksi, 'on proses', :kode_cabang, :nama_cabang)";
             $stmt_trans = $pdo->prepare($sql_trans);
             $stmt_trans->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR);
             $stmt_trans->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
-            $stmt_trans->bindParam(':kas_awal_closing_kasir', $kas_awal_closing_kasir, PDO::PARAM_STR);
+            $stmt_trans->bindParam(':kas_awal', $kas_awal, PDO::PARAM_STR);
             $stmt_trans->bindParam(':tanggal_transaksi', $tanggal_transaksi_baru, PDO::PARAM_STR);
             $stmt_trans->bindParam(':kode_cabang', $current_branch['kode_cabang'], PDO::PARAM_STR);
             $stmt_trans->bindParam(':nama_cabang', $current_branch['nama_cabang'], PDO::PARAM_STR);
@@ -955,8 +955,8 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
                            value="Rp 0" 
                            readonly>
                     <input type="hidden" 
-                           id="kas_awal_closing_kasir" 
-                           name="kas_awal_closing_kasir" 
+                           id="kas_awal" 
+                           name="kas_awal" 
                            value="0">
                 </div>
             </div>
@@ -979,7 +979,7 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
 
             var totalFormatted = "Rp " + totalKasAwal.toLocaleString('id-ID', { minimumFractionDigits: 0 });
             document.getElementById('kas_awal_display').value = totalFormatted;
-            document.getElementById('kas_awal_closing_kasir').value = totalKasAwal;
+            document.getElementById('kas_awal').value = totalKasAwal;
         }
 
         function hitungTotal(nominal) {
@@ -1002,7 +1002,7 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
 
         // Form validation sebelum submit
         document.getElementById('kasAwalForm').addEventListener('submit', function(e) {
-            var kasAwal = parseInt(document.getElementById('kas_awal_closing_kasir').value);
+            var kasAwal = parseInt(document.getElementById('kas_awal').value);
             
             if (kasAwal <= 0) {
                 e.preventDefault();

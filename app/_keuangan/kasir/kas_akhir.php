@@ -32,7 +32,7 @@ if (isset($_GET['kode_transaksi'])) {
 }
 
 // Cek apakah kas akhir sudah diinput
-$sql_check_kas_akhir = "SELECT COUNT(*) FROM kas_akhir_closing_kasir WHERE kode_transaksi = :kode_transaksi";
+$sql_check_kas_akhir = "SELECT COUNT(*) FROM kas_akhir WHERE kode_transaksi = :kode_transaksi";
 $stmt_check = $pdo->prepare($sql_check_kas_akhir);
 $stmt_check->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
 $stmt_check->execute();
@@ -50,31 +50,31 @@ $keping_data = $stmt_keping->fetchAll(PDO::FETCH_ASSOC);
 
 // Jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $kas_akhir_closing_kasir = isset($_POST['kas_akhir_closing_kasir']) ? $_POST['kas_akhir_closing_kasir'] : 0;
+    $kas_akhir = isset($_POST['kas_akhir']) ? $_POST['kas_akhir'] : 0;
     $tanggal = date('Y-m-d');  // Ambil tanggal otomatis
     $waktu = date('H:i:s');    // Ambil waktu otomatis
 
     try {
         $pdo->beginTransaction();
 
-        // Insert ke tabel kas_akhir_closing_kasir
-        $sql_kas_akhir = "INSERT INTO kas_akhir_closing_kasir (kode_transaksi, kode_karyawan, total_nilai, tanggal, waktu) 
+        // Insert ke tabel kas_akhir
+        $sql_kas_akhir = "INSERT INTO kas_akhir (kode_transaksi, kode_karyawan, total_nilai, tanggal, waktu) 
                           VALUES (:kode_transaksi, :kode_karyawan, :total_nilai, :tanggal, :waktu)";
         $stmt_kas_akhir = $pdo->prepare($sql_kas_akhir);
         $stmt_kas_akhir->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
         $stmt_kas_akhir->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR);
-        $stmt_kas_akhir->bindParam(':total_nilai', $kas_akhir_closing_kasir, PDO::PARAM_STR);
+        $stmt_kas_akhir->bindParam(':total_nilai', $kas_akhir, PDO::PARAM_STR);
         $stmt_kas_akhir->bindParam(':tanggal', $tanggal, PDO::PARAM_STR);
         $stmt_kas_akhir->bindParam(':waktu', $waktu, PDO::PARAM_STR);
         $stmt_kas_akhir->execute();
 
-        // Insert ke tabel detail_kas_akhir_closing_kasir
+        // Insert ke tabel detail_kas_akhir
         foreach ($keping_data as $row) {
             $nominal = $row['nominal'];
             $jumlah_keping = isset($_POST['keping_' . $nominal]) ? $_POST['keping_' . $nominal] : 0;
 
             if ($jumlah_keping > 0) {
-                $sql_detail = "INSERT INTO detail_kas_akhir_closing_kasir (kode_transaksi, nominal, jumlah_keping) 
+                $sql_detail = "INSERT INTO detail_kas_akhir (kode_transaksi, nominal, jumlah_keping) 
                                VALUES (:kode_transaksi, :nominal, :jumlah_keping)";
                 $stmt_detail = $pdo->prepare($sql_detail);
                 $stmt_detail->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
@@ -84,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        // Update kasir_transactions_closing_kasir untuk mengisi kas_akhir_closing_kasir
-        $sql_update_trans = "UPDATE kasir_transactions_closing_kasir SET kas_akhir = :kas_akhir_closing_kasir WHERE kode_transaksi = :kode_transaksi AND kode_karyawan = :kode_karyawan";
+        // Update kasir_transactions_closing_kasir untuk mengisi kas_akhir
+        $sql_update_trans = "UPDATE kasir_transactions_closing_kasir SET kas_akhir = :kas_akhir WHERE kode_transaksi = :kode_transaksi AND kode_karyawan = :kode_karyawan";
         $stmt_update_trans = $pdo->prepare($sql_update_trans);
-        $stmt_update_trans->bindParam(':kas_akhir_closing_kasir', $kas_akhir_closing_kasir, PDO::PARAM_STR);
+        $stmt_update_trans->bindParam(':kas_akhir', $kas_akhir, PDO::PARAM_STR);
         $stmt_update_trans->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
         $stmt_update_trans->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR); // Menggunakan kode_karyawan
         $stmt_update_trans->execute();
@@ -530,8 +530,8 @@ $karyawan_info = $kode_karyawan . ' - ' . ($nama_karyawan ?? 'Tidak diketahui');
                            value="Rp 0" 
                            readonly>
                     <input type="hidden" 
-                           id="kas_akhir_closing_kasir" 
-                           name="kas_akhir_closing_kasir" 
+                           id="kas_akhir" 
+                           name="kas_akhir" 
                            value="0">
                 </div>
             </div>
@@ -602,7 +602,7 @@ $karyawan_info = $kode_karyawan . ' - ' . ($nama_karyawan ?? 'Tidak diketahui');
             // Format total kas akhir sebagai mata uang
             var totalFormatted = "Rp " + totalKasAkhir.toLocaleString('id-ID', { minimumFractionDigits: 0 });
             document.getElementById('kas_akhir_display').value = totalFormatted;
-            document.getElementById('kas_akhir_closing_kasir').value = totalKasAkhir;
+            document.getElementById('kas_akhir').value = totalKasAkhir;
         }
     </script>
 </body>

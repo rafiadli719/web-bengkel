@@ -179,8 +179,8 @@ function buildClosingRevisionTransactionSnapshot(array $transaction): array
 
     return [
         'status' => $transaction['status'] ?? null,
-        'kas_awal_closing_kasir' => $kasAwal,
-        'kas_akhir_closing_kasir' => $kasAkhir,
+        'kas_awal' => $kasAwal,
+        'kas_akhir' => $kasAkhir,
         'total_penjualan' => $totalPenjualan,
         'total_servis' => $totalServis,
         'omset' => $omset,
@@ -234,8 +234,8 @@ function getClosingRevisionSummary(PDO $pdo, string $kodeTransaksi): ?array
 
     $comparisonFields = [
         'status' => 'Status',
-        'kas_awal_closing_kasir' => 'Kas Awal',
-        'kas_akhir_closing_kasir' => 'Kas Akhir',
+        'kas_awal' => 'Kas Awal',
+        'kas_akhir' => 'Kas Akhir',
         'total_penjualan' => 'Penjualan',
         'total_servis' => 'Servis',
         'omset' => 'Omset',
@@ -352,7 +352,7 @@ function getClosingRevisionLineItemChanges(PDO $pdo, string $oldKodeTransaksi, s
         [
             'key' => 'kas_akhir_detail',
             'label' => 'Detail Kas Akhir',
-            'table' => 'detail_kas_akhir_closing_kasir',
+            'table' => 'detail_kas_akhir',
             'fields' => ['nominal'],
             'value_field' => 'jumlah_keping',
             'value_label' => 'Jumlah Keping',
@@ -489,7 +489,7 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
                 jenis_setoran_id, kode_setoran, jumlah_diterima_fisik, catatan_validasi,
                 rekening_tujuan_id, validasi_at, validasi_by, bukti_transaksi, revision_parent_kode
             ) VALUES (
-                :kode_transaksi, :kas_awal_closing_kasir, :kas_akhir_closing_kasir, :total_pemasukan, :total_pengeluaran,
+                :kode_transaksi, :kas_awal, :kas_akhir, :total_pemasukan, :total_pengeluaran,
                 :total_penjualan, :total_servis, 'on proses', :tanggal_transaksi, NULL,
                 NULL, :setoran_real, :omset, :data_setoran, :selisih_setoran,
                 :kode_karyawan, :kasir_asal, :kode_cabang, :nama_cabang, 'Belum Disetor',
@@ -501,8 +501,8 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
 
         $stmtInsertTransaction->execute([
             ':kode_transaksi' => $kodeTransaksiBaru,
-            ':kas_awal_closing_kasir' => $transaction['kas_awal'],
-            ':kas_akhir_closing_kasir' => $transaction['kas_akhir'],
+            ':kas_awal' => $transaction['kas_awal'],
+            ':kas_akhir' => $transaction['kas_akhir'],
             ':total_pemasukan' => $transaction['total_pemasukan'],
             ':total_pengeluaran' => $transaction['total_pengeluaran'],
             ':total_penjualan' => $transaction['total_penjualan'],
@@ -525,7 +525,7 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
 
         duplicateTransactionRows(
             $pdo,
-            'kas_awal_closing_kasir',
+            'kas_awal',
             ['kode_transaksi', 'total_nilai', 'tanggal', 'waktu', 'status', 'kode_karyawan'],
             $transaction['kode_transaksi'],
             $kodeTransaksiBaru
@@ -533,7 +533,7 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
 
         duplicateTransactionRows(
             $pdo,
-            'detail_kas_awal_closing_kasir',
+            'detail_kas_awal',
             ['kode_transaksi', 'nominal', 'jumlah_keping'],
             $transaction['kode_transaksi'],
             $kodeTransaksiBaru
@@ -541,7 +541,7 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
 
         duplicateTransactionRows(
             $pdo,
-            'kas_akhir_closing_kasir',
+            'kas_akhir',
             ['kode_transaksi', 'total_nilai', 'tanggal', 'waktu', 'kode_karyawan'],
             $transaction['kode_transaksi'],
             $kodeTransaksiBaru
@@ -549,7 +549,7 @@ function approveClosingRevisionRequest(PDO $pdo, int $requestId, string $approve
 
         duplicateTransactionRows(
             $pdo,
-            'detail_kas_akhir_closing_kasir',
+            'detail_kas_akhir',
             ['kode_transaksi', 'nominal', 'jumlah_keping'],
             $transaction['kode_transaksi'],
             $kodeTransaksiBaru

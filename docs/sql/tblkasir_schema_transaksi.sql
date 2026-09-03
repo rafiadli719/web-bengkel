@@ -127,6 +127,12 @@ CREATE TABLE `closing_revision_requests_closing_kasir` (
   CONSTRAINT `fk_crr_ck_cabang` FOREIGN KEY (`kode_cabang`) REFERENCES `tbcabang` (`cabang_ref_kode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- CATATAN (2026-09-03 malam, susulan): kas_awal_closing_kasir, kas_akhir_closing_kasir,
+-- detail_kas_awal_closing_kasir, detail_kas_akhir_closing_kasir DI-RENAME jadi
+-- kas_awal/kas_akhir/detail_kas_awal/detail_kas_akhir (RENAME TABLE, bukan CREATE ulang) —
+-- gak ada tabrakan nama sama tabel fitmotor lama (fitur kasir lama pakai
+-- tbkas_kasir_header/tbkeping, bukan nama ini). DDL di bawah historical record
+-- nama saat pertama dibuat, kolom/index/FK gak berubah.
 CREATE TABLE `kas_awal_closing_kasir` (
   `id` int NOT NULL AUTO_INCREMENT,
   `kode_transaksi` varchar(20) NOT NULL,

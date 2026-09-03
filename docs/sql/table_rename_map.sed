@@ -6,10 +6,6 @@ s/\bkasir_transactions\b/kasir_transactions_closing_kasir/g
 s/\bclosing_transaction_groups\b/closing_transaction_groups_closing_kasir/g
 s/\bclosing_transaction_details\b/closing_transaction_details_closing_kasir/g
 s/\bclosing_revision_requests\b/closing_revision_requests_closing_kasir/g
-s/\bkas_awal\b/kas_awal_closing_kasir/g
-s/\bkas_akhir\b/kas_akhir_closing_kasir/g
-s/\bdetail_kas_awal\b/detail_kas_awal_closing_kasir/g
-s/\bdetail_kas_akhir\b/detail_kas_akhir_closing_kasir/g
 s/\bpemasukan_kasir\b/pemasukan_kasir_closing_kasir/g
 s/\bpemasukan_pusat\b/pemasukan_pusat_closing_kasir/g
 s/\bpengeluaran_kasir\b/pengeluaran_kasir_closing_kasir/g

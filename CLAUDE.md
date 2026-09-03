@@ -59,3 +59,35 @@ Catatan:
 4. Panggilan ini best-effort — kalau checklist-projek lagi down/unreachable
    (script exit 1), lanjutkan kerjaan seperti biasa, jangan blocking, cukup
    sebutkan ke Rafi bahwa update progress gagal terkirim.
+
+## Progress Merge Modul Kasir → Keuangan (2026-09-03)
+
+Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
+(34 task). Status per 2026-09-03 malam:
+
+- **Task 1-10 SELESAI & commit**: backup DB (372MB), DDL 25 tabel
+  `*_closing_kasir` + 10 VIEW, migrasi data ~50rb+ baris (row-count match
+  semua), RBAC (`tb_master_posisi.permissions` +5 kode `kasir_*` di
+  ADM/KEU/KSR).
+- **Task 11-12 SELESAI & commit**: porting `app/_keuangan/kasir/` —
+  `koneksi_kasir.php`, `kas_awal.php`, `kas_akhir.php`,
+  `closing_revision_helpers.php`, `pemasukan.php`, `pengeluaran.php`,
+  `process_closing_transaction.php`, `utils.php`. Sumber real beda dari
+  draft plan awal (dashboard besar, bukan file kecil) — lihat commit
+  message masing-masing buat detail keputusan porting.
+- **Keputusan susulan (2026-09-03 malam)**: tabel `kas_awal_closing_kasir`
+  → di-rename jadi **`kas_awal`** (dan `kas_akhir_closing_kasir` →
+  `kas_akhir`, `detail_kas_awal_closing_kasir` → `detail_kas_awal`,
+  `detail_kas_akhir_closing_kasir` → `detail_kas_akhir`) — TIDAK ada
+  tabrakan nama sama tabel fitmotor lama (dicek: gak ada tabel `kas_awal`/
+  `kas_akhir` asli di `fitmotor_dbbengkel`, fitur kasir lama fitmotor
+  pakai `tbkas_kasir_header`/`tbkeping` bukan nama itu). File lama
+  `app/kas_awal.php`/`app/kas_akhir.php` (pakai `tbkas_kasir_header`)
+  MASIH LIVE, belum diganti — penggantian menu ke versi baru
+  `app/_keuangan/kasir/kas_awal.php` ditahan sampai Task 15 (menu
+  wiring), biar gak putus fitur user tanpa checkpoint.
+- **Task 13-34 BELUM dikerjakan**: closing (`close_transaksi1.php`
+  141KB), closing revisi, `setoran_keuangan.php` (424KB, terbesar
+  seprojek), cutover (Task 17) & drop tabel mati (Task 18) — 2 task
+  terakhir itu WAJIB tanya konfirmasi eksplisit dulu sebelum eksekusi
+  (irreversible, sistem kasir/keuangan live).
