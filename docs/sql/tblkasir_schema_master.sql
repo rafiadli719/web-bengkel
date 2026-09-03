@@ -73,3 +73,11 @@ CREATE TABLE `kas_awal_config_closing_kasir` (
   KEY `idx_is_active` (`status`),
   CONSTRAINT `fk_kas_awal_config_closing_kasir` FOREIGN KEY (`kode_cabang`) REFERENCES `tbcabang` (`cabang_ref_kode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Task 8: master pecahan uang, statis 10 baris, gak ada FK keluar/masuk
+-- (detail_kas_awal/akhir_closing_kasir cuma simpan nominal+jumlah_keping sendiri, bukan FK ke sini)
+CREATE TABLE keping_closing_kasir (
+  id INT NOT NULL AUTO_INCREMENT,
+  nominal INT NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
