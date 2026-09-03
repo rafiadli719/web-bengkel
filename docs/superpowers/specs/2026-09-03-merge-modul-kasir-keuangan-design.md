@@ -84,7 +84,8 @@ Semua masuk `fitmotor_dbbengkel`. Prefix baru: `tblkasir_*`.
 | `audit_log` | `tblkasir_audit_log` | |
 | `keping` | *(cek dulu)* | verifikasi dulu apa dupe `tbkas_kasir_detail` fitmotor sebelum putuskan nama |
 | `hpp_api_keys`, `hpp_bypass`, `hpp_bypass_request`, `hpp_sync_log`, `hpp_sync_status` | **DROP** | bridge API mati, HPP diakses langsung via query same-DB |
-| `dynamic_sidebars`, `user_sidebar_settings`, `masterkeys` | **DROP** | spesifik app lama, gak relevan di fitmotor |
+| `dynamic_sidebars`, `user_sidebar_settings` | **DROP** | spesifik app lama, gak relevan di fitmotor |
+| `users`, `masterkeys` | **JANGAN DROP dulu** | lihat §3.8 — dipakai live oleh bridge eksternal `login_dashboard` → priori-tech, drop cuma boleh SETELAH bridge itu dialihkan ke `tbuser` fitmotor |
 | `v_transaksi_ada_selisih`, `v_transaksi_dikembalikan_cs`, `v_transaksi_perlu_validasi`, `view_pemasukan_combined`, `view_pemasukan_kasir`, `view_pemasukan_pusat`, `view_pemasukan_with_closing`, `view_pengeluaran_kasir`, `view_pengeluaran_pusat`, `view_setoran_with_closing` | rebuild ulang | recreate VIEW definition setelah tabel base di-rename |
 
 FK baru: semua kolom `kode_cabang` → `tbcabang.cabang_ref_kode`, semua
@@ -94,6 +95,7 @@ FK baru: semua kolom `kode_cabang` → `tbcabang.cabang_ref_kode`, semua
 
 ```
 app/_keuangan/kasir/
+├── dashboard.php             (rekap/summary — port dari admin_dashboard.php)
 ├── kas_awal.php              (buka kasir/shift)
 ├── kas_akhir.php             (tutup kasir/shift)
 ├── closing.php               (closing per cabang, grouping dipinjam/meminjam)
@@ -104,6 +106,14 @@ app/_keuangan/kasir/
 ├── validasi_keuangan_pusat.php
 └── ... (~140 file web_kasir dipindah & direfactor ke sini)
 ```
+
+`admin_dashboard.php` (18.5KB) satu-satunya dashboard AKTIF — dilink
+dari `includes/sidebar.php`. 3 varian lain
+(`kasir_closing_dashboard.php`, `kasir_dashboard_baru.php`,
+`kasir_dashboard_baru1..php`) tidak dilink sidebar → dead variant, tidak
+diport (pola sama kayak file `_asli`/bernomor lain di source). Isi
+dashboard: cek role user (`SELECT role FROM users WHERE kode_karyawan =
+?`), rekap `kasir_transactions` per cabang/tanggal.
 
 Ikuti pola direktori underscore fitmotor yang sudah ada (`_admincab`,
 `_ajax`, `_template`, `_tools`). Koneksi DB pakai `app/koneksi.php`
@@ -185,6 +195,35 @@ Setelah cutover modul baru sukses (bukan bareng window migrasi utama):
 - Regression check: pastikan bridge HPP lama dihapus tidak merusak
   fitur HPP fitmotor yang sudah ada (HPP FIFO dsb, lihat memory
   `project_gap_analysis_access_vs_webapp_2026-08-09`).
+
+### 3.8 Dependensi eksternal — bridge SSO ke priori-tech (temuan 2026-09-03, setelah spec awal)
+
+`web_kasir/includes/sidebar.php` redirect login ke
+`../../login_dashboard/login.php` — projek KETIGA,
+`C:\laragon\www\login_dashboard` (SSO hub, punya `login.php`,
+`sso_token.php`, `sync_users_api.php`, DB target sama:
+`fitmotor_maintance-beta`). `sync_users_api.php` di situ adalah jembatan
+API buat projek KEEMPAT, **"priori-tech"** (VPS terpisah, tidak bisa
+akses DB shared hosting langsung) — endpoint ini query
+`users JOIN masterkeys` (proteksi shared-secret header) dan
+**MASIH AKTIF DIPAKAI** (dikonfirmasi Rafi 2026-09-03).
+
+**Dampak ke plan**: tabel `users` dan `masterkeys` di
+`fitmotor_maintance-beta` TIDAK BOLEH langsung didrop pas cutover (beda
+dari asumsi awal spec ini). Pendekatan: alihkan query
+`sync_users_api.php` supaya baca dari `tbuser`/RBAC fitmotor
+(`fitmotor_dbbengkel`) alih-alih `users`/`masterkeys` lama — biar cuma
+ada SATU sumber data karyawan (`tbuser`), bukan dua sumber paralel yang
+gampang out-of-sync. Endpoint tetap harus mengembalikan bentuk JSON yang
+sama (`kode_karyawan, nama_karyawan, role, nama_cabang, kode_cabang`)
+supaya priori-tech tidak perlu berubah di sisi mereka. Baru setelah
+bridge dialihkan & diverifikasi jalan, `users`+`masterkeys` boleh
+didrop.
+
+`login_dashboard/sync_users_api.php` punya secret key **hardcoded
+plaintext** di source (`$sync_secret = '...'`) — di luar scope merge
+ini buat diperbaiki langsung (bukan bagian dari repo `web-bengkel`),
+tapi dicatat sebagai temuan security buat dilaporkan ke Rafi terpisah.
 
 ## 4. Ambiguitas / hal yang perlu diverifikasi saat implementasi
 

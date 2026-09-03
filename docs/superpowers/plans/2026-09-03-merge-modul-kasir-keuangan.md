@@ -949,8 +949,12 @@ perlu, cuma diblokir aksesnya)
 ```php
 <?php
 // _tmp_cleanup_bridge.php — disposable, jalankan HANYA setelah Task 16 PASS total
+// PENTING: `users` dan `masterkeys` SENGAJA TIDAK didrop di sini —
+// masih dipakai live oleh login_dashboard/sync_users_api.php buat sync
+// ke priori-tech (projek eksternal). Baru boleh didrop setelah Task 21
+// (alihkan bridge) selesai & terverifikasi. Lihat spec §3.8.
 $c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_maintance-beta');
-foreach(['hpp_api_keys','hpp_bypass','hpp_bypass_request','hpp_sync_log','hpp_sync_status','dynamic_sidebars','user_sidebar_settings','masterkeys'] as $t){
+foreach(['hpp_api_keys','hpp_bypass','hpp_bypass_request','hpp_sync_log','hpp_sync_status','dynamic_sidebars','user_sidebar_settings'] as $t){
     $ok = mysqli_query($c, "DROP TABLE IF EXISTS `$t`");
     echo "$t: ".($ok ? "dropped" : mysqli_error($c))."\n";
 }
@@ -958,7 +962,7 @@ foreach(['hpp_api_keys','hpp_bypass','hpp_bypass_request','hpp_sync_log','hpp_sy
 (DB sumber `fitmotor_maintance-beta` sendiri TIDAK didrop total di task
 ini — cuma tabel bridge yang sudah tidak relevan; keputusan drop DB
 utuh menyusul beberapa hari setelah cutover stabil, di luar scope plan
-ini)
+ini. `users`+`masterkeys` ditangani terpisah di Task 21.)
 
 - [ ] **Step 3: Update status spec**
 
@@ -1049,16 +1053,150 @@ Update `MEMORY.md` index dengan satu baris pointer.
 
 ---
 
+## Task 20: Port dashboard kasir/admin
+
+**Files:**
+- Create: `app/_keuangan/kasir/dashboard.php` (source: `admin_dashboard.php` di web_kasir, satu-satunya dashboard aktif — dilink `includes/sidebar.php`)
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php` (Task 11), `tblkasir_transaksi` (Task 5), `tbuser`/RBAC (Task 10) buat cek role.
+
+- [ ] **Step 1: Baca file sumber**
+
+```bash
+grep -n "SELECT\|FROM \|function " "/mnt/c/laragon/www/web_kasir/website_kasir/admin_dashboard.php"
+```
+Catat: query cek role (`SELECT role FROM users WHERE kode_karyawan = ?`
+di source — ganti ke cek permission RBAC Task 10, bukan tabel `users`
+lama), query rekap `kasir_transactions` per cabang/tanggal (ganti ke
+`tblkasir_transaksi`), dan query distinct cabang (ganti ke join
+`tbcabang` via `cabang_ref_kode`, bukan `DISTINCT nama_cabang` manual
+dari data transaksi).
+
+- [ ] **Step 2: Tulis `dashboard.php`**
+
+Port logic, ganti semua referensi seperti pola task sebelumnya
+(`kasir_transactions`→`tblkasir_transaksi`, cek role via RBAC fitmotor,
+`kode_cabang` pakai `$kode_cabang_aktif` dari `koneksi_kasir.php`).
+
+- [ ] **Step 3: Smoke test + verifikasi DB**
+
+Login role admin keuangan & role kasir cabang via Claude-in-Chrome,
+buka dashboard, pastikan rekap omset/closing per cabang tampil dan
+angkanya cocok dengan query manual ke `tblkasir_transaksi` (bandingkan
+`SUM(omset)` hari berjalan).
+
+- [ ] **Step 4: Jadikan `dashboard.php` landing page modul**
+
+Update menu Task 15 — link "Keuangan Kasir" grup di sidebar mengarah
+duluan ke `dashboard.php` sebagai entry point, bukan langsung ke
+`kas_awal.php`.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add app/_keuangan/kasir/dashboard.php app/menu_config.php
+git commit -m "feat(keuangan-kasir): port dashboard kasir/admin"
+```
+
+---
+
+## Task 21: Alihkan bridge SSO priori-tech ke `tbuser` fitmotor
+
+**Files:**
+- Modify: `C:\laragon\www\login_dashboard\sync_users_api.php` (di luar repo git ini — edit langsung via filesystem, projek terpisah)
+
+**Interfaces:**
+- Consumes: `tbuser`, RBAC permission Task 10 (`fitmotor_dbbengkel`).
+- Produces: endpoint tetap mengembalikan JSON bentuk sama
+  (`kode_karyawan, nama_karyawan, role, nama_cabang, kode_cabang`) tapi
+  sumber data dari `fitmotor_dbbengkel.tbuser` (+ RBAC), bukan lagi
+  `fitmotor_maintance-beta.users`/`masterkeys`.
+
+**PRASYARAT WAJIB**: task ini baru boleh dikerjakan SETELAH dikoordinasikan
+dengan pihak yang pegang priori-tech (bukan cuma commit sepihak — endpoint
+ini dipakai sistem eksternal aktif, salah ubah bentuk response bisa
+mematikan priori-tech). Konfirmasi dulu ke Rafi sebelum eksekusi Step 2.
+
+- [ ] **Step 1: Baca query asli & pahami kontrak response**
+
+```bash
+cat "/mnt/c/laragon/www/login_dashboard/sync_users_api.php"
+```
+Catat persis: nama field JSON yang dikembalikan, filter
+`masterkeys.status_aktif = 1` (artinya cuma karyawan aktif yang
+disertakan — cari padanan kolom `is_active`/`status_row` yang sudah ada
+di `tbuser` fitmotor).
+
+- [ ] **Step 2: Tulis query pengganti**
+
+Ganti koneksi PDO di `config.php` (di direktori sama) supaya nunjuk ke
+`fitmotor_dbbengkel` (bukan `fitmotor_maintance-beta`), lalu ganti query:
+```php
+$stmt = $pdo->query(
+    "SELECT u.kode_karyawan, u.nama_user AS nama_karyawan, u.role_name AS role,
+            c.nama_cabang, c.cabang_ref_kode AS kode_cabang
+     FROM tbuser u
+     LEFT JOIN tbcabang c ON c.kode_cabang = u.kode_cabang
+     WHERE u.is_active = 'active'"
+);
+```
+(sesuaikan nama kolom persis kalau ternyata beda dari yang ditemukan
+Task 1/investigasi awal — `tbuser.role_name` mungkin perlu di-map ke
+role string yang sama formatnya dengan `users.role` lama kalau
+priori-tech expect value tertentu, bukan asumsi cocok otomatis; cek
+dengan pihak priori-tech dulu sesuai prasyarat di atas)
+
+- [ ] **Step 3: Test endpoint manual**
+
+```bash
+curl -s -H "X-Sync-Secret: <ambil dari sync_users_api.php>" "http://localhost/login_dashboard/sync_users_api.php" | head -c 2000
+```
+Expected: JSON array dengan shape sama seperti sebelum perubahan,
+bandingkan manual beberapa baris dengan hasil query lama.
+
+- [ ] **Step 4: Setelah dikonfirmasi priori-tech tetap jalan normal — baru drop `users`+`masterkeys`**
+
+```php
+<?php
+// _tmp_drop_users_masterkeys.php — disposable, jalankan HANYA setelah Step 3 dikonfirmasi OK oleh priori-tech
+$c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_maintance-beta');
+foreach(['users','masterkeys'] as $t){
+    $ok = mysqli_query($c, "DROP TABLE IF EXISTS `$t`");
+    echo "$t: ".($ok ? "dropped" : mysqli_error($c))."\n";
+}
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+rm -f _tmp_drop_users_masterkeys.php
+git commit --allow-empty -m "chore(keuangan-kasir): alihkan bridge priori-tech ke tbuser fitmotor, drop users/masterkeys lama"
+```
+(commit di repo `web-bengkel` sebagai penanda, walau file yang diubah
+ada di repo `login_dashboard` terpisah — kalau `login_dashboard` juga
+git repo, commit perubahan asalnya di situ juga)
+
+---
+
 ## Self-Review Notes (writing-plans skill)
 
 - **Spec coverage:** §3.1 skema → Task 2-9. §3.2 struktur file → Task
-  11-14. §3.3 RBAC → Task 10. §3.4 migrasi data → Task 4-7. §3.5 cutover
-  → Task 1 (backup), 16 (smoke test), 17 (cutover). §3.6 tabel lama →
-  Task 18. §3.7 testing → Task 16. §4 ambiguitas → Task 8 (keping), Task
-  11 Step 1 (session var), Task 17 (dynamic_sidebars didrop setelah
-  dicek gak dipakai UI aktif web_kasir — kalau ternyata dipakai, worker
-  WAJIB stop & lapor sebelum Task 17 Step 2 jalan). Semua section spec
-  punya task yang menjalankannya.
+  11-14, 20 (dashboard). §3.3 RBAC → Task 10. §3.4 migrasi data → Task
+  4-7. §3.5 cutover → Task 1 (backup), 16 (smoke test), 17 (cutover).
+  §3.6 tabel lama → Task 18. §3.7 testing → Task 16. §3.8 dependensi
+  priori-tech → Task 21. §4 ambiguitas → Task 8 (keping), Task 11 Step 1
+  (session var), Task 17 (dynamic_sidebars didrop setelah dicek gak
+  dipakai UI aktif web_kasir — kalau ternyata dipakai, worker WAJIB stop
+  & lapor sebelum Task 17 Step 2 jalan). Semua section spec punya task
+  yang menjalankannya.
+- **Gap ditemukan setelah plan awal (2026-09-03, pertanyaan Rafi):**
+  dashboard (`admin_dashboard.php`) awalnya kelewat dari daftar file
+  porting — ditambah sebagai Task 20. Dependensi eksternal
+  `login_dashboard`→priori-tech (baca `users`/`masterkeys`) awalnya gak
+  diketahui pas brainstorming — Task 17 direvisi (gak jadi drop
+  `users`/`masterkeys` langsung), ditambah Task 21 buat alihkan bridge
+  ke `tbuser` fitmotor dulu sebelum drop.
 - **Placeholder scan:** setiap step migrasi/DDL pakai kode PHP/SQL
   konkret; step yang isinya "cek dulu path/nama file exact" (Task 1
   mysqldump path, Task 11 nama file sumber & session var, Task 13 nama
