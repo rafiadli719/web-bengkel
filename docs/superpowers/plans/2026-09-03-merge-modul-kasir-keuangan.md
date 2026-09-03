@@ -1179,6 +1179,529 @@ git repo, commit perubahan asalnya di situ juga)
 
 ---
 
+## Task 22: Tambah `tbuser.kode_kasir` & migrasi field karyawan yang belum ada
+
+**Files:**
+- Create: `_tmp_add_kode_kasir.php` (disposable)
+
+**Interfaces:**
+- Consumes: `tbuser` (fitmotor), `web_kasir.users.kode_user`.
+- Produces: kolom baru `tbuser.kode_kasir`, dipakai quick-login kasir di Task 11/24.
+
+- [ ] **Step 1: Tambah kolom**
+
+```php
+<?php
+// _tmp_add_kode_kasir.php — disposable
+$c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
+$ok = mysqli_query($c, "ALTER TABLE tbuser ADD COLUMN kode_kasir VARCHAR(3) NULL UNIQUE AFTER kode_karyawan");
+echo $ok ? "kolom ditambahkan\n" : mysqli_error($c)."\n";
+```
+
+- [ ] **Step 2: Isi data dari sumber**
+
+```php
+<?php
+// _tmp_migrate_kode_kasir.php — disposable
+$src = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_maintance-beta');
+$dst = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
+$r = mysqli_query($src, "SELECT kode_user, kode_karyawan FROM users WHERE kode_user IS NOT NULL AND kode_user != ''");
+$n = 0; $skip = 0;
+while($row = mysqli_fetch_assoc($r)){
+    $ku = mysqli_real_escape_string($dst, $row['kode_user']);
+    $kk = mysqli_real_escape_string($dst, $row['kode_karyawan']);
+    $ok = mysqli_query($dst, "UPDATE tbuser SET kode_kasir = '$ku' WHERE kode_karyawan = '$kk'");
+    if($ok && mysqli_affected_rows($dst) > 0) $n++; else $skip++;
+}
+echo "$n terupdate, $skip skip (kode_karyawan gak ketemu di tbuser)\n";
+```
+Expected: `$skip` = 0 (semua 18 user web_kasir harus match ke `tbuser`
+via validasi Task 1). Kalau ada skip, cek lagi hasil Task 1.
+
+- [ ] **Step 3: Commit**
+
+```bash
+rm -f _tmp_add_kode_kasir.php _tmp_migrate_kode_kasir.php
+git commit --allow-empty -m "feat(keuangan-kasir): tambah tbuser.kode_kasir buat quick-login shift"
+```
+
+---
+
+## Task 23: DDL + migrasi + port `data_penjualan`/`data_servis` (input manual harian)
+
+**Files:**
+- Modify: `docs/sql/tblkasir_schema_transaksi.sql` (tambah 2 tabel)
+- Create: `app/_keuangan/kasir/input_penjualan_servis.php`
+
+**Interfaces:**
+- Consumes: `tblkasir_master_akun` pola sama tabel lain; `koneksi_kasir.php` (Task 11).
+- Produces: `tblkasir_data_penjualan`, `tblkasir_data_servis` — dipakai cross-check manual kasir vs sistem.
+
+- [ ] **Step 1: DDL** — pola sama Task 3, ambil `SHOW CREATE TABLE` dari
+`data_penjualan`/`data_servis` sumber, rename ke `tblkasir_data_penjualan`/
+`tblkasir_data_servis`, tambah FK `kode_cabang`→`tbcabang.cabang_ref_kode`,
+`kode_karyawan`→`tbuser.kode_karyawan`.
+
+- [ ] **Step 2: Migrasi data** — pola `copyTable()` sama Task 4-7.
+
+- [ ] **Step 3: Baca file sumber & port**
+
+```bash
+grep -n "SELECT \|FROM \|INSERT INTO" "/mnt/c/laragon/www/web_kasir/website_kasir/input_penjualan_servis.php"
+```
+Port ke `app/_keuangan/kasir/input_penjualan_servis.php`, ganti target
+tabel `data_penjualan`/`data_servis` → `tblkasir_data_penjualan`/
+`tblkasir_data_servis`, koneksi pakai `koneksi_kasir.php`.
+
+- [ ] **Step 4: Smoke test + verifikasi DB, commit**
+
+```bash
+git add docs/sql/tblkasir_schema_transaksi.sql app/_keuangan/kasir/input_penjualan_servis.php
+git commit -m "feat(keuangan-kasir): port input manual penjualan/servis harian"
+```
+
+---
+
+## Task 24: Port `index_kasir.php` — landing dashboard kasir harian
+
+**Files:**
+- Create: `app/_keuangan/kasir/index_kasir.php`
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php` (Task 11), `tblkasir_transaksi`, `tblkasir_kas_awal/akhir` (Task 5), `tbuser.kode_kasir` (Task 22).
+
+- [ ] **Step 1: Baca file sumber**
+
+```bash
+grep -n "SELECT \|FROM \|function " "/mnt/c/laragon/www/web_kasir/website_kasir/index_kasir.php" | head -40
+```
+
+- [ ] **Step 2: Port** — ini landing page role `kasir`/`user` (beda dari
+`dashboard.php` Task 20 yang buat admin). Ganti semua referensi tabel
+sesuai mapping §3.1, cek status shift aktif (`tblkasir_kas_awal.status
+= 'on proses'`) buat kasir yang login, tampilkan tombol buka/tutup
+kasir sesuai status.
+
+- [ ] **Step 3: Update menu (Task 15) & smoke test**
+
+Login role kasir, landing page harus `index_kasir.php` bukan
+`dashboard.php` — atur logic redirect di file login/router fitmotor
+(bukan `menu_config.php`, itu buat sidebar; cek file yang handle
+redirect-setelah-login fitmotor, pola sama Task 11 Step 1 pencarian
+session).
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add app/_keuangan/kasir/index_kasir.php
+git commit -m "feat(keuangan-kasir): port index_kasir landing dashboard kasir harian"
+```
+
+---
+
+## Task 25: Setup lib laporan (phpspreadsheet + tcpdf) scoped modul kasir
+
+**Files:**
+- Modify: `composer.json` (root fitmotor)
+
+**Interfaces:**
+- Produces: `phpoffice/phpspreadsheet`, `tecnickcom/tcpdf`, `phpoffice/phpword` ter-install, dipakai Task 26/30.
+
+- [ ] **Step 1: Tambah dependency**
+
+```bash
+cat composer.json
+```
+(baca dulu isi sekarang — cuma ada `dompdf/dompdf`, JANGAN dihapus)
+Edit `composer.json`, tambahkan ke `require` (jangan ganti yang sudah ada):
+```json
+{
+    "require": {
+        "dompdf/dompdf": "^2.0",
+        "phpoffice/phpspreadsheet": "^3.3",
+        "tecnickcom/tcpdf": "^6.10",
+        "smalot/pdfparser": "^2.12",
+        "phpoffice/phpword": "^1.3"
+    }
+}
+```
+
+- [ ] **Step 2: Install**
+
+```bash
+/mnt/c/laragon/bin/php/php-8.3.16-nts-Win32-vs16-x64/php.exe /mnt/c/laragon/www/web-bengkel/aplikasi/aplikasi/composer.phar install
+```
+(pakai `composer.phar`/binary composer yang tersedia di environment —
+cek dulu `which composer` atau `ls *.phar` kalau command di atas gak
+ada; fallback: download composer.phar resmi kalau belum ada sama sekali
+di environment)
+
+- [ ] **Step 3: Verifikasi autoload gak bentrok**
+
+```php
+<?php
+// _tmp_verify_composer.php — disposable
+require_once __DIR__ . '/vendor/autoload.php';
+echo class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet') ? "phpspreadsheet OK\n" : "phpspreadsheet GAGAL\n";
+echo class_exists('TCPDF') ? "tcpdf OK\n" : "tcpdf GAGAL\n";
+echo class_exists('Dompdf\Dompdf') ? "dompdf masih OK (gak kesenggol)\n" : "dompdf RUSAK — STOP, investigasi\n";
+```
+
+- [ ] **Step 4: Commit**
+
+```bash
+rm -f _tmp_verify_composer.php
+git add composer.json composer.lock
+git commit -m "chore(keuangan-kasir): tambah lib phpspreadsheet/tcpdf/pdfparser/phpword scoped modul kasir"
+```
+
+---
+
+## Task 26: Port OCR pipeline pelunasan hutang
+
+**Files:**
+- Create: `app/_keuangan/kasir/services/pelunasan_hutang/DocumentReader.php`
+- Create: `app/_keuangan/kasir/services/pelunasan_hutang/ExtractorService.php`
+- Create: `app/_keuangan/kasir/services/pelunasan_hutang/OCRService.php`
+- Create: `app/_keuangan/kasir/services/pelunasan_hutang/ParserService.php`
+
+**Interfaces:**
+- Consumes: `vendor/autoload.php` (Task 25, `smalot/pdfparser`).
+- Produces: fungsi baca/ekstrak dokumen bukti transfer, dipakai Task 27/28 (form upload pelunasan hutang & setoran).
+
+- [ ] **Step 1: Copy 4 file service apa adanya dulu**
+
+```bash
+mkdir -p app/_keuangan/kasir/services/pelunasan_hutang
+cp "/mnt/c/laragon/www/web_kasir/website_kasir/services/pelunasan_hutang/DocumentReader.php" app/_keuangan/kasir/services/pelunasan_hutang/
+cp "/mnt/c/laragon/www/web_kasir/website_kasir/services/pelunasan_hutang/ExtractorService.php" app/_keuangan/kasir/services/pelunasan_hutang/
+cp "/mnt/c/laragon/www/web_kasir/website_kasir/services/pelunasan_hutang/OCRService.php" app/_keuangan/kasir/services/pelunasan_hutang/
+cp "/mnt/c/laragon/www/web_kasir/website_kasir/services/pelunasan_hutang/ParserService.php" app/_keuangan/kasir/services/pelunasan_hutang/
+```
+
+- [ ] **Step 2: Baca isi tiap file, cari hardcoded path/DB call**
+
+```bash
+grep -n "require\|include\|new PDO\|mysqli_connect\|__DIR__" app/_keuangan/kasir/services/pelunasan_hutang/*.php
+```
+Kalau ada hardcoded path relatif ke struktur lama (`../config.php`, dst)
+atau koneksi DB langsung dibuat sendiri (bukan di-inject), sesuaikan ke
+struktur baru (`require_once __DIR__ . '/../../koneksi_kasir.php'`,
+path upload disesuaikan Task 32).
+
+- [ ] **Step 3: Test unit manual — proses 1 file sample**
+
+```php
+<?php
+// _tmp_test_ocr.php — disposable, taruh 1 file sample bukti transfer dulu
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/app/_keuangan/kasir/services/pelunasan_hutang/DocumentReader.php';
+require_once __DIR__ . '/app/_keuangan/kasir/services/pelunasan_hutang/OCRService.php';
+require_once __DIR__ . '/app/_keuangan/kasir/services/pelunasan_hutang/ParserService.php';
+// panggil sesuai signature asli fungsi (baca dulu class-nya di Step 2 buat tau nama method persis)
+```
+Expected: gak fatal error, hasil ekstraksi (nominal/rekening tujuan)
+sesuai isi dokumen sample.
+
+- [ ] **Step 4: Commit**
+
+```bash
+rm -f _tmp_test_ocr.php
+git add app/_keuangan/kasir/services
+git commit -m "feat(keuangan-kasir): port OCR pipeline pelunasan hutang"
+```
+
+---
+
+## Task 27: Port modul Keuangan Pusat
+
+**Files:**
+- Create: `app/_keuangan/kasir/keuangan_pusat.php`
+- Create: `app/_keuangan/kasir/laporan_keuangan_pusat.php`
+- Create: `app/_keuangan/kasir/edit_keuangan_pusat.php`
+- Create: `app/_keuangan/kasir/hapus_keuangan_pusat.php`
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php`, `tblkasir_pemasukan_pusat`, `tblkasir_pengeluaran_pusat`, `tblkasir_master_akun` (Task 4/7).
+
+- [ ] **Step 1: Baca file sumber (100KB, port bertahap per fungsi — JANGAN sekaligus)**
+
+```bash
+grep -n "function \|SELECT \|INSERT INTO\|UPDATE " "/mnt/c/laragon/www/web_kasir/website_kasir/keuangan_pusat.php" | head -60
+```
+Pecah jadi fungsi-fungsi logis, port satu-satu, ganti tabel sesuai
+mapping §3.1.
+
+- [ ] **Step 2-4: Port `laporan_keuangan_pusat.php`, `edit_keuangan_pusat.php`, `hapus_keuangan_pusat.php`** (pola sama Step 1)
+
+- [ ] **Step 5: Smoke test + verifikasi DB, commit**
+
+```bash
+git add app/_keuangan/kasir/keuangan_pusat.php app/_keuangan/kasir/laporan_keuangan_pusat.php app/_keuangan/kasir/edit_keuangan_pusat.php app/_keuangan/kasir/hapus_keuangan_pusat.php
+git commit -m "feat(keuangan-kasir): port modul keuangan pusat"
+```
+
+---
+
+## Task 28: Port `setoran_keuangan` (family terbesar, 434KB+268KB+2 varian)
+
+**Files:**
+- Create: `app/_keuangan/kasir/setoran_keuangan.php`
+- Create: `app/_keuangan/kasir/setoran_keuangan_cs.php`
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php`, `tblkasir_setoran_bank`(+detail), `tblkasir_pengambilan_setoran`(+log/pembayaran), OCR service (Task 26).
+
+**PENTING**: `setoran_keuangan.php` (434KB) itu file TERBESAR di seluruh
+projek — JANGAN port sekaligus 1 file. Pecah per fungsi/tab UI, commit
+bertahap per fungsi selesai, bukan 1 commit raksasa di akhir.
+`setoran_keuangan1.php` (268KB) & `setoran_keuangan_cs_enhanced.php`
+adalah varian — cek dulu mana yang aktif dilink dari `includes/sidebar.php`
+sebelum port (jangan asumsi `setoran_keuangan.php` polos yang aktif).
+
+- [ ] **Step 1: Cek varian mana yang aktif**
+
+```bash
+grep -n "setoran_keuangan" "/mnt/c/laragon/www/web_kasir/website_kasir/includes/sidebar.php"
+```
+
+- [ ] **Step 2: Baca struktur fungsi file aktif**
+
+```bash
+grep -n "function \|<!-- TAB\|case '" "/mnt/c/laragon/www/web_kasir/website_kasir/setoran_keuangan.php" | head -80
+```
+(sesuaikan nama file kalau hasil Step 1 nunjuk varian lain)
+
+- [ ] **Step 3: Port bertahap per fungsi/tab**, commit tiap fungsi kelar
+(bukan detail di sini — worker breakdown sendiri berdasar hasil Step 2,
+prinsip: tiap sub-fungsi = 1 commit, target tabel sesuai mapping §3.1,
+form upload OCR pakai service Task 26)
+
+- [ ] **Step 4: Port `setoran_keuangan_cs.php`** (varian CS, cek juga apa
+`_cs_enhanced.php` yang aktif via sidebar, pola sama Step 1)
+
+- [ ] **Step 5: Smoke test penuh alur setoran + OCR upload, verifikasi DB**
+
+- [ ] **Step 6: Commit final penanda selesai**
+
+```bash
+git commit --allow-empty -m "feat(keuangan-kasir): port setoran_keuangan selesai (semua sub-fungsi)"
+```
+
+---
+
+## Task 29: Port CRUD master data admin
+
+**Files:**
+- Create: `app/_keuangan/kasir/master_akun.php`
+- Create: `app/_keuangan/kasir/master_nama_transaksi.php`
+- Create: `app/_keuangan/kasir/master_rekening_cabang.php`
+- Create: `app/_keuangan/kasir/keping.php` (tergantung keputusan Task 8)
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php`, `tblkasir_master_akun`, `tblkasir_master_transaksi`, `tblkasir_rekening_cabang` (Task 2/4).
+
+- [ ] **Step 1-4: Port tiap file** — pola sama task porting lain, CRUD
+sederhana (list/tambah/edit/hapus), target tabel sesuai mapping §3.1.
+`setup_master_cabang.php` **TIDAK diport** — cabang dikelola `tbcabang`
+fitmotor, bukan tabel `cabang` web_kasir yang di-drop.
+
+- [ ] **Step 5: Smoke test + commit**
+
+```bash
+git add app/_keuangan/kasir/master_akun.php app/_keuangan/kasir/master_nama_transaksi.php app/_keuangan/kasir/master_rekening_cabang.php app/_keuangan/kasir/keping.php
+git commit -m "feat(keuangan-kasir): port CRUD master data admin"
+```
+
+---
+
+## Task 30: Port laporan/export (17 file → 3 batch)
+
+**Files:**
+- Create: `app/_keuangan/kasir/export/excel.php` (konsolidasi `export_excel*.php`, `generate_excel.php`, `ganerate_excel_admin.php`, `export_csv.php`, `export_setoran_excel.php`, `export_keuangan_excel.php` — parametrized by report type, bukan 1 file per jenis laporan kalau strukturnya emang mirip; kalau ternyata beda logic signifikan, pecah jadi beberapa file, jangan paksa 1 file kalau bikin kode jelek)
+- Create: `app/_keuangan/kasir/export/pdf.php` (konsolidasi `export_pdf_closing_kasir.php`, `export_pdf_setoran.php`, `generate_pdf.php`, `ganerate_pdf_admin.php`, `print_closing_kasir.php`, `print_serah_terima_pengambilan.php`)
+
+**Interfaces:**
+- Consumes: `phpoffice/phpspreadsheet`/`tecnickcom/tcpdf` (Task 25), semua tabel `tblkasir_*` sesuai jenis laporan.
+
+- [ ] **Step 1: Baca tiap 17 file sumber, kelompokkan by jenis laporan & format**
+
+```bash
+ls "/mnt/c/laragon/www/web_kasir/website_kasir" | grep -iE "export|generate|ganerate|print_"
+```
+Buat tabel mapping: nama laporan → tabel sumber → format (Excel/PDF/CSV)
+sebelum mulai nulis kode konsolidasi.
+
+- [ ] **Step 2: Tulis `export/excel.php`** — pakai `PhpOffice\PhpSpreadsheet`,
+port logic tiap jenis laporan Excel jadi 1 fungsi per jenis dalam file
+ini (atau file terpisah kalau lebih jelas), ganti semua tabel sesuai
+mapping §3.1.
+
+- [ ] **Step 3: Tulis `export/pdf.php`** — pakai `TCPDF`, pola sama Step 2.
+
+- [ ] **Step 4: Smoke test tiap jenis laporan** — generate & buka hasil
+file Excel/PDF, cek data cocok dengan query manual ke `tblkasir_*`.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add app/_keuangan/kasir/export
+git commit -m "feat(keuangan-kasir): port laporan/export excel & pdf (konsolidasi 17 file)"
+```
+
+---
+
+## Task 31: Port monitoring & riwayat transaksi
+
+**Files:**
+- Create: `app/_keuangan/kasir/monitoring_setoran.php`
+- Create: `app/_keuangan/kasir/monitor_branch_data.php`
+- Create: `app/_keuangan/kasir/view_transaksi.php`
+- Create: `app/_keuangan/kasir/view_transaksi_admin.php`
+
+**Interfaces:**
+- Consumes: `koneksi_kasir.php`, semua tabel `tblkasir_*` transaksional (Task 5-7), view Task 9.
+
+- [ ] **Step 1-4: Port tiap file** — pola sama task porting lain, query
+laporan/monitoring read-only, ganti tabel sesuai mapping §3.1, prefer
+pakai VIEW hasil Task 9 kalau ada yang cocok (jangan duplikat query
+kompleks yang udah ada di VIEW).
+
+- [ ] **Step 5: Smoke test + commit**
+
+```bash
+git add app/_keuangan/kasir/monitoring_setoran.php app/_keuangan/kasir/monitor_branch_data.php app/_keuangan/kasir/view_transaksi.php app/_keuangan/kasir/view_transaksi_admin.php
+git commit -m "feat(keuangan-kasir): port monitoring & riwayat transaksi"
+```
+
+---
+
+## Task 32: Migrasi file fisik uploads
+
+**Files:**
+- Create: `app/uploads/kasir/pelunasan_hutang/` (folder target)
+- Create: `_tmp_migrate_uploads.php` (disposable)
+
+**Interfaces:**
+- Consumes: path lama di kolom `pengambilan_setoran.mutasi_dokumen_path` (Task 7 hasil migrasi).
+- Produces: file fisik pindah, kolom path di `tblkasir_pengambilan_setoran` diupdate ke path baru.
+
+- [ ] **Step 1: Copy fisik file**
+
+```bash
+mkdir -p app/uploads/kasir/pelunasan_hutang
+cp -r "/mnt/c/laragon/www/web_kasir/website_kasir/uploads/pelunasan_hutang/"* app/uploads/kasir/pelunasan_hutang/
+```
+
+- [ ] **Step 2: Update path di DB**
+
+```php
+<?php
+// _tmp_migrate_uploads.php — disposable
+$c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
+$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM tblkasir_pengambilan_setoran WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
+$n = 0;
+while($row = mysqli_fetch_assoc($r)){
+    $old = $row['mutasi_dokumen_path'];
+    $newPath = str_replace('uploads/pelunasan_hutang', 'uploads/kasir/pelunasan_hutang', $old);
+    $id = (int)$row['id'];
+    $esc = mysqli_real_escape_string($c, $newPath);
+    mysqli_query($c, "UPDATE tblkasir_pengambilan_setoran SET mutasi_dokumen_path = '$esc' WHERE id = $id");
+    $n++;
+}
+echo "$n path terupdate\n";
+```
+
+- [ ] **Step 3: Verifikasi file benar-benar ada di path baru**
+
+```php
+<?php
+// _tmp_verify_uploads.php — disposable
+$c = mysqli_connect('localhost','fitmotor_LOGIN','Sayalupa12','fitmotor_dbbengkel');
+$r = mysqli_query($c, "SELECT id, mutasi_dokumen_path FROM tblkasir_pengambilan_setoran WHERE mutasi_dokumen_path IS NOT NULL AND mutasi_dokumen_path != ''");
+$missing = 0;
+while($row = mysqli_fetch_assoc($r)){
+    $full = __DIR__ . '/' . $row['mutasi_dokumen_path'];
+    if(!file_exists($full)){ echo "MISSING: {$row['mutasi_dokumen_path']}\n"; $missing++; }
+}
+echo $missing === 0 ? "OK — semua file ketemu\n" : "$missing file HILANG, cek Step 1\n";
+```
+
+- [ ] **Step 4: Commit**
+
+```bash
+rm -f _tmp_migrate_uploads.php _tmp_verify_uploads.php
+git add app/uploads/kasir
+git commit -m "feat(keuangan-kasir): migrasi file fisik uploads pelunasan hutang"
+```
+
+---
+
+## Task 33: Bersihkan file berbahaya di webroot web_kasir (URGENT, independen dari cutover)
+
+**Files:**
+- Modify: `C:\laragon\www\web_kasir\website_kasir` (di luar repo git ini)
+
+**Interfaces:**
+- Tidak ada — task keamanan murni, TIDAK perlu menunggu task lain, bisa dieksekusi kapan saja mulai sekarang.
+
+- [ ] **Step 1: Hapus dump SQL mentah & error log dari webroot**
+
+```bash
+rm -f "/mnt/c/laragon/www/web_kasir/website_kasir/fitmotor_maintance-beta (1).sql"
+rm -f "/mnt/c/laragon/www/web_kasir/website_kasir/error_log"
+```
+(pastikan sudah ada backup lain kalau perlu — tapi Task 1 sudah bikin
+dump resmi ke `backups/`, dump liar di webroot ini murni resiko, bukan
+satu-satunya backup)
+
+- [ ] **Step 2: Hapus file dev/debug/test mati**
+
+```bash
+cd "/mnt/c/laragon/www/web_kasir/website_kasir"
+rm -f debug_closing_dropdown.php debug_rekening.php cleanup_debug_files.php create_test_closing.php temp_js.txt temp_php.txt temp_php2.txt restore_pga.php repair_missing_data.php fix_orphaned_payments.php fix_sisa.php patch_ocr_upload.php run_sync.php
+```
+
+- [ ] **Step 3: Verifikasi web_kasir masih jalan normal setelah cleanup**
+
+Buka via Claude-in-Chrome, login, pastikan halaman utama masih normal
+(file yang dihapus semuanya bukan dependency runtime, cuma script
+debug/dev berdiri sendiri — tapi verifikasi tetap wajib sebelum
+lanjut).
+
+- [ ] **Step 4: Commit** (di repo `web_kasir` kalau itu git repo terpisah — bukan repo `web-bengkel` ini)
+
+```bash
+git -C "/mnt/c/laragon/www/web_kasir" add -A
+git -C "/mnt/c/laragon/www/web_kasir" commit -m "security: hapus dump SQL mentah, error_log, dan file dev/debug dari webroot"
+```
+
+---
+
+## Task 34: Retire `masterkey.php` setelah Task 21
+
+**Files:**
+- Tidak ada file baru — task administratif/verifikasi.
+
+**Interfaces:**
+- Consumes: Task 21 harus selesai (bridge sudah pakai `tbuser.is_active`).
+
+- [ ] **Step 1: Verifikasi tidak ada lagi yang butuh `masterkey.php`/`store_masterkey.php`**
+
+Cek `login_dashboard/sync_users_api.php` versi baru (Task 21) sudah
+pakai `tbuser.is_active`, bukan `masterkeys.status_aktif`. Kalau sudah,
+`masterkey.php`/`store_masterkey.php` di web_kasir aman gak diport —
+catat keputusan ini di spec §3.9 (sudah ditulis, task ini cuma
+verifikasi eksekusi sesuai rencana).
+
+- [ ] **Step 2: Commit penanda**
+
+```bash
+git commit --allow-empty -m "docs(keuangan-kasir): konfirmasi masterkey.php retired, tergantikan tbuser.is_active"
+```
+
+---
+
 ## Self-Review Notes (writing-plans skill)
 
 - **Spec coverage:** §3.1 skema → Task 2-9. §3.2 struktur file → Task
@@ -1197,6 +1720,22 @@ git repo, commit perubahan asalnya di situ juga)
   diketahui pas brainstorming — Task 17 direvisi (gak jadi drop
   `users`/`masterkeys` langsung), ditambah Task 21 buat alihkan bridge
   ke `tbuser` fitmotor dulu sebelum drop.
+- **Gap audit lanjutan (2026-09-03, "cek jangan ada yang kelewat")**:
+  sample awal cuma ~40 dari 155 file root web_kasir. Audit penuh nemu:
+  landing kasir terpisah `index_kasir.php` (Task 24), modul Keuangan
+  Pusat 100KB+ (Task 27), `setoran_keuangan.php` 434KB — file terbesar
+  seluruh projek (Task 28), OCR pipeline nyata buat verifikasi bukti
+  transfer (Task 26, butuh lib baru — Task 25), 17 file laporan/export
+  (Task 30), CRUD master data admin (Task 29), monitoring/riwayat
+  terpisah dari dashboard (Task 31), 2 tabel `data_penjualan`/
+  `data_servis` yang kelewat total dari skema awal (Task 23), file fisik
+  `uploads/` belum ada rencana migrasi (Task 32), dump SQL mentah 4.3MB
+  + error_log 798KB nangkring di webroot — resiko keamanan aktif (Task
+  33, urgent independen dari cutover), dan `tbuser` perlu kolom baru
+  `kode_kasir` buat fitur quick-login yang gak ada padanannya (Task 22).
+  Semua 13 task baru (22-34) ini hasil audit ulang, bukan asumsi ulang —
+  tiap satu ditelusuri ke file/kolom sumber yang konkret sebelum
+  ditambahkan ke plan.
 - **Placeholder scan:** setiap step migrasi/DDL pakai kode PHP/SQL
   konkret; step yang isinya "cek dulu path/nama file exact" (Task 1
   mysqldump path, Task 11 nama file sumber & session var, Task 13 nama

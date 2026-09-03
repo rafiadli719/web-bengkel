@@ -225,6 +225,107 @@ plaintext** di source (`$sync_secret = '...'`) — di luar scope merge
 ini buat diperbaiki langsung (bukan bagian dari repo `web-bengkel`),
 tapi dicatat sebagai temuan security buat dilaporkan ke Rafi terpisah.
 
+### 3.9 Audit lanjutan (2026-09-03, permintaan Rafi "cek jangan ada yang kelewat")
+
+Audit ulang seluruh 155 file root `website_kasir` (bukan cuma ~40 file
+yang kesampel di brainstorming awal) menemukan modul-modul yang belum
+tercakup spec/plan awal:
+
+**Landing page ganda** — `login.php` route beda per role: admin/super_admin
+→ `admin_dashboard.php`, role `user`/`kasir` → **`index_kasir.php`**
+(33KB) — dashboard utama kasir harian, TIDAK sama dengan admin dashboard,
+sebelumnya sama sekali kelewat.
+
+**Modul Keuangan Pusat sendiri** — `keuangan_pusat.php` (100KB),
+`laporan_keuangan_pusat.php`, `edit_keuangan_pusat.php`,
+`hapus_keuangan_pusat.php` — lebih besar & terpisah dari
+"validasi_keuangan_pusat.php" yang diasumsikan simpel di plan awal.
+
+**`setoran_keuangan.php` (434KB) + `setoran_keuangan1.php` (268KB) +
+`setoran_keuangan_cs.php` + `_cs_enhanced.php`** — file terbesar di
+seluruh projek, jauh lebih kompleks dari "setoran_bank.php" yang
+diasumsikan di Task 14 lama.
+
+**OCR pipeline nyata** untuk verifikasi bukti transfer/pelunasan hutang —
+`services/pelunasan_hutang/{DocumentReader,ExtractorService,OCRService,ParserService}.php`,
+dipicu dari form upload di `setoran_keuangan.php`, pakai
+`smalot/pdfparser`. Field `mutasi_hasil_json`/`mutasi_confidence` di
+`pengambilan_setoran` (sudah ada di skema §3.1) adalah hasil OCR ini.
+
+**Modul laporan/export — 17 file**, pakai
+`phpoffice/phpspreadsheet` + `tecnickcom/tcpdf` + `phpoffice/phpword`
+(composer.json web_kasir) — beda generasi lib dari fitmotor
+(`dompdf/dompdf` doang di `composer.json` fitmotor + `app/PHPExcel`
+vendored lama). **Keputusan: lib baru (phpspreadsheet/tcpdf) di-`composer
+require` KHUSUS buat modul Keuangan Kasir, TIDAK mengganti PHPExcel/dompdf
+yang dipakai modul laporan fitmotor lain** — supaya modul lain gak
+kesenggol perubahan lib.
+
+**CRUD master data terpisah dari data migrasi** — `master_akun.php`,
+`master_nama_transaksi.php`, `master_rekening_cabang.php`, `keping.php`,
+`kas_awal_config_crud.php` butuh UI admin, bukan cuma tabelnya pindah
+(Task 2/4 di plan lama cuma migrasi data, belum ada UI-nya).
+`setup_master_cabang.php` **di-drop** — itu setup UI buat tabel `cabang`
+web_kasir sendiri yang sudah diputuskan drop (§3.1), cabang dikelola
+fitmotor via `tbcabang`.
+
+**Manajemen karyawan kasir** (`edit_employee.php`, `delete_employee.php`,
+`view_employees.php`, `get_employees.php`, `update_employee.php`,
+`users.php`) — **diputuskan: TIDAK diport sebagai modul terpisah**,
+manajemen karyawan tetap satu sumber di `tbuser` fitmotor. Tapi
+`users.kode_user` (varchar(3) unik, kode singkat kayak "AAA"/"BOA" —
+dipakai kasir buat quick-login/ganti shift) **tidak ada padanannya di
+`tbuser`** — ditambahkan sebagai kolom baru `tbuser.kode_kasir` (lihat
+§3.10) supaya fitur quick-login kasir tetap jalan tanpa employee module
+terpisah.
+
+**Input manual penjualan/servis harian** — `input_penjualan_servis.php`,
+`edit_penjualan_servis.php` baca/tulis tabel `data_penjualan`/
+`data_servis` — **2 tabel ini KELEWAT dari mapping skema §3.1**, harus
+ditambahkan. **Diputuskan: tetap diport** (ada alasan bisnis dari Rafi —
+cross-check manual kasir vs sistem, meski fitmotor punya data live di
+`tblpenjualan_header`/`tblservice`).
+
+**Monitoring/riwayat terpisah dari dashboard** — `monitoring_setoran.php`,
+`monitor_branch_data.php`, `view_transaksi.php`, `view_transaksi_admin.php`.
+
+**File fisik belum ada rencana migrasi** — `uploads/pelunasan_hutang/`
+(bukti transfer/dokumen hasil OCR) perlu dipindah ke storage fitmotor,
+bukan cuma path di DB yang di-migrasi.
+
+**`masterkey.php`/`store_masterkey.php`** — UI admin buat tabel
+`masterkeys` (dipertahankan sementara buat bridge priori-tech, §3.8).
+Setelah Task 21 (redirect bridge ke `tbuser`), UI ini **jadi obsolete**
+(status aktif karyawan cukup dari `tbuser.is_active`) — tidak diport.
+
+**`process_pengadaan_verification.php`** — nama menyesatkan (bukan
+modul pengadaan fitmotor), isinya helper yang **auto-ALTER TABLE saat
+runtime** kalau kolom `pengambilan_setoran_edit_log`/
+`pengambilan_setoran_pembayaran` belum ada — pola auto-DDL-diam-diam
+yang TIDAK BOLEH diport apa adanya (resiko race condition/DDL diam-diam
+di production). DDL yang di-auto-generate script ini harus dijadikan
+DDL eksplisit di skema §3.1/Task 3, bukan logic runtime.
+
+**Temuan keamanan** — file `fitmotor_maintance-beta (1).sql` (4.3MB,
+dump database mentah) dan `error_log` (798KB) nangkring langsung di
+web-root `website_kasir/`, berpotensi diakses publik. File dev/debug
+mati lain: `debug_closing_dropdown.php`, `debug_rekening.php`,
+`cleanup_debug_files.php`, `create_test_closing.php`, `temp_js.txt`,
+`temp_php.txt`, `temp_php2.txt`, `restore_pga.php`,
+`repair_missing_data.php`, `fix_orphaned_payments.php`, `fix_sisa.php`,
+`patch_ocr_upload.php` (script sekali-pakai edit source), `run_sync.php`
+(script test manual hardcoded). Semua **TIDAK diport**, dan dump
+SQL+error_log **perlu dihapus dari web_kasir SEGERA**, independen dari
+timeline cutover — ini resiko aktif selama web_kasir masih online.
+
+### 3.10 Perubahan skema `tbuser` fitmotor (kolom baru)
+
+```sql
+ALTER TABLE tbuser ADD COLUMN kode_kasir VARCHAR(3) NULL UNIQUE AFTER kode_karyawan;
+```
+Diisi dari `web_kasir.users.kode_user` saat migrasi (Task 22), dipetakan
+by `kode_karyawan` yang match.
+
 ## 4. Ambiguitas / hal yang perlu diverifikasi saat implementasi
 
 - Tabel `keping` web_kasir — cek dulu isinya, apakah duplikat konsep
