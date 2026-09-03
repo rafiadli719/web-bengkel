@@ -88,7 +88,8 @@ function canApproveClosingRevision(PDO $pdo, array $session): bool
         return false;
     }
 
-    return $session['role'] === 'super_admin';
+    // RBAC Task 10: kasir_approve dipegang ADM (super_admin) + KEU (admin).
+    return in_array($session['role'], ['super_admin', 'admin'], true);
 }
 
 function userCanRequestRevisionForTransaction(PDO $pdo, array $session, array $transaction): bool
