@@ -8,9 +8,9 @@ require_once __DIR__ . '/koneksi_kasir.php';
 requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
 
 // Query di bawah masih pakai PDO/mysqli persis source asli — koneksi terpisah ke DB yang sama.
-$conn = mysqli_connect("localhost", "fitmotor_LOGIN", "Sayalupa12", "fitmotor_dbbengkel");
+$conn = mysqli_connect(getenv('DB_HOST') ?: 'localhost', getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12', getenv('DB_NAME') ?: 'fitmotor_dbbengkel');
 if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
-$pdo = new PDO("mysql:host=localhost;dbname=fitmotor_dbbengkel", "fitmotor_LOGIN", "Sayalupa12");
+$pdo = new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel'), getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Set timezone sesuai zona waktu lokal

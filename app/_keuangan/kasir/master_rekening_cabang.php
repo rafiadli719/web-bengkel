@@ -25,9 +25,9 @@ $username       = $nama_karyawan_aktif;
 $role           = $legacy_session_kasir['role'] ?? 'User';
 $kode_karyawan  = $kode_karyawan_aktif;
 
-$dsn = "mysql:host=localhost;dbname=fitmotor_dbbengkel";
+$dsn = 'mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel');
 try {
-    $pdo = new PDO($dsn, 'fitmotor_LOGIN', 'Sayalupa12');
+    $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());

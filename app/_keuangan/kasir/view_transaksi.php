@@ -8,7 +8,7 @@ requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
 require_once __DIR__ . '/closing_revision_helpers.php';
 
 // Database connection
-$pdo = new PDO("mysql:host=localhost;dbname=fitmotor_dbbengkel", "fitmotor_LOGIN", "Sayalupa12");
+$pdo = new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel'), getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Get user details dari RBAC fitmotor (Task 10/11 pola koneksi_kasir.php)
