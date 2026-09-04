@@ -1891,7 +1891,9 @@ git commit --allow-empty -m "feat(keuangan-kasir): port setoran_keuangan selesai
 
 ---
 
-## Task 29: Port CRUD master data admin
+## Task 29: Port CRUD master data admin — ✅ SELESAI (2026-09-04, commit c45867a)
+
+## Task 29: Port CRUD master data admin (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/master_akun.php`
