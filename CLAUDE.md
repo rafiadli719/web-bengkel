@@ -140,3 +140,21 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   Data sumber sudah termigrasi & terverifikasi (34/159/5/10 baris).
   Cutover (Task 17) & drop tabel mati (Task 18) masih TETAP butuh
   konfirmasi eksplisit sebelum eksekusi.
+- **Update 2026-09-04 malam**: Task 25 (lib laporan phpspreadsheet+tcpdf+fpdf,
+  commit 5c75534/479ba7c/b1b9423), **Task 31 (monitoring & riwayat transaksi,
+  commit 6716bdf)**, dan **Task 30 (port laporan/export, commit 6160b3b)**
+  SELESAI. Task 30 deviasi dari spec plan (17 file -> 2 file gabungan
+  excel.php/pdf.php): dipertahankan 12 file terpisah
+  (`app/_keuangan/kasir/export/export_*.php` + `generate_excel.php`) karena
+  logic tiap laporan beda signifikan. Sebelum commit ditemukan & difix
+  kredensial DB hardcode (`fitmotor_LOGIN`/`Sayalupa12` + host/dbname literal)
+  nempel langsung di tiap `new PDO(...)` meski file sudah require
+  `koneksi_kasir.php` (itu cuma expose RBAC + `$koneksi` mysqli, bukan PDO) -
+  diganti `getenv('DB_HOST'/'DB_USER'/'DB_PASS'/'DB_NAME')` pola sama seperti
+  `app/koneksi.php`. Divalidasi: php -l lolos semua 12 file + smoke test PDO
+  connect & query ke 10 tabel `*_closing_kasir` real (data ada, bukan tabel
+  kosong). Sisa backlog: **Task 32** (migrasi file fisik uploads), **Task 33**
+  (bersihkan file berbahaya webroot web_kasir lama, independen dari cutover),
+  **Task 34** (retire masterkey.php setelah Task 21), closing
+  (`close_transaksi1.php` 141KB) & closing revisi belum disentuh. Cutover
+  (Task 17) & drop tabel mati (Task 18) tetap WAJIB konfirmasi eksplisit.
