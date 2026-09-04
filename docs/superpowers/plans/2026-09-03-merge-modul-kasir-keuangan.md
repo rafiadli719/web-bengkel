@@ -1746,7 +1746,9 @@ git commit -m "chore(keuangan-kasir): tambah lib phpspreadsheet/tcpdf/pdfparser/
 
 ---
 
-## Task 26: Port OCR pipeline pelunasan hutang
+## Task 26: Port OCR pipeline pelunasan hutang — ✅ SELESAI (gap-analysis 14, commit b10c420)
+
+## Task 26: Port OCR pipeline pelunasan hutang (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/services/pelunasan_hutang/DocumentReader.php`
@@ -1802,7 +1804,9 @@ git commit -m "feat(keuangan-kasir): port OCR pipeline pelunasan hutang"
 
 ---
 
-## Task 27: Port modul Keuangan Pusat
+## Task 27: Port modul Keuangan Pusat — ✅ SELESAI (gap-analysis 14b, commit af5ab2b — dashboard tunggal `keuangan_pusat.php`, bukan 4 file spec asli, lihat commit message)
+
+## Task 27: Port modul Keuangan Pusat (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/keuangan_pusat.php`
@@ -1837,7 +1841,9 @@ git commit -m "feat(keuangan-kasir): port modul keuangan pusat"
 
 ---
 
-## Task 28: Port `setoran_keuangan` (family terbesar, 434KB+268KB+2 varian)
+## Task 28: Port `setoran_keuangan` (family terbesar, 434KB+268KB+2 varian) — ✅ SELESAI (gap-analysis 14b, commit e988079)
+
+## Task 28: Port `setoran_keuangan` (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/setoran_keuangan.php`
@@ -1919,7 +1925,9 @@ git commit -m "feat(keuangan-kasir): port CRUD master data admin"
 
 ---
 
-## Task 30: Port laporan/export (17 file → 3 batch)
+## Task 30: Port laporan/export (17 file → 3 batch) — ✅ SELESAI (2026-09-04) — deviasi: 12 file dipertahankan terpisah (`export_*.php`, `generate_excel.php`), bukan digabung `excel.php`/`pdf.php` 1-2 file spec asli — logic per laporan beda cukup signifikan (query, kolom, styling), gabung paksa bikin kode jelek. Semua sudah pakai `koneksi_kasir.php` (RBAC) + PDO dgn getenv() DB_HOST/DB_USER/DB_PASS/DB_NAME (bukan hardcode kredensial). Smoke test: PDO connect + query ke 10 tabel `*_closing_kasir` sukses (kasir_transactions 2222 baris, pengeluaran_kasir 22156 baris, dst).
+
+## Task 30: Port laporan/export (17 file → 3 batch) (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/export/excel.php` (konsolidasi `export_excel*.php`, `generate_excel.php`, `ganerate_excel_admin.php`, `export_csv.php`, `export_setoran_excel.php`, `export_keuangan_excel.php` — parametrized by report type, bukan 1 file per jenis laporan kalau strukturnya emang mirip; kalau ternyata beda logic signifikan, pecah jadi beberapa file, jangan paksa 1 file kalau bikin kode jelek)
@@ -1958,7 +1966,9 @@ git commit -m "feat(keuangan-kasir): port laporan/export excel & pdf (konsolidas
 
 ---
 
-## Task 31: Port monitoring & riwayat transaksi
+## Task 31: Port monitoring & riwayat transaksi — ✅ SELESAI (2026-09-04, commit 6716bdf)
+
+## Task 31: Port monitoring & riwayat transaksi (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/monitoring_setoran.php`
