@@ -343,7 +343,8 @@ function isActive(string $page, string $current): string {
 </script>
 
 <?php
-// Sumber punya include 'super_admin_task_reminder.php' tapi file itu
-// TIDAK ADA di source web_kasir (dicek: file not found) — dead include
-// di source aslinya juga, jadi dibuang bukan dipertahankan.
+// KOREKSI (2026-09-04): temuan lama "file tidak ada" SALAH — file ada
+// dan aktif di source (includes/super_admin_task_reminder.php), sekarang
+// sudah diport. $is_super_admin sudah dihitung di atas file ini.
+include __DIR__ . '/super_admin_task_reminder.php';
 
