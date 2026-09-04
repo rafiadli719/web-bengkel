@@ -185,12 +185,12 @@ if (!$check_only) {
 }
 
 $sql_recent = "SELECT COUNT(*) as recent_count FROM kasir_transactions_closing_kasir 
-               WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAYS)";
+               WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
 $stmt = $pdo->query($sql_recent);
 $recent_count = $stmt->fetchColumn();
 
 $sql_recent_missing = "SELECT COUNT(*) as recent_missing FROM kasir_transactions_closing_kasir 
-                      WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAYS)
+                      WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                       AND (kode_cabang IS NULL OR nama_cabang IS NULL 
                            OR kode_cabang = '' OR nama_cabang = '')";
 $stmt = $pdo->query($sql_recent_missing);
