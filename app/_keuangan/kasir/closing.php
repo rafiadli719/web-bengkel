@@ -13,11 +13,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 require_once __DIR__ . '/closing_revision_helpers.php';
 
-if (!function_exists('syncPengambilanClosingFromKasirStatus')) {
-    // TODO(Task 14): implementasi asli ada di process_pengadaan_verification.php sumber web_kasir
-    // (auto-centang pengambilan dana yang menunggu verifikasi closing). Belum aktif — no-op dulu.
-    function syncPengambilanClosingFromKasirStatus(PDO $pdo, string $kodeCabangPenerima): void {}
-}
+require_once __DIR__ . '/process_pengadaan_verification.php'; // syncPengambilanClosingFromKasirStatus() — Task 14, real impl
 
 // Ambil kode transaksi dari URL
 if (isset($_GET['kode_transaksi'])) {

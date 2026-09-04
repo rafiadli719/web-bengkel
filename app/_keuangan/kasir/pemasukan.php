@@ -15,22 +15,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=fitmotor_dbbengkel", "fitmotor_LOGIN
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 require_once __DIR__ . '/process_closing_transaction.php'; // processClosingTransaction(), getAvailableClosingTransactions()
-// NOTE: process_pengadaan_verification.php (updatePengadaanVerification/markPengambilanReadyForBank/
-// markEditLogDibaca) SENGAJA belum diport — depend vendor OCR composer, satu paket sama Task 14
-// (pengambilan_setoran). Flow "PENGAMBILAN DANA" (DRKUAN) di form ini jadi belum fungsional
-// penuh sampai Task 14 selesai — sisanya (pemasukan manual, DARI CLOSING) tetap jalan normal.
-if (!function_exists('updatePengadaanVerification')) {
-    function updatePengadaanVerification(PDO $pdo, string $kodePengambilan, int $pemasukanId, float $nominalInput, string $kodeKaryawanInput = '', ?string $catatan = null, ?array $documentMeta = null): int
-    {
-        throw new RuntimeException('Fitur Pengambilan Dana belum aktif — nunggu Task 14 (porting pengambilan_setoran).');
-    }
-}
-if (!function_exists('markPengambilanReadyForBank')) {
-    function markPengambilanReadyForBank(PDO $pdo, string $kodePengambilan): void {}
-}
-if (!function_exists('markEditLogDibaca')) {
-    function markEditLogDibaca(PDO $pdo, string $kodeCabangPenerima): void {}
-}
+require_once __DIR__ . '/process_pengadaan_verification.php'; // updatePengadaanVerification()/markPengambilanReadyForBank()/markEditLogDibaca() — Task 14, real impl
 
 date_default_timezone_set('Asia/Jakarta');
 

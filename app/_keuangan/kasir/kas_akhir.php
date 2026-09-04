@@ -6,18 +6,7 @@ requirePermission($koneksi, $id_user_aktif, 'kasir_close');
 // Query di bawah masih pakai PDO persis source asli (logic INSERT/UPDATE full preserved)
 $pdo = new PDO("mysql:host=localhost;dbname=fitmotor_dbbengkel", "fitmotor_LOGIN", "Sayalupa12");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-// NOTE: process_pengadaan_verification.php (checkAndUpdatePengadaanSelesai) SENGAJA
-// belum di-port ke sini — file itu 70KB, depend vendor/autoload.php + OCR services
-// composer (ExtractorService/ParserService/OCRService) yang belum di-setup di fitmotor,
-// dan secara alami satu paket sama porting pengambilan_setoran (Task 14). Auto-tracking
-// verified_cabang_penerima_sudah_closing di bawah di-stub no-op dulu, DIPORT PENUH bareng
-// Task 14 saat pengambilan_setoran_closing_kasir/*.php masuk.
-if (!function_exists('checkAndUpdatePengadaanSelesai')) {
-    function checkAndUpdatePengadaanSelesai(PDO $pdo, string $kodePengambilan): void
-    {
-        // TODO(Task 14): implementasi asli ada di process_pengadaan_verification.php sumber web_kasir.
-    }
-}
+require_once __DIR__ . '/process_pengadaan_verification.php'; // checkAndUpdatePengadaanSelesai() — Task 14, real impl
 
 // Set timezone ke Asia/Jakarta
 date_default_timezone_set('Asia/Jakarta');
