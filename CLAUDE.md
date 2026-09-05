@@ -201,3 +201,30 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   data live TRX-20241101-0001; 2 file "edit by id" dgn id bukan milik
   user login nampilin pesan "tidak ditemukan" sesuai desain, bukan
   fatal). **Task 15 + Task 23 + Task 24 semua SELESAI TUNTAS.**
+- **UAT E2E penuh 2026-09-05 (browser + CLI-simulasi POST)**: alur
+  lengkap divalidasi sampai closing — Verifikasi Kas Awal → Kas Awal
+  (Rp310rb) → Pemasukan (Rp50rb) → Pengeluaran (Rp20rb) → Omset
+  (penjualan Rp150rb+servis Rp75rb) → Kas Akhir (Rp535rb) → Closing
+  (status jadi 'end proses', omset/setoran/selisih semua kehitung
+  benar) → muncul benar di Serah Terima. Browser native (dialog
+  `confirm()` bikin CDP freeze 30 detik+, harus `window.confirm=()=>true`
+  patch dulu tiap page load) DAN simulasi PHP-CLI POST langsung
+  (lebih reliable, dipakai buat isolasi bug) sama-sama dipakai. Ketemu+
+  fix **3 bug fatal baru** yang gak kelihatan dari smoke-test biasa:
+  (1) `verifikasi_kas_awal.php` KELEWAT TOTAL dari Task 11 — flow
+  "Mulai Kas Awal Baru" infinite-loop, gak pernah bisa bikin transaksi
+  sama sekali (link ke `kas_awal.php` langsung, skip step session-set);
+  (2) kolom `kode_transaksi` varchar(20) di 9 tabel overflow buat akun
+  fitmotor-native `nama_user`>3 huruf (`admin`/`adm01`/`keu01`) — widen
+  ke varchar(50), dikonfirmasi eksplisit Rafi; (3) **paling parah**:
+  `process_closing_transaction.php` (required `pemasukan.php`) punya
+  guard top-level cek `$_SESSION['kode_karyawan']`/`['role']` (key
+  legacy web_kasir yang fitmotor gak pernah set) — bikin **pemasukan.php
+  TOTAL GAK BISA DIPAKAI SATU USER PUN sejak Task 14b diport**, exit
+  diam-diam tanpa pesan error apapun. Ketahuan cuma karena testing pakai
+  PHP-CLI session bersih (browser session kebetulan kebawa sisa login
+  test `web_kasir.test` yang nyamarin bug ini). Juga ketemu+fix: sed
+  table-rename Task 11 kena nama FILE (`serah_terima_kasir.php`→
+  `serah_terima_kasir_closing_kasir.php`, 404) di 7 file, dan 23 link
+  export tanpa prefix folder `export/` (Task 30 mindahin file tapi
+  caller-nya kelewat) di 6 file. Semua commit terpisah, lint bersih.
