@@ -1787,7 +1787,8 @@ $total_available = array_sum(array_column($transaksi_available, 'setoran_real'))
         const kasirPenerima = document.getElementById('kode_karyawan_penerima');
         const checkedBoxes = document.querySelectorAll('.transaksi-checkbox:checked');
         const submitBtn = document.getElementById('btnKirimPermintaan');
-        
+        if (!submitBtn) return; // form step 4 gak dirender kalau nol transaksi bisa diserahkan
+
         // Enable submit button only if kasir penerima is selected and at least one transaction is checked
         if (kasirPenerima && kasirPenerima.value && checkedBoxes.length > 0) {
             submitBtn.disabled = false;
