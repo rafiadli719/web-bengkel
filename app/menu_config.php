@@ -419,4 +419,30 @@ return [
             ['title' => 'Stok Keluar (Manual)', 'url' => 'lap_stok_keluar.php', 'permission' => 'lap_stok_keluar_read'],
         ]
     ],
+    [
+        'title' => 'Keuangan Kasir',
+        'icon' => 'fa-money',
+        'permission' => 'kasir_menu_read', // guard tampil grup, sama kayak baseline koneksi_kasir.php
+        'submenu' => [
+            ['title' => 'Dashboard Kasir', 'url' => '_keuangan/kasir/index_kasir.php', 'permission' => 'kasir_menu_read'],
+            ['title' => 'Buka Kasir', 'url' => '_keuangan/kasir/kas_awal.php', 'permission' => 'kasir_operate'],
+            ['title' => 'Pemasukan', 'url' => '_keuangan/kasir/pemasukan.php', 'permission' => 'kasir_operate'],
+            ['title' => 'Pengeluaran', 'url' => '_keuangan/kasir/pengeluaran.php', 'permission' => 'kasir_operate'],
+            ['title' => 'Tutup Kasir', 'url' => '_keuangan/kasir/kas_akhir.php', 'permission' => 'kasir_close'],
+            ['title' => 'Closing', 'url' => '_keuangan/kasir/closing.php', 'permission' => 'kasir_close'],
+            ['title' => 'Ajukan Revisi Closing', 'url' => '_keuangan/kasir/closing_revisi.php', 'permission' => 'kasir_close'],
+            ['title' => 'Serah Terima Kasir', 'url' => '_keuangan/kasir/serah_terima.php', 'permission' => 'kasir_close'],
+            ['title' => 'Setoran ke Staff Keuangan', 'url' => '_keuangan/kasir/setoran_keuangan_cs.php', 'permission' => 'kasir_menu_read'],
+            ['title' => 'Approval Revisi Closing', 'url' => '_keuangan/kasir/closing_revisi_admin.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Monitoring Setoran', 'url' => '_keuangan/kasir/monitoring_setoran.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Detail Transaksi (Admin)', 'url' => '_keuangan/kasir/view_transaksi_admin.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Manajemen Setoran Keuangan Pusat', 'url' => '_keuangan/kasir/setoran_keuangan.php', 'permission' => 'kasir_admin'],
+            ['title' => 'Keuangan Pusat', 'url' => '_keuangan/kasir/keuangan_pusat.php', 'permission' => 'kasir_admin'],
+            ['title' => 'Riwayat Setoran Bank', 'url' => '_keuangan/kasir/setoran_bank_rekap.php', 'permission' => 'kasir_admin'],
+            ['title' => 'Master Akun', 'url' => '_keuangan/kasir/master_akun.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Master Nama Transaksi', 'url' => '_keuangan/kasir/master_nama_transaksi.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Master Rekening Cabang', 'url' => '_keuangan/kasir/master_rekening_cabang.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Master Nominal', 'url' => '_keuangan/kasir/keping.php', 'permission' => 'kasir_approve'],
+        ],
+    ],
 ];

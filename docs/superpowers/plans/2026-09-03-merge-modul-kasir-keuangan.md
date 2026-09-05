@@ -1173,7 +1173,9 @@ git commit -m "feat(keuangan-kasir): port setoran bank, pengambilan setoran, ser
 
 ---
 
-## Task 15: Wire menu & sidebar
+## Task 15: Wire menu & sidebar — ✅ SELESAI (2026-09-05) — grup menu "Keuangan Kasir" (19 item) ditambah ke `app/menu_config.php`, permission dicek satu-satu dari `requirePermission()` tiap file (bukan tebak dari spec draft). Gap ditemukan+difix sebelum wiring: `index_kasir.php` (Dashboard Kasir, 811 baris) BELUM PERNAH diport — diport baru sesi ini, sed table-rename (`kasir_transactions`→`kasir_transactions_closing_kasir` dst) + `users`→`tbuser`. `setoran_keuangan.php` fetch() ke 3 nama file API lama (`api_pelunasan_manual.php` dst) yang udah digabung jadi `pengambilan_setoran.php`(dispatch action)/`setoran_bank.php` — direroute + tambah param `action`. `closing.php` fetch backup ke `api_backup_closing.php` (trigger .bat Windows Access-era, gak applicable MySQL) — step backup dicopot dari JS, redirect ke `index_kasir.php` tetap jalan. Ketemu+fix juga: kredensial hardcode di `pengambilan_setoran.php`/`setoran_bank.php` (pola sama Task 30), bug null-reference JS `checkFormValidity()` di `serah_terima.php` (submit button gak dirender pas 0 transaksi). Smoke test: 19/19 halaman lolos (browser, admin login), console bersih. Sisa gap (dicatat, BUKAN diblokir): 7 link "edit mode" di `index_kasir.php` (edit_kas_awal.php, edit_kas_akhir.php, input_penjualan_servis.php, edit_pemasukan1.php, edit_pengeluaran1.php, edit_omset1.php, cek_data.php) masih nunjuk nama file source lama yang belum diport — commented TODO di kode.
+
+## Task 15: Wire menu & sidebar (spec asli)
 
 **Files:**
 - Modify: `app/menu_config.php`
@@ -1995,7 +1997,9 @@ git commit -m "feat(keuangan-kasir): port monitoring & riwayat transaksi"
 
 ---
 
-## Task 32: Migrasi file fisik uploads
+## Task 32: Migrasi file fisik uploads — ✅ SELESAI-DENGAN-TEMUAN (2026-09-04, no-op) — dicek `fitmotor_maintance-beta.pengambilan_setoran` (source, 6 baris) & `pengambilan_setoran_closing_kasir` (migrasi, 6 baris): SEMUA `mutasi_dokumen_path` NULL, nol referensi file. 12 file fisik di `web_kasir/uploads/pelunasan_hutang/` (11 draft `tmp/`, 1 file final kode `PGA-2026-0015` yang gak ada row-nya di DB manapun) = orphan murni, gak ke-link row manapun. Spec di bawah asumsi ada path terisi — gak cocok kondisi nyata, jadi gak dieksekusi (push back). Gak ada aksi lanjut diperlukan kecuali Rafi mau arsip manual file orphan itu buat jaga-jaga historis.
+
+## Task 32: Migrasi file fisik uploads (spec asli)
 
 **Files:**
 - Create: `app/uploads/kasir/pelunasan_hutang/` (folder target)
@@ -2056,7 +2060,9 @@ git commit -m "feat(keuangan-kasir): migrasi file fisik uploads pelunasan hutang
 
 ---
 
-## Task 33: Bersihkan file berbahaya di webroot web_kasir (URGENT, independen dari cutover)
+## Task 33: Bersihkan file berbahaya di webroot web_kasir (URGENT, independen dari cutover) — ✅ SELESAI (2026-09-04 siang, dieksekusi sesi sebelumnya) — diverifikasi ulang: dump SQL/error_log/file debug-dev semua sudah gak ada di webroot. Repo `web_kasir` sendiri 0 commit history (belum pernah di-git-commit sama sekali) jadi Step 4 (commit) gak relevan — fix intinya file fisik udah kehapus dari webroot, itu yang matter buat keamanan.
+
+## Task 33: Bersihkan file berbahaya di webroot web_kasir (spec asli)
 
 **Files:**
 - Modify: `C:\laragon\www\web_kasir\website_kasir` (di luar repo git ini)
