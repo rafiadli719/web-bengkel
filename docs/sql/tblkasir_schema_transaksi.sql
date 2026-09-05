@@ -494,3 +494,35 @@ CREATE TABLE `audit_log_closing_kasir` (
   KEY `idx_created_at` (`created_at`),
   CONSTRAINT `fk_al_ck_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser` (`kode_karyawan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Task 23 (2026-09-05): DDL data_penjualan/data_servis - kelewat total dari
+-- skema awal (ketahuan pas smoke test input_penjualan_servis.php, Task 15).
+-- Sumber: fitmotor_maintance-beta.data_penjualan/data_servis (2175 baris
+-- masing-masing). Sama pola Task 3: rename + FK kode_karyawan -> tbuser
+-- (kolom disamain varchar(255) utf8mb4_general_ci, match kasir_transactions_
+-- closing_kasir.kode_karyawan biar collation FK cocok).
+CREATE TABLE `data_penjualan_closing_kasir` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `kode_transaksi` varchar(20) NOT NULL,
+  `jumlah_penjualan` decimal(15,2) NOT NULL,
+  `tanggal` date NOT NULL,
+  `waktu` time NOT NULL,
+  `kode_karyawan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kode_karyawan` (`kode_karyawan`),
+  KEY `kode_transaksi` (`kode_transaksi`),
+  CONSTRAINT `fk_dp_ck_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser` (`kode_karyawan`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `data_servis_closing_kasir` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `kode_transaksi` varchar(20) NOT NULL,
+  `jumlah_servis` decimal(15,2) NOT NULL,
+  `tanggal` date NOT NULL,
+  `waktu` time NOT NULL,
+  `kode_karyawan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kode_karyawan` (`kode_karyawan`),
+  KEY `kode_transaksi` (`kode_transaksi`),
+  CONSTRAINT `fk_ds_ck_karyawan` FOREIGN KEY (`kode_karyawan`) REFERENCES `tbuser` (`kode_karyawan`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
