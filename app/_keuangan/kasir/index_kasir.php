@@ -786,10 +786,9 @@ $total_pages = ceil($total_transactions / $limit);
         // kasir_closing_dashboard.php->kas_akhir.php, close_transaksi.php->
         // closing.php, closing_revision_request.php->closing_revisi.php.
         function kasAwal(kode_transaksi) { window.location.href = "kas_awal.php?kode_transaksi=" + kode_transaksi; }
-        // TODO gap belum diport (dicek 2026-09-04, Task 15): edit_kas_awal.php,
-        // edit_kas_akhir.php, input_penjualan_servis.php, edit_pemasukan1.php,
-        // edit_pengeluaran1.php, edit_omset1.php, cek_data.php - link di bawah
-        // MASIH nunjuk nama file source lama (404 di fitmotor) sampai diport.
+        // 7 link edit-mode ini SUDAH diport (verified 2026-09-05, lint bersih):
+        // edit_kas_awal.php, edit_kas_akhir.php, input_penjualan_servis.php,
+        // edit_pemasukan1.php, edit_pengeluaran1.php, edit_omset1.php, cek_data.php
         function editKasAwal(kode_transaksi) { window.location.href = "edit_kas_awal.php?kode_transaksi=" + kode_transaksi; }
         function pemasukan(kode_transaksi) { window.location.href = "pemasukan.php?kode_transaksi=" + kode_transaksi; }
         function pengeluaran(kode_transaksi) { window.location.href = "pengeluaran.php?kode_transaksi=" + kode_transaksi; }

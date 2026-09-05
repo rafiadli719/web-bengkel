@@ -228,3 +228,18 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   `serah_terima_kasir_closing_kasir.php`, 404) di 7 file, dan 23 link
   export tanpa prefix folder `export/` (Task 30 mindahin file tapi
   caller-nya kelewat) di 6 file. Semua commit terpisah, lint bersih.
+- **Update 2026-09-05 sore — verifikasi 7 link edit-mode + checklist-projek**:
+  dicek ulang 11 file edit-mode (edit_kas_awal, edit_kas_akhir,
+  input_penjualan_servis, edit_pemasukan1/edit_pemasukan/hapus_pemasukan1,
+  edit_pengeluaran1/edit_pengeluaran/hapus_pengeluaran1, edit_omset1,
+  cek_data) — semua ADA, lint bersih, link di `index_kasir.php` bener
+  (bukan 404). Komentar TODO basi di `index_kasir.php` (nyebut "belum
+  diport") dibersihin. **checklist-projek diupdate 8 fitur**: 7 fitur
+  yang dieksekusi langsung di UAT E2E (Kas Awal, Kas Akhir, Pemasukan,
+  Pengeluaran, Closing, Serah Terima, Input Omset Penjualan/Servis)
+  naik ke hijau/selesai/100%; 3 fitur "Edit Data ... (mode revisi)"
+  naik dari merah/0% ke kuning/uat/60% (file diport+lint bersih, belum
+  diklik-UAT browser). Sisa backlog gak berubah: cabang-resolution
+  inconsistency (koneksi_kasir.php vs pemasukan.php) masih nunggu
+  keputusan Rafi; Task 17/18 tetap WAJIB konfirmasi eksplisit; Task 34
+  tetap blocked Task 21.
