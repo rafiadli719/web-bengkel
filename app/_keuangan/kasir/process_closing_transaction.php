@@ -4,35 +4,17 @@
  * Menangani proses transaksi "DARI CLOSING" dengan integrasi lengkap
  */
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// config.php lama gak diperlukan — caller (pemasukan.php dst) sudah nyiapin $pdo/$conn duluan
+// Guard session/role asli ($_SESSION['kode_karyawan']/['role'], key legacy
+// web_kasir) DICOPOT — ketahuan lewat UAT E2E 2026-09-05: fitmotor gak
+// pernah set 2 key itu (RBAC fitmotor pakai $_SESSION['_iduser'] dkk via
+// koneksi_kasir.php), jadi blok ini SELALU exit di top-level pas file ini
+// di-require (pemasukan.php baris 17), sebelum logic pemasukan sempat
+// jalan sama sekali — pemasukan.php sudah lolos requirePermission()
+// (koneksi_kasir.php) duluan sebelum require file ini, jadi guard kedua
+// ini redundan sekaligus salah kunci session.
 require_once __DIR__ . '/utils.php'; // Shared utility functions
 
 date_default_timezone_set('Asia/Jakarta');
-
-// Cek session dan role
-if (!isset($_SESSION['kode_karyawan']) || !isset($_SESSION['role'])) {
-    http_response_code(401);
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-        echo json_encode(['success' => false, 'message' => 'Session expired']);
-        exit;
-    }
-    header('Location: ../../login_dashboard/login.php');
-    exit;
-}
-
-if (!in_array($_SESSION['role'], ['kasir', 'admin', 'super_admin'])) {
-    http_response_code(403);
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-        echo json_encode(['success' => false, 'message' => 'Access denied']);
-        exit;
-    }
-    header('Location: ../../login_dashboard/login.php');
-    exit;
-}
 
 /**
  * Function untuk memproses transaksi closing
