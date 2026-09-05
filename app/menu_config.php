@@ -425,7 +425,7 @@ return [
         'permission' => 'kasir_menu_read', // guard tampil grup, sama kayak baseline koneksi_kasir.php
         'submenu' => [
             ['title' => 'Dashboard Kasir', 'url' => '_keuangan/kasir/index_kasir.php', 'permission' => 'kasir_menu_read'],
-            ['title' => 'Buka Kasir', 'url' => '_keuangan/kasir/kas_awal.php', 'permission' => 'kasir_operate'],
+            ['title' => 'Buka Kasir', 'url' => '_keuangan/kasir/verifikasi_kas_awal.php', 'permission' => 'kasir_operate'],
             ['title' => 'Pemasukan', 'url' => '_keuangan/kasir/pemasukan.php', 'permission' => 'kasir_operate'],
             ['title' => 'Pengeluaran', 'url' => '_keuangan/kasir/pengeluaran.php', 'permission' => 'kasir_operate'],
             ['title' => 'Tutup Kasir', 'url' => '_keuangan/kasir/kas_akhir.php', 'permission' => 'kasir_close'],

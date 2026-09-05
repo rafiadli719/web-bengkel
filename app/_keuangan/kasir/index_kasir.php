@@ -590,7 +590,7 @@ $total_pages = ceil($total_transactions / $limit);
                         <i class="fas fa-exclamation-triangle"></i> <?php echo $button_message; ?>
                     </div>
                 <?php else: ?>
-                    <a href="kas_awal.php" class="btn btn-new-transaction">
+                    <a href="verifikasi_kas_awal.php" class="btn btn-new-transaction">
                         <i class="fas fa-plus-circle"></i> Mulai Kas Awal Baru
                     </a>
                     <div style="color: var(--success-color); font-size: 12px; margin-top: 8px;">
