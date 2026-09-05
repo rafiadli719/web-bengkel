@@ -158,3 +158,30 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   **Task 34** (retire masterkey.php setelah Task 21), closing
   (`close_transaksi1.php` 141KB) & closing revisi belum disentuh. Cutover
   (Task 17) & drop tabel mati (Task 18) tetap WAJIB konfirmasi eksplisit.
+- **Update 2026-09-05**: **Task 32 SELESAI-DENGAN-TEMUAN (no-op)** — dicek
+  source (`fitmotor_maintance-beta.pengambilan_setoran`) & migrasi
+  (`pengambilan_setoran_closing_kasir`), sama-sama 6 baris semua
+  `mutasi_dokumen_path` NULL, nol referensi file. 12 file fisik di
+  `web_kasir/uploads/pelunasan_hutang/` = orphan murni, gak dipindah
+  (push back dari spec, gak sesuai kondisi nyata). **Task 33 dikonfirmasi
+  ulang SELESAI** (sudah dieksekusi sesi sebelumnya, diverifikasi lagi:
+  webroot bersih, repo `web_kasir` 0 commit history jadi Step 4 gak
+  relevan). **Task 15 (wire menu) SELESAI, commit 46a693f/6a5d58b/
+  cc1859d/8671064**: grup menu "Keuangan Kasir" (19 item) di
+  `app/menu_config.php`. Investigasi Task 15 nemu 3 gap tersembunyi yang
+  ikut difix: (1) `index_kasir.php` (Dashboard Kasir, 811 baris) BELUM
+  PERNAH diport sejak awal migrasi — diport baru sekarang, table rename
+  + `users`→`tbuser`; (2) `setoran_keuangan.php` fetch() 3 tombol
+  (pelunasan manual/setor bank/edit nominal) masih ke nama file API lama
+  yang udah digabung Task 14 (`pengambilan_setoran.php` dispatch action/
+  `setoran_bank.php`) — 404 kalau diklik, direroute; (3) `closing.php`
+  fetch backup ke `api_backup_closing.php` (trigger .bat Windows
+  Access-era, gak applicable MySQL) — step backup dicopot dari JS
+  (keputusan Rafi), backup DB sekarang lewat dump terjadwal. Bonus fix:
+  bug null-reference JS `checkFormValidity()` di `serah_terima.php`
+  (ketahuan live smoke test). Smoke test browser (login admin real):
+  19/19 halaman lolos, console bersih. Sisa gap dicatat (bukan
+  diblokir): 7 link "edit mode" di Dashboard Kasir (edit_kas_awal.php,
+  edit_kas_akhir.php, input_penjualan_servis.php, edit_pemasukan1.php,
+  edit_pengeluaran1.php, edit_omset1.php, cek_data.php) belum pernah
+  diport, ditandai TODO di kode — backlog terpisah dari Task 15.
