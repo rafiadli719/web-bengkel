@@ -604,10 +604,10 @@ function formatRupiah($angka) {
             <div class="content-header">
                 <h3><i class="fas fa-chart-line"></i> Monitoring Transaksi Closing</h3>
                 <div class="export-buttons">
-                    <a href="export_excel_setoran.php?type=monitoring" class="btn btn-success btn-sm">
+                    <a href="export/export_excel_setoran.php?type=monitoring" class="btn btn-success btn-sm">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
-                    <a href="export_csv.php?type=monitoring" class="btn btn-info btn-sm">
+                    <a href="export/export_csv.php?type=monitoring" class="btn btn-info btn-sm">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </a>
                 </div>

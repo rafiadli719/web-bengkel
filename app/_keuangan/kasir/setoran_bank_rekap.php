@@ -1128,16 +1128,16 @@ function formatRupiah($angka) {
                 <h3><i class="fas fa-file-alt"></i> Riwayat Setoran ke Bank</h3>
                 <div class="export-buttons">
                     <!-- PERBAIKAN: Kirim semua parameter filter ke export Excel -->
-                    <a href="export_excel_setoran.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-success btn-sm">
+                    <a href="export/export_excel_setoran.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-success btn-sm">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
-                    <a href="export_csv.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-info btn-sm">
+                    <a href="export/export_csv.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-info btn-sm">
                         <i class="fas fa-file-csv"></i> Export CSV
                     </a>
-                    <a href="export_pdf_setoran.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-danger btn-sm" target="_blank">
+                    <a href="export/export_pdf_setoran.php?type=bank_history&rekening_filter=<?php echo urlencode($rekening_filter); ?>&tanggal_setor_awal=<?php echo urlencode($tanggal_setor_awal); ?>&tanggal_setor_akhir=<?php echo urlencode($tanggal_setor_akhir); ?>&cabang=<?php echo urlencode($cabang); ?>" class="btn btn-danger btn-sm" target="_blank">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
-                    <a href="setoran_keuangan_closing_kasir.php" class="btn btn-secondary btn-sm">
+                    <a href="setoran_keuangan.php" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Kembali ke Manajemen Setoran
                     </a>
                 </div>
@@ -1456,10 +1456,10 @@ function formatRupiah($angka) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="export_excel_setoran.php?type=bank_detail&bank_id=<?php echo $bank_detail_view['id']; ?>" class="btn btn-success btn-sm">
+                    <a href="export/export_excel_setoran.php?type=bank_detail&bank_id=<?php echo $bank_detail_view['id']; ?>" class="btn btn-success btn-sm">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
-                    <a href="export_pdf_setoran.php?type=bank_detail&bank_id=<?php echo $bank_detail_view['id']; ?>" class="btn btn-danger btn-sm" target="_blank">
+                    <a href="export/export_pdf_setoran.php?type=bank_detail&bank_id=<?php echo $bank_detail_view['id']; ?>" class="btn btn-danger btn-sm" target="_blank">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
                     <a href="<?php echo $history_filter_query !== '' ? '?' . htmlspecialchars($history_filter_query, ENT_QUOTES) : '?'; ?>" class="btn btn-secondary">

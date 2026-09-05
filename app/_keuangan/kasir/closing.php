@@ -605,7 +605,7 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
 <body>
     <div class="sidebar" id="sidebar">
         <a href="index_kasir.php"><i class="fas fa-tachometer-alt"></i> Dashboard Kasir</a>
-        <a href="serah_terima_kasir_closing_kasir.php"><i class="fas fa-handshake"></i> Serah Terima Kasir</a>
+        <a href="serah_terima.php"><i class="fas fa-handshake"></i> Serah Terima Kasir</a>
         <a href="setoran_keuangan_cs.php"><i class="fas fa-money-bill"></i> Setoran Keuangan CS</a>
         <button class="logout-btn" onclick="window.location.href='logout.php';"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
@@ -950,7 +950,7 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
         // Function untuk download PDF data closing
         function downloadPDFClosing() {
             const kodeTransaksi = '<?php echo $kode_transaksi; ?>';
-            const pdfUrl = 'export_pdf_closing_kasir.php?kode_transaksi=' + encodeURIComponent(kodeTransaksi);
+            const pdfUrl = 'export/export_pdf_closing_kasir.php?kode_transaksi=' + encodeURIComponent(kodeTransaksi);
             
             // Langsung download PDF
             window.location.href = pdfUrl;

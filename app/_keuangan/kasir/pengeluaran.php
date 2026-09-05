@@ -564,7 +564,7 @@ $cabang_user = $nama_cabang_aktif ?? 'Unknown Cabang';
 <body>
     <div class="sidebar" id="sidebar">
         <a href="index_kasir.php"><i class="fas fa-tachometer-alt"></i> Dashboard Kasir</a>
-        <a href="serah_terima_kasir_closing_kasir.php"><i class="fas fa-handshake"></i> Serah Terima Kasir</a>
+        <a href="serah_terima.php"><i class="fas fa-handshake"></i> Serah Terima Kasir</a>
         <a href="setoran_keuangan_cs.php"><i class="fas fa-money-bill"></i> Setoran Keuangan CS</a>
         <button class="logout-btn" onclick="window.location.href='logout.php';"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
