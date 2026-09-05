@@ -1620,7 +1620,9 @@ git commit --allow-empty -m "feat(keuangan-kasir): tambah tbuser.kode_kasir buat
 
 ---
 
-## Task 23: DDL + migrasi + port `data_penjualan`/`data_servis` (input manual harian)
+## Task 23: DDL + migrasi + port `data_penjualan`/`data_servis` (input manual harian) — ✅ SELESAI (2026-09-05, commit 9e3bd72/5538a6e) — ketahuan lewat smoke test Task 15, bukan dikerjakan berurutan dari plan. DDL `data_penjualan_closing_kasir`/`data_servis_closing_kasir` (FK `tbuser.kode_karyawan`), migrasi 2175 baris masing-masing dari `fitmotor_maintance-beta` 100% sukses (0 gagal, 0 orphan). `input_penjualan_servis.php` sudah diport (lihat entri terpisah di bawah).
+
+## Task 23: DDL + migrasi + port `data_penjualan`/`data_servis` (spec asli)
 
 **Files:**
 - Modify: `docs/sql/tblkasir_schema_transaksi.sql` (tambah 2 tabel)
@@ -1652,7 +1654,9 @@ git commit -m "feat(keuangan-kasir): port input manual penjualan/servis harian"
 
 ---
 
-## Task 24: Port `index_kasir.php` — landing dashboard kasir harian
+## Task 24: Port `index_kasir.php` — landing dashboard kasir harian — ✅ SELESAI (2026-09-05, commit 46a693f, sesi sebelumnya) — diport pas investigasi Task 15 (closing.php redirect ke file yang gak ada). Redirect-setelah-login belum diatur ke landing ini (di luar scope Task 15), masih via menu sidebar biasa.
+
+## Task 24: Port `index_kasir.php` — landing dashboard kasir harian (spec asli)
 
 **Files:**
 - Create: `app/_keuangan/kasir/index_kasir.php`

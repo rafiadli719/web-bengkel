@@ -185,3 +185,19 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   edit_kas_akhir.php, input_penjualan_servis.php, edit_pemasukan1.php,
   edit_pengeluaran1.php, edit_omset1.php, cek_data.php) belum pernah
   diport, ditandai TODO di kode — backlog terpisah dari Task 15.
+- **Update 2026-09-05 lanjutan**: 7 link "edit mode" di atas **SELESAI
+  DIPORT semua, commit 9e3bd72/5538a6e/44eadc2**. Chain ternyata lebih
+  besar dari perkiraan — `edit_pemasukan1.php`/`edit_pengeluaran1.php`
+  masing-masing punya 2 dependency lagi (`edit_pemasukan.php`/
+  `hapus_pemasukan1.php`, sama pola buat pengeluaran) = total 11 file
+  baru, bukan 7. Ketemu+fix gap tersembunyi lagi: **Task 23** (DDL+migrasi
+  `data_penjualan`/`data_servis`) ternyata belum pernah dieksekusi sama
+  sekali sejak awal migrasi — `input_penjualan_servis.php` fatal error
+  tabel gak ada pas smoke test. DDL 2 tabel `*_closing_kasir` + migrasi
+  2175 baris masing-masing dari `fitmotor_maintance-beta`, 100% sukses
+  (0 gagal, 0 orphan `kode_karyawan`). Semua 11 file pola sama: RBAC
+  `koneksi_kasir.php`, PDO `getenv()`, table rename sed map, `users`→
+  `tbuser`. Smoke test browser 11/11 halaman render benar (title +
+  data live TRX-20241101-0001; 2 file "edit by id" dgn id bukan milik
+  user login nampilin pesan "tidak ditemukan" sesuai desain, bukan
+  fatal). **Task 15 + Task 23 + Task 24 semua SELESAI TUNTAS.**
