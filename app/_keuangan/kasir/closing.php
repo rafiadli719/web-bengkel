@@ -889,33 +889,15 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
                     return;
                 }
 
-                // Step 2: Trigger backup database
-                lbl.textContent = 'Backup database...';
-                const notif    = document.getElementById('backupNotif');
-                const notifTxt = document.getElementById('backupNotifText');
+                // Step backup database (api_backup_closing.php, trigger .bat
+                // Windows E:\Bengkel 2.0\... backup ke Google Drive) DICOPOT —
+                // infra Access-era lama, gak applicable ke MySQL fitmotor.
+                // Backup DB fitmotor sekarang lewat dump terjadwal, bukan
+                // trigger per-closing (keputusan 2026-09-04, lihat CLAUDE.md).
+                lbl.textContent = 'Closing berhasil, mengalihkan...';
 
-                try {
-                    const bf = new FormData();
-                    bf.append('kode_cabang', '<?= htmlspecialchars($kode_cabang, ENT_QUOTES) ?>');
-                    const br     = await fetch('api_backup_closing.php', { method: 'POST', body: bf });
-                    const bResult = await br.json();
-
-                    notif.classList.add('show');
-                    if (bResult.success) {
-                        notif.classList.add('success');
-                        notifTxt.textContent = 'Backup database ke Google Drive: BERHASIL ✓';
-                    } else {
-                        notif.classList.add('error');
-                        notifTxt.textContent = 'Backup database GAGAL: ' + (bResult.message || 'Error tidak diketahui');
-                    }
-                } catch (e) {
-                    notif.classList.add('show');
-                    notif.classList.add('error');
-                    notifTxt.textContent = 'Backup: Tidak bisa menghubungi API backup.';
-                }
-
-                // Redirect setelah 2.5 detik agar notif sempat dibaca
-                setTimeout(() => { window.location.href = 'index_kasir.php'; }, 2500);
+                // Redirect setelah 1 detik
+                setTimeout(() => { window.location.href = 'index_kasir.php'; }, 1000);
 
             } catch (e) {
                 alert('Error koneksi: ' + e.message);

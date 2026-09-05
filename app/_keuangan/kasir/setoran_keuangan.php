@@ -8367,6 +8367,7 @@ function submitManualPelunasan() {
     }
     
     const formData = new FormData();
+    formData.append('action', 'pelunasan_manual');
     formData.append('kode_pengambilan', kode);
     formData.append('nominal', nominal);
     formData.append('no_transaksi', noTrx);
@@ -8375,8 +8376,8 @@ function submitManualPelunasan() {
     if (bukti) {
         formData.append('bukti_tf', bukti);
     }
-    
-    fetch('api_pelunasan_manual.php', { method: 'POST', body: formData })
+
+    fetch('pengambilan_setoran.php', { method: 'POST', body: formData })
         .then(r => r.json()).then(data => {
             msgEl.style.display = 'block';
             if (data.success) {
@@ -8411,7 +8412,7 @@ function submitSetorBank() {
         msgEl.textContent = 'Kedua tanggal wajib diisi.'; return;
     }
     const body = new URLSearchParams({ kode_pengambilan: kode, tanggal_penyerahan: tglPenyerahan, tanggal_riil: tglRiil });
-    fetch('api_setor_bank_pengambilan.php', { method: 'POST', body })
+    fetch('setoran_bank.php', { method: 'POST', body })
         .then(r => r.json()).then(data => {
             msgEl.style.display = 'block';
             if (data.success) {
@@ -8490,8 +8491,8 @@ function submitEditNominalKeuangan() {
         msgEl.style.cssText = 'display:block;color:#dc2626;background:#fef2f2;border:1px solid #fca5a5;';
         msgEl.textContent = 'Alasan perubahan wajib diisi.'; return;
     }
-    const body = new URLSearchParams({ kode_pengambilan: kode, nominal_baru: nominal, alasan, role: 'keuangan' });
-    fetch('api_edit_nominal_pengambilan.php', { method: 'POST', body })
+    const body = new URLSearchParams({ action: 'edit_nominal', kode_pengambilan: kode, nominal_baru: nominal, alasan, role: 'keuangan' });
+    fetch('pengambilan_setoran.php', { method: 'POST', body })
         .then(r => r.json()).then(data => {
             msgEl.style.display = 'block';
             if (data.success) {
