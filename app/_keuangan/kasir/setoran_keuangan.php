@@ -18,10 +18,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 require_once __DIR__ . '/process_pengadaan_verification.php';
 
-$is_super_admin = true;
-$is_admin = false;
 $username = $nama_karyawan_aktif;
-$role = 'super_admin';
 
 $kode_karyawan = $kode_karyawan_aktif;
 $message = $message ?? null;
@@ -808,7 +805,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_selisih'])) {
                                  ) as total_closing_borrowed
                           FROM kasir_transactions_closing_kasir kt
                           LEFT JOIN pemasukan_kasir_closing_kasir pk ON pk.nomor_transaksi_closing = kt.kode_transaksi
-                          WHERE kt.kode_transaksi = ?";
+                          WHERE kt.kode_transaksi = ? AND kt.deposit_status = 'Validasi Keuangan SELISIH'";
         $stmt = $pdo->prepare($sql_transaksi);
         $stmt->execute([$transaksi_id]);
         $data_transaksi = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -845,31 +842,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_selisih'])) {
 
                 if ($validation_columns_exist) {
                     if ($selisih_fisik_is_generated) {
-                        $sql_update = "UPDATE kasir_transactions_closing_kasir SET 
-                                      jumlah_diterima_fisik = ?, 
-                                      deposit_status = ?, 
+                        $sql_update = "UPDATE kasir_transactions_closing_kasir SET
+                                      jumlah_diterima_fisik = ?,
+                                      deposit_status = ?,
                                       catatan_validasi = ?,
                                       validasi_at = NOW(),
                                       validasi_by = ?
-                                      WHERE kode_transaksi = ?";
+                                      WHERE kode_transaksi = ? AND deposit_status = 'Validasi Keuangan SELISIH'";
                         $stmt_update = $pdo->prepare($sql_update);
                         $stmt_update->execute([$jumlah_diterima_baru, $new_status, $catatan_validasi, $kode_karyawan, $transaksi_id]);
                     } else {
-                        $sql_update = "UPDATE kasir_transactions_closing_kasir SET 
-                                      jumlah_diterima_fisik = ?, 
-                                      selisih_fisik = ?, 
-                                      deposit_status = ?, 
+                        $sql_update = "UPDATE kasir_transactions_closing_kasir SET
+                                      jumlah_diterima_fisik = ?,
+                                      selisih_fisik = ?,
+                                      deposit_status = ?,
                                       catatan_validasi = ?,
                                       validasi_at = NOW(),
                                       validasi_by = ?
-                                      WHERE kode_transaksi = ?";
+                                      WHERE kode_transaksi = ? AND deposit_status = 'Validasi Keuangan SELISIH'";
                         $stmt_update = $pdo->prepare($sql_update);
                         $stmt_update->execute([$jumlah_diterima_baru, $selisih_baru, $new_status, $catatan_validasi, $kode_karyawan, $transaksi_id]);
                     }
                 } else {
-                    $sql_update = "UPDATE kasir_transactions_closing_kasir SET 
+                    $sql_update = "UPDATE kasir_transactions_closing_kasir SET
                                   deposit_status = ?
-                                  WHERE kode_transaksi = ?";
+                                  WHERE kode_transaksi = ? AND deposit_status = 'Validasi Keuangan SELISIH'";
                     $stmt_update = $pdo->prepare($sql_update);
                     $stmt_update->execute([$new_status, $transaksi_id]);
                 }
@@ -2104,8 +2101,8 @@ $closing_detail = [];
 $all_closing_detail = [];
 $bank_pengambilan_rows = [];
 if (isset($_GET['bank_detail_id'])) {
-    $bank_detail_id = $_GET['bank_detail_id'];
-    
+    $bank_detail_id = (int) $_GET['bank_detail_id'];
+
     $sql_bank_detail = "SELECT sb.*, u.nama_lengkap as created_by_name 
                        FROM setoran_ke_bank_closing_kasir sb 
                        LEFT JOIN tbuser u ON sb.created_by = u.kode_karyawan 
@@ -2209,7 +2206,7 @@ if (isset($_GET['bank_detail_id'])) {
 $cabang_closing_detail = [];
 if (isset($_GET['cabang_closing']) && isset($_GET['bank_detail_id'])) {
     $cabang_name = $_GET['cabang_closing'];
-    $bank_detail_id = $_GET['bank_detail_id'];
+    $bank_detail_id = (int) $_GET['bank_detail_id'];
     
     $sql_cabang_detail = "SELECT
                              sk.*,
@@ -6438,7 +6435,7 @@ body.tab-setor_bank #setorBankTableWrapper {
                 </script>
 
                 <div class="modal-footer">
-                    <a href="export/export_excel_setoran.php?type=cabang_closing&bank_id=<?php echo $_GET['bank_detail_id']; ?>&cabang=<?php echo urlencode($_GET['cabang_closing']); ?>" class="btn btn-success btn-sm">
+                    <a href="export/export_excel_setoran.php?type=cabang_closing&bank_id=<?php echo (int) $_GET['bank_detail_id']; ?>&cabang=<?php echo urlencode($_GET['cabang_closing']); ?>" class="btn btn-success btn-sm">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
                     <a href="?tab=bank_history" class="btn btn-secondary">
