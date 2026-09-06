@@ -243,3 +243,34 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   inconsistency (koneksi_kasir.php vs pemasukan.php) masih nunggu
   keputusan Rafi; Task 17/18 tetap WAJIB konfirmasi eksplisit; Task 34
   tetap blocked Task 21.
+- **Update 2026-09-06 — cabang-resolution fix (poin A/B) + port 2 file
+  gap terakhir (poin C), keputusan Rafi dieksekusi semua**: (A) kolom
+  `kode_cabang` ditambah ke `pemasukan_kasir_closing_kasir` dan
+  `pengeluaran_kasir_closing_kasir` (sebelumnya cuma resolve dari session,
+  gak pernah persist ke row) — INSERT di `pemasukan.php`/`pengeluaran.php`
+  diwire isi `$user_kode_cabang`/`$kode_cabang_aktif` dari
+  `koneksi_kasir.php`. (B) 14 baris orphan `kode_cabang` di
+  `kasir_transactions_closing_kasir` dimigrasi via FK `tbuser.kode_cabang`
+  (bukan freetext `nama_cabang` yang kadang "Unknown Cabang"/typo) — 5
+  kode_karyawan dipetakan ke cabang_ref_kode masing-masing, orphan
+  count jadi 0. Backfill historis 1725 baris pemasukan + 22157 baris
+  pengeluaran dari header transaksi (`kode_transaksi` JOIN); 3 baris
+  sisa (2 pemasukan + 1 pengeluaran) punya `kode_transaksi` dangling
+  (header transaksinya gak exist di DB — `TRX-20241104-0004`,
+  `TRX-20250221-BRD0006`) diselesaikan langsung via employee cabang,
+  dicatat sebagai backlog data-integrity terpisah (beda kelas masalah
+  dari orphan kode_cabang). (C) 2 file gap Task 15 diport:
+  `konfirmasi_buka_transaksi.php` (approve/reject request buka-kembali
+  transaksi closing dari CS, permission `kasir_admin`) dan
+  `kas_awal_config_crud.php` (CRUD nominal minimum kas awal per cabang,
+  permission `kasir_approve`, dropdown cabang diganti dari `users` jadi
+  `tbcabang` karena kolom tabelnya FK ke `cabang_ref_kode` bukan
+  `tbuser.kode_cabang`). Kedua tabel tujuan (`konfirmasi_buka_transaksi_closing_kasir`,
+  `kas_awal_config_closing_kasir`) sudah ada isinya dari migrasi Task
+  1-10 (31 dan 4 baris) — cuma interface-nya yang belum sempat diport.
+  Diwire ke `menu_config.php` grup "Keuangan Kasir" (21 item sekarang).
+  Semua lint bersih + smoke-test query PDO/mysqli langsung ke DB live
+  (bukan cuma syntax check). Belum di-klik-UAT browser. Sisa backlog:
+  Task 17/18 (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit;
+  Task 34 tetap blocked Task 21; review `close_transaksi1.php` (141KB)
+  dan `setoran_keuangan.php` (424KB) belum disentuh.

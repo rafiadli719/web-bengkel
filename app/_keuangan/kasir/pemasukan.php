@@ -141,10 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_pemasukan'])) {
     }
 
     // Insert into the `pemasukan_kasir_closing_kasir` table (gunakan PDO untuk keamanan)
-    $stmt_insert = $pdo->prepare("INSERT INTO pemasukan_kasir_closing_kasir (kode_transaksi, kode_karyawan, kode_akun, kode_pengambilan_ref, jumlah, keterangan_transaksi, tanggal, waktu, nomor_transaksi_closing)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt_insert = $pdo->prepare("INSERT INTO pemasukan_kasir_closing_kasir (kode_transaksi, kode_karyawan, kode_cabang, kode_akun, kode_pengambilan_ref, jumlah, keterangan_transaksi, tanggal, waktu, nomor_transaksi_closing)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $insert_ok = $stmt_insert->execute([
-        $kode_transaksi, $kode_karyawan, $kode_akun,
+        $kode_transaksi, $kode_karyawan, $user_kode_cabang, $kode_akun,
         ($is_keuangan_reference_required && $kode_pengambilan_ref !== '') ? $kode_pengambilan_ref : null,
         $jumlah, $keterangan_transaksi, $tanggal, $waktu,
         $nomor_transaksi_closing ?: null

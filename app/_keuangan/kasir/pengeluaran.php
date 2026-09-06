@@ -74,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_pengeluaran']))
     $kategori = $rowKategori ? $rowKategori['kategori'] : '';
 
     // Insert data ke tabel pengeluaran_kasir_closing_kasir termasuk kategori
-    $stmtInsert = mysqli_prepare($conn, "INSERT INTO pengeluaran_kasir_closing_kasir (kode_transaksi, kode_karyawan, kode_akun, jumlah, keterangan_transaksi, tanggal, waktu, umur_pakai, kategori)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($stmtInsert, 'sssssssss', $kode_transaksi, $kode_karyawan, $kode_akun, $jumlah, $keterangan_transaksi, $tanggal, $waktu, $umur_pakai, $kategori);
+    $stmtInsert = mysqli_prepare($conn, "INSERT INTO pengeluaran_kasir_closing_kasir (kode_transaksi, kode_karyawan, kode_cabang, kode_akun, jumlah, keterangan_transaksi, tanggal, waktu, umur_pakai, kategori)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmtInsert, 'ssssssssss', $kode_transaksi, $kode_karyawan, $kode_cabang_aktif, $kode_akun, $jumlah, $keterangan_transaksi, $tanggal, $waktu, $umur_pakai, $kategori);
     if (mysqli_stmt_execute($stmtInsert)) {
         // Redirect setelah berhasil untuk menghindari form resubmission
         header("Location: pengeluaran.php?kode_transaksi=$kode_transaksi&success=1");

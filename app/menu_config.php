@@ -443,6 +443,8 @@ return [
             ['title' => 'Master Nama Transaksi', 'url' => '_keuangan/kasir/master_nama_transaksi.php', 'permission' => 'kasir_approve'],
             ['title' => 'Master Rekening Cabang', 'url' => '_keuangan/kasir/master_rekening_cabang.php', 'permission' => 'kasir_approve'],
             ['title' => 'Master Nominal', 'url' => '_keuangan/kasir/keping.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Konfigurasi Kas Awal per Cabang', 'url' => '_keuangan/kasir/kas_awal_config_crud.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Konfirmasi Buka Kembali Transaksi', 'url' => '_keuangan/kasir/konfirmasi_buka_transaksi.php', 'permission' => 'kasir_admin'],
         ],
     ],
 ];
