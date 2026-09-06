@@ -272,5 +272,45 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   Semua lint bersih + smoke-test query PDO/mysqli langsung ke DB live
   (bukan cuma syntax check). Belum di-klik-UAT browser. Sisa backlog:
   Task 17/18 (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit;
-  Task 34 tetap blocked Task 21; review `close_transaksi1.php` (141KB)
-  dan `setoran_keuangan.php` (424KB) belum disentuh.
+  Task 34 tetap blocked Task 21.
+- **Update 2026-09-06 malam — push 56 commit lokal + review
+  setoran_keuangan.php (commit b35df5d, 73bd702)**: 56 commit
+  keuangan-kasir yang numpuk lokal sejak awal migrasi AKHIRNYA di-push
+  ke origin — sempat ketahan GitHub 100MB limit gara-gara
+  `backups/pre-merge-kasir-20260903_112757.sql` (373MB) nyangkut di
+  commit `dc79b59`; difix pakai `git filter-branch --index-filter`
+  (56→51 commit setelah prune-empty, cuma nyentuh commit yang emang
+  belum pernah nyampe origin jadi aman di-rewrite), file balik ke disk
+  (untracked) + masuk `.gitignore` (`backups/*.sql`). Branch cadangan
+  pra-rewrite `backup-before-filter-1788697051` masih ada lokal.
+  **`close_transaksi1.php` (141KB) TERNYATA GAK PERLU diport** — udah
+  keporting lebih dulu jadi `closing.php`/`closing_revisi.php`/
+  `closing_revisi_admin.php` (commit 65272ae, tanggal 2026-09-04), cuma
+  namanya beda dari source jadi kelewat di tracking — catatan lama soal
+  file itu "belum disentuh" sudah basi. **`setoran_keuangan.php` (8510
+  baris, file terbesar seprojek) direview via 2 subagent paralel**
+  (code-quality + security) — pertama kalinya direview mendalam sejak
+  porting. Security overall CLEAN (semua query PDO prepared statement,
+  RBAC guard bener, gak ada IDOR/SQLi/kredensial baru), cuma 1 XSS
+  reflected medium (`bank_detail_id` diecho mentah ke href, kolom
+  integer di-cast `(int)` di 3 titik). Quality nemu **1 bug logic
+  parah**: handler `edit_selisih` gak punya guard `deposit_status`
+  sama sekali (beda dari `validasi_individual` yang konsisten guard) —
+  bisa nimpa transaksi APAPUN statusnya termasuk yang udah "Sudah
+  Disetor ke Bank", ngerusak snapshot audit pasca setoran bank; pesan
+  error existing di kode udah nyiratin guard yang seharusnya ada
+  (`'bukan status selisih'`) — ditambahin `AND deposit_status =
+  'Validasi Keuangan SELISIH'` ke SELECT + 3 varian UPDATE. Dead code
+  (`$is_super_admin`/`$is_admin`/`$role` hardcode gak kepake) ikut
+  dibersihin. Ditemukan tapi SENGAJA gak difix sekarang (scope lebih
+  besar dari 1 file, dicatat backlog terpisah): drop/recreate trigger
+  `tr_update_setoran_status` saat runtime buat fitur Setor Bank (rawan
+  hilang permanen kalau proses PHP mati di tengah — bukan DDL transaksi
+  aman), beberapa N+1 query di listing closing/histori pengambilan
+  dana, log hygiene (`error_log` verbose termasuk dump `$_POST` tiap
+  request produksi), kredensial DB fallback hardcode
+  `fitmotor_LOGIN`/`Sayalupa12` (pola existing codebase-wide sejak
+  `app/koneksi.php`, bukan regresi file ini — kalau mau dibereskan
+  scope-nya lintas banyak file). Sisa backlog GAK berubah: Task 17/18
+  (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit; Task 34
+  tetap blocked Task 21.
