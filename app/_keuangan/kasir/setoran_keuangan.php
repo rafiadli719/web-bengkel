@@ -16,6 +16,71 @@ date_default_timezone_set('Asia/Jakarta');
 $pdo = new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel'), getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// Helper: pastikan trigger tr_update_setoran_status ada (idempotent, aman dipanggil ulang).
+// Dipakai handler Setor Bank yang sementara disable trigger ini buat hindari recursive
+// update conflict — supaya bisa direstore dari mana saja (sukses, error, atau shutdown
+// handler kalau proses PHP mati fatal/timeout di tengah jalan).
+if (!function_exists('ensureSetoranStatusTrigger')) {
+    function ensureSetoranStatusTrigger(PDO $pdo) {
+        // Bersihkan dummy trigger "_backup" sisa pola lama (empty body, orphan, gak dipakai)
+        $pdo->exec("DROP TRIGGER IF EXISTS tr_update_setoran_status_backup");
+
+        $exists = $pdo->query("SELECT COUNT(*) FROM information_schema.TRIGGERS
+                                WHERE TRIGGER_SCHEMA = DATABASE() AND TRIGGER_NAME = 'tr_update_setoran_status'")->fetchColumn();
+        if ($exists) {
+            return;
+        }
+
+        $pdo->exec("CREATE TRIGGER tr_update_setoran_status
+            AFTER UPDATE ON kasir_transactions_closing_kasir
+            FOR EACH ROW
+            BEGIN
+                DECLARE total_transaksi INT DEFAULT 0;
+                DECLARE transaksi_validated INT DEFAULT 0;
+                DECLARE transaksi_selisih INT DEFAULT 0;
+                DECLARE transaksi_dikembalikan INT DEFAULT 0;
+                DECLARE new_status VARCHAR(50);
+
+                SELECT COUNT(*) INTO total_transaksi
+                FROM kasir_transactions_closing_kasir
+                WHERE kode_setoran = NEW.kode_setoran
+                AND deposit_status IN ('Diterima Staff Keuangan', 'Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
+
+                SELECT COUNT(*) INTO transaksi_validated
+                FROM kasir_transactions_closing_kasir
+                WHERE kode_setoran = NEW.kode_setoran
+                AND deposit_status IN ('Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
+
+                SELECT COUNT(*) INTO transaksi_selisih
+                FROM kasir_transactions_closing_kasir
+                WHERE kode_setoran = NEW.kode_setoran
+                AND deposit_status = 'Validasi Keuangan SELISIH';
+
+                SELECT COUNT(*) INTO transaksi_dikembalikan
+                FROM kasir_transactions_closing_kasir
+                WHERE kode_setoran = NEW.kode_setoran
+                AND deposit_status = 'Dikembalikan ke CS';
+
+                IF total_transaksi = transaksi_validated AND total_transaksi > 0 THEN
+                    IF transaksi_dikembalikan > 0 THEN
+                        SET new_status = 'Ada yang Dikembalikan ke CS';
+                    ELSEIF transaksi_selisih > 0 THEN
+                        SET new_status = 'Validasi Keuangan SELISIH';
+                    ELSE
+                        SET new_status = 'Validasi Keuangan OK';
+                    END IF;
+
+                    UPDATE setoran_keuangan_closing_kasir
+                    SET
+                        status = new_status,
+                        updated_at = CURRENT_TIMESTAMP,
+                        updated_by = NEW.validasi_by
+                    WHERE kode_setoran = NEW.kode_setoran;
+                END IF;
+            END");
+    }
+}
+
 require_once __DIR__ . '/process_pengadaan_verification.php';
 
 $username = $nama_karyawan_aktif;
@@ -1185,13 +1250,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['setor_bank'])) {
                     // Temporarily disable the trigger to avoid recursive update conflict
                     // Note: DDL statements (DROP/CREATE TRIGGER) implicitly commit transactions
                     try {
-                        $pdo->exec("DROP TRIGGER IF EXISTS tr_update_setoran_status_backup");
-                        $pdo->exec("CREATE TRIGGER tr_update_setoran_status_backup AFTER UPDATE ON kasir_transactions_closing_kasir FOR EACH ROW BEGIN END");
                         $pdo->exec("DROP TRIGGER IF EXISTS tr_update_setoran_status");
                         error_log("SETOR BANK: Trigger temporarily disabled");
-                    } catch (Exception $trigger_drop_error) {
+                    } catch (Throwable $trigger_drop_error) {
                         error_log("SETOR BANK WARNING: Could not drop trigger: " . $trigger_drop_error->getMessage());
                     }
+
+                    // Safety net: kalau proses PHP mati fatal/timeout sebelum sempat recreate
+                    // di bawah, shutdown handler ini pastikan trigger tetap balik (idempotent).
+                    register_shutdown_function(function () use ($pdo) {
+                        try {
+                            ensureSetoranStatusTrigger($pdo);
+                        } catch (Throwable $shutdown_trigger_error) {
+                            error_log("SETOR BANK CRITICAL: shutdown trigger restore failed: " . $shutdown_trigger_error->getMessage());
+                        }
+                    });
                     
                     $pdo->beginTransaction();
                     try {
@@ -1294,64 +1367,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['setor_bank'])) {
                         
                         // Recreate the original trigger after successful transaction
                         try {
-                            $pdo->exec("DROP TRIGGER IF EXISTS tr_update_setoran_status");
-                            
-                            $trigger_sql = "CREATE TRIGGER tr_update_setoran_status
-                                AFTER UPDATE ON kasir_transactions_closing_kasir
-                                FOR EACH ROW
-                                BEGIN
-                                    DECLARE total_transaksi INT DEFAULT 0;
-                                    DECLARE transaksi_validated INT DEFAULT 0;
-                                    DECLARE transaksi_selisih INT DEFAULT 0;
-                                    DECLARE transaksi_dikembalikan INT DEFAULT 0;
-                                    DECLARE new_status VARCHAR(50);
-                                    
-                                    SELECT COUNT(*) INTO total_transaksi
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran 
-                                    AND deposit_status IN ('Diterima Staff Keuangan', 'Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
-                                    
-                                    SELECT COUNT(*) INTO transaksi_validated
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status IN ('Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
-                                    
-                                    SELECT COUNT(*) INTO transaksi_selisih
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status = 'Validasi Keuangan SELISIH';
-                                    
-                                    SELECT COUNT(*) INTO transaksi_dikembalikan
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status = 'Dikembalikan ke CS';
-                                    
-                                    IF total_transaksi = transaksi_validated AND total_transaksi > 0 THEN
-                                        IF transaksi_dikembalikan > 0 THEN
-                                            SET new_status = 'Ada yang Dikembalikan ke CS';
-                                        ELSEIF transaksi_selisih > 0 THEN
-                                            SET new_status = 'Validasi Keuangan SELISIH';
-                                        ELSE
-                                            SET new_status = 'Validasi Keuangan OK';
-                                        END IF;
-                                        
-                                        UPDATE setoran_keuangan_closing_kasir 
-                                        SET 
-                                            status = new_status,
-                                            updated_at = CURRENT_TIMESTAMP,
-                                            updated_by = NEW.validasi_by
-                                        WHERE kode_setoran = NEW.kode_setoran;
-                                    END IF;
-                                END";
-                            $pdo->exec($trigger_sql);
+                            ensureSetoranStatusTrigger($pdo);
                             error_log("SETOR BANK: Trigger recreated after successful transaction");
-                        } catch (Exception $trigger_recreate_error) {
+                        } catch (Throwable $trigger_recreate_error) {
                             error_log("SETOR BANK WARNING: Failed to recreate trigger after success: " . $trigger_recreate_error->getMessage());
                         }
-                    } catch (Exception $e) {
+                    } catch (Throwable $e) {
                         error_log("SETOR BANK EXCEPTION: " . $e->getMessage());
                         error_log("SETOR BANK TRACE: " . $e->getTraceAsString());
-                        
+
                         // Only rollback if transaction is active
                         if ($pdo->inTransaction()) {
                             $pdo->rollBack();
@@ -1359,64 +1383,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['setor_bank'])) {
                         } else {
                             error_log("SETOR BANK: No active transaction to rollback");
                         }
-                        
+
                         $error = "Error: " . $e->getMessage();
                         error_log("SETOR BANK ERROR: " . $e->getMessage());
-                        
+
                         // Always recreate trigger even on error (outside transaction)
                         try {
-                            $pdo->exec("DROP TRIGGER IF EXISTS tr_update_setoran_status");
-                            
-                            $trigger_sql = "CREATE TRIGGER tr_update_setoran_status
-                                AFTER UPDATE ON kasir_transactions_closing_kasir
-                                FOR EACH ROW
-                                BEGIN
-                                    DECLARE total_transaksi INT DEFAULT 0;
-                                    DECLARE transaksi_validated INT DEFAULT 0;
-                                    DECLARE transaksi_selisih INT DEFAULT 0;
-                                    DECLARE transaksi_dikembalikan INT DEFAULT 0;
-                                    DECLARE new_status VARCHAR(50);
-                                    
-                                    SELECT COUNT(*) INTO total_transaksi
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran 
-                                    AND deposit_status IN ('Diterima Staff Keuangan', 'Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
-                                    
-                                    SELECT COUNT(*) INTO transaksi_validated
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status IN ('Validasi Keuangan OK', 'Validasi Keuangan SELISIH', 'Dikembalikan ke CS');
-                                    
-                                    SELECT COUNT(*) INTO transaksi_selisih
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status = 'Validasi Keuangan SELISIH';
-                                    
-                                    SELECT COUNT(*) INTO transaksi_dikembalikan
-                                    FROM kasir_transactions_closing_kasir
-                                    WHERE kode_setoran = NEW.kode_setoran
-                                    AND deposit_status = 'Dikembalikan ke CS';
-                                    
-                                    IF total_transaksi = transaksi_validated AND total_transaksi > 0 THEN
-                                        IF transaksi_dikembalikan > 0 THEN
-                                            SET new_status = 'Ada yang Dikembalikan ke CS';
-                                        ELSEIF transaksi_selisih > 0 THEN
-                                            SET new_status = 'Validasi Keuangan SELISIH';
-                                        ELSE
-                                            SET new_status = 'Validasi Keuangan OK';
-                                        END IF;
-                                        
-                                        UPDATE setoran_keuangan_closing_kasir 
-                                        SET 
-                                            status = new_status,
-                                            updated_at = CURRENT_TIMESTAMP,
-                                            updated_by = NEW.validasi_by
-                                        WHERE kode_setoran = NEW.kode_setoran;
-                                    END IF;
-                                END";
-                            $pdo->exec($trigger_sql);
+                            ensureSetoranStatusTrigger($pdo);
                             error_log("SETOR BANK ERROR RECOVERY: Trigger recreated after error");
-                        } catch (Exception $trigger_error) {
+                        } catch (Throwable $trigger_error) {
                             error_log("SETOR BANK CRITICAL: Failed to recreate trigger after error: " . $trigger_error->getMessage());
                         }
                     }
