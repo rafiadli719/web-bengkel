@@ -214,8 +214,42 @@ function normalizeSelisih($nilai) {
     return (abs($num) < 0.5) ? 0.0 : $num;
 }
 
-function sumClosingBorrowedByDirectLink($pdo, $kode_transaksi) {
+function sumClosingBorrowedByDirectLink($pdo, $kode_transaksi, array $prime_codes = null) {
     static $cache = [];
+
+    // Mode priming: batch-fetch sekali buat semua kode_transaksi di listing,
+    // biar loop per-baris tinggal baca cache (hindari N+1). Panggil ini
+    // SEBELUM loop enrichClosingTransactionRow(), return-nya diabaikan.
+    if ($prime_codes !== null) {
+        $todo = [];
+        foreach ($prime_codes as $c) {
+            $c = trim((string)$c);
+            if ($c !== '' && !isset($cache[$c])) {
+                $todo[$c] = true;
+            }
+        }
+        $todo = array_keys($todo);
+        if (!empty($todo)) {
+            $placeholders = implode(',', array_fill(0, count($todo), '?'));
+            $stmt = $pdo->prepare("SELECT TRIM(nomor_transaksi_closing) AS kt, COALESCE(SUM(jumlah), 0) AS total
+                                   FROM pemasukan_kasir_closing_kasir
+                                   WHERE kode_akun = 'DRCLSG'
+                                     AND TRIM(nomor_transaksi_closing) IN ($placeholders)
+                                   GROUP BY TRIM(nomor_transaksi_closing)");
+            $stmt->execute($todo);
+            $found = [];
+            while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $cache[$r['kt']] = (float)$r['total'];
+                $found[$r['kt']] = true;
+            }
+            foreach ($todo as $c) {
+                if (!isset($found[$c])) {
+                    $cache[$c] = 0.0;
+                }
+            }
+        }
+        return null;
+    }
 
     $kode_transaksi = trim((string)$kode_transaksi);
     if ($kode_transaksi === '') {
@@ -413,8 +447,53 @@ function calculateExpectedPhysicalAmount($setoran_real, $borrowed_amount = 0) {
     return max(0, (float)$setoran_real - max(0, (float)$borrowed_amount));
 }
 
-function getInternalClosingUsageInfo($pdo, $kode_transaksi) {
+function getInternalClosingUsageInfo($pdo, $kode_transaksi, array $prime_codes = null) {
     static $cache = [];
+
+    // Mode priming: sama pola kayak sumClosingBorrowedByDirectLink() —
+    // batch-fetch sekali buat semua kode_transaksi di listing sebelum loop.
+    if ($prime_codes !== null) {
+        $todo = [];
+        foreach ($prime_codes as $c) {
+            $c = trim((string)$c);
+            if ($c !== '' && !isset($cache[$c])) {
+                $todo[$c] = true;
+            }
+        }
+        $todo = array_keys($todo);
+        if (!empty($todo)) {
+            $placeholders = implode(',', array_fill(0, count($todo), '?'));
+            $stmt = $pdo->prepare("SELECT
+                                        kode_transaksi AS kt,
+                                        COALESCE(SUM(jumlah), 0) AS total_amount,
+                                        COUNT(*) AS total_rows,
+                                        GROUP_CONCAT(DISTINCT TRIM(nomor_transaksi_closing) ORDER BY nomor_transaksi_closing SEPARATOR ', ') AS closing_refs
+                                   FROM pemasukan_kasir_closing_kasir
+                                   WHERE kode_transaksi IN ($placeholders)
+                                     AND kode_akun = 'DRCLSG'
+                                   GROUP BY kode_transaksi");
+            $stmt->execute($todo);
+            $found = [];
+            while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $references = [];
+                if (!empty($r['closing_refs'])) {
+                    $references = array_values(array_filter(array_map('trim', explode(',', $r['closing_refs']))));
+                }
+                $cache[$r['kt']] = [
+                    'amount' => (float)$r['total_amount'],
+                    'count' => (int)$r['total_rows'],
+                    'references' => $references
+                ];
+                $found[$r['kt']] = true;
+            }
+            foreach ($todo as $c) {
+                if (!isset($found[$c])) {
+                    $cache[$c] = ['amount' => 0.0, 'count' => 0, 'references' => []];
+                }
+            }
+        }
+        return null;
+    }
 
     $kode_transaksi = trim((string)$kode_transaksi);
     if ($kode_transaksi === '') {
@@ -1943,12 +2022,19 @@ $stmt_setoran = $pdo->prepare($sql_setoran);
 $stmt_setoran->execute($params);
 $setoran_list = $stmt_setoran->fetchAll(PDO::FETCH_ASSOC);
 
-if (($tab == 'validasi' || $tab == 'validasi_selisih') && !empty($setoran_list)) {
-    foreach ($setoran_list as &$row) {
-        $row = enrichClosingTransactionRow($pdo, $row);
+if ((($tab == 'validasi' || $tab == 'validasi_selisih') || $tab == 'setor_bank') && !empty($setoran_list)) {
+    // Priming: batch-fetch 2 query paling sering dipanggil enrichClosingTransactionRow()
+    // (dipanggil TIAP baris tanpa syarat) sekali buat semua baris di listing ini,
+    // biar loop di bawah tinggal baca cache, bukan query per baris (N+1 fix).
+    $prime_kode_transaksi = array_values(array_unique(array_filter(array_map(
+        function ($r) { return trim((string)($r['kode_transaksi'] ?? '')); },
+        $setoran_list
+    ))));
+    if (!empty($prime_kode_transaksi)) {
+        sumClosingBorrowedByDirectLink($pdo, null, $prime_kode_transaksi);
+        getInternalClosingUsageInfo($pdo, null, $prime_kode_transaksi);
     }
-    unset($row);
-} elseif ($tab == 'setor_bank' && !empty($setoran_list)) {
+
     foreach ($setoran_list as &$row) {
         $row = enrichClosingTransactionRow($pdo, $row);
     }
@@ -2015,6 +2101,27 @@ if ($tab === 'histori_pengambilan_dana') {
         'tanggal_awal' => $tanggal_awal,
         'tanggal_akhir' => $tanggal_akhir,
     ]);
+}
+
+// Batch-resolve semua ID [Ref TRX: ...] di histori pengambilan sekali jalan
+// (dulu query per baris di dalam loop render — N+1 fix).
+$ref_trx_kode_map = [];
+if (!empty($pengambilan_history_rows)) {
+    $all_ref_ids = [];
+    foreach ($pengambilan_history_rows as $r) {
+        if (!empty($r['keterangan']) && preg_match('/\[Ref TRX:\s*([^\]]+)\]/i', $r['keterangan'], $m)) {
+            foreach (array_filter(array_map('trim', explode(',', $m[1]))) as $id) {
+                $all_ref_ids[$id] = true;
+            }
+        }
+    }
+    $all_ref_ids = array_keys($all_ref_ids);
+    if (!empty($all_ref_ids)) {
+        $ph_ref = implode(',', array_fill(0, count($all_ref_ids), '?'));
+        $stmt_ref_trx = $pdo->prepare("SELECT id, kode_transaksi FROM kasir_transactions_closing_kasir WHERE id IN ($ph_ref)");
+        $stmt_ref_trx->execute($all_ref_ids);
+        $ref_trx_kode_map = $stmt_ref_trx->fetchAll(PDO::FETCH_KEY_PAIR);
+    }
 }
 
 // Handle detail view for closing transactions
@@ -4766,14 +4873,8 @@ body.tab-setor_bank #setorBankTableWrapper {
                                 $refTrxKodes = [];
                                 if (!empty($row['keterangan']) && preg_match('/\[Ref TRX:\s*([^\]]+)\]/i', $row['keterangan'], $m)) {
                                     $numericIds = array_values(array_filter(array_map('trim', explode(',', $m[1]))));
-                                    if (!empty($numericIds)) {
-                                        $ph = implode(',', array_fill(0, count($numericIds), '?'));
-                                        $stmtTrx = $pdo->prepare("SELECT id, kode_transaksi FROM kasir_transactions_closing_kasir WHERE id IN ($ph)");
-                                        $stmtTrx->execute($numericIds);
-                                        $trxMap = $stmtTrx->fetchAll(PDO::FETCH_KEY_PAIR);
-                                        foreach ($numericIds as $id) {
-                                            $refTrxKodes[] = $trxMap[$id] ?? "TRX#$id";
-                                        }
+                                    foreach ($numericIds as $id) {
+                                        $refTrxKodes[] = $ref_trx_kode_map[$id] ?? "TRX#$id";
                                     }
                                 }
                                 $keteranganBersih = preg_replace('/\[Ref TRX:[^\]]+\]/i', '', $row['keterangan'] ?? '');

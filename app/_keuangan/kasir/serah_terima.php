@@ -332,26 +332,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $transaksi_to_insert = [];
 
                 // PERBAIKAN: Handle gabungan transactions
+                // N+1 fix: dulu 2 query per transaksi terpilih di dalam loop.
+                // Sekarang di-batch jadi maks 3 query total sebelum loop, loop
+                // di bawah tinggal baca dari lookup array (logic hasil sama).
+                $gabungan_base_codes = [];
+                $individual_codes = [];
+                foreach ($selected_transaksi as $kt_selected) {
+                    if (strpos($kt_selected, 'GABUNGAN_') === 0) {
+                        $gabungan_base_codes[] = str_replace('GABUNGAN_', '', $kt_selected);
+                    } else {
+                        $individual_codes[] = $kt_selected;
+                    }
+                }
+                $gabungan_base_codes = array_values(array_unique($gabungan_base_codes));
+                $individual_codes = array_values(array_unique($individual_codes));
+
+                $regular_setoran_map = [];    // kode_transaksi => setoran_real (status end proses), buat gabungan
+                $individual_setoran_map = []; // kode_transaksi => setoran_real (tanpa filter status), buat individual
+                $closing_amount_map = [];     // kode_transaksi => jumlah closing punya kode_karyawan ini
+
+                if (!empty($gabungan_base_codes)) {
+                    $ph_g = implode(',', array_fill(0, count($gabungan_base_codes), '?'));
+                    $stmt_regular = $pdo->prepare("SELECT kode_transaksi, setoran_real FROM kasir_transactions_closing_kasir WHERE kode_transaksi IN ($ph_g) AND status = 'end proses'");
+                    $stmt_regular->execute($gabungan_base_codes);
+                    $regular_setoran_map = $stmt_regular->fetchAll(PDO::FETCH_KEY_PAIR);
+                }
+
+                if (!empty($individual_codes)) {
+                    $ph_i = implode(',', array_fill(0, count($individual_codes), '?'));
+                    $stmt_ind = $pdo->prepare("SELECT kode_transaksi, setoran_real FROM kasir_transactions_closing_kasir WHERE kode_transaksi IN ($ph_i)");
+                    $stmt_ind->execute($individual_codes);
+                    $individual_setoran_map = $stmt_ind->fetchAll(PDO::FETCH_KEY_PAIR);
+                }
+
+                $all_codes_for_closing = array_values(array_unique(array_merge($gabungan_base_codes, $individual_codes)));
+                if (!empty($all_codes_for_closing)) {
+                    $ph_c = implode(',', array_fill(0, count($all_codes_for_closing), '?'));
+                    $stmt_closing = $pdo->prepare("SELECT nomor_transaksi_closing, MAX(jumlah) AS jumlah
+                                                   FROM pemasukan_kasir_closing_kasir
+                                                   WHERE nomor_transaksi_closing IN ($ph_c)
+                                                     AND kode_karyawan = ?
+                                                   GROUP BY nomor_transaksi_closing");
+                    $stmt_closing->execute(array_merge($all_codes_for_closing, [$kode_karyawan]));
+                    $closing_amount_map = $stmt_closing->fetchAll(PDO::FETCH_KEY_PAIR);
+                }
+
                 foreach ($selected_transaksi as $kode_transaksi) {
                     if (strpos($kode_transaksi, 'GABUNGAN_') === 0) {
                         // This is a combined transaction, get the base transaction code
                         $base_code = str_replace('GABUNGAN_', '', $kode_transaksi);
-                        
-                        // Get regular transaction
-                        $sql_regular = "SELECT setoran_real FROM kasir_transactions_closing_kasir WHERE kode_transaksi = :kode_transaksi AND status = 'end proses'";
-                        $stmt_regular = $pdo->prepare($sql_regular);
-                        $stmt_regular->bindParam(':kode_transaksi', $base_code, PDO::PARAM_STR);
-                        $stmt_regular->execute();
-                        $regular_setoran = $stmt_regular->fetchColumn() ?: 0;
-                        
-                        // Get closing transaction
-                        $sql_closing = "SELECT jumlah FROM pemasukan_kasir_closing_kasir WHERE nomor_transaksi_closing = :kode_transaksi AND kode_karyawan = :kode_karyawan";
-                        $stmt_closing = $pdo->prepare($sql_closing);
-                        $stmt_closing->bindParam(':kode_transaksi', $base_code, PDO::PARAM_STR);
-                        $stmt_closing->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR);
-                        $stmt_closing->execute();
-                        $closing_amount = $stmt_closing->fetchColumn() ?: 0;
-                        
+
+                        $regular_setoran = $regular_setoran_map[$base_code] ?? 0;
+                        $closing_amount = $closing_amount_map[$base_code] ?? 0;
+
                         // PERBAIKAN: MINUS closing amount karena closing adalah pengambilan
                         $total_amount = $regular_setoran - $closing_amount;
                         $transaksi_to_insert[] = [
@@ -359,30 +392,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             'setoran_real' => $total_amount
                         ];
                         $total_setoran += $total_amount;
-                        
+
                     } else {
                         // Individual transaction
-                        $sql_get_setoran = "
-                            SELECT 
-                                kt.setoran_real,
-                                COALESCE((
-                                    SELECT pk.jumlah FROM pemasukan_kasir_closing_kasir pk 
-                                    WHERE pk.nomor_transaksi_closing = kt.kode_transaksi 
-                                    AND pk.kode_karyawan = :kode_karyawan
-                                ), 0) as closing_amount
-                            FROM kasir_transactions_closing_kasir kt 
-                            WHERE kt.kode_transaksi = :kode_transaksi";
-                        $stmt_get_setoran = $pdo->prepare($sql_get_setoran);
-                        $stmt_get_setoran->bindParam(':kode_transaksi', $kode_transaksi, PDO::PARAM_STR);
-                        $stmt_get_setoran->bindParam(':kode_karyawan', $kode_karyawan, PDO::PARAM_STR);
-                        $stmt_get_setoran->execute();
-                        $setoran_data = $stmt_get_setoran->fetch(PDO::FETCH_ASSOC);
-                        
-                        $setoran_transaksi = $setoran_data['setoran_real'] ?: 0;
-                        $closing_amount = $setoran_data['closing_amount'] ?: 0;
+                        $setoran_transaksi = $individual_setoran_map[$kode_transaksi] ?? 0;
+                        $closing_amount = $closing_amount_map[$kode_transaksi] ?? 0;
                         // PERBAIKAN: MINUS closing amount karena closing adalah pengambilan
                         $total_amount = $setoran_transaksi - $closing_amount;
-                        
+
                         $transaksi_to_insert[] = [
                             'kode_transaksi' => $kode_transaksi,
                             'setoran_real' => $total_amount
