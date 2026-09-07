@@ -314,3 +314,22 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   scope-nya lintas banyak file). Sisa backlog GAK berubah: Task 17/18
   (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit; Task 34
   tetap blocked Task 21.
+- **Update 2026-09-07 — fix trigger lifecycle `tr_update_setoran_status`
+  (commit b038463, belum di-push, gak ada `gh`/kredensial GitHub di shell
+  WSL ini)**: dari 3 track independen backlog review setoran_keuangan.php
+  (trigger lifecycle / log hygiene / N+1 query), dieksekusi trigger
+  lifecycle dulu (paling urgent, resiko data-loss real). Extract definisi
+  trigger dari 2 salinan identik (success path + error path) jadi 1 fungsi
+  `ensureSetoranStatusTrigger()` idempotent (cek `information_schema.TRIGGERS`
+  dulu sebelum CREATE). Tambah `register_shutdown_function()` sebagai safety
+  net — kalau proses PHP mati fatal/timeout di gap antara DROP dan CREATE
+  ulang trigger, shutdown handler pastikan trigger balik (sebelumnya
+  cuma `catch(Exception)`, gak nangkep PHP Error/fatal — sekarang
+  `catch(Throwable)` di 4 titik). Buang dummy trigger
+  `tr_update_setoran_status_backup` (empty body, orphan, sisa pola lama,
+  gak pernah dipakai/didrop). Lint bersih + brace balance verified;
+  live DB smoke-test GAK BISA dari shell WSL ini (kredensial DB cuma
+  keinject di proses Apache/Laragon Windows, bukan env WSL) — verifikasi
+  lanjut butuh browser E2E klik Setor Bank atau akses `gh`/token GitHub
+  buat push. Sisa 2 track (log hygiene, N+1 query) + Task 17/18 + Task 34
+  masih backlog, belum disentuh.
