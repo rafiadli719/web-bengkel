@@ -333,3 +333,14 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   lanjut butuh browser E2E klik Setor Bank atau akses `gh`/token GitHub
   buat push. Sisa 2 track (log hygiene, N+1 query) + Task 17/18 + Task 34
   masih backlog, belum disentuh.
+- **Update 2026-09-07 lanjutan — log hygiene selesai (commit 9353db1,
+  belum push, masih blocked gak ada `gh`/token GitHub)**: 4 blok debug
+  `error_log` leftover (comment eksplisit "Debug:") yang jalan tanpa
+  syarat tiap request produksi dibuang — 2 di antaranya kena TIAP PAGE
+  LOAD listing utama (bukan cuma tiap POST): dump POST keys top-level,
+  dump field SETOR BANK, dump filter rekening/tab, dan paling berat
+  dump SQL query lengkap + params + result count. 30 `error_log` sisa
+  di exception/catch path TIDAK disentuh (logging legit). Lint bersih,
+  brace balance 901/901. Sisa track: N+1 query audit (perf, gak urgent)
+  + Task 17/18 (WAJIB konfirmasi eksplisit) + Task 34 (blocked Task 21)
+  + setup push GitHub (numpuk 3 commit lokal: b038463, 2cc0c74, 9353db1).
