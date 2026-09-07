@@ -89,12 +89,6 @@ $kode_karyawan = $kode_karyawan_aktif;
 $message = $message ?? null;
 $error = $error ?? null;
 
-// Debug: Log all POST requests
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    error_log("POST REQUEST received to setoran_keuangan_closing_kasir.php");
-    error_log("POST keys: " . print_r(array_keys($_POST), true));
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verifikasi_notrx_pengadaan'])) {
     $kodePga = trim($_POST['kode_pengambilan'] ?? '');
     if ($kodePga !== '') {
@@ -1159,12 +1153,6 @@ function updateSetoranKeuanganStatus($pdo, $kode_setoran, $kode_karyawan, $valid
 }
 // Handle setor ke bank
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['setor_bank'])) {
-    // Debug logging
-    error_log("SETOR BANK: POST data received");
-    error_log("closing_ids: " . print_r($_POST['closing_ids'] ?? [], true));
-    error_log("rekening_cabang_id: " . ($_POST['rekening_cabang_id'] ?? 'empty'));
-    error_log("tanggal_setoran: " . ($_POST['tanggal_setoran'] ?? 'empty'));
-    
     $closing_ids = $_POST['closing_ids'] ?? [];
     $rekening_cabang_id = $_POST['rekening_cabang_id'] ?? '';
     $tanggal_input = trim($_POST['tanggal_setoran'] ?? date('Y-m-d'));
@@ -1549,10 +1537,6 @@ $status_filter = $_POST['status_filter'] ?? $_GET['status_filter'] ?? 'all';
 $rekening_filter = $_POST['rekening_filter'] ?? $_GET['rekening_filter'] ?? 'all';
 $pengambilan_scope = $_POST['pengambilan_scope'] ?? $_GET['pengambilan_scope'] ?? 'all';
 $pengambilan_status = $_POST['pengambilan_status'] ?? $_GET['pengambilan_status'] ?? 'all';
-
-// Debug logging
-error_log("Rekening filter: " . $rekening_filter);
-error_log("Tab: " . $tab);
 
 $sql_setoran = "
     SELECT sk.*, COALESCE(u.nama_lengkap, 'Unknown User') AS nama_karyawan
@@ -1958,11 +1942,6 @@ if ($tab == 'validasi' || $tab == 'validasi_selisih') {
 $stmt_setoran = $pdo->prepare($sql_setoran);
 $stmt_setoran->execute($params);
 $setoran_list = $stmt_setoran->fetchAll(PDO::FETCH_ASSOC);
-
-// Debug output
-error_log("Query: " . $sql_setoran);
-error_log("Params: " . print_r($params, true));
-error_log("Result count: " . count($setoran_list));
 
 if (($tab == 'validasi' || $tab == 'validasi_selisih') && !empty($setoran_list)) {
     foreach ($setoran_list as &$row) {
