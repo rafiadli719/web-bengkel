@@ -14,21 +14,23 @@
 // ===================
 
 // Data Transaksi Pembelian ==========       
-		$cari_kd=mysqli_query($koneksi,"SELECT 
-                                        tanggal, no_pelanggan, user, 
-                                        total_qty, total_jual, 
-                                        diskon, total_diskon, 
+		$cari_kd=mysqli_query($koneksi,"SELECT
+                                        tanggal, no_pelanggan, user, no_sales, note,
+                                        total_qty, total_jual,
+                                        diskon, total_diskon,
                                         pajak, total_pajak,
-                                        total_akhir, pembayaran, jumlah_bayar 
-                                        FROM 
-                                        tblpenjualan_header 
-                                        WHERE 
+                                        total_akhir, pembayaran, jumlah_bayar
+                                        FROM
+                                        tblpenjualan_header
+                                        WHERE
                                         notransaksi='$nobl'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
+		$tm_cari=mysqli_fetch_array($cari_kd);
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_pelanggan'];
 		$user_order=$tm_cari['user'];
-        $total_qty=$tm_cari['total_qty']; 
+        $no_sales=$tm_cari['no_sales'];
+        $keterangan=$tm_cari['note'];
+        $total_qty=$tm_cari['total_qty'];
         $total_beli=$tm_cari['total_jual'];
         $diskon=$tm_cari['diskon'];
         $total_diskon=$tm_cari['total_diskon'];
@@ -37,6 +39,15 @@
         $total_akhir=$tm_cari['total_akhir'];
         $pembayaran=$tm_cari['pembayaran'];
         $jumlah_bayar=$tm_cari['jumlah_bayar'];
+
+        $nama_sales = '';
+        if (!empty($no_sales)) {
+            $no_sales_esc = mysqli_real_escape_string($koneksi, $no_sales);
+            $cari_sales = mysqli_query($koneksi, "SELECT namasales FROM tblsales WHERE nosales='$no_sales_esc'");
+            if ($cari_sales && ($row_sales = mysqli_fetch_assoc($cari_sales))) {
+                $nama_sales = $row_sales['namasales'];
+            }
+        }
 // =====================
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -73,12 +84,15 @@
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PENJUALAN', array(
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PENJUALAN', array_filter(array(
             array('No. Transaksi', $nobl),
             array('Tanggal', $tanggal_order),
-            array('Supplier', $no_supplier.'&nbsp;'.$namapelanggan),
+            array('Pelanggan', $no_supplier.'&nbsp;'.$namapelanggan),
             array('Alamat', $alamat),
-        )).'
+            !empty($nama_sales) ? array('Sales', $nama_sales) : null,
+            !empty($user_order) ? array('User', $user_order) : null,
+            !empty($keterangan) ? array('Keterangan', $keterangan) : null,
+        ))).'
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
             <tr>
                 <td colspan="8"><hr></td>
@@ -151,6 +165,8 @@
                 <td width="9%" align="right"><font size="2"><b>'.number_format($jumlah_bayar,0).'</b></font></td>                
             </tr>
             </table>
+            <br>
+            <font size="2"><i>Barang yang telah dibeli tidak dapat dikembalikan, kecuali ada perjanjian.</i></font>
             <br>&nbsp;
             '.nota_pdf_footer_ttd();
 							
@@ -160,6 +176,9 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'landscape');
 // Rendering dari HTML Ke PDF
 $dompdf->render();
+// Footer nomor halaman (Halaman X dari Y)
+$canvas = $dompdf->getCanvas();
+$canvas->page_text(($canvas->get_width() - 150), ($canvas->get_height() - 20), "Halaman {PAGE_NUM} dari {PAGE_COUNT}", null, 8);
 // Melakukan output file Pdf
 $dompdf->stream('faktur-penjualan.pdf',array("Attachment"=>0));
 ?>
