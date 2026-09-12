@@ -26,7 +26,8 @@
                                         diskon_persen, diskon_nom,
                                         ppn_persen, ppn_nom,
                                         total_grand, bayar, kembali,
-                                        mekanik1, mekanik2, mekanik3, mekanik4
+                                        mekanik1, mekanik2, mekanik3, mekanik4,
+                                        keterangan, km_skr, km_berikut, id_user
                                         FROM tblservice
                                         WHERE no_service='$no_service'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
@@ -46,6 +47,16 @@
         $nama_mekanik = getMekanikNamaGabung($koneksi,
             $tm_cari['mekanik1'], $tm_cari['mekanik2'],
             $tm_cari['mekanik3'], $tm_cari['mekanik4']);
+        $keluhan = $tm_cari['keterangan'];
+        $km_skr = $tm_cari['km_skr'];
+        $km_berikut = $tm_cari['km_berikut'];
+        $id_user = (int)$tm_cari['id_user'];
+
+        $nama_user = '';
+        $cari_user = mysqli_query($koneksi, "SELECT COALESCE(nama_lengkap, nama_user) AS nama_input FROM tbuser WHERE id=".$id_user);
+        if ($cari_user && ($row_user = mysqli_fetch_assoc($cari_user))) {
+            $nama_user = $row_user['nama_input'];
+        }
 
         $customerRow = fitmotorFindCustomerForService($koneksi, $kode_pelanggan, $no_polisi);
         $bundle = fitmotorGetCustomerVehicleBundle($koneksi, $no_polisi, $kode_pelanggan);
@@ -57,9 +68,7 @@
 		$merek=$vehicleRow['merek'] ?? ($vehicleRow['tipe'] ?? '');
 		$warna=$vehicleRow['warna'] ?? '';
 		$no_rangka=$vehicleRow['no_rangka'] ?? '';
-		$no_mesin=$vehicleRow['no_mesin'] ?? '';        
-        $km_skr="";
-        $km_berikut="";
+		$no_mesin=$vehicleRow['no_mesin'] ?? '';
 
         // == Total dari Item Srrvice ==============
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -113,11 +122,34 @@
                 <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.$no_polisi.'</b></font></td>
             </tr>
+            '.(!empty($pemilik) ? '
+            <tr>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Pemilik</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$pemilik.'</font></td>
+            </tr>' : '').'
             '.(!empty($nama_mekanik) ? '
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Mekanik</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_mekanik.'</font></td>
+            </tr>' : '').'
+            '.(!empty($nama_user) ? '
+            <tr>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">User</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_user.'</font></td>
+            </tr>' : '').'
+            <tr>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Km</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.number_format((float)$km_skr,0).(!empty($km_berikut) ? ' &nbsp;&nbsp; Km Berikut : '.number_format((float)$km_berikut,0) : '').'</font></td>
+            </tr>
+            '.(!empty($keluhan) ? '
+            <tr>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Keluhan</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.htmlspecialchars($keluhan).'</font></td>
             </tr>' : '').'
         </table>
         <br>
@@ -340,6 +372,9 @@ $html .= "</div></body></html>";
 	$dompdf->setPaper('A4', 'landscape');
 	// Rendering dari HTML Ke PDF
 	$dompdf->render();
+	// Footer nomor halaman (Halaman X dari Y)
+	$canvas = $dompdf->getCanvas();
+	$canvas->page_text(($canvas->get_width() - 150), ($canvas->get_height() - 20), "Halaman {PAGE_NUM} dari {PAGE_COUNT}", null, 8);
 	// Melakukan output file Pdf - mode download = attachment 1, default = inline 0
 	$attachment = ($mode === 'download') ? 1 : 0;
 	$dompdf->stream('Nota-Servis-'.$no_service.'.pdf',array("Attachment"=>$attachment));
