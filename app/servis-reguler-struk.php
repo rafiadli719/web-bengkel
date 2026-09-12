@@ -106,10 +106,12 @@
 	$dompdf = new Dompdf();
 
 	$html = '<head>
-				<style>'.nota_pdf_style().'</style>
+				<style>'.nota_pdf_style().'
+				@page { margin: 8pt 20pt; }
+				</style>
 			</head>
 			<body>
-		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
+		<div style="padding: 4pt 10pt; overflow: none; text-align: justify;">
 '.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR SERVICE', array(
             array('No. Service', $no_service),
             array('Tanggal', $tanggal),
@@ -290,65 +292,41 @@
                     <font size="2">'.number_format($bayar,0).'</font>     
                 </td>             
             </tr>            
-            <tr valign="top">																			
+            <tr valign="top">
                 <td width="18%" align="center">
                 <font size="2"></font>
                 </td>
-                <td width="4%"></td>                
+                <td width="4%"></td>
                 <td width="18%" align="center">
                 <font size="2"></font>
-                </td>                
+                </td>
                 <td width="15%" align="right">
-                    <font size="2"></font>     
+                    <font size="2"></font>
                 </td>
                 <td width="10%" align="right">
-                    <font size="2"></font>     
+                    <font size="2"></font>
                 </td>
                 <td width="10%" align="right">
-                    <font size="2"></font>     
+                    <font size="2"></font>
                 </td>
                 <td width="10%" align="right">
-                    <font size="2"></font>     
-                </td>   
-                <td width="15%" align="right">
-                <hr>
-                </td>             
+                    <font size="2">Kembali</font>
+                </td>
+                <td width="15%" align="right" style="border-top:1px solid black;">
+                <font size="2">'.number_format($kembali,0).'</font>
+                </td>
             </tr>
-            <tr valign="top">																			
+            <tr valign="top">
                 <td width="18%" align="center">
-                <font size="2"></font>
-                </td>
-                <td width="4%"></td>                
-                <td width="18%" align="center">
-                <font size="2"></font>
-                </td>                
-                <td width="15%" align="right">
-                    <font size="2"></font>     
-                </td>
-                <td width="10%" align="right">
-                    <font size="2"></font>     
-                </td>
-                <td width="10%" align="right">
-                    <font size="2"></font>     
-                </td>
-                <td width="10%" align="right">
-                    <font size="2">Kembali</font>     
-                </td>   
-                <td width="15%" align="right">
-                <font size="2">'.number_format($kembali,0).'</font> 
-                </td>             
-            </tr>
-            <tr valign="top">																			
-                <td width="18%" align="center">
-                    <br>&nbsp;
+                    <br>
                     <hr>
                 </td>
-                <td width="4%"></td>                
+                <td width="4%"></td>
                 <td width="18%" align="center">
-                    <br>&nbsp;
+                    <br>
                     <hr>
-                </td>                
-                <td colspan="5"></td>             
+                </td>
+                <td colspan="5"></td>
             </tr>
             </table>';
 							
