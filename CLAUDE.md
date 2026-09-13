@@ -242,7 +242,8 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   diklik-UAT browser). Sisa backlog gak berubah: cabang-resolution
   inconsistency (koneksi_kasir.php vs pemasukan.php) masih nunggu
   keputusan Rafi; Task 17/18 tetap WAJIB konfirmasi eksplisit; Task 34
-  tetap blocked Task 21.
+  tetap blocked Task 21. **[SUPERSEDED 2026-09-13: Task 17/18 selesai
+  2026-09-12 — lihat "Status Ringkas per 2026-09-13".]**
 - **Update 2026-09-06 — cabang-resolution fix (poin A/B) + port 2 file
   gap terakhir (poin C), keputusan Rafi dieksekusi semua**: (A) kolom
   `kode_cabang` ditambah ke `pemasukan_kasir_closing_kasir` dan
@@ -272,7 +273,8 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   Semua lint bersih + smoke-test query PDO/mysqli langsung ke DB live
   (bukan cuma syntax check). Belum di-klik-UAT browser. Sisa backlog:
   Task 17/18 (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit;
-  Task 34 tetap blocked Task 21.
+  Task 34 tetap blocked Task 21. **[SUPERSEDED 2026-09-13: Task 17/18
+  selesai 2026-09-12 — lihat "Status Ringkas per 2026-09-13".]**
 - **Update 2026-09-06 malam — push 56 commit lokal + review
   setoran_keuangan.php (commit b35df5d, 73bd702)**: 56 commit
   keuangan-kasir yang numpuk lokal sejak awal migrasi AKHIRNYA di-push
@@ -314,6 +316,9 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   scope-nya lintas banyak file). Sisa backlog GAK berubah: Task 17/18
   (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit; Task 34
   tetap blocked Task 21.
+  **[SUPERSEDED 2026-09-13: Task 17/18 SUDAH DIEKSEKUSI 2026-09-12 — lihat
+  "Status Ringkas per 2026-09-13" di akhir file. Jangan anggap masih
+  backlog dari baris ini.]**
 - **Update 2026-09-07 — fix trigger lifecycle `tr_update_setoran_status`
   (commit b038463, belum di-push, gak ada `gh`/kredensial GitHub di shell
   WSL ini)**: dari 3 track independen backlog review setoran_keuangan.php
@@ -333,6 +338,9 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   lanjut butuh browser E2E klik Setor Bank atau akses `gh`/token GitHub
   buat push. Sisa 2 track (log hygiene, N+1 query) + Task 17/18 + Task 34
   masih backlog, belum disentuh.
+  **[SUPERSEDED 2026-09-13: log hygiene selesai (lihat entry di bawah ini),
+  N+1 listing utama juga udah difix commit ea3d7be (2026-09-07), Task
+  17/18 dieksekusi 2026-09-12. Lihat "Status Ringkas per 2026-09-13".]**
 - **Update 2026-09-07 lanjutan — log hygiene selesai (commit 9353db1,
   belum push, masih blocked gak ada `gh`/token GitHub)**: 4 blok debug
   `error_log` leftover (comment eksplisit "Debug:") yang jalan tanpa
@@ -344,3 +352,80 @@ Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
   brace balance 901/901. Sisa track: N+1 query audit (perf, gak urgent)
   + Task 17/18 (WAJIB konfirmasi eksplisit) + Task 34 (blocked Task 21)
   + setup push GitHub (numpuk 3 commit lokal: b038463, 2cc0c74, 9353db1).
+  **[SUPERSEDED 2026-09-13 — SEMUA 4 item baris ini sudah tuntas atau
+  diperbarui, JANGAN dibaca sebagai backlog aktif lagi:**
+  **(1) N+1 query audit: listing utama (bagian paling parah, 4 query/baris
+  tanpa limit) sudah difix commit `ea3d7be` (2026-09-07, hari yang sama).
+  Sisa 2 titik kecil di POST handler (`setoran_keuangan.php` baris
+  718 & 1103) N-nya dibatasi jumlah pilihan user, bukan listing tanpa
+  limit — severity rendah, opsional, lihat detail di bagian "Status
+  Ringkas per 2026-09-13" kalau mau dikerjain.
+  (2) Task 17/18: DIEKSEKUSI TUNTAS 2026-09-12 (Task 17 Step 1 blokir
+  akses web_kasir lama commit `f9e9787`, Step 2 di-skip permanen atas
+  keputusan Rafi; Task 18 revisi drop 5/9 tabel orphan commit `115f12f`,
+  4 tabel akuntansi aktif sengaja gak didrop). BUKAN backlog lagi.
+  (3) Task 34: MASIH blocked Task 21 (SSO bridge priori-tech, belum
+  ada progress baru per 2026-09-13) — satu-satunya dari 4 item ini yang
+  BENERAN masih pending.
+  (4) Push GitHub: commit `b038463`/`2cc0c74`/`9353db1` dkk (termasuk
+  semua commit numpuk sampai `383d10c`) SUDAH KE-PUSH 2026-09-13 pakai
+  PAT sementara dari Rafi (token itu sudah diminta di-revoke/rotate
+  setelah dipakai — cek langsung ke Rafi kalau perlu push lagi tanpa
+  `gh` CLI terinstall).]**
+
+## Status Ringkas per 2026-09-13 (baca INI dulu, bukan scroll history di atas)
+
+Log di atas ("Update YYYY-MM-DD ...") adalah jurnal historis — akurat
+PADA SAAT ditulis, tapi bisa jadi basi kalau gak ada entry baru yang
+mengoreksi. Section ini satu-satunya sumber kebenaran soal status
+SEKARANG; kalau bingung status sesuatu, cek di sini dulu sebelum percaya
+baris history manapun di atas. Update section ini tiap kali status
+berubah (jangan biarin basi lagi kayak sebelumnya).
+
+**Selesai, bukan backlog lagi:**
+- Task 16 (smoke test E2E 5 cabang, commit `93cc6de`), Task 17
+  (blokir web_kasir lama, commit `f9e9787`, Step 2 di-skip permanen atas
+  keputusan Rafi), Task 18 revisi (drop 5/9 tabel orphan, commit
+  `115f12f`, 4 tabel akuntansi aktif sengaja gak didrop) — semua tuntas
+  2026-09-12.
+- N+1 query listing utama `setoran_keuangan.php` (paling parah, 4
+  query/baris tanpa limit) — fixed commit `ea3d7be` (2026-09-07).
+- Log hygiene `setoran_keuangan.php` — fixed commit `9353db1`
+  (2026-09-07).
+- Trigger lifecycle `tr_update_setoran_status` — fixed commit `b038463`
+  (2026-09-07).
+- Semua commit lokal numpuk (sampai `383d10c`) sudah di-push ke origin
+  2026-09-13.
+- **Modul Penanganan Komplain Tahap 1+2 SELESAI TUNTAS** (branch
+  `feat/modul-komplain`, merge ke `fix/servis-garansi-wo-fraud-validation`
+  2026-09-13, plan: `docs/superpowers/plans/2026-09-12-modul-komplain-implementation.md`,
+  spec: `docs/Modul_Penanganan_Komplain_Fit_Motor.md`). 13 task, semua
+  commit + smoke test live + final code review (5 temuan, semua difix:
+  permission bocor di endpoint riwayat nopol, race condition nomor
+  komplain, hardcoded DB credential fallback di file baru, duplicate-key
+  handling master kategori, migration file gak reproducible). Checklist-
+  projek diupdate 8 fitur, semua selesai/100%. `app/_komplain/` folder
+  baru, 4 tabel `tblkomplain*`, posisi `KACAB` baru, permission RBAC
+  `komplain_*` di posisi CS/ADM/KM/MNG. Fitur Komplain Garansi existing
+  di modul servis TIDAK disentuh (tetap terpisah, sesuai keputusan Rafi).
+
+**Masih pending/backlog beneran (bukan salah baca history):**
+- **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
+  per cabang + lengkapi akun Kepala Mekanik (`KM`) di cabang PACUL,
+  PESALAKAN, TRAYEMAN, CIKDITIRO (cuma PST yang punya KM sekarang).
+  BLOCKING approval REWORK/non-REWORK beneran jalan di 4 cabang itu.
+  Butuh dari Rafi: nama staf real + kode karyawan per cabang — JANGAN
+  auto-generate akun/password.
+- **Task 34** (retire `masterkey.php`) — masih blocked Task 21 (migrasi
+  SSO bridge `priori-tech` → `tbuser`), Task 21 butuh koordinasi
+  eksternal, belum ada progress baru.
+- N+1 minor di 2 POST handler `setoran_keuangan.php` (baris ~718
+  `terima_setoran`, baris ~1103 kembalikan-ke-CS) — N dibatasi pilihan
+  user, bukan listing tanpa limit, severity rendah, opsional dikerjain.
+- 3 gap desain Modul Komplain yang sengaja di-skip (spec ambigu, butuh
+  keputusan Rafi): uploader data massal komplain, idempotent submit
+  (dedup 60 detik), threshold No-show 7 hari configurable.
+- Kredensial DB fallback hardcode (`fitmotor_LOGIN`/`Sayalupa12`) di
+  `app/koneksi.php` dan file-file lama sejenis — utang teknis
+  codebase-wide, bukan regresi baru, belum dibereskan (scope lintas
+  banyak file, belum dijadwalkan).
