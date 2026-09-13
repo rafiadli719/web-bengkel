@@ -458,6 +458,10 @@ return [
             ['title' => 'Input Komplain', 'url' => '_komplain/input.php', 'permission' => 'komplain_input'],
             ['title' => 'Antrian Rework', 'url' => '_komplain/antrian_rework.php', 'permission' => 'komplain_review'],
             ['title' => 'Antrian Approval', 'url' => '_komplain/antrian_approval.php', 'permission' => 'komplain_approve_rework'],
+            ['title' => 'Eskalasi Manajemen', 'url' => '_komplain/eskalasi_manajemen.php', 'permission' => 'komplain_eskalasi_keputusan'],
+            ['title' => 'Dashboard Komplain', 'url' => '_komplain/dashboard_manajemen.php', 'permission' => 'komplain_dashboard'],
+            ['title' => 'Export Komplain', 'url' => '_komplain/export.php', 'permission' => 'komplain_export'],
+            ['title' => 'Master Kategori Komplain', 'url' => '_komplain/master_kategori.php', 'permission' => 'komplain_master_kategori'],
         ],
     ],
 ];
