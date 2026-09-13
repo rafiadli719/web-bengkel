@@ -83,3 +83,12 @@ CREATE TABLE tblkomplain_export_log (
   jumlah_baris INT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Ruling (gap plan, ditemukan saat eksekusi Task 4): plan gak pernah
+-- assign permission komplain_input (CS/ADM, spec bagian 4: "Input
+-- komplain baru, edit sebelum diproses PIC") atau komplain_review
+-- (Kepala Mekanik, spec: "Meninjau & menyusun usulan REWORK") ke posisi
+-- manapun — tanpa ini Task 4/5 gak bisa dipakai siapapun. Additive,
+-- pola sama JSON_ARRAY_APPEND Task 13.
+UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_input') WHERE kode_posisi IN ('CS', 'ADM');
+UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_review') WHERE kode_posisi = 'KM';
