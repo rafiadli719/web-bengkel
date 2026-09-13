@@ -447,4 +447,17 @@ return [
             ['title' => 'Konfirmasi Buka Kembali Transaksi', 'url' => '_keuangan/kasir/konfirmasi_buka_transaksi.php', 'permission' => 'kasir_admin'],
         ],
     ],
+    [
+        'title' => 'Penanganan Komplain',
+        'icon' => 'fa-exclamation-circle',
+        // Gak ada 'permission' di level grup — role CS/KM/Kepala Cabang beda-beda
+        // permission tanpa 1 baseline bersama (beda dari kasir_menu_read di grup
+        // Keuangan Kasir). filterMenuByPermissions() skip gate kalau key ini absen,
+        // grup tetap muncul kalau ada minimal 1 submenu yang lolos permission-nya.
+        'submenu' => [
+            ['title' => 'Input Komplain', 'url' => '_komplain/input.php', 'permission' => 'komplain_input'],
+            ['title' => 'Antrian Rework', 'url' => '_komplain/antrian_rework.php', 'permission' => 'komplain_review'],
+            ['title' => 'Antrian Approval', 'url' => '_komplain/antrian_approval.php', 'permission' => 'komplain_approve_rework'],
+        ],
+    ],
 ];
