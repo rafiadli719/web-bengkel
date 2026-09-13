@@ -2,6 +2,12 @@
 require __DIR__ . '/koneksi_komplain.php';
 header('Content-Type: application/json');
 
+if (!cekPermissionKomplain('komplain_input')) {
+    http_response_code(403);
+    echo json_encode(['riwayat' => [], 'message' => 'Tidak punya akses.']);
+    exit;
+}
+
 $nopol = trim($_GET['nopol'] ?? '');
 if ($nopol === '') {
     echo json_encode(['riwayat' => []]);

@@ -11,16 +11,22 @@ $pesan = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $aksi = $_POST['aksi'] ?? '';
     if ($aksi === 'tambah') {
-        $stmt = $koneksi_komplain->prepare(
-            "INSERT INTO tblkomplain_kategori (kode_kategori, nama_kategori, pic_role, jenis_penyelesaian) VALUES (:kode, :nama, :pic, :jenis)"
-        );
-        $stmt->execute([
-            ':kode' => trim($_POST['kode_kategori'] ?? ''),
-            ':nama' => trim($_POST['nama_kategori'] ?? ''),
-            ':pic' => $_POST['pic_role'] ?? 'KEPALA_CABANG',
-            ':jenis' => trim($_POST['jenis_penyelesaian'] ?? ''),
-        ]);
-        $pesan = 'Kategori ditambahkan.';
+        try {
+            $stmt = $koneksi_komplain->prepare(
+                "INSERT INTO tblkomplain_kategori (kode_kategori, nama_kategori, pic_role, jenis_penyelesaian) VALUES (:kode, :nama, :pic, :jenis)"
+            );
+            $stmt->execute([
+                ':kode' => trim($_POST['kode_kategori'] ?? ''),
+                ':nama' => trim($_POST['nama_kategori'] ?? ''),
+                ':pic' => $_POST['pic_role'] ?? 'KEPALA_CABANG',
+                ':jenis' => trim($_POST['jenis_penyelesaian'] ?? ''),
+            ]);
+            $pesan = 'Kategori ditambahkan.';
+        } catch (PDOException $e) {
+            $pesan = ($e->getCode() === '23000')
+                ? 'Kode kategori sudah dipakai, pakai kode lain.'
+                : 'Gagal menambah kategori.';
+        }
     } elseif ($aksi === 'edit') {
         $stmt = $koneksi_komplain->prepare(
             "UPDATE tblkomplain_kategori SET nama_kategori = :nama, pic_role = :pic, jenis_penyelesaian = :jenis WHERE id = :id"

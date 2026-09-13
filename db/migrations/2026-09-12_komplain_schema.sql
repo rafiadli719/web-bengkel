@@ -92,3 +92,18 @@ CREATE TABLE tblkomplain_export_log (
 -- pola sama JSON_ARRAY_APPEND Task 13.
 UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_input') WHERE kode_posisi IN ('CS', 'ADM');
 UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_review') WHERE kode_posisi = 'KM';
+
+-- Task 13 (permission Manajemen/Super Admin) — SUDAH DIJALANKAN LANGSUNG di
+-- live DB pas eksekusi Task 9 (dibutuhkan buat smoke test eskalasi lebih
+-- awal dari jadwal Task 13), tapi kelewat gak ditulis ke file ini waktu itu
+-- (gap ditemukan final code review). Ditambahkan sekarang biar migration
+-- file ini reproducible di environment baru — JANGAN dijalankan ulang di DB
+-- fitmotor_dbbengkel yang sekarang (bakal dobel append value JSON yang sama).
+UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(
+  JSON_ARRAY_APPEND(
+    JSON_ARRAY_APPEND(permissions, '$', 'komplain_view_all'),
+    '$', 'komplain_eskalasi_keputusan'),
+  '$', 'komplain_dashboard')
+WHERE kode_posisi = 'MNG';
+UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_export') WHERE kode_posisi = 'MNG';
+UPDATE tb_master_posisi SET permissions = JSON_ARRAY_APPEND(permissions, '$', 'komplain_master_kategori') WHERE kode_posisi = 'ADM';

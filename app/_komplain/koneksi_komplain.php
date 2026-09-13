@@ -33,10 +33,17 @@ if ($kode_karyawan_aktif === null) {
 // $_SESSION['permissions'] di sistem live fitmotor).
 $komplain_user_permissions = getUserPermissions($koneksi, $id_user_aktif);
 
+// File baru — no fallback hardcoded (beda dari koneksi.php/koneksi_kasir.php
+// lama yang punya default plaintext; itu utang teknis existing di luar
+// scope modul ini, jangan ditambah lagi di kode baru — [[feedback_secrets_no_hardcoded_default]]).
 $DB_HOST = getenv('DB_HOST') ?: 'localhost';
-$DB_USER = getenv('DB_USER') ?: 'fitmotor_LOGIN';
-$DB_PASS = getenv('DB_PASS') ?: 'Sayalupa12';
-$DB_NAME = getenv('DB_NAME') ?: 'fitmotor_dbbengkel';
+$DB_USER = getenv('DB_USER');
+$DB_PASS = getenv('DB_PASS');
+$DB_NAME = getenv('DB_NAME');
+if (!$DB_USER || !$DB_PASS || !$DB_NAME) {
+    error_log('[komplain] DB_USER/DB_PASS/DB_NAME env belum diset.');
+    die('Konfigurasi database belum lengkap — hubungi admin IT.');
+}
 
 try {
     $koneksi_komplain = new PDO(
