@@ -240,7 +240,7 @@
 											<?php
 												$sql="select id, level_name FROM tblevel";
 												$sql_row=mysqli_query($koneksi,$sql);
-												while($sql_res=mysqli_fetch_assoc($sql_row))	
+												while($sql_res=mysqli_fetch_assoc($sql_row))
 												{
 											?>
 											<option value="<?php echo $sql_res["id"]; ?>"><?php echo $sql_res["level_name"]; ?></option>
@@ -250,7 +250,48 @@
 											</select>
 										</div>
 									</div>
-									
+
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Posisi </label>
+										<div class="col-sm-9">
+											<select class="col-xs-10 col-sm-6" name="kode_posisi" id="kode_posisi" required >
+											<option value="">- Pilih -</option>
+											<?php
+												// kode_posisi dari tb_master_posisi (dipakai RBAC modern + lookup
+												// approval per-cabang, mis. app/_komplain/koneksi_komplain.php).
+												// Terpisah dari "Level Akses" (tblevel) di atas yang sistem lama,
+												// keduanya sengaja dipertahankan bareng biar gak putus fitur yang
+												// masih baca user_akses numerik.
+												$sql_posisi = "SELECT kode_posisi, nama_posisi FROM tb_master_posisi WHERE is_active='active' ORDER BY nama_posisi ASC";
+												$sql_posisi_row = mysqli_query($koneksi, $sql_posisi);
+												while ($posisi_res = mysqli_fetch_assoc($sql_posisi_row)) {
+											?>
+											<option value="<?php echo htmlspecialchars($posisi_res['kode_posisi']); ?>"><?php echo htmlspecialchars($posisi_res['nama_posisi'] . ' [' . $posisi_res['kode_posisi'] . ']'); ?></option>
+											<?php
+												}
+											?>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> Cabang </label>
+										<div class="col-sm-9">
+											<select class="col-xs-10 col-sm-6" name="kode_cabang" id="kode_cabang" required >
+											<option value="">- Pilih -</option>
+											<?php
+												$sql_cabang = "SELECT kode_cabang, nama_cabang FROM tbcabang ORDER BY nama_cabang ASC";
+												$sql_cabang_row = mysqli_query($koneksi, $sql_cabang);
+												while ($cabang_res = mysqli_fetch_assoc($sql_cabang_row)) {
+											?>
+											<option value="<?php echo htmlspecialchars($cabang_res['kode_cabang']); ?>"><?php echo htmlspecialchars($cabang_res['nama_cabang'] . ' [' . $cabang_res['kode_cabang'] . ']'); ?></option>
+											<?php
+												}
+											?>
+											</select>
+										</div>
+									</div>
+
 									<div class="clearfix form-actions">
 										<div>
 											<button class="btn btn-info" type="submit">

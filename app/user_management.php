@@ -7,6 +7,7 @@ if(empty($_SESSION['_iduser'])){
     $id_user=$_SESSION['_iduser'];
     $kd_cabang=$_SESSION['_cabang'];
     include "../config/koneksi.php";
+    include "../config/karyawan_helper.php";
 
     $cari_kd=mysqli_query($koneksi,"SELECT
                                     nama_user, password, user_akses, foto_user
@@ -71,6 +72,34 @@ if(empty($_SESSION['_iduser'])){
     $nama_cabang = $tm_cari ? $tm_cari['nama_cabang'] : '';
     $tipe_cabang = $tm_cari ? $tm_cari['tipe_cabang'] : '';
 
+    // Daftar semua cabang buat dropdown penempatan user. Ditambahkan
+    // karena form ini sebelumnya gak pernah nyimpen kode_cabang ke tbuser
+    // sama sekali (semua user baru/lama lewat halaman ini kode_cabang-nya
+    // NULL) - ketauan pas ngecek kenapa lookup approval per-cabang di
+    // app/_komplain/koneksi_komplain.php (WHERE kode_posisi=? AND
+    // kode_cabang=?) gak pernah dapet hasil buat KACAB/KM yang dibuat
+    // lewat sini.
+    $cabang_options = [];
+    $cabang_result = mysqli_query($koneksi, "SELECT kode_cabang, nama_cabang FROM tbcabang ORDER BY nama_cabang ASC");
+    if ($cabang_result) {
+        while ($cabang_row = mysqli_fetch_assoc($cabang_result)) {
+            $cabang_options[] = $cabang_row;
+        }
+    }
+    $renderCabangOptions = function ($selected = '') use ($cabang_options) {
+        $html = '<option value="">- Pilih Cabang -</option>';
+        foreach ($cabang_options as $cabang_option) {
+            $isSelected = $selected === $cabang_option['kode_cabang'] ? ' selected' : '';
+            $label = htmlspecialchars($cabang_option['nama_cabang'] . ' [' . $cabang_option['kode_cabang'] . ']');
+            $value = htmlspecialchars($cabang_option['kode_cabang']);
+            $html .= "<option value=\"{$value}\"{$isSelected}>{$label}</option>";
+        }
+        return $html;
+    };
+
+    // Generate kode_karyawan lewat fungsi shared (satu ruang nomor dengan
+    // tbuser_karyawan) — lihat config/karyawan_helper.php.
+
     // Handle form submissions
     $message = '';
     $message_type = '';
@@ -80,10 +109,19 @@ if(empty($_SESSION['_iduser'])){
         $nama_user = mysqli_real_escape_string($koneksi, $_POST['nama_user']);
         $password = mysqli_real_escape_string($koneksi, $_POST['password']);
         $kode_posisi = mysqli_real_escape_string($koneksi, trim($_POST['kode_posisi'] ?? ''));
+        $kode_cabang = mysqli_real_escape_string($koneksi, trim($_POST['kode_cabang'] ?? ''));
         $is_active = mysqli_real_escape_string($koneksi, $_POST['is_active']);
+
+        $cabang_valid = false;
+        foreach ($cabang_options as $cabang_option) {
+            if ($cabang_option['kode_cabang'] === $kode_cabang) { $cabang_valid = true; break; }
+        }
 
         if (!isset($role_lookup[$kode_posisi])) {
             $message = "Role/posisi tidak valid.";
+            $message_type = "danger";
+        } elseif (!$cabang_valid) {
+            $message = "Cabang tidak valid.";
             $message_type = "danger";
         } else {
             $user_akses = $role_lookup[$kode_posisi]['user_akses'];
@@ -96,8 +134,15 @@ if(empty($_SESSION['_iduser'])){
                 $message = "Username sudah ada! Gunakan username lain.";
                 $message_type = "danger";
             } else {
-                $query = "INSERT INTO tbuser (nama_user, password, user_akses, kode_posisi, role_name, department, foto_user, status_row, is_active, created_at)
-                         VALUES ('$nama_user', '$password', '$user_akses', '$kode_posisi', '$role_name', '$department', 'file_upload/avatar.png', '0', '$is_active', NOW())";
+                $kode_karyawan = generateKodeKaryawan($koneksi);
+                if ($kode_karyawan === null) {
+                    $message = "Gagal generate kode karyawan, coba lagi.";
+                    $message_type = "danger";
+                } else {
+                $id_karyawan = !empty($_POST['id_karyawan']) ? (int) $_POST['id_karyawan'] : null;
+                $id_karyawan_val = $id_karyawan !== null ? $id_karyawan : 'NULL';
+                $query = "INSERT INTO tbuser (kode_karyawan, nama_user, password, user_akses, kode_posisi, kode_cabang, role_name, department, foto_user, status_row, is_active, id_karyawan, created_at)
+                         VALUES ('$kode_karyawan', '$nama_user', '$password', '$user_akses', '$kode_posisi', '$kode_cabang', '$role_name', '$department', 'file_upload/avatar.png', '0', '$is_active', $id_karyawan_val, NOW())";
 
                 if(mysqli_query($koneksi, $query)) {
                     $message = "User berhasil ditambahkan!";
@@ -115,6 +160,7 @@ if(empty($_SESSION['_iduser'])){
                     $message = "Error: " . mysqli_error($koneksi);
                     $message_type = "danger";
                 }
+                }
             }
         }
     }
@@ -124,10 +170,19 @@ if(empty($_SESSION['_iduser'])){
         $user_id = intval($_POST['user_id']);
         $nama_user = mysqli_real_escape_string($koneksi, $_POST['nama_user']);
         $kode_posisi = mysqli_real_escape_string($koneksi, trim($_POST['kode_posisi'] ?? ''));
+        $kode_cabang = mysqli_real_escape_string($koneksi, trim($_POST['kode_cabang'] ?? ''));
         $is_active = mysqli_real_escape_string($koneksi, $_POST['is_active']);
+
+        $cabang_valid = false;
+        foreach ($cabang_options as $cabang_option) {
+            if ($cabang_option['kode_cabang'] === $kode_cabang) { $cabang_valid = true; break; }
+        }
 
         if (!isset($role_lookup[$kode_posisi])) {
             $message = "Role/posisi tidak valid.";
+            $message_type = "danger";
+        } elseif (!$cabang_valid) {
+            $message = "Cabang tidak valid.";
             $message_type = "danger";
         } else {
             $user_akses = $role_lookup[$kode_posisi]['user_akses'];
@@ -138,6 +193,7 @@ if(empty($_SESSION['_iduser'])){
                       nama_user='$nama_user',
                       user_akses='$user_akses',
                       kode_posisi='$kode_posisi',
+                      kode_cabang='$kode_cabang',
                       role_name='$role_name',
                       department='$department',
                       is_active='$is_active',
@@ -499,6 +555,12 @@ if(empty($_SESSION['_iduser'])){
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
+                                    <label>Cari dari Master Karyawan <small class="text-muted">(opsional — kosongkan buat isi manual)</small></label>
+                                    <input type="text" class="form-control" id="karyawan_search" placeholder="Ketik nama atau kode karyawan...">
+                                    <div id="karyawan_search_results" style="max-height:150px; overflow-y:auto; border:1px solid #ddd; display:none;"></div>
+                                    <input type="hidden" name="id_karyawan" id="id_karyawan_selected">
+                                </div>
+                                <div class="form-group">
                                     <label>Username <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="nama_user" required>
                                 </div>
@@ -509,6 +571,10 @@ if(empty($_SESSION['_iduser'])){
                                 <div class="form-group">
                                     <label>Role <span class="text-danger">*</span></label>
                                     <select class="form-control" name="kode_posisi" id="user_akses_add" required onchange="updateRoleInfo('add')"><?php echo $renderRoleOptions(); ?></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cabang <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="kode_cabang" required><?php echo $renderCabangOptions(); ?></select>
                                 </div>
                                 <div class="form-group">
                                     <label>Role Name</label>
@@ -662,6 +728,36 @@ if(empty($_SESSION['_iduser'])){
                     ],
                     order: [[ 0, "desc" ]]
                 });
+            });
+
+            // Pencarian karyawan existing buat form Tambah User
+            $('#karyawan_search').on('keyup', function() {
+                var keyword = $(this).val();
+                if (keyword.length < 2) { $('#karyawan_search_results').hide(); return; }
+                $.ajax({
+                    url: 'user_management_ajax.php',
+                    type: 'POST',
+                    data: {action: 'search_karyawan', keyword: keyword},
+                    dataType: 'json',
+                    success: function(rows) {
+                        var html = '';
+                        rows.forEach(function(r) {
+                            html += '<div class="karyawan-result-item" style="padding:5px; cursor:pointer;" ' +
+                                    'data-id="' + r.id + '" data-nama="' + r.nama_lengkap + '" ' +
+                                    'data-posisi="' + r.kode_posisi + '" data-cabang="' + r.kode_cabang + '">' +
+                                    r.nama_lengkap + ' [' + r.kode_karyawan + ']</div>';
+                        });
+                        $('#karyawan_search_results').html(html).show();
+                    }
+                });
+            });
+
+            $(document).on('click', '.karyawan-result-item', function() {
+                $('#id_karyawan_selected').val($(this).data('id'));
+                $('#karyawan_search').val($(this).data('nama'));
+                $('#karyawan_search_results').hide();
+                $('#user_akses_add').val($(this).data('posisi')).trigger('change');
+                $('select[name="kode_cabang"]').val($(this).data('cabang'));
             });
 
             // Update role information based on selection

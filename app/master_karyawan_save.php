@@ -7,6 +7,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 include "../config/koneksi.php";
 include "../config/permission_check.php";
+include "../config/karyawan_helper.php";
 
 if (!$koneksi) {
     http_response_code(500);
@@ -78,17 +79,14 @@ function saveKaryawanBaru() {
             echo json_encode(['success' => false, 'message' => 'tanggal_masuk tidak valid']);
             return;
         }
-        $prefix = date('Ym', $ts);
-
-        $seqRes = mysqli_query($koneksi,
-            "SELECT MAX(CAST(RIGHT(kode_karyawan, 4) AS UNSIGNED)) AS seq
-             FROM tbuser_karyawan WHERE kode_karyawan LIKE '$prefix%'");
-        $seq = 1;
-        if ($seqRes) {
-            $sr = mysqli_fetch_assoc($seqRes);
-            if (!empty($sr['seq'])) { $seq = (int)$sr['seq'] + 1; }
+        // Generate lewat fungsi shared (satu ruang nomor dengan tbuser) —
+        // lihat config/karyawan_helper.php.
+        $kode_karyawan = generateKodeKaryawan($koneksi, $ts);
+        if ($kode_karyawan === null) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Gagal generate kode karyawan, coba lagi']);
+            return;
         }
-        $kode_karyawan = sprintf('%s%04d', $prefix, $seq);
 
         $check = mysqli_query($koneksi,
             "SELECT COUNT(*) as cnt FROM tbuser_karyawan WHERE kode_karyawan = '$kode_karyawan'");

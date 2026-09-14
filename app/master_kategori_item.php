@@ -6,6 +6,7 @@ if(empty($_SESSION['_iduser'])){
     $id_user=$_SESSION['_iduser'];
     $kd_cabang=$_SESSION['_cabang'];
     include "../config/koneksi.php";
+    include "../config/permission_check.php";
 
     $cari_kd=mysqli_query($koneksi,"SELECT
                                     nama_user, password, user_akses, foto_user
@@ -33,9 +34,12 @@ if(empty($_SESSION['_iduser'])){
     $bulan_skr=date('m');
     $thn_skr=date('Y');
 
-    // Cek hak akses - sementara semua user bisa akses full
-    $is_admin_pengadaan = true; // ($lvl_akses == 'admin' || $lvl_akses == 'pengadaan');
-    $is_read_only = false; // !$is_admin_pengadaan;
+    // Cek hak akses via hasPermission() - diperbaiki 2026-09-14, sebelumnya
+    // dihardcode true (proteksi mati total). Bandingan lama ($lvl_akses ==
+    // 'admin'/'pengadaan') gak pernah true karena user_akses itu kolom
+    // INT, bukan string.
+    $is_admin_pengadaan = hasPermission('barang_kategori', 'edit') || isAdmin();
+    $is_read_only = !$is_admin_pengadaan;
 
     // Handle search
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';

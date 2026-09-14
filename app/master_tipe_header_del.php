@@ -6,6 +6,7 @@ if(empty($_SESSION['_iduser'])){
 }
 
 include "../config/koneksi.php";
+include "../config/permission_check.php";
 
 $id_user = $_SESSION['_iduser'];
 $kd_cabang = $_SESSION['_cabang'];
@@ -14,7 +15,7 @@ $cari_kd = mysqli_query($koneksi,"SELECT user_akses FROM tbuser WHERE id='$id_us
 $tm_cari = mysqli_fetch_array($cari_kd);
 $lvl_akses = $tm_cari['user_akses'];
 
-$is_admin_pengadaan = ($lvl_akses == 'admin' || $lvl_akses == 'pengadaan');
+$is_admin_pengadaan = hasPermission('motor_tipe', 'edit') || isAdmin(); // diperbaiki 2026-09-14, perbandingan string lama gak pernah true (user_akses itu INT)
 if (!$is_admin_pengadaan) {
     header('Location: master_tipe_header.php');
     exit();

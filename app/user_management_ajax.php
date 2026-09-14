@@ -65,6 +65,21 @@ if(isset($_POST['action']) && $_POST['action'] == 'get_user') {
         </div>
 
         <div class="form-group">
+            <label>Cabang <span class="text-danger">*</span></label>
+            <select class="form-control" name="kode_cabang" required>
+                <option value="">- Pilih Cabang -</option>
+                <?php
+                $cabang_result = mysqli_query($koneksi, "SELECT kode_cabang, nama_cabang FROM tbcabang ORDER BY nama_cabang ASC");
+                while ($cabang_row = mysqli_fetch_assoc($cabang_result)):
+                ?>
+                <option value="<?php echo htmlspecialchars($cabang_row['kode_cabang']); ?>" <?php echo ($user['kode_cabang'] ?? '') === $cabang_row['kode_cabang'] ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($cabang_row['nama_cabang'] . ' [' . $cabang_row['kode_cabang'] . ']'); ?>
+                </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>Role Name</label>
             <input type="text" class="form-control" name="role_name" id="role_name_edit" value="<?php echo htmlspecialchars($user['role_name'] ?? ''); ?>">
         </div>
@@ -111,5 +126,21 @@ if(isset($_POST['action']) && $_POST['action'] == 'get_user') {
     } else {
         echo '<div class="alert alert-danger">User not found!</div>';
     }
+}
+
+if (isset($_POST['action']) && $_POST['action'] == 'search_karyawan') {
+    $keyword = mysqli_real_escape_string($koneksi, $_POST['keyword'] ?? '');
+    $result = mysqli_query($koneksi,
+        "SELECT id, kode_karyawan, nama_lengkap, kode_posisi, kode_cabang
+         FROM tbuser_karyawan
+         WHERE (nama_lengkap LIKE '%$keyword%' OR kode_karyawan LIKE '%$keyword%')
+           AND tanggal_keluar IS NULL
+           AND id NOT IN (SELECT id_karyawan FROM tbuser WHERE id_karyawan IS NOT NULL)
+         ORDER BY nama_lengkap ASC LIMIT 20");
+    $rows = [];
+    while ($r = mysqli_fetch_assoc($result)) { $rows[] = $r; }
+    header('Content-Type: application/json');
+    echo json_encode($rows);
+    exit;
 }
 ?>

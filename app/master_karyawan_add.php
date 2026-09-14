@@ -49,15 +49,8 @@ if(empty($_SESSION['_iduser'])){
     $query_posisi = "SELECT * FROM tb_master_posisi WHERE kode_posisi NOT IN ('MK','KM') ORDER BY kode_posisi ASC";
     $result_posisi = mysqli_query($koneksi, $query_posisi);
 
-    // Jabatan per posisi — difilter JS saat posisi dipilih
-    $query_jabatan = "SELECT * FROM master_jabatan WHERE is_active='active' ORDER BY kode_posisi, urutan ASC";
-    $result_jabatan = mysqli_query($koneksi, $query_jabatan);
-    $jabatan_data = [];
-    if ($result_jabatan) {
-        while ($jb = mysqli_fetch_assoc($result_jabatan)) {
-            $jabatan_data[$jb['kode_posisi']][] = $jb;
-        }
-    }
+    // Dropdown Jabatan dicopot 2026-09-14 — master_jabatan dicek live,
+    // 0 baris, gak pernah kepakai (lihat plan rapikan-master-karyawan).
 
     // Get cabang list
     $query_cabang = "SELECT * FROM tbcabang ORDER BY nama_cabang ASC";
@@ -373,14 +366,6 @@ if(empty($_SESSION['_iduser'])){
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Jabatan</label>
-                                        <select name="kode_jabatan" id="kode_jabatan" class="form-control">
-                                            <option value="">-- Pilih Posisi dulu --</option>
-                                        </select>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="row">
@@ -457,24 +442,7 @@ if(empty($_SESSION['_iduser'])){
     <script src="assets/js/bootstrap.min.js"></script>
 
     <script>
-        var jabatanData = <?php echo json_encode($jabatan_data); ?>;
-
-        function updateJabatanDropdown(kode_posisi, selected) {
-            var $sel = $('#kode_jabatan');
-            $sel.empty().append('<option value="">-- Pilih Jabatan --</option>');
-            var list = jabatanData[kode_posisi] || [];
-            $.each(list, function(i, j) {
-                var opt = $('<option>').val(j.kode_jabatan).text(j.nama_jabatan);
-                if (selected && j.kode_jabatan === selected) { opt.prop('selected', true); }
-                $sel.append(opt);
-            });
-        }
-
         $(document).ready(function() {
-            $('select[name="kode_posisi"]').on('change', function() {
-                updateJabatanDropdown($(this).val(), null);
-            });
-
             $('#formKaryawan').submit(function(e) {
                 e.preventDefault();
                 
