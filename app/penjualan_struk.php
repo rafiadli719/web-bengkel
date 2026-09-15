@@ -95,41 +95,44 @@
         ))).'
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
             <tr>
-                <td colspan="8"><hr></td>
-            </tr>
-            <tr>	
-                <td class="center" width="5%"><font size="2"><b>No</b></font></td>
-                <td width="15%"><font size="2"><b>Kode</b></font></td>
-                <td width="30%"><font size="2"><b>Nama Item</b></font></td>
-                <td align="right" width="9%"><font size="2"><b>Pesan</b></font></td>
-                <td align="right" width="9%"><font size="2"><b>Jumlah</b></font></td>
-                <td align="right" width="9%"><font size="2"><b>Harga</b></font></td>
-                <td align="right" width="9%"><font size="2"><b>Pot.</b></font></td>
-                <td align="right" width="14%"><font size="2"><b>Total</b></font></td>																		
+                <td colspan="9"><hr></td>
             </tr>
             <tr>
-                <td colspan="8"><hr></td>
+                <td class="center" width="5%"><font size="2"><b>No</b></font></td>
+                <td width="14%"><font size="2"><b>Kode</b></font></td>
+                <td width="26%"><font size="2"><b>Nama Item</b></font></td>
+                <td align="right" width="8%"><font size="2"><b>Pesan</b></font></td>
+                <td align="right" width="8%"><font size="2"><b>Jumlah</b></font></td>
+                <td width="8%" style="padding-left:6pt;"><font size="2"><b>Satuan</b></font></td>
+                <td align="right" width="9%"><font size="2"><b>Harga</b></font></td>
+                <td align="right" width="8%"><font size="2"><b>Pot.</b></font></td>
+                <td align="right" width="14%"><font size="2"><b>Total</b></font></td>
+            </tr>
+            <tr>
+                <td colspan="9"><hr></td>
             </tr>';
 
             $no = 1;
             while($row = mysqli_fetch_array($query))
             {
                 $no_item=$row['no_item'];
-                $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                FROM tblitem 
-                                                WHERE noitem='$no_item'");			
+                $cari_kd=mysqli_query($koneksi,"SELECT namaitem, satuan
+                                                FROM tblitem
+                                                WHERE noitem='$no_item'");
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $namaitem_tbl=$tm_cari['namaitem'];
-                                                
+                $satuan_tbl=$tm_cari['satuan'];
+
         $html .= "<tr>
                 <td align=center><font size=2>".$no."</font></td>
                 <td><font size=2>".$row['no_item']."</font></td>
                 <td><font size=2>".$namaitem_tbl."</font></td>
                 <td align=right><font size=2>".$row['qty_order']."</font></td>
                 <td align=right><font size=2>".$row['quantity']."</font></td>
-                <td align=right><font size=2>".number_format($row['harga_jual'],0)."</font></td>		
-                <td align=right><font size=2>".number_format($row['potongan'],0)."%</font></td>		                
-                <td align=right><font size=2>".number_format($row['total'],0)."</font></td>		                                
+                <td style=\"padding-left:6pt;\"><font size=2>".htmlspecialchars($satuan_tbl)."</font></td>
+                <td align=right><font size=2>".number_format($row['harga_jual'],0)."</font></td>
+                <td align=right><font size=2>".number_format($row['potongan'],0)."%</font></td>
+                <td align=right><font size=2>".number_format($row['total'],0)."</font></td>
                 </tr>";
             $no++;
             }
