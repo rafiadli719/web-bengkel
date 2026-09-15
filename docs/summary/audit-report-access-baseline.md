@@ -226,9 +226,26 @@ Diminta user cek ulang lagi karena masih ada gambar belum diperiksa. Sapuan keti
 3. **No. 22 (Surat Perintah Pengambilan Motor/Jemput Antar) — BUKAN GAP, sudah dicek.** FM Web Base sudah punya `sp-ambil-motor.php`, field-nya cocok sama layout Access (Tanggal/Jam Ambil/No Servis, Nama/No Polisi/Merek/Tipe/Jenis/Warna, Pengerjaan, Alamat, Patokan, Keterangan, TTD Petugas Jemput/Pemilik Motor). Klaim "belum dicek statusnya" di E.2c poin 218 sekarang terjawab: sudah ada, sesuai.
 4. **No. 23 (SPK vs `workorder-print.php`) — masih OPEN, belum bisa dikerjakan.** Bukti cetak asli SPK dari Access belum ketemu (baru tombolnya doang, isi field belum diverifikasi). Butuh screenshot hasil cetak SPK asli dari operator cabang dulu sebelum bisa dibandingkan field-by-field — sama seperti No.4 dan No.13 di bawah.
 
+### E.5 Update 2026-09-15 (lanjutan) — No.2 diputuskan SELESAI, tercover No.22
+
+Rafi konfirmasi: No.2 (Surat Pengambilan Kendaraan / `RPT_SURAT_AMBILMOTOR`) dan No.22
+(Surat Perintah Pengambilan Motor / Jemput Antar) **1 dokumen yang sama** di operasional
+riil — bukan 2 dokumen terpisah seperti asumsi awal di E.2/E.2c. Bukti: screenshot
+dokumen produksi asli (dikirim Rafi) judulnya "SURAT PERINTAH PENGAMBILAN MOTOR",
+field: Tanggal, Nama (+telpon), No Polisi, Merek, Tipe, Pengerjaan (isi keluhan),
+Alamat, Keterangan — semua field itu sudah ada di `sp-ambil-motor.php` (malah lebih
+lengkap: ada Jam Ambil, No Servis, Telpon terpisah, Jenis, Warna, Patokan terpisah dari
+Alamat, foto kondisi motor, kotak TTD Petugas Jemput/Pemilik Motor).
+
+**Kesimpulan: No.2 SELESAI, gak perlu dokumen baru.** `sp-ambil-motor.php` sudah
+superset dari field yang dipakai riil di lapangan. Dicabut dari daftar gap.
+
+Belum ada entry khusus di checklist-projek buat dokumen ini (dicek `GET
+/api/web-base/features`, gak ketemu yang cocok) — kalau Rafi mau ditrack terpisah,
+tinggal minta buatkan entry baru.
+
 Sisa item yang masih butuh input dari luar kode (bukan bisa dikerjakan sendiri):
-- No. 2 (Surat Pengambilan Kendaraan / `RPT_SURAT_AMBILMOTOR`) — beda konteks dari No.22 (ini surat serah-terima motor SELESAI servis, bukan jemput-antar), masih gap murni, butuh keputusan Rafi apakah masih dipakai.
-- No. 6 (Transaksi Harian Kasir) — butuh klarifikasi user, rekap atau struk per-transaksi.
+- No. 6 (Transaksi Harian Kasir) — Rafi akan buka file `.rpt` sendiri & kirim hasilnya; dieksekusi setelah itu.
 - No. 4 (Bukti Pembelian Barang), No. 13 (Bukti Retur Servis) — butuh screenshot hasil cetak asli dari operator cabang.
 
 ### E.3 Ringkasan prioritas (revisi setelah E.2c)
