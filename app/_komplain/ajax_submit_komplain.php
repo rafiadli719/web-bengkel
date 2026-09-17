@@ -14,11 +14,26 @@ $nopol = trim($_POST['nopol'] ?? '');
 $kategori = trim($_POST['kode_kategori'] ?? '');
 $channel = trim($_POST['channel_lapor'] ?? '');
 $detail = trim($_POST['detail_keluhan'] ?? '');
-$noNota = trim($_POST['no_nota_rujukan'] ?? '') ?: null;
+$noServiceAsli = trim($_POST['no_service_asli'] ?? '');
 $kodeCabang = $kode_cabang_aktif;
 
-if ($nama === '' || $hp === '' || $nopol === '' || $kategori === '' || $channel === '' || $detail === '' || $kodeCabang === null) {
-    echo json_encode(['success' => false, 'message' => 'Field wajib belum lengkap.']);
+if ($nama === '' || $hp === '' || $nopol === '' || $kategori === '' || $channel === '' || $detail === '' || $noServiceAsli === '' || $kodeCabang === null) {
+    echo json_encode(['success' => false, 'message' => 'Field wajib belum lengkap (termasuk No Service Asli).']);
+    exit;
+}
+
+// No Service Asli wajib valid & punya nopol yang sama — ini yang jadi
+// ref_service kalau komplain berujung REWORK, biar servis rework otomatis
+// masuk jalur garansi (is_garansi=1), bukan servis reguler/jemput.
+$stmtService = $koneksi_komplain->prepare("SELECT no_polisi FROM tblservice WHERE no_service = :ns");
+$stmtService->execute([':ns' => $noServiceAsli]);
+$servicePolisi = $stmtService->fetchColumn();
+if ($servicePolisi === false) {
+    echo json_encode(['success' => false, 'message' => 'No Service Asli tidak ditemukan.']);
+    exit;
+}
+if (strcasecmp($servicePolisi, $nopol) !== 0) {
+    echo json_encode(['success' => false, 'message' => 'No Service Asli tidak cocok dengan Nopol yang diinput.']);
     exit;
 }
 
@@ -48,13 +63,13 @@ for ($percobaan = 1; $percobaan <= $maxPercobaan; $percobaan++) {
     try {
         $stmt = $koneksi_komplain->prepare(
             "INSERT INTO tblkomplain
-             (no_komplain, nama_pelanggan, no_hp, nopol, kode_cabang, kode_kategori, channel_lapor, detail_keluhan, no_nota_rujukan, pic_kode_karyawan, status)
-             VALUES (:no, :nama, :hp, :nopol, :cabang, :kategori, :channel, :detail, :nota, :pic, 'Open')"
+             (no_komplain, nama_pelanggan, no_hp, nopol, kode_cabang, kode_kategori, channel_lapor, detail_keluhan, no_service_asli, pic_kode_karyawan, status)
+             VALUES (:no, :nama, :hp, :nopol, :cabang, :kategori, :channel, :detail, :noservice, :pic, 'Open')"
         );
         $stmt->execute([
             ':no' => $noKomplain, ':nama' => $nama, ':hp' => $hp, ':nopol' => $nopol,
             ':cabang' => $kodeCabang, ':kategori' => $kategori, ':channel' => $channel,
-            ':detail' => $detail, ':nota' => $noNota, ':pic' => $pic,
+            ':detail' => $detail, ':noservice' => $noServiceAsli, ':pic' => $pic,
         ]);
         $komplainId = (int)$koneksi_komplain->lastInsertId();
         break;

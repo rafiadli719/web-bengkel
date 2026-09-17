@@ -4,6 +4,8 @@ excel_xml/
 logs/
 .env
 *.env
+config/db_env.php
+app/db_env.php
 *.log
 __pycache__/
 

@@ -56,8 +56,11 @@ $kategoriList = $stmtKategori->fetchAll(PDO::FETCH_ASSOC);
           </select>
         </div>
         <div class="col-md-6">
-          <label class="form-label">No Nota Rujukan (opsional)</label>
-          <input type="text" class="form-control" name="no_nota_rujukan">
+          <label class="form-label">No Service Asli <span class="text-danger">*</span></label>
+          <select class="form-select" name="no_service_asli" id="noServiceAsliSelect" required>
+            <option value="">-- Isi Nopol dulu --</option>
+          </select>
+          <div class="form-text">Service yang jadi dasar komplain ini. Wajib — dipakai kalau nanti komplain berujung REWORK (biar masuk garansi, bukan servis reguler/jemput).</div>
         </div>
         <div class="col-12">
           <label class="form-label">Detail Keluhan</label>
@@ -84,6 +87,27 @@ document.getElementById('nopolInput').addEventListener('blur', function () {
             el.innerHTML = 'Riwayat: ' + data.riwayat.map(function (r) {
                 return r.no_komplain + ' (' + r.kode_kategori + ', ' + r.status + ')';
             }).join(', ');
+        });
+
+    var sel = document.getElementById('noServiceAsliSelect');
+    sel.innerHTML = '<option value="">Memuat...</option>';
+    fetch('ajax_cari_service_nopol.php?nopol=' + encodeURIComponent(nopol))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var list = data.servis || [];
+            if (list.length === 0) {
+                sel.innerHTML = '<option value="">-- Tidak ada service untuk nopol ini --</option>';
+                return;
+            }
+            function escHtml(v) {
+                return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            }
+            sel.innerHTML = '<option value="">-- Pilih Service --</option>' + list.map(function (s) {
+                var ket = (s.keterangan || '').substring(0, 40);
+                return '<option value="' + escHtml(s.no_service) + '">' + escHtml(s.no_service) + ' (' + escHtml(s.tanggal) + ') - ' + escHtml(ket) + '</option>';
+            }).join('');
         });
 });
 

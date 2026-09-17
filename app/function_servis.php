@@ -130,4 +130,96 @@ function NextServiceSeqByPrefix($koneksi, $seqKey, $prefix)
 
     return $next;
 }
+
+/**
+ * Bikin service garansi baru (ref ke service asli) + antrian prioritas
+ * urgent. Extract dari servis-garansi.php (F1-A/F1-B) biar bisa dipanggil
+ * ulang dari luar form garansi manual — dipakai juga oleh alur REWORK
+ * modul Komplain (ajax_keputusan_rework.php), supaya rework selalu masuk
+ * jalur garansi (is_garansi=1), bukan servis reguler/jemput.
+ *
+ * @param mysqli $koneksi
+ * @param string $ref_service    no_service asli yang jadi dasar garansi (wajib, non-empty)
+ * @param string $kode_pelanggan
+ * @param string $no_polisi
+ * @param string $keluhan
+ * @param string $kd_cabang
+ * @param int    $id_user
+ * @return array{success:bool,no_service?:string,no_antrian?:int,message?:string}
+ */
+function createServisGaransi($koneksi, $ref_service, $kode_pelanggan, $no_polisi, $keluhan, $kd_cabang, $id_user)
+{
+    if (empty($ref_service)) {
+        return ['success' => false, 'message' => 'ref_service wajib diisi untuk service garansi.'];
+    }
+
+    $ref_service_escaped = mysqli_real_escape_string($koneksi, $ref_service);
+    $q_ref = mysqli_query($koneksi, "SELECT * FROM tblservice WHERE no_service='$ref_service_escaped'");
+    $ref_service_data = ($q_ref && mysqli_num_rows($q_ref) > 0) ? mysqli_fetch_assoc($q_ref) : null;
+    if (!$ref_service_data) {
+        return ['success' => false, 'message' => "Service asli '$ref_service' tidak ditemukan."];
+    }
+
+    $tanggal_service = date('Y-m-d');
+    $jam_input = date('H:i');
+
+    $prefix_service = 'GAR-' . date('Ymd') . '-';
+    $new_number = NextServiceSeqByPrefix($koneksi, $prefix_service, $prefix_service);
+    $no_service = $prefix_service . str_pad($new_number, 4, '0', STR_PAD_LEFT);
+
+    $query_antrian_count = "SELECT COUNT(*) as total FROM tb_antrian_servis WHERE tanggal = '$tanggal_service'";
+    $result_antrian_count = mysqli_query($koneksi, $query_antrian_count);
+    $antrian_count = mysqli_fetch_array($result_antrian_count)['total'];
+    $no_antrian = $antrian_count + 1;
+
+    $keluhan_esc = mysqli_real_escape_string($koneksi, $keluhan);
+    $kode_pelanggan_esc = mysqli_real_escape_string($koneksi, $kode_pelanggan);
+    $no_polisi_esc = mysqli_real_escape_string($koneksi, $no_polisi);
+    $kd_cabang_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
+    $id_user_esc = (int) $id_user;
+
+    $tgl_expire = '';
+    $mekanik_orig = $ref_service_data['mekanik1'] ?? '';
+    $komisi_mode = 'unknown';
+    $tgl_asal = $ref_service_data['tanggal'] ?? '';
+    if ($tgl_asal) {
+        $masa_garansi_standar = 7;
+        if (function_exists('getMasaGaransiHari') && !empty($ref_service_data['no_pelanggan'])) {
+            $mg = getMasaGaransiHari($koneksi, $ref_service_data['no_pelanggan']);
+            $masa_garansi_standar = $mg['standar'];
+        }
+        $tgl_expire = date('Y-m-d', strtotime($tgl_asal . " +{$masa_garansi_standar} days"));
+    }
+
+    $query_insert_service = "INSERT INTO tblservice (
+        no_service, tanggal, jam, no_pelanggan, no_polisi, kd_cabang, id_user,
+        status, status_servis, status_jemput, keterangan,
+        is_garansi, ref_no_service_original, tanggal_garansi_expire,
+        mekanik_original, komisi_garansi_mode, created_at
+    ) VALUES (
+        '$no_service', '$tanggal_service', '$jam_input', '$kode_pelanggan_esc',
+        '$no_polisi_esc', '$kd_cabang_esc', '$id_user_esc',
+        '1', 'datang', '0', '$keluhan_esc',
+        '1', '$ref_service_escaped', " . ($tgl_expire ? "'$tgl_expire'" : "NULL") . ",
+        '$mekanik_orig', '$komisi_mode', NOW()
+    )";
+
+    if (!mysqli_query($koneksi, $query_insert_service)) {
+        return ['success' => false, 'message' => 'Gagal insert tblservice: ' . mysqli_error($koneksi)];
+    }
+
+    $query_insert_antrian = "INSERT INTO tb_antrian_servis (
+        no_service, no_antrian, tanggal, jam_ambil,
+        status_antrian, prioritas, created_at
+    ) VALUES (
+        '$no_service', '$no_antrian', '$tanggal_service', '$jam_input',
+        'menunggu', 'urgent', NOW()
+    )";
+
+    if (!mysqli_query($koneksi, $query_insert_antrian)) {
+        return ['success' => false, 'message' => 'Gagal insert tb_antrian_servis: ' . mysqli_error($koneksi)];
+    }
+
+    return ['success' => true, 'no_service' => $no_service, 'no_antrian' => $no_antrian];
+}
 ?>
