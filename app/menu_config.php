@@ -434,14 +434,14 @@ return [
         'icon' => 'fa-money',
         'permission' => 'kasir_menu_read', // guard tampil grup, sama kayak baseline koneksi_kasir.php
         'submenu' => [
-            ['title' => 'Buka Kasir', 'url' => '_keuangan/kasir/verifikasi_kas_awal.php', 'permission' => 'kasir_operate'],
-            ['title' => 'Pemasukan', 'url' => '_keuangan/kasir/pemasukan.php', 'permission' => 'kasir_operate'],
-            ['title' => 'Pengeluaran', 'url' => '_keuangan/kasir/pengeluaran.php', 'permission' => 'kasir_operate'],
-            ['title' => 'Tutup Kasir', 'url' => '_keuangan/kasir/kas_akhir.php', 'permission' => 'kasir_close'],
-            ['title' => 'Closing', 'url' => '_keuangan/kasir/closing.php', 'permission' => 'kasir_close'],
-            ['title' => 'Ajukan Revisi Closing', 'url' => '_keuangan/kasir/closing_revisi.php', 'permission' => 'kasir_close'],
-            ['title' => 'Serah Terima Kasir', 'url' => '_keuangan/kasir/serah_terima.php', 'permission' => 'kasir_close'],
-            ['title' => 'Setoran ke Staff Keuangan', 'url' => '_keuangan/kasir/setoran_keuangan_cs.php', 'permission' => 'kasir_menu_read'],
+            // Buka Kasir/Pemasukan/Pengeluaran/Tutup Kasir/Closing/Ajukan Revisi
+            // Closing/Serah Terima Kasir/Setoran ke Staff Keuangan sengaja gak
+            // ada link langsung di sidebar (dihapus per keputusan Rafi
+            // 2026-09-18) — 6 dari 8 butuh GET kode_transaksi (pemasukan.php,
+            // pengeluaran.php, kas_akhir.php, closing.php, closing_revisi.php)
+            // jadi rusak kalau diakses langsung tanpa konteks transaksi.
+            // Alurnya lewat tombol per-baris di Dashboard Kasir di bawah.
+            ['title' => 'Dashboard Kasir', 'url' => '_keuangan/kasir/index_kasir.php', 'permission' => 'kasir_menu_read'],
             ['title' => 'Approval Revisi Closing', 'url' => '_keuangan/kasir/closing_revisi_admin.php', 'permission' => 'kasir_approve'],
             ['title' => 'Monitoring Setoran', 'url' => '_keuangan/kasir/monitoring_setoran.php', 'permission' => 'kasir_approve'],
             ['title' => 'Detail Transaksi (Admin)', 'url' => '_keuangan/kasir/view_transaksi_admin.php', 'permission' => 'kasir_approve'],
