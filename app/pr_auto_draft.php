@@ -9,7 +9,7 @@ $kd_cabang = isset($_SESSION['_cabang']) ? $_SESSION['_cabang'] : '';
 include "../config/koneksi.php";
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 if(!isset($koneksi) || !$koneksi){
     header('Content-Type: text/plain; charset=utf-8');
     http_response_code(500);

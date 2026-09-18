@@ -34,10 +34,10 @@
 		$thn_skr=date('Y');
 
         // == Default ==
-        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key']);
-        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari']);
-        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
-        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
+        $txtkey= mysqli_real_escape_string($koneksi, $_GET['_key'] ?? '');
+        $txtcari= mysqli_real_escape_string($koneksi, $_GET['_cari'] ?? '');
+        $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut'] ?? '');
+        $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt'] ?? '');
 
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
@@ -67,6 +67,7 @@
     
     
     // urut ================
+        $sql_urut="no_order";
         if($txturut=='1') {
             $sql_urut="no_order";
         }

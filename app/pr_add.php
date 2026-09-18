@@ -10,7 +10,7 @@ include "../config/koneksi.php";
 
 // Debug helpers to avoid blank 500 and ensure proper charset
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 if(!isset($koneksi) || !$koneksi){
     header('Content-Type: text/plain; charset=utf-8');
     http_response_code(500);

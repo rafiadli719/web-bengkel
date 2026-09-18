@@ -10,7 +10,7 @@ if(empty($_SESSION['_iduser'])){
 
 	// Optional debug mode: add ?debug=1 to URL for detailed errors (dev only)
 	if (isset($_GET['debug']) && $_GET['debug'] == '1') {
-		ini_set('display_errors', 1);
+		ini_set('display_errors', 0);
 		error_reporting(E_ALL);
 	}
 

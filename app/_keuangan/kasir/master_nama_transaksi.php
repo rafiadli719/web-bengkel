@@ -10,8 +10,8 @@
 // master_akun -> master_akun_closing_kasir per sed map.
 require_once __DIR__ . '/koneksi_kasir.php';
 requirePermission($koneksi, $id_user_aktif, 'kasir_approve');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
 
 $is_super_admin = ($legacy_session_kasir['role'] ?? '') === 'super_admin';
