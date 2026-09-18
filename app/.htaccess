@@ -1,0 +1,2 @@
+# Use the application-styled page instead of exposing a raw server/PHP error.
+ErrorDocument 404 /web-bengkel/aplikasi/aplikasi/app/404.php

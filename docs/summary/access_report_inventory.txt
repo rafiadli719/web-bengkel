@@ -1,0 +1,8 @@
+﻿=== C:\Program Files (x86)\MySoftBiz\Bengkel 2.0\Bengkel2.0.mde ===
+STATUS|ERROR|The property 'DisplayAlerts' cannot be found on this object. Verify that the property exists and can be set.
+=== D:\BENGKEL 2.0\FITMOTOR APP.mdb ===
+STATUS|ERROR|The property 'DisplayAlerts' cannot be found on this object. Verify that the property exists and can be set.
+=== D:\BENGKEL 2.0\FITMOTOR.mdb ===
+STATUS|ERROR|The property 'DisplayAlerts' cannot be found on this object. Verify that the property exists and can be set.
+=== D:\BENGKEL 2.0\FITMOTOR GABUNG.mdb ===
+STATUS|ERROR|The property 'DisplayAlerts' cannot be found on this object. Verify that the property exists and can be set.

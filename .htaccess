@@ -1,4 +1,10 @@
 RewriteEngine On
+ErrorDocument 404 /web-bengkel/aplikasi/aplikasi/app/404.php
+
+# App 404 wrapper: avoid raw PHP/FastCGI errors for missing app pages.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^app/.*\.php$ app/404.php [L,QSA]
 
 # Universal app entry point: expose /panel/... mapped to /app/
 RewriteRule ^panel$ panel/ [R=302,L]

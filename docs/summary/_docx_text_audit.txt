@@ -1,0 +1,473 @@
+﻿KEBUTUHAN PROGRAM BENGKEL
+BENGKEL FIT MOTOR
+
+KEBUTUHAN SISTEM
+WAJIB TERSEDIA (MANDATORY)
+Bisa untuk Multi Cabang
+Bisa untuk Multi User
+Mudah digunakan
+Database mudah diakses untuk kebutuhan pengolahan data 
+
+PELENGKAP (SETELAH MANDATORY TERSEDIA)
+Mudah diakses dari berbagai piranti (Laptop, Smartphone)
+Semua operasional bengkel bisa terakomodir (bertahap)
+Memudahkan dalam pengambilan keputusan
+ 
+
+KEBUTUHAN MODUL
+WAJIB TERSEDIA (MANDATORY)
+DATA MASTER
+KASIR
+PEMBELIAN
+PENJUALAN
+SERVIS
+PENYESUAIAN STOK
+TRANSFER STOK ANTAR CABANG
+LAPORAN
+
+PELENGKAP (SETELAH MANDATORY TERSEDIA)
+PERHITUNGAN INSENTIF
+CRM (MANAJEMEN HUBUNGAN PELANGGAN)
+DASHBOARD MANAJEMEN (SEMUA CABANG)
+DASHBOARD CABANG
+PENGADAAN
+AKUNTANSI KEUANGAN
+ 
+LEVEL USER
+ADMINISTRATOR
+AKSES SEMUA MENU
+PEMBUKAAN CABANG BARU
+HANYA MENGATUR CABANG TERKAIT
+
+USER (LOGIN BISA BERPINDAH2 CABANG)
+STAF CS / KASIR
+KEPALA MEKANIK
+PENGADAAN
+STAF CRM
+
+MANAJEMEN
+DASHBOARD LAPORAN
+GABUNGAN SEMUA CABANG
+PER CABANG
+LAPORAN HARIAN, BULANAN, TAHUNAN
+
+HALAMAN LOGIN
+
+
+
+untuk kolom USER agar bisa combo box ato predictive text
+tambah kolom pilihan CABANG untuk menunjukkan user sedang tugas di Cabang mana
+
+MENU UTAMA
+
+
+
+MASTER DATA
+
+
+MASTER BARANG
+MASTER KATEGORI BARANG (OLIGEN, ORISIN, VARIASI, AFTER MARKET, DLL)
+MASTER SATUAN BARANG (BOX, PCS, DLL)
+MASTER PABRIK  BARANG (HONDA, YAMAHA, IRC, FEDERAL, DLL)
+MASTER RAK BARANG (AKSESORIS, CAIRAN, BAHAN HABIS PAKAI, DLL)
+MASTER MARGIN HARGA JUAL
+
+MASTER STATUS HARGA (JUAL NAIK POKOK NAIK, JUAL NAIK POKOK TETAP, DLL)
+
+MASTER WORK ORDER / PAKET (PAKET SERVIS : JASA + BARANG)
+
+MASTER PELANGGAN 
+MASTER KATEGORI PELANGGAN (SILVER, GOLD, DIAMOND)
+
+MASTER SUPPLIER (TERMASUK CABANG SBG SUPPLIER)
+
+MASTER CABANG (PESALAKAN, PACUL, CIKDITIRO)
+MASTER TIPE CABANG (MILIK SENDIRI, MITRA)
+
+MASTER MEKANIK
+MASTER LEVEL MEKANIK (PEMULA, MENENGAH, MAHIR)
+
+MASTER TIPE MOTOR (VARIO 110, VARIO 150, VARIO 160, BEAT 110, DLL)
+MASTER PABRIK MOTOR (HONDA, YAMAHA,SUZUKI, KAWASAKI, DLL)
+MASTER KATEGORI MOTOR (MATIC, SUPER MATIC, BEBEK, SPORT, SUPER SPORT)
+MASTER KENDARAAN
+MASTER WARNA
+
+MASTER DESA
+MASTER KECAMATAN
+MASTER KOTA
+MASTER PROPINSI
+MASTER AKUN BIAYA
+MASTER MARGIN HARGA JUAL
+
+
+MASTER HARGA JUAL PLUS JASA
+
+
+MASTER ITEM
+
+(versi Program Bengkel)
+
+Hanya Administrator yg dapat menambah / mengedit data master barang
+tujuannya : agar penulisan nama produk seragam, jadi lebih mudah terkontrol
+
+Fitur pencarian ditambah :
+bisa berdasar grup produk (oli mesin, komstir, dll), jenis produk (orisin, imitasi, dll), tipe motor (vario 125, beat FI, dll)
+bisa cek sisa stok per cabang & total keseluruhan
+
+penanda berdasar sisa stok cabang terkait vs minimum & maksimum stok per cabang :
+untuk produk2 yg jumlahnya ≤ minimal (cth : stok warna barisnya berubah jadi kuning)
+untuk produk2 yg jumlah stok nya = 0, (cth : warna barisnya berubah jadi merah)
+
+
+
+Kolom BARCODE tetap harus tersedia, saat ini terpakai untuk kolom KATEGORI BARANG (oli mesin, komstir, dll)
+Kolom KETERANGAN nantinya ada tersendiri (untuk info lain2 terkait barang)
+kolom APPLICABLE PART (sumber dari data TIPE MOTOR) berisi info sparepart tersebut bisa digunakan oleh motor apa saja
+jika pilih tipe item “BARANG”, tambahan kolom pilihan dari MASTER HARGA JUAL PLUS JASA (PK PS PB PC)
+kolom SUPPLIER 3 untuk info supplier ke-3
+kolom STOK MAKSIMAL nanti masuk kolom tersendiri
+yg belum masuk di tampilan yaitu kolom PABRIK, AREA
+
+
+
+
+(versi buatan sendiri)
+Tampilan diurutkan berdasar STATUS HARGA BARANG (NAIK/TURUN/TETAP), 
+
+STATUS HARGA BARANG ditentukan dari :
+Harga HPP pada Master Barang VS Perhitungan Acuan HPP
+Acuan HPP = harga beli netto dari 4 pembelian terakhir ke supplier yang termahal
+
+Harga Jual pada Master Barang VS Perhitungan Harga Jual 
+Variabel yg digunakan utk Perhitungan Harga Jual =
+ACUAN HPP, MASTER MARGIN HARGA JUAL, MASTER HARGA JUAL PLUS JASA
+
+Sistem bisa update per item ataupun beberapa item sekaligus (centang)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KARTU STOK
+
+
+HISTORY HARGA POKOK / PEMBELIAN
+ 
+MASTER SUPPLIER
+ 
+
+
+PENAMBAHAN / EDIT SUPPLIER HANYA BISA DILAKUKAN OLEH ADMINISTRATOR
+TERTERA JUGA SUPPLIER NAMA CABANG
+Kolom DAFTAR PABRIK SPAREPART yg disuplai oleh supplier tersebut
+Kolom KODE POS saat ini digunakan utk kolom LAMA HARI KIRIM DARI SUPPLIER
+Kolom NEGARA saat ini digunakan utk kolom PERIODE JATUH TEMPO
+
+MASTER TIPE MOTOR
+
+
+MASTER KENDARAAN
+
+
+JENIS MOTOR menggunakan dropdown menu (KARBURATOR, INJEKSI, LISTRIK)
+Tahun Buat saat ini digunakan untuk Tahun Pajak
+Input KENDARAAN baru akan ditolak jika NOMOR POLISI yang diinput sudah tercatat di sistem
+MASTER PELANGGAN
+
+
+
+
+Tiap pelanggan bisa memiliki beberapa motor, pengecekan 2 kolom kunci yaitu : NOMOR WHATSAPP atau NOMOR POLISI
+Input Pelanggan baru akan ditolak jika nomor WHATSAPP yang diinput sudah tercatat di sistem
+Status WA / HP sudah tidak diperlukan
+Kolom yang perlu ditambahkan : Patokan, koordinat gmaps, panggilan (mas/mba/ pak/bu), dll yg diperlukan
+Dipisahkan antara kolom patokan dengan koordinat google maps
+
+MASTER MEKANIK
+
+
+
+Input KEPALA MEKANIK saat servis menggunakan data MEKANIK
+Tingkat keahlian minimal untuk KEPALA MEKANIK yaitu mekanik dengan keahlian MAHIR
+
+MASTER SALES
+
+
+
+Digunakan untuk info dalam proses servis
+karena beberapa motor servis dibawa oleh customer get customer
+nantinya SALES tersebut akan mendapat insentif / hadiah
+
+
+MASTER USER
+
+
+
+
+Tampilan admin disesuaikan sesuai yg dianggap terbaik
+
+TRANSAKSI PEMBELIAN
+
+Fitur yang dibutuhkan :
+PESANAN PEMBELIAN
+PEMBELIAN
+PEMBAYARAN HUTANG
+
+PEMBELIAN
+
+
+Pencarian Data Pembelian bisa dilengkapi berdasar :
+Tanggal
+Nama (Kode) Supplier
+Status Pembayaran
+Tipe Supplier (Eksternal / Antar Cabang) 
+
+
+
+Perlu tambahan kolom NOMOR FAKTUR, TANGGAL FAKTUR
+Kolom keterangan nantinya akan diisi info lainnya 
+
+PEMBAYARAN HUTANG
+
+Tampilan pemilihan data yg ditampilkan ditambah berdasar NAMA SUPPLIER, TIPE SUPPLIER (Eksternal / Antar Cabang), RENTANG TANGGAL JATUH TEMPO
+Pelunasan bisa langsung beberapa faktur bersamaan yang dipilih (bisa dalam bentuk CENTANG)
+
+
+
+
+
+
+LAPORAN HUTANG
+saat ini digunakan untuk kirim ke WA manajemen
+Nantinya manajemen langsung bisa akses sendiri
+Laporan hutang detail per faktur per suplier 
+Laporan hutang total per suplier
+
+
+
+TRANSAKSI PENJUALAN
+Terbagi menjadi 2 tipe :
+Penjualan ke Pelanggan 
+Penjualan Antar Cabang :
+Cabang Sendiri 
+Cabang Mitra - Eksternal 
+
+
+PENJUALAN KE PELANGGAN 
+
+BARANG DGN STATUS STOK KOSONG & HARGA NAIK TIDAK BISA DIINPUT KE TRANSAKSI
+
+ 
+ 
+
+
+PELUNASAN PENJUALAN
+ 
+
+ 
+ 
+
+PENJUALAN ANTAR CABANG 
+Untuk saat ini proses pengolahan data untuk Pesanan Penjualan di Excel
+File Excel diupload ke database, lalu diproses masuk ke Pesanan Penjualan
+Dari Pesanan Penjualan data ditarik masuk ke Penjualan (penerima tidak perlu input ulang manual) 
+Cabang Sendiri 
+Harga Jual = Harga Pokok
+Tunai 
+Diskon 100%
+Cabang Mitra - Eksternal  
+Harga Jual = Harga Pokok + Margin Laba (5% * bisa berubah)
+Tempo (kredit) 10 Hari
+Nilai margin laba (5%) dan Tempo Kredit bisa (10 hari) bisa diubah
+
+ 
+
+ 
+
+
+
+
+
+
+
+PENERIMAAN ANTAR CABANG 
+User memilih CABANG PENGIRIM
+Daftar Nota Cabang yang muncul hanya nota yang belum pernah diterima
+Data PENJUALAN ANTAR CABANG dari Cabang Pengirim masuk sebagai data PESANAN PEMBELIAN di Cabang Penerima
+Semua ketentuan (Margin Harga, Periode Kredit) Nota dari Cabang Pengirim akan masuk ke Cabang Penerima
+
+
+
+
+
+
+
+PENYESUAIAN STOK
+Dibagi menjadi 2 METODE :
+Hasil stok opnam dihitung MANUAL selisihnya, user akan input selisih sesuai status :
+Item Masuk (selisih lebih)
+Item Keluar (selisih kurang)
+Hasil hitung stok opnam secara OTOMATIS dihitung selisihnya oleh sistem
+
+PENYESUAIAN STOK MANUAL
+ITEM MASUK
+
+
+
+
+Report untuk Item Masuk (Selisih Lebih) belum tersedia
+
+
+PENYESUAIAN STOK MANUAL
+ITEM KELUAR
+
+
+
+
+
+Report untuk Item Keluar (Selisih Kurang) belum tersedia
+
+PENYESUAIAN STOK OTOMATIS
+Tahapannya :
+User melakukan stok opnam dengan pilihan data acuan stok opnam :
+Produk2 yg ada transaksi penjualan & servis pada RENTANG TANGGAL tertentu
+Semua item yg STOK-NYA > 0 sesuai cabang terkait
+Data yg tampil diurutkan berdasar RAK BARANG lalu NAMA BARANG
+Hasil stok opnam dibandingkan dengan stok sistem, lalu sistem akan langsung posting penyesuaian :
+Item Masuk (selisih lebih)
+Item Keluar (selisih kurang)
+
+
+
+TRANSAKSI SERVIS
+
+PEMBAGIAN TIPE SERVIS (di awal selalu pilih diantara 2 opsi di bawah) :
+SERVIS REGULER 
+SERVIS GARANSI (KOMPLAIN/REWORK)
+
+KETERANGAN :
+SERVIS REGULER, alur, fitur, & kebutuhan :
+Input pelanggan baru berdasarkan pengecekan 2 kolom kunci yaitu : NOMOR WHATSAPP atau NOMOR POLISI (untuk meminimalkan duplikasi) termasuk nomor polisi lama yg sudah tidak aktif
+
+Bisa pilih WORK ORDER (Gabungan Jasa + Barang) untuk mempercepat & meminimalkan kesalahan input, Contoh :
+PAKET SERVIS LENGKAP, detail jasa & barangnya :
+Jasa : Servis Standar, Perawatan CVT, Gurah Mesin
+Barang : Pembersih CVT (1), ICC (1), PEC (1), Carbu Cleaner (2), Grease (2)
+NILAI HPP MENGGUNAKAN HARGA BELI TERMAHAL DARI 4 PEMBELIAN TERAKHIR 
+Pencatatan Perintah Kerja, Keluhan, & Catatan Terpisah
+(Ada status progress masing2 perintah kerja & keluhan)
+Barang dgn status STOK KOSONG & HARGA NAIK tidak bisa diinput ke transaksi
+STATUS WAKTU TIAP PROSES bisa tercatat (DATANG, DIPROSES, SELESAI, BAYAR/SERAH TERIMA)
+
+
+
+Saat ini pecatatan Perintah Kerja, Keluhan, & Catatan masih dalam satu kolom
+(Ada status progress masing2 perintah kerja & keluhan)
+
+PELANGGAN BARU
+
+
+
+
+PELANGGAN LAMA
+
+
+JEMPUT ANTAR
+
+
+
+
+PENTING !
+User bisa input item WORK ORDER 
+Item barang / jasa tidak boleh diinput 2 kali dalam 1 nomor servis
+Tambahan kolom Input Kepala Mekanik (wajib terisi), Sales
+Cara input mekanik dipermudah, mekanik wajib terisi minimal 1 nama
+Kolom biaya di sebelah kanan seharusnya kolom kontribusi mekanik, totalnya harus 100%
+Diskon jasa & barang otomatis terisi berdasar tipe pelanggan
+Diskon jasa & barang bisa diisi fleksibel dalam Persen ataupun Potongan Rupiah 
+KM berikut bertambah otomatis saat diinput KM Sekarang, mengacu MASTER JADWAL PENGGANTIAN OLI
+
+
+1179705
+
+NOTA SERVIS
+
+
+
+
+History servis pelanggan / motor terkait (saat ini)
+
+
+Tampilan History Servis yg Dibutuhkan
+bisa melihat REKAP & DETAIL data dari PELANGGAN & MOTOR terkait
+
+
+FORM SERVIS
+Saat ini Lembar Form Servis di bawah digunakan oleh Admin & Kepala Mekanik 
+Tujuannya 
+memudahkan dalam pencatatan
+memudahkan dalam penawaran
+sebagai panduan untuk upselling & cross selling
+Jenis Sparepart (Oli Mesin, Aki, Busi, dll) yg ditampilkan adalah barang2 laku cepat
+Pada Format Form Servis Kosong, bagian yg putih adalah bagian yg diisi oleh admin dan bagian yg kuning adalah yang diisi oleh Kepala Mekanik
+Berikut Penjelasan Alur dan Cara Pengisian Form Servis (Form Servis Terisi) : 
+Admin mencatat profil (data pelanggan & motor), perintah kerja, dan keluhan pelanggan
+Kepala Mekanik melakukan pengetesan awal sesuai nomor urut servis
+Mekanik melakukan pengerjaan servis sesuai arahan Kepala Mekanik dan Form Servis
+Hasil pengecekan berupa usulan penggantian sparepart (termasuk jasa) dicatat pada Form Servis
+Termasuk juga status kondisi dari masing2 sparepart yg diusulkan ganti (nantinya perlu data master status kondisi per jenis sparepart)
+Admin menghitung estimasi total tagihan (jasa + barang) untuk diinfo ke pelanggan terkait
+Admin menghitung  & konfirmasi total tagihan yg disetujui pelanggan, kemudian diteruskan ke kepala mekanik
+Berdasar hasil konfirmasi pelanggan, pekerjaan dieksekusi oleh Mekanik 
+Untuk poin2 yang tidak disetujui pelanggan, akan masuk daftar catatan
+
+Admin bisa input penawaran sparepart yang nama sparepart-nya belum ada di master sparepart (ini dibutuhkan karena ada beberapa penawaran sparepart yg belum pernah disediakan bengkel)
+
+FORM SERVIS KOSONG
+
+
+FORM SERVIS TERISI
+
+
+SERVIS GARANSI (KOMPLAIN/REWORK)
+Tampilan hampir sama dengan tampilan Servis Reguler
+Status SERVIS = KOMPLAIN
+Yang membedakan yaitu di awal Admin akan menarik data NOMOR SERVIS SEBELUMNYA
+Data dari nomor servis sebelumnya akan diinput ke Servis Garansi seperti Nama & Nomor Kendaraan
+Nilai Sub Total Jasa TIDAK BOLEH NOL ( 0 )
+Checking Input & Error sama dengan Servis Reguler
+
+
+
+
+KASIR
+Tahapan proses kasir : Kas Awal 🡪 Transaksi 🡪 Kas Akhir (Closing)
+Dalam 1 hari bisa proses kasir lebih dari 1 kali (contoh admin 1 pagi s.d siang, admin 2 siang s.d sore)
+SETORAN RIIL = KAS AWAL + PENJUALAN TUNAI + SERVIS + UANG MASUK – UANG KELUAR – PEMBELIAN TUNAI 
+
+2541-3809
+
+
+
+  
+
+
+PELENGKAP (setelah semua poin mandatory terpenuhi)
+BOOKING SERVIS
+
+
+STATUS PENGERJAAN (PROGRES)  SERVIS MOTOR
+

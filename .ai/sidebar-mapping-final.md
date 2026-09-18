@@ -1,0 +1,247 @@
+# Mapping halaman belum ter-include sidebar
+
+Audit programatik: 155 URL menu dibanding 1457 file PHP app/ yang dipindai.
+Kandidat halaman ber-layout belum terdaftar langsung: 227.
+
+## Dieksekusi ke sidebar (sudah diterapkan di app/menu_config.php)
+- jasa-list.php — Master/Data Referensi; aksi: Tambah; lokasi: Data Master > Daftar Item; label: Master Jasa Service; permission: barang_read
+- master_perusahaan.php — Master/Data Referensi; aksi: Tambah; lokasi: Data Master; label: Master Perusahaan; permission: master_read
+- lap_profit_insentif.php — Laporan; aksi: Tambah; lokasi: Laporan; label: Profit & Insentif; permission: laporan_menu_read
+- lap_antarcab.php — Laporan; aksi: Tambah; lokasi: Laporan > Antar Cabang; label: Ringkasan Antar Cabang; permission: lap_antarcab_read
+- pengadaan_antarcab_push.php — Transaksi/Operasional; aksi: Tambah; lokasi: Antar Cabang > Pengadaan Barang; label: Kirim Barang Tanpa Request; permission: antar_cabang_read
+- workorder-list.php — Master/Data Referensi; aksi: Mapping ulang; lokasi: Data Master > Daftar Item; label: Work Order/Paket; permission: paket_read
+
+## Ditahan / perlu keputusan
+- supplier_pabrik_spart.php — Butuh parameter kd supplier; lebih tepat sub-action dari supplier.php, bukan sidebar langsung.
+
+## Tambahan setelah verifikasi browser live
+- kas_masuk.php — live OK, tabel tblkas_keluar_masuk jenis=Masuk berisi data; ditambahkan ke Keuangan Kasir > Kas Umum Legacy sebagai Kas Masuk Legacy dengan permission kasir_admin.
+- kas_keluar.php — live OK, tabel tblkas_keluar_masuk jenis=Keluar render normal; ditambahkan ke Keuangan Kasir > Kas Umum Legacy sebagai Pengeluaran Kas Legacy dengan permission kasir_admin.
+- _keuangan/kasir/pemasukan.php dan pengeluaran.php adalah form transaksi per kode_transaksi; tanpa parameter menampilkan pesan Kode transaksi tidak ditemukan, jadi bukan pengganti list kas umum legacy.
+
+## Dead code / jangan masuk sidebar
+- do_receive.php
+- do_tracking_update.php
+
+## Kandidat lain yang terdeteksi sebagai sub-page/CRUD
+- 403.php — refs: -
+- _archive/barang_kategori_edit_new.php — refs: _archive/barang_kategori_new.php
+- _archive/barang_kategori_new.php — refs: _archive/barang_kategori_edit_new.php
+- _archive/buat pembelian.php — refs: -
+- _archive/cari_kendaraan.php — refs: -
+- _archive/cari_pelanggan.php — refs: -
+- _archive/cari_pelanggan_jl_byr.php — refs: -
+- _archive/cari_pelanggan_jl_pesan.php — refs: -
+- _archive/cari_pelanggan_kendaraan.php — refs: -
+- _archive/database_updater.php — refs: -
+- _archive/desa1.php — refs: -
+- _archive/download-sp-ambil-motor.php — refs: -
+- _archive/emergency_fix.php — refs: -
+- _archive/item_masuk_otomatis-asli.php — refs: -
+- _archive/item_masuk_otomatis.php — refs: -
+- _archive/kas_akhir_asli.php — refs: -
+- _archive/kas_awal_asli.php — refs: -
+- _archive/kas_awal_yg dulu.php — refs: -
+- _archive/master-fastmoves-ace.php — refs: -
+- _archive/master_kategori_item_old.php — refs: -
+- _archive/master_merk_motor_del_simple.php — refs: -
+- _archive/master_merk_motor_edit_simple.php — refs: -
+- _archive/master_merk_motor_old.php — refs: -
+- _archive/master_posisi.php — refs: -
+- _archive/master_tipe_detail_add.php — refs: -
+- _archive/master_tipe_detail_del.php — refs: -
+- _archive/master_tipe_detail_del_complete.php — refs: -
+- _archive/master_tipe_header_old.php — refs: -
+- _archive/migrate_kategori_motor.php — refs: -
+- _archive/migrate_kategori_motor_v2.php — refs: -
+- _archive/migration_duplicate_tables.php — refs: -
+- _archive/paket_detail1.php — refs: -
+- _archive/paket_edith.php — refs: -
+- _archive/pelanggan_add_servis_enhanced.php — refs: -
+- _archive/pembelian_add1.php — refs: -
+- _archive/penjualan_add1.php — refs: -
+- _archive/penyesuaian-stok-otomatis-alternatif.php — refs: -
+- _archive/pmby_hutang1.php — refs: -
+- _archive/pmby_piutang-asli.php — refs: -
+- _archive/popup-cari-kendaraan.php — refs: -
+- _archive/procurement_chain.php — refs: -
+- _archive/quick_database_fix.php — refs: -
+- _archive/run_database_optimization.php — refs: -
+- _archive/service_input.php — refs: -
+- _archive/servis-garansi-redesign.php — refs: -
+- _archive/servis-input-reg-coba.php — refs: -
+- _archive/servis-input-reg.php — refs: -
+- _archive/servis-input-reguler-coba.php — refs: _archive/check_service.php
+- _archive/servis-input-reguler-jemput-SECURE.php — refs: -
+- _archive/servis-input-reguler-jemput-redesign.php — refs: -
+- _archive/servis-input-reguler-redesign.php — refs: -
+- _archive/servis_edit_item.php — refs: -
+- _archive/servis_edit_paket.php — refs: -
+- _archive/sp-motor-download.php — refs: -
+- _archive/staff_admin.php — refs: _archive/staff_admin_add.php, _archive/staff_admin_save.php
+- _archive/staff_cs.php — refs: _archive/staff_cs_add.php, _archive/staff_cs_save.php
+- _include_navbar.php — refs: lap_profit_insentif.php, laporan_hutang_detail.php, laporan_hutang_summary.php, laporan_piutang_detail.php, laporan_piutang_summary.php
+- _keuangan/kasir/cek_data.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/edit_kas_akhir.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/edit_kas_awal.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/edit_omset1.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/edit_pemasukan.php — refs: _keuangan/kasir/edit_pemasukan1.php, _keuangan/kasir/pemasukan.php
+- _keuangan/kasir/edit_pemasukan1.php — refs: _keuangan/kasir/hapus_pemasukan1.php, _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/edit_pengeluaran.php — refs: _keuangan/kasir/edit_pengeluaran1.php, _keuangan/kasir/pengeluaran.php
+- _keuangan/kasir/edit_pengeluaran1.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/input_penjualan_servis.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/kas_awal.php — refs: _keuangan/kasir/index_kasir.php
+- _keuangan/kasir/view_transaksi.php — refs: _keuangan/kasir/closing_revisi.php, _keuangan/kasir/closing_revisi_admin.php, _keuangan/kasir/edit_pemasukan1.php, _keuangan/kasir/index_kasir.php
+- _print/print-pickup-schedule.php — refs: servis-reguler-jemput.php
+- _tools/migrate_fase1_fase2.php — refs: -
+- _tools/migrate_schema_fixes.php — refs: -
+- admin-backfill-tbstok-servis.php — refs: -
+- barang_add_improved.php — refs: _archive/execute_database_fixes.php, _archive/migrate_database.php, barang.php, barang_list_improved.php, save_barang_improved.php
+- barang_edit_improved.php — refs: _archive/emergency_fix.php, _archive/fix_supplier_table.php, _archive/quick_database_fix.php, barang.php, barang_list_improved.php
+- barang_history_hp.php — refs: barang.php, barang_rst.php
+- barang_kartu_stok.php — refs: barang.php, barang_rst.php
+- barang_kategori_add_new.php — refs: _archive/barang_kategori_new.php, barang_kategori.php
+- barang_list_improved.php — refs: _archive/execute_database_fixes.php, _archive/migrate_database.php, barang.php
+- barang_stok_akhir.php — refs: barang.php, barang_rst.php
+- barang_validate.php — refs: _archive/emergency_fix.php, _archive/fix_supplier_table.php, _archive/quick_database_fix.php, _archive/quick_setup_validation_log.php, barang.php
+- cari_item_pembelian.php — refs: _archive/buat pembelian.php
+- cari_item_pembelian_bl.php — refs: pembelian_add_next.php, pembelian_add_next_rst.php
+- cari_item_penjualan_jl.php — refs: penjualan_add_next.php, penjualan_add_next_rst.php
+- cari_item_penjualan_jl_pesan.php — refs: pesanan_penjualan_add_next.php, pesanan_penjualan_add_next_rst.php
+- cari_item_pesanan_pembelian.php — refs: pesanan_pembelian_add_next.php, pesanan_pembelian_add_next_rst.php
+- cari_pelanggan_jl.php — refs: _archive/service_input.php, _template/_item-brg-serv.php
+- change_pwd.php — refs: _archive/barang_kategori_add.php, _archive/barang_kategori_new.php, _archive/buat pembelian.php, _archive/cari_kendaraan.php, _archive/cari_pelanggan.php
+- dashboard-antrian-servis.php — refs: index.php
+- database_migration_custom_items.php — refs: -
+- database_update_optimizer.php — refs: -
+- db_update_procurement.php — refs: -
+- detail_pelanggan.php — refs: _include_statistik_pelanggan.php, _template/_statistik_followup_pelanggan.php, _template/_statistik_semua_pelanggan.php, _template/_statistik_top_pelanggan.php, _template/tab-detail-service-redesign.php
+- dokter.php — refs: dokter_add.php, save_dokter.php
+- dompdf/src/Css/Stylesheet.php — refs: -
+- dompdf/src/FrameDecorator/AbstractFrameDecorator.php — refs: -
+- edit-margin-jual.php — refs: _template/_tarik_data_pesanan_detail_mitra.php
+- edit_bayar_hutang.php — refs: _template/_pmby_hutang_list_cetak.php, _template/_pmby_hutang_list_next.php, pmby_hutang_add_next1.php
+- edit_bayar_piutang.php — refs: _template/_pmby_piutang_list_cetak.php, _template/_pmby_piutang_list_next.php
+- input_garapan.php — refs: -
+- input_pelanggan_awal.php — refs: pelanggan_add_enhanced.php, servis-carinopol.php
+- item_masuk_otomatis_add_so.php — refs: _archive/item_masuk_otomatis.php
+- jasa-input.php — refs: jasa-list.php
+- keluhan-proses.php — refs: _template/_servis_add_header_kanan.php
+- kendaraan-history.php — refs: kendaraan.php, kendaraan_rst.php
+- lap_kas_keluar_xls.php — refs: lap_kas_keluar.php
+- lap_kas_masuk_xls.php — refs: lap_kas_masuk.php
+- lap_komisi_mekanik.php — refs: -
+- lap_pembelian_xls.php — refs: lap_pembelian.php
+- lap_pesanan_pembelian_xls.php — refs: lap_pesanan_pembelian.php
+- lap_pesanan_penjualan_xls.php — refs: lap_pesanan_penjualan.php
+- lap_pmby_hutang_xls.php — refs: lap_pmby_hutang.php
+- lap_pmby_piutang_xls.php — refs: lap_pmby_piutang.php
+- lap_servis_xls.php — refs: lap_servis.php
+- lap_stok_keluar_xls.php — refs: lap_stok_keluar.php
+- lap_stok_masuk_xls.php — refs: lap_stok_masuk.php
+- laporan-cancel-servis.php — refs: -
+- master-keluhan.php — refs: keluhan-proses.php
+- master_jenis_item.php — refs: master_jenis_item_add.php, master_jenis_item_del.php, master_jenis_item_edit.php
+- master_jenis_item_add.php — refs: master_jenis_item.php
+- master_jenis_item_del.php — refs: master_jenis_item.php
+- master_jenis_item_edit.php — refs: master_jenis_item.php
+- master_jenis_motor.php — refs: master_jenis_motor_add.php, master_jenis_motor_del.php, master_jenis_motor_edit.php
+- master_jenis_motor_add.php — refs: master_jenis_motor.php
+- master_jenis_motor_del.php — refs: master_jenis_motor.php
+- master_jenis_motor_edit.php — refs: master_jenis_motor.php
+- master_karyawan_add.php — refs: master_karyawan.php
+- master_karyawan_edit.php — refs: master_karyawan.php
+- master_kategori_item.php — refs: _archive/master_kategori_item_old.php, master_kategori_item_add.php, master_kategori_item_add_simple.php, master_kategori_item_del.php, master_kategori_item_del_simple.php
+- master_kategori_item_add.php — refs: _archive/master_kategori_item_old.php
+- master_kategori_item_add_simple.php — refs: master_kategori_item.php
+- master_kategori_item_del.php — refs: _archive/master_kategori_item_old.php
+- master_kategori_item_del_simple.php — refs: master_kategori_item.php
+- master_kategori_item_edit.php — refs: _archive/master_kategori_item_old.php, master_kategori_item_del.php
+- master_kategori_item_edit_simple.php — refs: master_kategori_item.php
+- master_kategori_member.php — refs: -
+- master_kategori_motor.php — refs: master_kategori_motor_add.php, master_kategori_motor_del.php, master_kategori_motor_edit.php
+- master_kategori_motor_add.php — refs: master_kategori_motor.php
+- master_kategori_motor_del.php — refs: master_kategori_motor.php
+- master_kategori_motor_edit.php — refs: master_kategori_motor.php
+- master_merk_motor.php — refs: _archive/master_merk_motor_del_simple.php, _archive/master_merk_motor_edit_simple.php, _archive/master_merk_motor_old.php, master_merk_motor_add.php, master_merk_motor_del.php
+- master_merk_motor_add.php — refs: _archive/master_merk_motor_old.php, master_merk_motor.php
+- master_merk_motor_del.php — refs: _archive/master_merk_motor_old.php, master_merk_motor.php
+- master_merk_motor_edit.php — refs: _archive/master_merk_motor_old.php, master_merk_motor.php
+- master_nama_barang.php — refs: master_nama_barang_add.php, master_nama_barang_del.php, master_nama_barang_edit.php
+- master_nama_barang_add.php — refs: master_nama_barang.php
+- master_nama_barang_del.php — refs: master_nama_barang.php
+- master_nama_barang_edit.php — refs: master_nama_barang.php
+- master_satuan_barang.php — refs: master_satuan_barang_add.php, master_satuan_barang_del.php, master_satuan_barang_edit.php
+- master_satuan_barang_add.php — refs: master_satuan_barang.php
+- master_satuan_barang_del.php — refs: master_satuan_barang.php
+- master_satuan_barang_edit.php — refs: master_satuan_barang.php
+- master_tipe_detail.php — refs: _archive/master_tipe_detail_add.php, _archive/master_tipe_detail_del.php, _archive/master_tipe_detail_del_complete.php, master_tipe_detail_add_simple.php, master_tipe_detail_del_simple.php
+- master_tipe_detail_add_simple.php — refs: master_tipe_detail.php
+- master_tipe_detail_del_simple.php — refs: master_tipe_detail.php
+- master_tipe_detail_edit.php — refs: _archive/master_tipe_detail_del.php
+- master_tipe_detail_edit_simple.php — refs: master_tipe_detail.php
+- master_tipe_header.php — refs: _archive/master_tipe_header_old.php, master_tipe_header_add.php, master_tipe_header_add_simple.php, master_tipe_header_del.php, master_tipe_header_del_simple.php
+- master_tipe_header_add.php — refs: _archive/master_tipe_header_old.php
+- master_tipe_header_add_simple.php — refs: master_tipe_header.php
+- master_tipe_header_del.php — refs: _archive/master_tipe_header_old.php
+- master_tipe_header_del_simple.php — refs: master_tipe_header.php
+- master_tipe_header_edit.php — refs: _archive/master_tipe_header_old.php
+- master_tipe_header_edit_simple.php — refs: master_tipe_header.php
+- mekanik_management.php — refs: _archive/database_updater.php
+- menu_dashboard.php — refs: _archive/barang_kategori_add.php, _archive/barang_kategori_new.php, _archive/buat pembelian.php, _archive/cari_kendaraan.php, _archive/cari_pelanggan.php
+- migrate_statistik_pelanggan.php — refs: -
+- paket_editd.php — refs: paket_add_brg_cari_detail.php, paket_add_jasa_cari_detail.php, wo_edit_brg_detail.php, wo_edit_jasa_detail.php, wo_hapus_brg_detail.php
+- pelanggan_add_enhanced.php — refs: input_pelanggan_awal.php
+- pelanggan_add_servis.php — refs: input_pelanggan_awal.php, penjualan_buat_servis.php
+- pelanggan_awal_piutang.php — refs: pelanggan.php, pelanggan_rst.php
+- pembelian_edit_item.php — refs: _template/_pembelian_cetak.php, _template/_pembelian_detail.php
+- pengadaan_antarcab_terima.php — refs: pengadaan_antarcab.php, pengadaan_antarcab_detail.php
+- penjualan_buat_servis.php — refs: penjualan_buat_servis_proses.php, penjualan_detail.php
+- penjualan_cab_add_proses_mitra.php — refs: edit-margin-jual.php
+- penjualan_edit_item.php — refs: _template/_penjualan_detail.php, _template/_penjualan_detail_cetak.php
+- pesanan_pembelian_edit_item.php — refs: _template/_pesanan_pembelian_cetak.php, _template/_pesanan_pembelian_detail.php
+- pesanan_penjualan_cab_edit_item.php — refs: _template/_pesanan_penjualan_cab_detail.php
+- pesanan_penjualan_edit_item.php — refs: _template/_pesanan_penjualan_cab_detail_cetak.php, _template/_pesanan_penjualan_detail.php, _template/_pesanan_penjualan_detail_cetak.php, _template/_tarik_data_pesananbl_detail.php
+- pmby_hutang_add_next1.php — refs: _archive/save_hutang_d.php
+- profile.php — refs: _archive/barang_kategori_add.php, _archive/barang_kategori_new.php, _archive/buat pembelian.php, _archive/cari_kendaraan.php, _archive/cari_pelanggan.php
+- refresh_statistik_estimasi.php — refs: -
+- run_migration_history_service.php — refs: -
+- servis-garansi.php — refs: _archive/servis-input-garansi.php, _archive/servis-input-reg.php, _archive/servis-input-reguler-new.php, _archive/servis-input-reguler-redesign.php, _archive/servis-input-reguler-temp.php
+- servis-input-reguler-jemput.php — refs: _archive/save-no-servis-reguler-jemput.php, _archive/save_combined_servis.php, _archive/servis-input-reg.php, _archive/servis-input-reguler-jemput-SECURE.php, _archive/servis-input-reguler-new.php
+- servis-input-reguler.php — refs: _archive/_template/tab-temuan-penawaran-content-coba.php, _archive/check_error.php, _archive/demo-kategori-pelanggan.php, _archive/servis-input-reg-coba.php, _archive/servis-input-reg.php
+- servis-reguler-byr.php — refs: servis_edit_item_byr.php, servis_edit_paket_byr.php, servis_hapus_item_byr.php, servis_hapus_paket_byr.php
+- servis_edit_item_byr.php — refs: _template/_servis_byr_detail_barang.php
+- servis_edit_item_garansi.php — refs: _template/_servis_garansi_detail_barang.php
+- servis_edit_item_jemput.php — refs: _template/_servis_add_jemput_detail_barang.php
+- servis_edit_jemput_paket.php — refs: _template/_servis_add_jemput_detail_servis.php
+- servis_edit_paket_byr.php — refs: _template/_servis_byr_detail_servis.php
+- servis_edit_paket_garansi.php — refs: _template/_servis_garansi_detail_servis.php
+- setting-highlight-member.php — refs: servis-carinopol.php
+- setting-threshold-harga.php — refs: alarm-harga-beli.php
+- setting_diskon_member_item.php — refs: pelanggan_kategori.php
+- so-item-keluar-edit-item.php — refs: so-item-keluar-rst.php
+- so-item-keluar.php — refs: penyesuaian-stok-otomatis.php, so-item-keluar-batal.php
+- so-item-masuk-edit-item.php — refs: so-item-masuk-rst.php
+- so-item-masuk.php — refs: penyesuaian-stok-otomatis.php, so-item-masuk-batal.php, so-keluar-add-cetak.php, so-masuk-add-cetak.php
+- sp-ambil-motor.php — refs: servis-reguler.php
+- statistik_pelanggan_dashboard.php — refs: _include_statistik_pelanggan.php, detail_pelanggan.php, master_kategori_member.php, pelanggan_kategori.php, statistik_pelanggan_send_wa.php
+- statistik_pelanggan_send_wa.php — refs: _include_statistik_pelanggan.php, _template/_statistik_followup_pelanggan.php, _template/_statistik_semua_pelanggan.php, _template/_statistik_top_pelanggan.php
+- stok-akhir-result.php — refs: stok-akhir-rst.php
+- stok_keluar_edit_item.php — refs: _template/_stok_keluar_detail.php, _template/_stok_keluar_detail_cetak.php
+- stok_masuk_edit_item.php — refs: _template/_stok_masuk_detail.php, _template/_stok_masuk_detail_cetak.php
+- supplier_awal_hutang.php — refs: supplier.php
+- tarik_pesanan_edit_item.php — refs: _template/_tarik_data_pesanan_detail.php
+- temuan-penawaran-export.php — refs: _archive/tab-temuan-penawaran-content-improved.php, _template/tab-temuan-penawaran-content.php, _template/tab-temuan-penawaran-redesign.php
+- tipe-motor-kategori.php — refs: item-motor-mapping.php
+- tools_repair_statistik_pelanggan.php — refs: -
+- update_logo_all_files.php — refs: -
+- user_management.php — refs: _archive/database_updater.php
+- wo_edit_brg.php — refs: _template/_wo_brg_detail.php
+- wo_edit_jasa.php — refs: _template/_wo_jasa_detail.php
+- workorder-detail-view.php — refs: paket.php, workorder-list.php
+- workorder-input.php — refs: paket.php, workorder-detail-hapus.php, workorder-detail-view.php, workorder-list.php
+
+## Verifikasi otomatis
+- `app/menu_config.php` parse OK sebagai PHP dan return array menu.
+- URL baru terdaftar: `workorder-list.php`, `jasa-list.php`, `master_perusahaan.php`, `pengadaan_antarcab_push.php`, `lap_antarcab.php`, `lap_profit_insentif.php`, `kas_masuk.php`, `kas_keluar.php`.
+- Verifikasi live via Windows host PowerShell: login admin/admin cabang PST OK; `kas_masuk.php` dan `kas_keluar.php` status 200 dan render halaman legacy. Browser tool WSL langsung masih timeout ke localhost, tetapi Windows/Laragon HTTP session reachable.

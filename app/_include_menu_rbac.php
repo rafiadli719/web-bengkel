@@ -229,6 +229,38 @@ function filterMenuByPermissions($menu_items, $user_permissions) {
  * @param int $level Nesting level (for CSS classes)
  * @return string HTML output
  */
+function menuUrlMatchesCurrentPage($item_url, $current_page) {
+    if ($item_url === '#' || $current_page === '') {
+        return false;
+    }
+
+    $item_path = parse_url($item_url, PHP_URL_PATH);
+    $item_page = basename($item_path ?: $item_url);
+    $current_path = parse_url($current_page, PHP_URL_PATH);
+    $current_page_name = basename($current_path ?: $current_page);
+
+    return $item_page !== '' && $item_page === $current_page_name;
+}
+
+/**
+ * Check whether a menu item or any descendant matches the current page.
+ */
+function menuItemHasActiveDescendant($item, $current_page) {
+    if (isset($item['url']) && menuUrlMatchesCurrentPage($item['url'], $current_page)) {
+        return true;
+    }
+
+    if (!empty($item['submenu']) && is_array($item['submenu'])) {
+        foreach ($item['submenu'] as $child) {
+            if (menuItemHasActiveDescendant($child, $current_page)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 function renderMenu($menu_items, $current_page = '', $level = 0) {
     if (empty($menu_items)) {
         if ($level === 0) {
@@ -253,12 +285,15 @@ function renderMenu($menu_items, $current_page = '', $level = 0) {
     foreach ($menu_items as $item) {
         $has_submenu = isset($item['submenu']) && !empty($item['submenu']);
         $item_url = $item['url'] ?? '#';
-        $is_active = ($item_url !== '#' && $item_url === $current_page);
+        $is_active = menuItemHasActiveDescendant($item, $current_page);
         
         // Build CSS classes
         $li_classes = [];
         if ($is_active) $li_classes[] = 'active';
-        if ($has_submenu) $li_classes[] = 'hover';
+        if ($has_submenu) {
+            $li_classes[] = 'hover';
+            if ($is_active) $li_classes[] = 'open';
+        }
         
         $li_class_str = !empty($li_classes) ? ' class="' . implode(' ', $li_classes) . '"' : ' class=""';
         

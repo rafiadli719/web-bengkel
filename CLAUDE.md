@@ -96,282 +96,13 @@ Dashboard checklist-projek menyediakan API RESTful lengkap:
 - `GET|POST|PUT|DELETE /api/web-base/pages` — CRUD Halaman per Sub Modul
 - `GET|POST|PUT|DELETE /api/web-base/features` — CRUD Fitur per Halaman (status_rag: hijau/kuning/merah)
 
-## Progress Merge Modul Kasir   Keuangan (2026-09-03)
+## Progress Merge Modul Kasir & Keuangan (2026-09-03)
 
-Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md`
-(34 task). Status per 2026-09-03 malam:
-
-- **Task 1-10 SELESAI & commit**: backup DB (372MB), DDL 25 tabel
-  `*_closing_kasir` + 10 VIEW, migrasi data ~50rb+ baris (row-count match
-  semua), RBAC (`tb_master_posisi.permissions` +5 kode `kasir_*` di
-  ADM/KEU/KSR).
-- **Task 11-12 SELESAI & commit**: porting `app/_keuangan/kasir/` -
-  `koneksi_kasir.php`, `kas_awal.php`, `kas_akhir.php`,
-  `closing_revision_helpers.php`, `pemasukan.php`, `pengeluaran.php`,
-  `process_closing_transaction.php`, `utils.php`. Sumber real beda dari
-  draft plan awal (dashboard besar, bukan file kecil) - lihat commit
-  message masing-masing buat detail keputusan porting.
-- **Keputusan susulan (2026-09-03 malam)**: tabel `kas_awal_closing_kasir`
-    di-rename jadi **`kas_awal`** (dan `kas_akhir_closing_kasir`  
-  `kas_akhir`, `detail_kas_awal_closing_kasir`   `detail_kas_awal`,
-  `detail_kas_akhir_closing_kasir`   `detail_kas_akhir`) - TIDAK ada
-  tabrakan nama sama tabel fitmotor lama (dicek: gak ada tabel `kas_awal`/
-  `kas_akhir` asli di `fitmotor_dbbengkel`, fitur kasir lama fitmotor
-  pakai `tbkas_kasir_header`/`tbkeping` bukan nama itu). File lama
-  `app/kas_awal.php`/`app/kas_akhir.php` (pakai `tbkas_kasir_header`)
-  MASIH LIVE, belum diganti - penggantian menu ke versi baru
-  `app/_keuangan/kasir/kas_awal.php` ditahan sampai Task 15 (menu
-  wiring), biar gak putus fitur user tanpa checkpoint.
-- **Task 13-34 BELUM dikerjakan**: closing (`close_transaksi1.php`
-  141KB), closing revisi, `setoran_keuangan.php` (424KB, terbesar
-  seprojek), cutover (Task 17) & drop tabel mati (Task 18) - 2 task
-  terakhir itu WAJIB tanya konfirmasi eksplisit dulu sebelum eksekusi
-  (irreversible, sistem kasir/keuangan live).
-- **Update 2026-09-04**: sejak catatan di atas ditulis, banyak task
-  gap-analysis (14b dst, lihat `git log`) sudah jalan lewat porting
-  copy-paste + patch per file nyata (bukan urutan linear 13-34 di plan
-  awal — plan lama dipakai sebagai checklist referensi, bukan urutan
-  eksekusi ketat). **Task 29 (CRUD master data admin) SELESAI & commit
-  c45867a**: `master_akun.php`, `master_nama_transaksi.php`,
-  `master_rekening_cabang.php`, `keping.php` - semua pakai
-  `koneksi_kasir.php` + PDO prepared statement (bukan concat SQL
-  mentah source asli). `master_rekening_cabang.php` dropdown cabang
-  diganti `tbcabang.cabang_ref_kode` (bukan tabel `cabang` web_kasir).
-  Data sumber sudah termigrasi & terverifikasi (34/159/5/10 baris).
-  Cutover (Task 17) & drop tabel mati (Task 18) masih TETAP butuh
-  konfirmasi eksplisit sebelum eksekusi.
-- **Update 2026-09-04 malam**: Task 25 (lib laporan phpspreadsheet+tcpdf+fpdf,
-  commit 5c75534/479ba7c/b1b9423), **Task 31 (monitoring & riwayat transaksi,
-  commit 6716bdf)**, dan **Task 30 (port laporan/export, commit 6160b3b)**
-  SELESAI. Task 30 deviasi dari spec plan (17 file -> 2 file gabungan
-  excel.php/pdf.php): dipertahankan 12 file terpisah
-  (`app/_keuangan/kasir/export/export_*.php` + `generate_excel.php`) karena
-  logic tiap laporan beda signifikan. Sebelum commit ditemukan & difix
-  kredensial DB hardcode (`fitmotor_LOGIN`/`Sayalupa12` + host/dbname literal)
-  nempel langsung di tiap `new PDO(...)` meski file sudah require
-  `koneksi_kasir.php` (itu cuma expose RBAC + `$koneksi` mysqli, bukan PDO) -
-  diganti `getenv('DB_HOST'/'DB_USER'/'DB_PASS'/'DB_NAME')` pola sama seperti
-  `app/koneksi.php`. Divalidasi: php -l lolos semua 12 file + smoke test PDO
-  connect & query ke 10 tabel `*_closing_kasir` real (data ada, bukan tabel
-  kosong). Sisa backlog: **Task 32** (migrasi file fisik uploads), **Task 33**
-  (bersihkan file berbahaya webroot web_kasir lama, independen dari cutover),
-  **Task 34** (retire masterkey.php setelah Task 21), closing
-  (`close_transaksi1.php` 141KB) & closing revisi belum disentuh. Cutover
-  (Task 17) & drop tabel mati (Task 18) tetap WAJIB konfirmasi eksplisit.
-- **Update 2026-09-05**: **Task 32 SELESAI-DENGAN-TEMUAN (no-op)** — dicek
-  source (`fitmotor_maintance-beta.pengambilan_setoran`) & migrasi
-  (`pengambilan_setoran_closing_kasir`), sama-sama 6 baris semua
-  `mutasi_dokumen_path` NULL, nol referensi file. 12 file fisik di
-  `web_kasir/uploads/pelunasan_hutang/` = orphan murni, gak dipindah
-  (push back dari spec, gak sesuai kondisi nyata). **Task 33 dikonfirmasi
-  ulang SELESAI** (sudah dieksekusi sesi sebelumnya, diverifikasi lagi:
-  webroot bersih, repo `web_kasir` 0 commit history jadi Step 4 gak
-  relevan). **Task 15 (wire menu) SELESAI, commit 46a693f/6a5d58b/
-  cc1859d/8671064**: grup menu "Keuangan Kasir" (19 item) di
-  `app/menu_config.php`. Investigasi Task 15 nemu 3 gap tersembunyi yang
-  ikut difix: (1) `index_kasir.php` (Dashboard Kasir, 811 baris) BELUM
-  PERNAH diport sejak awal migrasi — diport baru sekarang, table rename
-  + `users`→`tbuser`; (2) `setoran_keuangan.php` fetch() 3 tombol
-  (pelunasan manual/setor bank/edit nominal) masih ke nama file API lama
-  yang udah digabung Task 14 (`pengambilan_setoran.php` dispatch action/
-  `setoran_bank.php`) — 404 kalau diklik, direroute; (3) `closing.php`
-  fetch backup ke `api_backup_closing.php` (trigger .bat Windows
-  Access-era, gak applicable MySQL) — step backup dicopot dari JS
-  (keputusan Rafi), backup DB sekarang lewat dump terjadwal. Bonus fix:
-  bug null-reference JS `checkFormValidity()` di `serah_terima.php`
-  (ketahuan live smoke test). Smoke test browser (login admin real):
-  19/19 halaman lolos, console bersih. Sisa gap dicatat (bukan
-  diblokir): 7 link "edit mode" di Dashboard Kasir (edit_kas_awal.php,
-  edit_kas_akhir.php, input_penjualan_servis.php, edit_pemasukan1.php,
-  edit_pengeluaran1.php, edit_omset1.php, cek_data.php) belum pernah
-  diport, ditandai TODO di kode — backlog terpisah dari Task 15.
-- **Update 2026-09-05 lanjutan**: 7 link "edit mode" di atas **SELESAI
-  DIPORT semua, commit 9e3bd72/5538a6e/44eadc2**. Chain ternyata lebih
-  besar dari perkiraan — `edit_pemasukan1.php`/`edit_pengeluaran1.php`
-  masing-masing punya 2 dependency lagi (`edit_pemasukan.php`/
-  `hapus_pemasukan1.php`, sama pola buat pengeluaran) = total 11 file
-  baru, bukan 7. Ketemu+fix gap tersembunyi lagi: **Task 23** (DDL+migrasi
-  `data_penjualan`/`data_servis`) ternyata belum pernah dieksekusi sama
-  sekali sejak awal migrasi — `input_penjualan_servis.php` fatal error
-  tabel gak ada pas smoke test. DDL 2 tabel `*_closing_kasir` + migrasi
-  2175 baris masing-masing dari `fitmotor_maintance-beta`, 100% sukses
-  (0 gagal, 0 orphan `kode_karyawan`). Semua 11 file pola sama: RBAC
-  `koneksi_kasir.php`, PDO `getenv()`, table rename sed map, `users`→
-  `tbuser`. Smoke test browser 11/11 halaman render benar (title +
-  data live TRX-20241101-0001; 2 file "edit by id" dgn id bukan milik
-  user login nampilin pesan "tidak ditemukan" sesuai desain, bukan
-  fatal). **Task 15 + Task 23 + Task 24 semua SELESAI TUNTAS.**
-- **UAT E2E penuh 2026-09-05 (browser + CLI-simulasi POST)**: alur
-  lengkap divalidasi sampai closing — Verifikasi Kas Awal → Kas Awal
-  (Rp310rb) → Pemasukan (Rp50rb) → Pengeluaran (Rp20rb) → Omset
-  (penjualan Rp150rb+servis Rp75rb) → Kas Akhir (Rp535rb) → Closing
-  (status jadi 'end proses', omset/setoran/selisih semua kehitung
-  benar) → muncul benar di Serah Terima. Browser native (dialog
-  `confirm()` bikin CDP freeze 30 detik+, harus `window.confirm=()=>true`
-  patch dulu tiap page load) DAN simulasi PHP-CLI POST langsung
-  (lebih reliable, dipakai buat isolasi bug) sama-sama dipakai. Ketemu+
-  fix **3 bug fatal baru** yang gak kelihatan dari smoke-test biasa:
-  (1) `verifikasi_kas_awal.php` KELEWAT TOTAL dari Task 11 — flow
-  "Mulai Kas Awal Baru" infinite-loop, gak pernah bisa bikin transaksi
-  sama sekali (link ke `kas_awal.php` langsung, skip step session-set);
-  (2) kolom `kode_transaksi` varchar(20) di 9 tabel overflow buat akun
-  fitmotor-native `nama_user`>3 huruf (`admin`/`adm01`/`keu01`) — widen
-  ke varchar(50), dikonfirmasi eksplisit Rafi; (3) **paling parah**:
-  `process_closing_transaction.php` (required `pemasukan.php`) punya
-  guard top-level cek `$_SESSION['kode_karyawan']`/`['role']` (key
-  legacy web_kasir yang fitmotor gak pernah set) — bikin **pemasukan.php
-  TOTAL GAK BISA DIPAKAI SATU USER PUN sejak Task 14b diport**, exit
-  diam-diam tanpa pesan error apapun. Ketahuan cuma karena testing pakai
-  PHP-CLI session bersih (browser session kebetulan kebawa sisa login
-  test `web_kasir.test` yang nyamarin bug ini). Juga ketemu+fix: sed
-  table-rename Task 11 kena nama FILE (`serah_terima_kasir.php`→
-  `serah_terima_kasir_closing_kasir.php`, 404) di 7 file, dan 23 link
-  export tanpa prefix folder `export/` (Task 30 mindahin file tapi
-  caller-nya kelewat) di 6 file. Semua commit terpisah, lint bersih.
-- **Update 2026-09-05 sore — verifikasi 7 link edit-mode + checklist-projek**:
-  dicek ulang 11 file edit-mode (edit_kas_awal, edit_kas_akhir,
-  input_penjualan_servis, edit_pemasukan1/edit_pemasukan/hapus_pemasukan1,
-  edit_pengeluaran1/edit_pengeluaran/hapus_pengeluaran1, edit_omset1,
-  cek_data) — semua ADA, lint bersih, link di `index_kasir.php` bener
-  (bukan 404). Komentar TODO basi di `index_kasir.php` (nyebut "belum
-  diport") dibersihin. **checklist-projek diupdate 8 fitur**: 7 fitur
-  yang dieksekusi langsung di UAT E2E (Kas Awal, Kas Akhir, Pemasukan,
-  Pengeluaran, Closing, Serah Terima, Input Omset Penjualan/Servis)
-  naik ke hijau/selesai/100%; 3 fitur "Edit Data ... (mode revisi)"
-  naik dari merah/0% ke kuning/uat/60% (file diport+lint bersih, belum
-  diklik-UAT browser). Sisa backlog gak berubah: cabang-resolution
-  inconsistency (koneksi_kasir.php vs pemasukan.php) masih nunggu
-  keputusan Rafi; Task 17/18 tetap WAJIB konfirmasi eksplisit; Task 34
-  tetap blocked Task 21. **[SUPERSEDED 2026-09-13: Task 17/18 selesai
-  2026-09-12 — lihat "Status Ringkas per 2026-09-13".]**
-- **Update 2026-09-06 — cabang-resolution fix (poin A/B) + port 2 file
-  gap terakhir (poin C), keputusan Rafi dieksekusi semua**: (A) kolom
-  `kode_cabang` ditambah ke `pemasukan_kasir_closing_kasir` dan
-  `pengeluaran_kasir_closing_kasir` (sebelumnya cuma resolve dari session,
-  gak pernah persist ke row) — INSERT di `pemasukan.php`/`pengeluaran.php`
-  diwire isi `$user_kode_cabang`/`$kode_cabang_aktif` dari
-  `koneksi_kasir.php`. (B) 14 baris orphan `kode_cabang` di
-  `kasir_transactions_closing_kasir` dimigrasi via FK `tbuser.kode_cabang`
-  (bukan freetext `nama_cabang` yang kadang "Unknown Cabang"/typo) — 5
-  kode_karyawan dipetakan ke cabang_ref_kode masing-masing, orphan
-  count jadi 0. Backfill historis 1725 baris pemasukan + 22157 baris
-  pengeluaran dari header transaksi (`kode_transaksi` JOIN); 3 baris
-  sisa (2 pemasukan + 1 pengeluaran) punya `kode_transaksi` dangling
-  (header transaksinya gak exist di DB — `TRX-20241104-0004`,
-  `TRX-20250221-BRD0006`) diselesaikan langsung via employee cabang,
-  dicatat sebagai backlog data-integrity terpisah (beda kelas masalah
-  dari orphan kode_cabang). (C) 2 file gap Task 15 diport:
-  `konfirmasi_buka_transaksi.php` (approve/reject request buka-kembali
-  transaksi closing dari CS, permission `kasir_admin`) dan
-  `kas_awal_config_crud.php` (CRUD nominal minimum kas awal per cabang,
-  permission `kasir_approve`, dropdown cabang diganti dari `users` jadi
-  `tbcabang` karena kolom tabelnya FK ke `cabang_ref_kode` bukan
-  `tbuser.kode_cabang`). Kedua tabel tujuan (`konfirmasi_buka_transaksi_closing_kasir`,
-  `kas_awal_config_closing_kasir`) sudah ada isinya dari migrasi Task
-  1-10 (31 dan 4 baris) — cuma interface-nya yang belum sempat diport.
-  Diwire ke `menu_config.php` grup "Keuangan Kasir" (21 item sekarang).
-  Semua lint bersih + smoke-test query PDO/mysqli langsung ke DB live
-  (bukan cuma syntax check). Belum di-klik-UAT browser. Sisa backlog:
-  Task 17/18 (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit;
-  Task 34 tetap blocked Task 21. **[SUPERSEDED 2026-09-13: Task 17/18
-  selesai 2026-09-12 — lihat "Status Ringkas per 2026-09-13".]**
-- **Update 2026-09-06 malam — push 56 commit lokal + review
-  setoran_keuangan.php (commit b35df5d, 73bd702)**: 56 commit
-  keuangan-kasir yang numpuk lokal sejak awal migrasi AKHIRNYA di-push
-  ke origin — sempat ketahan GitHub 100MB limit gara-gara
-  `backups/pre-merge-kasir-20260903_112757.sql` (373MB) nyangkut di
-  commit `dc79b59`; difix pakai `git filter-branch --index-filter`
-  (56→51 commit setelah prune-empty, cuma nyentuh commit yang emang
-  belum pernah nyampe origin jadi aman di-rewrite), file balik ke disk
-  (untracked) + masuk `.gitignore` (`backups/*.sql`). Branch cadangan
-  pra-rewrite `backup-before-filter-1788697051` masih ada lokal.
-  **`close_transaksi1.php` (141KB) TERNYATA GAK PERLU diport** — udah
-  keporting lebih dulu jadi `closing.php`/`closing_revisi.php`/
-  `closing_revisi_admin.php` (commit 65272ae, tanggal 2026-09-04), cuma
-  namanya beda dari source jadi kelewat di tracking — catatan lama soal
-  file itu "belum disentuh" sudah basi. **`setoran_keuangan.php` (8510
-  baris, file terbesar seprojek) direview via 2 subagent paralel**
-  (code-quality + security) — pertama kalinya direview mendalam sejak
-  porting. Security overall CLEAN (semua query PDO prepared statement,
-  RBAC guard bener, gak ada IDOR/SQLi/kredensial baru), cuma 1 XSS
-  reflected medium (`bank_detail_id` diecho mentah ke href, kolom
-  integer di-cast `(int)` di 3 titik). Quality nemu **1 bug logic
-  parah**: handler `edit_selisih` gak punya guard `deposit_status`
-  sama sekali (beda dari `validasi_individual` yang konsisten guard) —
-  bisa nimpa transaksi APAPUN statusnya termasuk yang udah "Sudah
-  Disetor ke Bank", ngerusak snapshot audit pasca setoran bank; pesan
-  error existing di kode udah nyiratin guard yang seharusnya ada
-  (`'bukan status selisih'`) — ditambahin `AND deposit_status =
-  'Validasi Keuangan SELISIH'` ke SELECT + 3 varian UPDATE. Dead code
-  (`$is_super_admin`/`$is_admin`/`$role` hardcode gak kepake) ikut
-  dibersihin. Ditemukan tapi SENGAJA gak difix sekarang (scope lebih
-  besar dari 1 file, dicatat backlog terpisah): drop/recreate trigger
-  `tr_update_setoran_status` saat runtime buat fitur Setor Bank (rawan
-  hilang permanen kalau proses PHP mati di tengah — bukan DDL transaksi
-  aman), beberapa N+1 query di listing closing/histori pengambilan
-  dana, log hygiene (`error_log` verbose termasuk dump `$_POST` tiap
-  request produksi), kredensial DB fallback hardcode
-  `fitmotor_LOGIN`/`Sayalupa12` (pola existing codebase-wide sejak
-  `app/koneksi.php`, bukan regresi file ini — kalau mau dibereskan
-  scope-nya lintas banyak file). Sisa backlog GAK berubah: Task 17/18
-  (cutover + drop tabel mati) tetap WAJIB konfirmasi eksplisit; Task 34
-  tetap blocked Task 21.
-  **[SUPERSEDED 2026-09-13: Task 17/18 SUDAH DIEKSEKUSI 2026-09-12 — lihat
-  "Status Ringkas per 2026-09-13" di akhir file. Jangan anggap masih
-  backlog dari baris ini.]**
-- **Update 2026-09-07 — fix trigger lifecycle `tr_update_setoran_status`
-  (commit b038463, belum di-push, gak ada `gh`/kredensial GitHub di shell
-  WSL ini)**: dari 3 track independen backlog review setoran_keuangan.php
-  (trigger lifecycle / log hygiene / N+1 query), dieksekusi trigger
-  lifecycle dulu (paling urgent, resiko data-loss real). Extract definisi
-  trigger dari 2 salinan identik (success path + error path) jadi 1 fungsi
-  `ensureSetoranStatusTrigger()` idempotent (cek `information_schema.TRIGGERS`
-  dulu sebelum CREATE). Tambah `register_shutdown_function()` sebagai safety
-  net — kalau proses PHP mati fatal/timeout di gap antara DROP dan CREATE
-  ulang trigger, shutdown handler pastikan trigger balik (sebelumnya
-  cuma `catch(Exception)`, gak nangkep PHP Error/fatal — sekarang
-  `catch(Throwable)` di 4 titik). Buang dummy trigger
-  `tr_update_setoran_status_backup` (empty body, orphan, sisa pola lama,
-  gak pernah dipakai/didrop). Lint bersih + brace balance verified;
-  live DB smoke-test GAK BISA dari shell WSL ini (kredensial DB cuma
-  keinject di proses Apache/Laragon Windows, bukan env WSL) — verifikasi
-  lanjut butuh browser E2E klik Setor Bank atau akses `gh`/token GitHub
-  buat push. Sisa 2 track (log hygiene, N+1 query) + Task 17/18 + Task 34
-  masih backlog, belum disentuh.
-  **[SUPERSEDED 2026-09-13: log hygiene selesai (lihat entry di bawah ini),
-  N+1 listing utama juga udah difix commit ea3d7be (2026-09-07), Task
-  17/18 dieksekusi 2026-09-12. Lihat "Status Ringkas per 2026-09-13".]**
-- **Update 2026-09-07 lanjutan — log hygiene selesai (commit 9353db1,
-  belum push, masih blocked gak ada `gh`/token GitHub)**: 4 blok debug
-  `error_log` leftover (comment eksplisit "Debug:") yang jalan tanpa
-  syarat tiap request produksi dibuang — 2 di antaranya kena TIAP PAGE
-  LOAD listing utama (bukan cuma tiap POST): dump POST keys top-level,
-  dump field SETOR BANK, dump filter rekening/tab, dan paling berat
-  dump SQL query lengkap + params + result count. 30 `error_log` sisa
-  di exception/catch path TIDAK disentuh (logging legit). Lint bersih,
-  brace balance 901/901. Sisa track: N+1 query audit (perf, gak urgent)
-  + Task 17/18 (WAJIB konfirmasi eksplisit) + Task 34 (blocked Task 21)
-  + setup push GitHub (numpuk 3 commit lokal: b038463, 2cc0c74, 9353db1).
-  **[SUPERSEDED 2026-09-13 — SEMUA 4 item baris ini sudah tuntas atau
-  diperbarui, JANGAN dibaca sebagai backlog aktif lagi:**
-  **(1) N+1 query audit: listing utama (bagian paling parah, 4 query/baris
-  tanpa limit) sudah difix commit `ea3d7be` (2026-09-07, hari yang sama).
-  Sisa 2 titik kecil di POST handler (`setoran_keuangan.php` baris
-  718 & 1103) N-nya dibatasi jumlah pilihan user, bukan listing tanpa
-  limit — severity rendah, opsional, lihat detail di bagian "Status
-  Ringkas per 2026-09-13" kalau mau dikerjain.
-  (2) Task 17/18: DIEKSEKUSI TUNTAS 2026-09-12 (Task 17 Step 1 blokir
-  akses web_kasir lama commit `f9e9787`, Step 2 di-skip permanen atas
-  keputusan Rafi; Task 18 revisi drop 5/9 tabel orphan commit `115f12f`,
-  4 tabel akuntansi aktif sengaja gak didrop). BUKAN backlog lagi.
-  (3) Task 34: MASIH blocked Task 21 (SSO bridge priori-tech, belum
-  ada progress baru per 2026-09-13) — satu-satunya dari 4 item ini yang
-  BENERAN masih pending.
-  (4) Push GitHub: commit `b038463`/`2cc0c74`/`9353db1` dkk (termasuk
-  semua commit numpuk sampai `383d10c`) SUDAH KE-PUSH 2026-09-13 pakai
-  PAT sementara dari Rafi (token itu sudah diminta di-revoke/rotate
-  setelah dipakai — cek langsung ke Rafi kalau perlu push lagi tanpa
-  `gh` CLI terinstall).]**
+Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md` (34 task).
+History detail tiap update (2026-09-03 s/d 2026-09-07) dipindah ke
+`.ai/changelog/2026-09-kasir-keuangan-merge-history.md` — baca situ kalau butuh jejak
+keputusan lama. Status TERKINI ada di section "Status Ringkas per 2026-09-13" di bawah,
+itu satu-satunya sumber kebenaran, jangan percaya baris history mana pun tanpa cek situ dulu.
 
 ## Status Ringkas per 2026-09-13 (baca INI dulu, bukan scroll history di atas)
 
@@ -408,6 +139,25 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   baru, 4 tabel `tblkomplain*`, posisi `KACAB` baru, permission RBAC
   `komplain_*` di posisi CS/ADM/KM/MNG. Fitur Komplain Garansi existing
   di modul servis TIDAK disentuh (tetap terpisah, sesuai keputusan Rafi).
+- **REWORK-to-Warranty Integration SELESAI & LIVE** (commit `93190ce`,
+  2026-09-17, di atas Tahap 1+2 di atas). Komplain kategori REWORK yang
+  di-approve Kepala Cabang sekarang otomatis bikin servis garansi
+  (is_garansi=1, prioritas urgent) via `createServisGaransi()` di
+  `function_servis.php`, bukan servis reguler/jemput lagi. Kolom baru
+  `tblkomplain.no_service_asli`/`no_service_rework` (migration
+  `db/migrations/2026-09-15_komplain_rework_garansi.sql`, sudah jalan
+  live). Form input komplain sekarang wajib pilih "No Service Asli"
+  (dropdown tervalidasi ke `tblservice`, harus nopol sama). Endpoint baru
+  `ajax_cari_service_nopol.php`. Sudah E2E test via browser (login test
+  account KACAB, submit komplain -> approve Setuju -> servis garansi
+  ke-generate benar, ref_no_service_original match) — data test dihapus
+  setelah verifikasi, akun test dihapus juga.
+  Catatan environment: modul komplain butuh `app/db_env.php` DAN
+  `config/db_env.php` (2 file terpisah, tiap `koneksi.php` cari
+  `db_env.php` di direktori sendiri) — keduanya gitignored, isi
+  `putenv()` DB_HOST/DB_USER/DB_PASS/DB_NAME. Kalau setup ulang di mesin
+  lain, kedua file itu harus dibuat manual (gak ke-commit by design,
+  sesuai [[feedback_secrets_no_hardcoded_default]]).
 
 **Masih pending/backlog beneran (bukan salah baca history):**
 - **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)

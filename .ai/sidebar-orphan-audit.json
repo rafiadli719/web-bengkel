@@ -1,0 +1,747 @@
+{
+  "menu_count": 155,
+  "direct_php_count": 763,
+  "likely_count": 73,
+  "likely": [
+    {
+      "file": "barang_history_hp.php",
+      "refs": [
+        "barang.php",
+        "barang_rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "barang_kartu_stok.php",
+      "refs": [
+        "barang.php",
+        "barang_rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "barang_list_improved.php",
+      "refs": [
+        "barang.php"
+      ],
+      "title": "",
+      "heading": "Master Barang  Sistem Klasifikasi ORI/NON-ORI",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "barang_stok_akhir.php",
+      "refs": [
+        "barang.php",
+        "barang_rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "change_pwd.php",
+      "refs": [
+        "access-sync-report.php",
+        "access-sync.php",
+        "akun_biaya.php",
+        "akun_biaya_edit.php",
+        "akun_kas.php",
+        "akun_kas_add.php",
+        "akun_kas_edit.php",
+        "akun_kel_biaya_edit.php",
+        "antarcab_list.php",
+        "approval-diskon.php",
+        "barang.php",
+        "barang_add.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "dokter.php",
+      "refs": [
+        "barang_rak_add.php",
+        "cabang_add.php",
+        "cabang_tipe_add.php",
+        "dokter_add.php",
+        "hjual_jasa_add.php",
+        "kab_add.php",
+        "keping_add.php",
+        "margin_jual_add.php",
+        "mekanik_level_add.php",
+        "motor_kategori_add.php",
+        "motor_pabrik_add.php",
+        "motor_tipe_add.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "do_receive.php",
+      "refs": [],
+      "title": "",
+      "heading": "Terima Barang - DO #",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "do_tracking_update.php",
+      "refs": [],
+      "title": "",
+      "heading": "Update Tracking DO #",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "input_garapan.php",
+      "refs": [
+        "save_garapan.php"
+      ],
+      "title": "",
+      "heading": "INFO PELANGGAN & KENDARAAN",
+      "category": "Servis"
+    },
+    {
+      "file": "input_pelanggan_awal.php",
+      "refs": [
+        "pelanggan_add_enhanced.php",
+        "servis-carinopol.php"
+      ],
+      "title": "",
+      "heading": "Input Data Pelanggan                                                                                               Langkah 1: Input Nomor WhatsApp",
+      "category": "Servis"
+    },
+    {
+      "file": "jasa-input.php",
+      "refs": [
+        "jasa-list.php"
+      ],
+      "title": "",
+      "heading": "Jasa Service                                                                                                           Kelola data jasa service dan perawatan",
+      "category": "Lainnya"
+    },
+    {
+      "file": "jasa-list.php",
+      "refs": [
+        "jasa-input.php"
+      ],
+      "title": "",
+      "heading": "Master Jasa Service \t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\tKelola data jasa service dan perawatan",
+      "category": "Lainnya"
+    },
+    {
+      "file": "kas_keluar.php",
+      "refs": [
+        "kas_keluar_add.php",
+        "kas_keluar_del.php",
+        "kas_keluar_edit.php",
+        "kas_keluar_edit_proses.php",
+        "kas_keluar_proses.php",
+        "menu_config.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "kas_masuk.php",
+      "refs": [
+        "kas_masuk_add.php",
+        "kas_masuk_del.php",
+        "kas_masuk_edit.php",
+        "kas_masuk_edit_proses.php",
+        "kas_masuk_proses.php",
+        "lap_kas_keluar.php",
+        "lap_kas_masuk.php",
+        "lap_stok_keluar.php",
+        "lap_stok_masuk.php",
+        "menu_config.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "kendaraan-history.php",
+      "refs": [
+        "kendaraan.php",
+        "kendaraan_rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "laporan-cancel-servis.php",
+      "refs": [
+        "lap_cancel_servis.php"
+      ],
+      "title": "- Laporan Cancel Servis",
+      "heading": "Laporan Service yang Dibatalkan                                                              Periode:  -",
+      "category": "Laporan"
+    },
+    {
+      "file": "lap_antarcab.php",
+      "refs": [],
+      "title": "",
+      "heading": "Laporan Transaksi Antar Cabang",
+      "category": "Laporan"
+    },
+    {
+      "file": "lap_profit_insentif.php",
+      "refs": [],
+      "title": "",
+      "heading": "Laporan Profit &amp; Insentif                                                                                               Data Access (INSENTIF_JUAL_SERVIS) \u2014",
+      "category": "Laporan"
+    },
+    {
+      "file": "master-keluhan.php",
+      "refs": [
+        "keluhan-proses.php"
+      ],
+      "title": "Master Keluhan - Bengkel System",
+      "heading": "Form Master Keluhan",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_item.php",
+      "refs": [
+        "master_jenis_item_add.php",
+        "master_jenis_item_del.php",
+        "master_jenis_item_edit.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Jenis Item",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_item_add.php",
+      "refs": [
+        "master_jenis_item.php"
+      ],
+      "title": "",
+      "heading": "Tambah Master Jenis Item",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_item_del.php",
+      "refs": [
+        "master_jenis_item.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi Penghapusan Data",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_item_edit.php",
+      "refs": [
+        "master_jenis_item.php"
+      ],
+      "title": "",
+      "heading": "Edit Master Jenis Item",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_motor.php",
+      "refs": [
+        "master_jenis_motor_add.php",
+        "master_jenis_motor_del.php",
+        "master_jenis_motor_edit.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Jenis Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_motor_add.php",
+      "refs": [
+        "master_jenis_motor.php"
+      ],
+      "title": "",
+      "heading": "Tambah Master Jenis Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_motor_del.php",
+      "refs": [
+        "master_jenis_motor.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_jenis_motor_edit.php",
+      "refs": [
+        "master_jenis_motor.php"
+      ],
+      "title": "",
+      "heading": "Edit Master Jenis Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_karyawan_add.php",
+      "refs": [
+        "master_karyawan.php"
+      ],
+      "title": "Tambah Karyawan -",
+      "heading": "Tambah Karyawan Baru",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_karyawan_edit.php",
+      "refs": [
+        "master_karyawan.php"
+      ],
+      "title": "Edit Karyawan -",
+      "heading": "Edit Karyawan",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_kategori_item.php",
+      "refs": [
+        "master_kategori_item_add.php",
+        "master_kategori_item_add_simple.php",
+        "master_kategori_item_del.php",
+        "master_kategori_item_del_simple.php",
+        "master_kategori_item_edit.php",
+        "master_kategori_item_edit_simple.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Kategori Item",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_kategori_motor.php",
+      "refs": [
+        "master_kategori_motor_add.php",
+        "master_kategori_motor_del.php",
+        "master_kategori_motor_edit.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Kategori Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_kategori_motor_add.php",
+      "refs": [
+        "master_kategori_motor.php"
+      ],
+      "title": "",
+      "heading": "Tambah Master Kategori Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_kategori_motor_del.php",
+      "refs": [
+        "master_kategori_motor.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_kategori_motor_edit.php",
+      "refs": [
+        "master_kategori_motor.php"
+      ],
+      "title": "",
+      "heading": "Edit Master Kategori Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_merk_motor.php",
+      "refs": [
+        "master_merk_motor_add.php",
+        "master_merk_motor_del.php",
+        "master_merk_motor_edit.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Merk Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_merk_motor_add.php",
+      "refs": [
+        "master_merk_motor.php"
+      ],
+      "title": "",
+      "heading": "Input Merk Motor Baru",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_merk_motor_del.php",
+      "refs": [
+        "master_merk_motor.php"
+      ],
+      "title": "",
+      "heading": "Hapus Merk Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_merk_motor_edit.php",
+      "refs": [
+        "master_merk_motor.php"
+      ],
+      "title": "",
+      "heading": "Edit Merk Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_nama_barang.php",
+      "refs": [
+        "master_nama_barang_add.php",
+        "master_nama_barang_del.php",
+        "master_nama_barang_edit.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_nama_barang_add.php",
+      "refs": [
+        "master_nama_barang.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_nama_barang_del.php",
+      "refs": [
+        "master_nama_barang.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_nama_barang_edit.php",
+      "refs": [
+        "master_nama_barang.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_perusahaan.php",
+      "refs": [],
+      "title": "",
+      "heading": "Master Perusahaan  Manajemen Data Perusahaan",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_satuan_barang.php",
+      "refs": [
+        "master_satuan_barang_add.php",
+        "master_satuan_barang_del.php",
+        "master_satuan_barang_edit.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Satuan Barang",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_satuan_barang_add.php",
+      "refs": [
+        "master_satuan_barang.php"
+      ],
+      "title": "",
+      "heading": "Tambah Master Satuan Barang",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_satuan_barang_del.php",
+      "refs": [
+        "master_satuan_barang.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_satuan_barang_edit.php",
+      "refs": [
+        "master_satuan_barang.php"
+      ],
+      "title": "",
+      "heading": "Edit Master Satuan Barang",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_detail.php",
+      "refs": [
+        "master_tipe_detail_add_simple.php",
+        "master_tipe_detail_del_simple.php",
+        "master_tipe_detail_edit.php",
+        "master_tipe_detail_edit_simple.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Tipe Detail Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_detail_add_simple.php",
+      "refs": [
+        "master_tipe_detail.php"
+      ],
+      "title": "",
+      "heading": "Input Tipe Detail Motor Baru",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_detail_del_simple.php",
+      "refs": [
+        "master_tipe_detail.php"
+      ],
+      "title": "",
+      "heading": "Hapus Tipe Detail Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_detail_edit_simple.php",
+      "refs": [
+        "master_tipe_detail.php"
+      ],
+      "title": "",
+      "heading": "Edit Tipe Detail Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_header.php",
+      "refs": [
+        "master_tipe_header_add.php",
+        "master_tipe_header_add_simple.php",
+        "master_tipe_header_del.php",
+        "master_tipe_header_del_simple.php",
+        "master_tipe_header_edit.php",
+        "master_tipe_header_edit_simple.php"
+      ],
+      "title": "",
+      "heading": "Pencarian Tipe Header Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_header_add_simple.php",
+      "refs": [
+        "master_tipe_header.php"
+      ],
+      "title": "",
+      "heading": "Input Tipe Header Motor Baru",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_header_del_simple.php",
+      "refs": [
+        "master_tipe_header.php"
+      ],
+      "title": "",
+      "heading": "Hapus Tipe Header Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "master_tipe_header_edit_simple.php",
+      "refs": [
+        "master_tipe_header.php"
+      ],
+      "title": "",
+      "heading": "Edit Tipe Header Motor",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "mekanik_management.php",
+      "refs": [
+        "mekanik.php"
+      ],
+      "title": "",
+      "heading": "Mechanic Management System",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "pelanggan_awal_piutang.php",
+      "refs": [
+        "pelanggan.php",
+        "pelanggan_rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "pengadaan_antarcab_push.php",
+      "refs": [
+        "pengadaan_antarcab.php"
+      ],
+      "title": "",
+      "heading": "Kirim Barang ke Cabang                          Inisiasi Pusat \u2014 Tanpa Request",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "pengadaan_antarcab_terima.php",
+      "refs": [
+        "pengadaan_antarcab.php",
+        "pengadaan_antarcab_detail.php"
+      ],
+      "title": "",
+      "heading": "Konfirmasi Penerimaan Barang",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "penjualan_buat_servis.php",
+      "refs": [
+        "penjualan_buat_servis_proses.php",
+        "penjualan_detail.php",
+        "save_pelanggan_servis.php"
+      ],
+      "title": "",
+      "heading": "Buat Servis dari Nota Penjualan \t\t\t\t\t\t\t\t Nota  &mdash; Cari Pelanggan",
+      "category": "Transaksi/Operasional"
+    },
+    {
+      "file": "profile.php",
+      "refs": [
+        "access-sync-report.php",
+        "access-sync.php",
+        "akun_biaya.php",
+        "akun_biaya_edit.php",
+        "akun_kas.php",
+        "akun_kas_add.php",
+        "akun_kas_edit.php",
+        "akun_kel_biaya_edit.php",
+        "antarcab_list.php",
+        "approval-diskon.php",
+        "barang.php",
+        "barang_add.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "servis-reguler-byr.php",
+      "refs": [
+        "servis_edit_item_byr.php",
+        "servis_edit_paket_byr.php",
+        "servis_hapus_item_byr.php",
+        "servis_hapus_paket_byr.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Servis"
+    },
+    {
+      "file": "setting-highlight-member.php",
+      "refs": [
+        "servis-carinopol.php"
+      ],
+      "title": "Setting Highlight Member -",
+      "heading": "Setting Highlight Kategori Member \t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\tAtur warna highlight untuk setiap kategori member",
+      "category": "Lainnya"
+    },
+    {
+      "file": "setting-threshold-harga.php",
+      "refs": [
+        "alarm-harga-beli.php"
+      ],
+      "title": "",
+      "heading": "Setting Threshold Alarm Harga Beli",
+      "category": "Lainnya"
+    },
+    {
+      "file": "so-item-keluar.php",
+      "refs": [
+        "penyesuaian-stok-otomatis.php",
+        "so-item-keluar-batal.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "so-item-masuk.php",
+      "refs": [
+        "penyesuaian-stok-otomatis.php",
+        "so-item-masuk-batal.php",
+        "so-keluar-add-cetak.php",
+        "so-masuk-add-cetak.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "stok-akhir-result.php",
+      "refs": [
+        "stok-akhir-rst.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Lainnya"
+    },
+    {
+      "file": "supplier_awal_hutang.php",
+      "refs": [
+        "supplier.php"
+      ],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "supplier_pabrik_spart.php",
+      "refs": [],
+      "title": "",
+      "heading": "",
+      "category": "Master/Data Referensi"
+    },
+    {
+      "file": "tipe-motor-kategori.php",
+      "refs": [
+        "item-motor-mapping.php"
+      ],
+      "title": "",
+      "heading": "Perapihan Kategori Tipe Motor                                                                                   Bulk assign `tbtipe_motor.kode_kategori`",
+      "category": "Lainnya"
+    },
+    {
+      "file": "user_management.php",
+      "refs": [
+        "user.php"
+      ],
+      "title": "",
+      "heading": "User Management System",
+      "category": "Lainnya"
+    },
+    {
+      "file": "workorder-input.php",
+      "refs": [
+        "paket.php",
+        "workorder-detail-hapus.php",
+        "workorder-detail-view.php",
+        "workorder-list.php"
+      ],
+      "title": "",
+      "heading": "Work Order (Paket Servis)                                                                                                           Kelola paket servis dengan kombinasi jasa dan barang",
+      "category": "Servis"
+    },
+    {
+      "file": "workorder-list.php",
+      "refs": [
+        "ajax-get-keluhan-workorder-list.php",
+        "master-diskon-periode.php",
+        "paket.php",
+        "workorder-detail-view.php",
+        "workorder-input.php"
+      ],
+      "title": "",
+      "heading": "Daftar Work Order (Paket Servis) \t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\tKelola paket servis dengan kombinasi jasa dan barang",
+      "category": "Servis"
+    }
+  ]
+}
