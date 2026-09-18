@@ -1,7 +1,12 @@
 <?php
+	session_start();
+	if (empty($_SESSION['_iduser'])) {
+		header("location:../index.php");
+		exit;
+	}
 	include "../config/koneksi.php";
-	    
-    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);        
+
+    $cbolevel= mysqli_real_escape_string($koneksi, $_POST['cbolevel']);
 	$txtmarginpersen= mysqli_real_escape_string($koneksi, $_POST['txtmarginpersen']);
 	$txtmarginplus= mysqli_real_escape_string($koneksi, $_POST['txtmarginplus']);    
 	$txtbulat= mysqli_real_escape_string($koneksi, $_POST['txtbulat']);

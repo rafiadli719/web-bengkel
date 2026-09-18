@@ -1,6 +1,12 @@
 <?php
+session_start();
+if (empty($_SESSION['_iduser'])) {
+    header("location:../index.php");
+    exit;
+}
+
 // Aktifkan error reporting
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 // Include file konfigurasi database

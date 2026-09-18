@@ -1,6 +1,11 @@
 <?php
+	session_start();
+	if (empty($_SESSION['_iduser'])) {
+		header("location:../index.php");
+		exit;
+	}
 	include "../config/koneksi.php";
-	
+
 	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
 
 	mysqli_query($koneksi,"INSERT INTO tbrakbarang 

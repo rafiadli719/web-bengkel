@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (empty($_SESSION['_iduser'])) {
+    header("location:../index.php");
+    exit;
+}
 include "../config/koneksi.php";
 include "../config/accurate_config.php";
 
