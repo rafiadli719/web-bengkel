@@ -189,7 +189,7 @@ if(!$suppliers){
                 <div class="breadcrumbs ace-save-state" id="breadcrumbs">
                     <ul class="breadcrumb">
                         <li><i class="ace-icon fa fa-home home-icon"></i> <a href="index.php">Home</a></li>
-                        <li><a href="pesanan_pembelian.php">Pesanan Pembelian</a></li>
+                        <li><a href="pesanan_pembelian_rst.php">Pesanan Pembelian</a></li>
                         <li class="active">Upload Excel</li>
                     </ul>
                 </div>
@@ -334,7 +334,7 @@ if(!$suppliers){
                         <div class="col-md-12" id="actionButtons" style="display:none;">
                             <div class="text-center">
                                 <hr>
-                                <a href="pesanan_pembelian.php" class="btn btn-default btn-lg">
+                                <a href="pesanan_pembelian_rst.php" class="btn btn-default btn-lg">
                                     <i class="fa fa-arrow-left"></i> Kembali
                                 </a>
                                 <button type="button" id="btnProcess" class="btn btn-primary btn-lg" onclick="processUpload()">

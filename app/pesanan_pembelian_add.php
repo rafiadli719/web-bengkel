@@ -503,7 +503,7 @@
 								<a href="#">Pembelian</a>
 							</li>                            
                             <li>
-								<a href="pesanan_pembelian.php">Pesanan Pembelian</a>
+								<a href="pesanan_pembelian_rst.php">Pesanan Pembelian</a>
 							</li>                            
 							<li class="active">Tambah Data</li>
 						</ul><!-- /.breadcrumb -->
@@ -684,7 +684,7 @@
 																			</button>                                                
 																		</div>
 																		<div class="col-xs-3">
-																			<a href="pesanan_pembelian.php">
+																			<a href="pesanan_pembelian_rst.php">
 																			<button class="btn btn-default btn-block" type="button">
 																				<i class="ace-icon fa fa-arrow-left"></i>
 																				Tutup

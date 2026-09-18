@@ -473,7 +473,7 @@
 </div>
 
 <div class="col-xs-12 col-sm-3 no-print">
-    <a href="pesanan_pembelian.php">
+    <a href="pesanan_pembelian_rst.php">
     <button class="btn btn-default btn-block" type="button">
         Tutup
     </button>

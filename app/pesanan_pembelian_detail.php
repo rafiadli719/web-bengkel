@@ -249,7 +249,7 @@
 								<a href="#">Pembelian</a>
 							</li>                            
                             <li>
-								<a href="pesanan_pembelian.php">Pesanan Pembelian</a>
+								<a href="pesanan_pembelian_rst.php">Pesanan Pembelian</a>
 							</li>                            
 							<li class="active">Tambah Data</li>
 						</ul><!-- /.breadcrumb -->
@@ -397,7 +397,7 @@
                                         </a>
                                     </div>
                                     <div class="btn-group">
-                                        <a href="pesanan_pembelian.php" class="btn btn-primary">
+                                        <a href="pesanan_pembelian_rst.php" class="btn btn-primary">
                                             <i class="fa fa-arrow-left"></i> Kembali
                                         </a>
                                     </div>

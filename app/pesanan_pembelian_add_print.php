@@ -240,7 +240,7 @@
 								<a href="#">Pembelian</a>
 							</li>                            
                             <li>
-								<a href="pesanan_pembelian.php">Pesanan Pembelian</a>
+								<a href="pesanan_pembelian_rst.php">Pesanan Pembelian</a>
 							</li>                            
 							<li class="active">Tambah Data</li>
 						</ul><!-- /.breadcrumb -->
