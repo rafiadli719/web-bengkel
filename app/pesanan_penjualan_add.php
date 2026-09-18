@@ -143,7 +143,7 @@
         if(isset($_POST['btnsimpan'])) {
             $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);            
             if($txttotal_harga=='0') {
-                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_pembelian_add.php');</script>";			                            
+                echo"<script>window.alert('Belum ada Item barang yang dipilih. Transaksi tidak dapat disimpan!');window.location=('pesanan_penjualan_add.php');</script>";
             } else {
             // insert ke order header                
                 date_default_timezone_set('Asia/Jakarta');
