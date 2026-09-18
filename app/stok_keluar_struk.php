@@ -1,4 +1,9 @@
 <?php
+    session_start();
+    if (empty($_SESSION['_iduser'])) {
+        header("location:../index.php");
+        exit;
+    }
     include "../config/koneksi.php";
     include "_template/_nota_pdf_parts.php";
 	$notrx = mysqli_real_escape_string($koneksi, $_GET['snopesanan']);

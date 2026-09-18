@@ -1,4 +1,6 @@
 <?php
+    session_start();
+    if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
     include "../config/koneksi.php";
                 
     date_default_timezone_set('Asia/Jakarta');
