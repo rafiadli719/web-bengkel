@@ -80,48 +80,48 @@
         if($txtflt=='asc') {
             IF($sql_cari=="") {
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_keluar_header 
-                            WHERE 
-                            (no_transaksi like '%".$txtkey."%') OR 
-                            (note like '%".$txtkey."%') 
+                            WHERE kd_cabang='$kd_cabang' AND 
+                            ((no_transaksi like '%".$txtkey."%') OR 
+                            (note like '%".$txtkey."%')) 
                             order by ".$sql_urut." asc"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_keluar_header 
-                                                WHERE 
-                                                (no_transaksi like '%".$txtkey."%') OR 
-                            (note like '%".$txtkey."%')");			
+                                                WHERE kd_cabang='$kd_cabang' AND 
+                                                ((no_transaksi like '%".$txtkey."%') OR 
+                            (note like '%".$txtkey."%'))");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_keluar_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_keluar_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                        
             }
         } else {
             IF($sql_cari=="") {
                 $sql_query="SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_keluar_header 
-                            WHERE 
-                            (no_transaksi like '%".$txtkey."%') OR 
-                            (note like '%".$txtkey."%') 
+                            WHERE kd_cabang='$kd_cabang' AND 
+                            ((no_transaksi like '%".$txtkey."%') OR 
+                            (note like '%".$txtkey."%')) 
                             order by ".$sql_urut." desc"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_keluar_header 
-                                                WHERE 
-                                                (no_transaksi like '%".$txtkey."%') OR 
-                            (note like '%".$txtkey."%')");			
+                                                WHERE kd_cabang='$kd_cabang' AND 
+                                                ((no_transaksi like '%".$txtkey."%') OR 
+                            (note like '%".$txtkey."%'))");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_keluar_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_keluar_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                                    
             }
