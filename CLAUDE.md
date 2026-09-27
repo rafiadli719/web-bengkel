@@ -178,6 +178,29 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   (`KPL-20260927-0005`, "[TEST-ALUR] E-tolak") yang lolos dari cleanup
   sesi REWORK-to-Warranty sebelumnya — dihapus via script sekali-pakai
   yang langsung dihapus lagi setelah jalan (gak masuk git).
+- **N+1 minor 2 POST handler `setoran_keuangan.php` SELESAI** (commit
+  `eb2da78`, 2026-09-27). Handler `terima_setoran` (baris ~718, tadinya
+  3 query/item loop) dan `kembalikan_ke_cs` (baris ~1103, tadinya 1
+  query/item loop) dibatch pakai `WHERE ... IN (...)`. Behavior-
+  preserving, kolom/kondisi WHERE sama persis dgn query original — cuma
+  divalidasi via review kode + php lint (gak ada data live "Sedang
+  Dibawa Kurir" buat E2E browser saat itu).
+- **`includes/sidebar.css` modul Keuangan Kasir dibuat** (commit
+  `8f6dccb`, `b352eee`, 2026-09-27). File ini gak pernah ada di repo
+  (404 dari awal) — dipakai `includes/sidebar.php` di 11 halaman
+  (`setoran_keuangan`, `keuangan_pusat`, `master_akun`,
+  `master_nama_transaksi`, `master_rekening_cabang`,
+  `monitoring_setoran`, `setoran_bank_rekap`,
+  `konfirmasi_buka_transaksi`, `closing_revisi_admin`, `keping`),
+  sidebar tampil polos tanpa styling di semua halaman itu. Divalidasi
+  E2E browser (session admin live) di 2 halaman beda, sidebar dark +
+  kategori collapsible + active state render benar. Sempat coba ganti
+  animasi `max-height` accordion ke `grid-template-rows` (0fr/1fr) buat
+  fix temuan linter impeccable "layout-transition", tapi gagal ditest
+  live (height tetap 0px walau class `.open` ke-apply) — di-revert balik
+  ke `max-height` (commit `b352eee`), temuan linter di-suppress via
+  `.impeccable/config.json` dengan alasan tercatat (accordion click-
+  triggered, max 4 kategori, bukan animasi scroll/frequent).
 
 **Masih pending/backlog beneran (bukan salah baca history):**
 - **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
@@ -189,9 +212,6 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
 - **Task 34** (retire `masterkey.php`) — masih blocked Task 21 (migrasi
   SSO bridge `priori-tech` → `tbuser`), Task 21 butuh koordinasi
   eksternal, belum ada progress baru.
-- N+1 minor di 2 POST handler `setoran_keuangan.php` (baris ~718
-  `terima_setoran`, baris ~1103 kembalikan-ke-CS) — N dibatasi pilihan
-  user, bukan listing tanpa limit, severity rendah, opsional dikerjain.
 - 3 gap desain Modul Komplain yang sengaja di-skip (spec ambigu, butuh
   keputusan Rafi): uploader data massal komplain, idempotent submit
   (dedup 60 detik), threshold No-show 7 hari configurable.
@@ -199,3 +219,7 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `app/koneksi.php` dan file-file lama sejenis — utang teknis
   codebase-wide, bukan regresi baru, belum dibereskan (scope lintas
   banyak file, belum dijadwalkan).
+- Sidebar 9 halaman lain di modul Keuangan Kasir (selain 2 yang
+  di-screenshot: `setoran_keuangan`, `keuangan_pusat`) belum dicek
+  visual satu-satu — CSS sama file jadi kemungkinan besar aman, tapi
+  belum diverifikasi eksplisit.
