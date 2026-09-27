@@ -1,0 +1,200 @@
+/* Sidebar admin modul Keuangan Kasir — dipakai includes/sidebar.php di semua
+   halaman kasir/keuangan (setoran_keuangan, keuangan_pusat, master_*, dst).
+   File ini sebelumnya tidak ada (404) sehingga sidebar tampil sebagai list
+   link polos tanpa styling. Pakai CSS var (--primary-color dst) yang sudah
+   didefinisikan tiap halaman pemanggil di :root. */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+    background: #1e293b;
+    color: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.25s ease;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-brand i {
+    color: var(--primary-color, #007bff);
+    font-size: 18px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 10px;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 2px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar .nav-link i {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    background: var(--primary-color, #007bff);
+    color: #fff;
+}
+
+.sidebar .nav-link.sub-item {
+    padding-left: 30px;
+    font-size: 13.5px;
+}
+
+.nav-category {
+    margin-bottom: 4px;
+}
+
+.nav-cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+
+.nav-cat-header:hover {
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+}
+
+.nav-category.has-active .nav-cat-header {
+    color: #fff;
+}
+
+.cat-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cat-icon {
+    width: 16px;
+    text-align: center;
+}
+
+.nav-chevron {
+    font-size: 11px;
+    transition: transform 0.2s ease;
+}
+
+.nav-chevron.rotated {
+    transform: rotate(90deg);
+}
+
+.nav-cat-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+}
+
+.nav-cat-items.open {
+    max-height: 600px;
+}
+
+.sidebar-footer {
+    padding: 14px 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Toggle button — hidden di desktop, muncul di mobile */
+.admin-sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1100;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color, #007bff);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 999;
+}
+
+body.admin-sidebar-open .admin-sidebar-backdrop {
+    display: block;
+}
+
+.main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    min-height: 100vh;
+    padding: 24px;
+    transition: margin-left 0.25s ease, width 0.25s ease;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar-toggle {
+        display: flex;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 16px;
+    }
+}
