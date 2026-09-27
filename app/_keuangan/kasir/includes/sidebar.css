@@ -126,17 +126,13 @@
 }
 
 .nav-cat-items {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.25s ease;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
 }
 
 .nav-cat-items.open {
-    grid-template-rows: 1fr;
-}
-
-.nav-cat-items-inner {
-    overflow: hidden;
+    max-height: 600px;
 }
 
 .sidebar-footer {
@@ -180,6 +176,7 @@ body.admin-sidebar-open .admin-sidebar-backdrop {
     width: calc(100% - 260px);
     min-height: 100vh;
     padding: 24px;
+    transition: margin-left 0.25s ease, width 0.25s ease;
 }
 
 @media (max-width: 768px) {

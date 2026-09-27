@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "app/_keuangan/kasir/includes/sidebar.css"
+        ],
+        "createdAt": "2026-09-27T15:29:36.658Z",
+        "reason": "Tested grid-template-rows alternative live in browser (Rafi's session 2026-09-27) — computed height stayed 0px even with .open class applied, unreliable in this codebase's rendering context. Reverted to max-height. Accordion is click-triggered (max 4 categories, rare interaction), not scroll/frequent — reflow cost negligible in practice."
+      }
+    ]
+  }
+}
