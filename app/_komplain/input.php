@@ -14,32 +14,32 @@ include __DIR__ . '/_ace_header.php';
 ?>
   <div class="card"><div class="card-body">
     <form id="formKomplain">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">Nama Pelanggan</label>
+      <div class="row">
+        <div class="col-md-6 form-group">
+          <label class="control-label">Nama Pelanggan</label>
           <input type="text" class="form-control" name="nama_pelanggan" required>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">No HP</label>
+        <div class="col-md-6 form-group">
+          <label class="control-label">No HP</label>
           <input type="text" class="form-control" name="no_hp" required>
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Nopol</label>
+        <div class="col-md-4 form-group">
+          <label class="control-label">Nopol</label>
           <input type="text" class="form-control text-uppercase" name="nopol" id="nopolInput" required>
-          <div id="riwayatNopol" class="form-text"></div>
+          <div id="riwayatNopol" class="help-block"></div>
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Kategori Komplain</label>
-          <select class="form-select" name="kode_kategori" required>
+        <div class="col-md-4 form-group">
+          <label class="control-label">Kategori Komplain</label>
+          <select class="form-control" name="kode_kategori" required>
             <option value="">-- Pilih Kategori --</option>
             <?php foreach ($kategoriList as $k): ?>
             <option value="<?= htmlspecialchars($k['kode_kategori']) ?>"><?= htmlspecialchars($k['nama_kategori']) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Channel Lapor</label>
-          <select class="form-select" name="channel_lapor" required>
+        <div class="col-md-4 form-group">
+          <label class="control-label">Channel Lapor</label>
+          <select class="form-control" name="channel_lapor" required>
             <option value="">-- Pilih --</option>
             <option>Telepon</option>
             <option>WA</option>
@@ -47,20 +47,20 @@ include __DIR__ . '/_ace_header.php';
             <option>Lainnya</option>
           </select>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">No Service Asli <span class="text-danger">*</span></label>
-          <select class="form-select" name="no_service_asli" id="noServiceAsliSelect" required>
+        <div class="col-md-6 form-group">
+          <label class="control-label">No Service Asli <span class="text-danger">*</span></label>
+          <select class="form-control" name="no_service_asli" id="noServiceAsliSelect" required>
             <option value="">-- Isi Nopol dulu --</option>
           </select>
-          <div class="form-text">Service yang jadi dasar komplain ini. Wajib — dipakai kalau nanti komplain berujung REWORK (biar masuk garansi, bukan servis reguler/jemput).</div>
+          <div class="help-block">Service yang jadi dasar komplain ini. Wajib — dipakai kalau nanti komplain berujung REWORK (biar masuk garansi, bukan servis reguler/jemput).</div>
         </div>
-        <div class="col-12">
-          <label class="form-label">Detail Keluhan</label>
+        <div class="col-md-12 form-group">
+          <label class="control-label">Detail Keluhan</label>
           <textarea class="form-control" name="detail_keluhan" rows="3" required></textarea>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary mt-3">Simpan Komplain</button>
-      <div id="hasilSubmit" class="mt-2"></div>
+      <button type="submit" class="btn btn-primary" style="margin-top:10px">Simpan Komplain</button>
+      <div id="hasilSubmit" style="margin-top:8px"></div>
     </form>
   </div></div>
 <?php include __DIR__ . '/_ace_footer.php'; ?>
