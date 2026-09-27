@@ -50,17 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $list = $koneksi_komplain->query("SELECT * FROM tblkomplain_kategori ORDER BY nama_kategori")->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Master Kategori Komplain';
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Master Kategori Komplain — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Master Kategori Komplain</h4>
   <?php if ($pesan): ?><div class="alert alert-success"><?= htmlspecialchars($pesan) ?></div><?php endif; ?>
 
   <div class="card mb-4"><div class="card-body">
@@ -103,6 +95,6 @@ $list = $koneksi_komplain->query("SELECT * FROM tblkomplain_kategori ORDER BY na
     <?php endforeach; ?>
     </tbody>
   </table>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 </body>
 </html>

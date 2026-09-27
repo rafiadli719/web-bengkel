@@ -11,17 +11,9 @@ $stmt = $koneksi_komplain->prepare(
 );
 $stmt->execute();
 $daftar = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Eskalasi Manajemen (Revisi ke-3)';
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Eskalasi Manajemen — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Eskalasi Manajemen (Revisi ke-3)</h4>
   <table class="table table-bordered bg-white">
     <thead><tr><th>No Komplain</th><th>Cabang</th><th>Nopol</th><th>Jumlah Revisi</th><th>Aging (hari)</th><th>Aksi</th></tr></thead>
     <tbody>
@@ -41,7 +33,7 @@ $daftar = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
     </tbody>
   </table>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 <script>
 function keputusan(id, keputusanFinal) {
     var fd = new FormData();

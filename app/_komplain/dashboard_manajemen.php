@@ -22,18 +22,9 @@ $approvalRatePic = $koneksi_komplain->query(
        SUM(keputusan_kepala_cabang = 'Setuju') / NULLIF(COUNT(keputusan_kepala_cabang), 0) AS approval_rate
      FROM tblkomplain WHERE keputusan_kepala_cabang IS NOT NULL GROUP BY pic_kode_karyawan"
 )->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Dashboard Komplain — Lintas Cabang';
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard Komplain Manajemen — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Dashboard Komplain — Lintas Cabang</h4>
-
   <h6>Jumlah Komplain per Cabang & Kategori</h6>
   <table class="table table-bordered bg-white mb-4">
     <thead><tr><th>Cabang</th><th>Kategori</th><th>Jumlah</th></tr></thead>
@@ -70,6 +61,6 @@ $approvalRatePic = $koneksi_komplain->query(
     <?php endforeach; ?>
     </tbody>
   </table>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 </body>
 </html>

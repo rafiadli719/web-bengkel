@@ -9,17 +9,9 @@ if (!cekPermissionKomplain('komplain_input')) {
 $stmtKategori = $koneksi_komplain->prepare("SELECT kode_kategori, nama_kategori FROM tblkomplain_kategori WHERE is_active = 'active' ORDER BY nama_kategori");
 $stmtKategori->execute();
 $kategoriList = $stmtKategori->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Input Komplain Pelanggan';
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Input Komplain — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Input Komplain Pelanggan</h4>
   <div class="card"><div class="card-body">
     <form id="formKomplain">
       <div class="row g-3">
@@ -71,7 +63,7 @@ $kategoriList = $stmtKategori->fetchAll(PDO::FETCH_ASSOC);
       <div id="hasilSubmit" class="mt-2"></div>
     </form>
   </div></div>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 <script>
 document.getElementById('nopolInput').addEventListener('blur', function () {
     var nopol = this.value.trim();

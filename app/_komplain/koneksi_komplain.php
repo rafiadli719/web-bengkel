@@ -13,12 +13,16 @@ if (empty($_SESSION['_iduser'])) {
 // kode_karyawan_aktif — session cuma simpan _iduser (tbuser.id), bukan
 // kode_karyawan langsung. Lookup sekali per request (sama pola koneksi_kasir.php).
 $id_user_aktif = (int) $_SESSION['_iduser'];
-$stmtUser = mysqli_prepare($koneksi, "SELECT kode_karyawan, kode_cabang FROM tbuser WHERE id = ?");
+$stmtUser = mysqli_prepare($koneksi, "SELECT kode_karyawan, kode_cabang, nama_user, foto_user FROM tbuser WHERE id = ?");
 mysqli_stmt_bind_param($stmtUser, 'i', $id_user_aktif);
 mysqli_stmt_execute($stmtUser);
 $resUser = mysqli_stmt_get_result($stmtUser);
 $rowUser = mysqli_fetch_assoc($resUser);
 $kode_karyawan_aktif = $rowUser['kode_karyawan'] ?? null;
+// Buat navbar tema ACE global (samain kayak servis-reguler.php dkk) — jangan
+// query ulang di tiap halaman komplain, sekali di sini cukup.
+$_nama = $rowUser['nama_user'] ?? '';
+$foto_user = $rowUser['foto_user'] ?? '';
 // kode_cabang_aktif — modul komplain ikut pola tbuser.kode_cabang (teks
 // pendek, mis. "PST"), BUKAN tbcabang.cabang_ref_kode (numerik) — sesuai
 // Global Constraint plan modul komplain (beda dari modul kasir yang FK-nya

@@ -29,18 +29,9 @@ if ($bolehCloseNonRework) {
     $stmt2->execute([':cabang' => $kode_cabang_aktif]);
     $nonRework = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 }
+$pageTitle = 'Antrian Approval Komplain — ' . ($kode_cabang_aktif ?? '-');
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Antrian Approval Komplain — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Antrian Approval Komplain — <?= htmlspecialchars($kode_cabang_aktif ?? '-') ?></h4>
-
   <?php if ($bolehApproveRework): ?>
   <h6 class="mt-4">Rework — Menunggu Keputusan</h6>
   <table class="table table-bordered bg-white">
@@ -83,7 +74,7 @@ if ($bolehCloseNonRework) {
     </tbody>
   </table>
   <?php endif; ?>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 <script>
 function keputusanRework(id, keputusan) {
     var fd = new FormData();

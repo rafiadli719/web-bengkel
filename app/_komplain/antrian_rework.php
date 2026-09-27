@@ -11,17 +11,9 @@ $stmt = $koneksi_komplain->prepare(
 );
 $stmt->execute([':pic' => $kode_karyawan_aktif]);
 $antrian = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Antrian & Usulan Rework — ' . $kode_karyawan_aktif;
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Antrian Rework — Fit Motor</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4 class="mb-3">Antrian & Usulan Rework — <?= htmlspecialchars($kode_karyawan_aktif) ?></h4>
   <table class="table table-bordered bg-white">
     <thead><tr><th>No Komplain</th><th>Nopol</th><th>Keluhan</th><th>Status</th><th>Aksi</th></tr></thead>
     <tbody>
@@ -41,7 +33,7 @@ $antrian = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
     </tbody>
   </table>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 
 <div class="modal" id="modalUsulan" tabindex="-1">
   <div class="modal-dialog">

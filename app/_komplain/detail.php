@@ -19,17 +19,9 @@ if (!$isManajemen && $komplain['kode_cabang'] !== $kode_cabang_aktif) {
 $stmtLog = $koneksi_komplain->prepare("SELECT * FROM tblkomplain_log WHERE komplain_id = :id ORDER BY created_at ASC");
 $stmtLog->execute([':id' => $id]);
 $logs = $stmtLog->fetchAll(PDO::FETCH_ASSOC);
+$pageTitle = 'Detail Komplain ' . $komplain['no_komplain'];
+include __DIR__ . '/_ace_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Detail Komplain <?= htmlspecialchars($komplain['no_komplain']) ?></title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-  <h4>Detail Komplain <?= htmlspecialchars($komplain['no_komplain']) ?></h4>
   <div class="card mb-3"><div class="card-body">
     <dl class="row mb-0">
       <dt class="col-sm-3">Pelanggan</dt><dd class="col-sm-9"><?= htmlspecialchars($komplain['nama_pelanggan']) ?> (<?= htmlspecialchars($komplain['no_hp']) ?>)</dd>
@@ -58,6 +50,6 @@ $logs = $stmtLog->fetchAll(PDO::FETCH_ASSOC);
     </li>
     <?php endforeach; ?>
   </ul>
-</div>
+<?php include __DIR__ . '/_ace_footer.php'; ?>
 </body>
 </html>
