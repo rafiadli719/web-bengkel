@@ -714,34 +714,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['terima_setoran'])) {
         try {
             $success_count = 0;
             $received_setorans = []; // Untuk menyimpan data setoran yang diterima
-            
-            foreach ($setoran_ids as $setoran_id) {
-                // Get setoran data before update
-                $sql_get_detail = "SELECT * FROM setoran_keuangan_closing_kasir WHERE id = ? AND status = 'Sedang Dibawa Kurir'";
-                $stmt_get_detail = $pdo->prepare($sql_get_detail);
-                $stmt_get_detail->execute([$setoran_id]);
-                $setoran_detail = $stmt_get_detail->fetch(PDO::FETCH_ASSOC);
-                
-                if ($setoran_detail) {
-                    $sql_update = "UPDATE setoran_keuangan_closing_kasir SET 
-                                  status = 'Diterima Staff Keuangan', 
-                                  updated_by = ?, 
-                                  updated_at = NOW()
-                                  WHERE id = ? AND status = 'Sedang Dibawa Kurir'";
-                    $stmt_update = $pdo->prepare($sql_update);
-                    if ($stmt_update->execute([$kode_karyawan, $setoran_id])) {
-                        if ($stmt_update->rowCount() > 0) {
-                            $success_count++;
-                            $received_setorans[] = $setoran_detail; // Simpan data untuk bukti penerimaan
-                            
-                            $sql_update_kasir = "UPDATE kasir_transactions_closing_kasir SET 
-                                                deposit_status = 'Diterima Staff Keuangan'
-                                                WHERE kode_setoran = ? AND deposit_status = 'Sedang Dibawa Kurir'";
-                            $stmt_update_kasir = $pdo->prepare($sql_update_kasir);
-                            $stmt_update_kasir->execute([$setoran_detail['kode_setoran']]);
-                        }
-                    }
-                }
+
+            // Ambil semua detail setoran valid dalam 1 query (hindari N+1)
+            $id_placeholders = implode(',', array_fill(0, count($setoran_ids), '?'));
+            $sql_get_detail = "SELECT * FROM setoran_keuangan_closing_kasir WHERE id IN ($id_placeholders) AND status = 'Sedang Dibawa Kurir'";
+            $stmt_get_detail = $pdo->prepare($sql_get_detail);
+            $stmt_get_detail->execute($setoran_ids);
+            $received_setorans = $stmt_get_detail->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($received_setorans) {
+                $valid_ids = array_column($received_setorans, 'id');
+                $valid_id_placeholders = implode(',', array_fill(0, count($valid_ids), '?'));
+                $sql_update = "UPDATE setoran_keuangan_closing_kasir SET
+                              status = 'Diterima Staff Keuangan',
+                              updated_by = ?,
+                              updated_at = NOW()
+                              WHERE id IN ($valid_id_placeholders) AND status = 'Sedang Dibawa Kurir'";
+                $stmt_update = $pdo->prepare($sql_update);
+                $stmt_update->execute(array_merge([$kode_karyawan], $valid_ids));
+                $success_count = $stmt_update->rowCount();
+
+                $kode_setoran_list = array_values(array_unique(array_column($received_setorans, 'kode_setoran')));
+                $ks_placeholders = implode(',', array_fill(0, count($kode_setoran_list), '?'));
+                $sql_update_kasir = "UPDATE kasir_transactions_closing_kasir SET
+                                    deposit_status = 'Diterima Staff Keuangan'
+                                    WHERE kode_setoran IN ($ks_placeholders) AND deposit_status = 'Sedang Dibawa Kurir'";
+                $stmt_update_kasir = $pdo->prepare($sql_update_kasir);
+                $stmt_update_kasir->execute($kode_setoran_list);
             }
 
             $pdo->commit();
@@ -1098,19 +1097,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kembalikan_ke_cs'])) {
                 $catatan_kembalikan .= " (Termasuk sumber transaksi: {$source_transaction})";
             }
             
-            // Update all related transactions
+            // Update all related transactions dalam 1 query (hindari N+1)
             $updated_count = 0;
-            foreach ($transaksi_dikembalikan as $kode_trans) {
-                $sql_update = "UPDATE kasir_transactions_closing_kasir SET 
-                              deposit_status = 'Dikembalikan ke CS',
-                              catatan_validasi = ?,
-                              validasi_at = NOW(),
-                              validasi_by = ?
-                              WHERE kode_transaksi = ? AND kode_setoran = ?";
-                $stmt_update = $pdo->prepare($sql_update);
-                $stmt_update->execute([$catatan_kembalikan, $kode_karyawan_aktif, $kode_trans, $data_transaksi['kode_setoran']]);
-                $updated_count += $stmt_update->rowCount();
-            }
+            $tx_placeholders = implode(',', array_fill(0, count($transaksi_dikembalikan), '?'));
+            $sql_update = "UPDATE kasir_transactions_closing_kasir SET
+                          deposit_status = 'Dikembalikan ke CS',
+                          catatan_validasi = ?,
+                          validasi_at = NOW(),
+                          validasi_by = ?
+                          WHERE kode_transaksi IN ($tx_placeholders) AND kode_setoran = ?";
+            $stmt_update = $pdo->prepare($sql_update);
+            $params = array_merge([$catatan_kembalikan, $kode_karyawan_aktif], $transaksi_dikembalikan, [$data_transaksi['kode_setoran']]);
+            $stmt_update->execute($params);
+            $updated_count = $stmt_update->rowCount();
             
             if ($updated_count > 0) {
                 // Update setoran_keuangan_closing_kasir status
