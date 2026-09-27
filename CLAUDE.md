@@ -101,10 +101,10 @@ Dashboard checklist-projek menyediakan API RESTful lengkap:
 Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md` (34 task).
 History detail tiap update (2026-09-03 s/d 2026-09-07) dipindah ke
 `.ai/changelog/2026-09-kasir-keuangan-merge-history.md` — baca situ kalau butuh jejak
-keputusan lama. Status TERKINI ada di section "Status Ringkas per 2026-09-13" di bawah,
+keputusan lama. Status TERKINI ada di section "Status Ringkas per 2026-09-27" di bawah,
 itu satu-satunya sumber kebenaran, jangan percaya baris history mana pun tanpa cek situ dulu.
 
-## Status Ringkas per 2026-09-13 (baca INI dulu, bukan scroll history di atas)
+## Status Ringkas per 2026-09-27 (baca INI dulu, bukan scroll history di atas)
 
 Log di atas ("Update YYYY-MM-DD ...") adalah jurnal historis — akurat
 PADA SAAT ditulis, tapi bisa jadi basi kalau gak ada entry baru yang
@@ -158,6 +158,26 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `putenv()` DB_HOST/DB_USER/DB_PASS/DB_NAME. Kalau setup ulang di mesin
   lain, kedua file itu harus dibuat manual (gak ke-commit by design,
   sesuai [[feedback_secrets_no_hardcoded_default]]).
+- **Modul Komplain — tema ACE global (navbar/sidebar/footer) SELESAI &
+  LIVE** (commit `f3c158a`, `bbc7006`, 2026-09-27). 7 halaman
+  (`antrian_approval.php`, `antrian_rework.php`, `dashboard_manajemen.php`,
+  `detail.php`, `eskalasi_manajemen.php`, `input.php`,
+  `master_kategori.php`) tadinya standalone Bootstrap5+CDN, gak nyambung
+  sidebar/navbar global — sekarang pakai partial baru
+  `app/_komplain/_ace_header.php` / `_ace_footer.php` (include
+  `menu_dashboard.php`, `lib/logo.php`, `lib/footer.php`, sama pola
+  `servis-reguler.php` dkk). `koneksi_komplain.php` nambah `$_nama`/
+  `$foto_user` dari `tbuser` buat navbar. `export.php` gak disentuh (murni
+  download xlsx). Commit kedua (`bbc7006`) rapiin grid form
+  `input.php` dari class Bootstrap5 (`row g-3`, `form-label`,
+  `form-select`) ke Bootstrap3 (`form-group`, `control-label`,
+  `form-control`) biar match CSS tema ACE. Divalidasi E2E browser pakai
+  session admin live (bukan bikin akun test baru — udah ada sesi aktif),
+  semua 7 halaman render sidebar/navbar/breadcrumb/footer benar. Sekalian
+  bersih-bersih data test nyasar `tblkomplain.id=10`
+  (`KPL-20260927-0005`, "[TEST-ALUR] E-tolak") yang lolos dari cleanup
+  sesi REWORK-to-Warranty sebelumnya — dihapus via script sekali-pakai
+  yang langsung dihapus lagi setelah jalan (gak masuk git).
 
 **Masih pending/backlog beneran (bukan salah baca history):**
 - **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
