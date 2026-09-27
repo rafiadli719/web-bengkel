@@ -83,6 +83,7 @@ function isActive(string $page, string $current): string {
                 <i class="fas fa-chevron-right nav-chevron <?= chevRot('laporan', $active_cat) ?>"></i>
             </div>
             <div class="nav-cat-items <?= catOpen('laporan', $active_cat) ?>" id="cat-laporan">
+              <div class="nav-cat-items-inner">
                 <a href="detail_pemasukan.php" class="nav-link sub-item <?= isActive('detail_pemasukan.php', $current_page) ?>">
                     <i class="fas fa-arrow-circle-down"></i><span>Detail Pemasukan</span>
                 </a>
@@ -92,6 +93,7 @@ function isActive(string $page, string $current): string {
                 <a href="detail_omset.php" class="nav-link sub-item <?= isActive('detail_omset.php', $current_page) ?>">
                     <i class="fas fa-chart-line"></i><span>Detail Omset</span>
                 </a>
+              </div>
             </div>
         </div>
 
@@ -104,6 +106,7 @@ function isActive(string $page, string $current): string {
                 <i class="fas fa-chevron-right nav-chevron <?= chevRot('master', $active_cat) ?>"></i>
             </div>
             <div class="nav-cat-items <?= catOpen('master', $active_cat) ?>" id="cat-master">
+              <div class="nav-cat-items-inner">
                 <a href="master_akun.php" class="nav-link sub-item <?= isActive('master_akun.php', $current_page) ?>">
                     <i class="fas fa-users-cog"></i><span>Master Akun</span>
                 </a>
@@ -127,6 +130,7 @@ function isActive(string $page, string $current): string {
                     <i class="fas fa-university"></i><span>Master Rekening</span>
                 </a>
                 <?php endif; ?>
+              </div>
             </div>
         </div>
 
@@ -140,6 +144,7 @@ function isActive(string $page, string $current): string {
                 <i class="fas fa-chevron-right nav-chevron <?= chevRot('operasional', $active_cat) ?>"></i>
             </div>
             <div class="nav-cat-items <?= catOpen('operasional', $active_cat) ?>" id="cat-operasional">
+              <div class="nav-cat-items-inner">
                 <a href="index_kasir.php" class="nav-link sub-item <?= isActive('index_kasir.php', $current_page) ?>">
                     <i class="fas fa-store"></i><span>Dashboard Kasir</span>
                 </a>
@@ -151,6 +156,7 @@ function isActive(string $page, string $current): string {
                     <i class="fas fa-code-branch"></i><span>Approval Revisi Closing</span>
                 </a>
                 <?php endif; ?>
+              </div>
             </div>
         </div>
         <?php endif; ?>
@@ -165,6 +171,7 @@ function isActive(string $page, string $current): string {
                 <i class="fas fa-chevron-right nav-chevron <?= chevRot('keuangan', $active_cat) ?>"></i>
             </div>
             <div class="nav-cat-items <?= catOpen('keuangan', $active_cat) ?>" id="cat-keuangan">
+              <div class="nav-cat-items-inner">
                 <a href="setoran_keuangan.php" class="nav-link sub-item <?= isActive('setoran_keuangan.php', $current_page) ?>">
                     <i class="fas fa-hand-holding-usd"></i><span>Manajemen Setoran</span>
                 </a>
@@ -177,6 +184,7 @@ function isActive(string $page, string $current): string {
                 <a href="monitoring_setoran.php" class="nav-link sub-item <?= isActive('monitoring_setoran.php', $current_page) ?>">
                     <i class="fas fa-chart-line"></i><span>Monitoring Setoran</span>
                 </a>
+              </div>
             </div>
         </div>
         <?php endif; ?>
