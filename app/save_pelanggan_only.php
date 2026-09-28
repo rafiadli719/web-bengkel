@@ -111,13 +111,13 @@ try {
         $types = "ssssssssssssssss";
         
         if (!empty($google_maps)) {
-            $update_sql .= ", google_maps_link = ?";
+            $update_sql .= ", link_gmaps = ?";
             $params[] = $google_maps;
             $types .= "s";
         }
         
         if (!empty($foto_rumah)) {
-            $update_sql .= ", foto_rumah = ?";
+            $update_sql .= ", foto_tampak_rumah = ?";
             $params[] = $foto_rumah;
             $types .= "s";
         }
@@ -138,13 +138,13 @@ try {
                        telephone, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, 
                        patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, 
                        id_panggilan, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id, 
-                       gender, valid_tgl_lahir, informasi_sumber, google_maps_link, foto_rumah) 
+                       gender, valid_tgl_lahir, informasi_sumber, link_gmaps, foto_tampak_rumah) 
                       VALUES 
                       (?, ?, ?, ?, ?, '', '', ?, '', 'WA', '', 0, 'C', '3', '001', ?, 
-                       '', '', '', 0, '0000-00-00', ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                       '', '', '', 0, CURDATE(), ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = mysqli_prepare($koneksi, $insert_sql);
-        mysqli_stmt_bind_param($stmt, "sssssssssssiiiissss", 
+        mysqli_stmt_bind_param($stmt, "ssssssssssiiiisssss", 
                               $customer_code, $nama, $alamat, $kota, $provinsi, $nowa, $patokan, 
                               $tgl_lahir_formatted, $bulan_pajak, $tahun_pajak, $merek_id, 
                               $tipe_id, $jenis_id, $warna_id, $gender, $valid_tgl_lahir, 
@@ -165,23 +165,47 @@ try {
     $vehicle_exists = mysqli_num_rows($vehicle_result) > 0;
     mysqli_stmt_close($check_vehicle);
     
+    // tblkendaraan menyimpan nama teks tipe/jenis/warna (NOT NULL tanpa default)
+    // di samping kode-nya, sama seperti save_pelanggan_servis.php & save_kendaraan.php.
+    $lookupNama = function ($sql, $id) use ($koneksi) {
+        $nama_hasil = '';
+        $st = mysqli_prepare($koneksi, $sql);
+        if ($st) {
+            mysqli_stmt_bind_param($st, "i", $id);
+            mysqli_stmt_execute($st);
+            $res = mysqli_stmt_get_result($st);
+            if ($res && $row = mysqli_fetch_row($res)) {
+                $nama_hasil = (string) $row[0];
+            }
+            mysqli_stmt_close($st);
+        }
+        return $nama_hasil;
+    };
+    $tipe_nama = $lookupNama("SELECT tipe FROM tbtipe_motor WHERE kode_tipe = ?", (int) $tipe_id);
+    $jenis_nama = $lookupNama("SELECT jenis FROM tbjenis_motor WHERE kd = ?", (int) $jenis_id);
+    $warna_nama = $lookupNama("SELECT warna FROM tbwarna WHERE id = ?", (int) $warna_id);
+    $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
+    $tahun_rakit = $tahun_pajak;
+    $alamat_kendaraan = mb_substr($alamat, 0, 50); // kolom alamat varchar(50)
+
     if (!$vehicle_exists) {
         // Insert vehicle data
-        $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
-        $insert_vehicle = mysqli_prepare($koneksi, "INSERT INTO tblkendaraan 
-                                        (nopolisi, pemilik, alamat, kode_merek, kode_tipe, kode_jenis, kode_warna, tahun_buat) 
-                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($insert_vehicle, "sssiiiis", $nopol, $customer_code, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat);
+        $insert_vehicle = mysqli_prepare($koneksi, "INSERT INTO tblkendaraan
+                                        (nopolisi, pemilik, alamat, kode_merek, tipe, kode_tipe, jenis, kode_jenis,
+                                         tahun_buat, tahun_rakit, warna, kode_warna)
+                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($insert_vehicle, "sssisisisssi", $nopol, $customer_code, $alamat_kendaraan, $merek_id,
+                               $tipe_nama, $tipe_id, $jenis_nama, $jenis_id, $tahun_buat, $tahun_rakit, $warna_nama, $warna_id);
         $vehicle_success = mysqli_stmt_execute($insert_vehicle);
+        $vehicle_error = mysqli_stmt_error($insert_vehicle);
         mysqli_stmt_close($insert_vehicle);
-        
+
         if (!$vehicle_success) {
-            throw new Exception("Gagal menyimpan data kendaraan: " . mysqli_error($koneksi));
+            throw new Exception("Gagal menyimpan data kendaraan: " . $vehicle_error);
         }
     } else {
-        $tahun_buat = $bulan_pajak . '-' . $tahun_pajak;
-        $update_vehicle = mysqli_prepare($koneksi, "UPDATE tblkendaraan SET pemilik = ?, alamat = ?, kode_merek = ?, kode_tipe = ?, kode_jenis = ?, kode_warna = ?, tahun_buat = ? WHERE nopolisi = ?");
-        mysqli_stmt_bind_param($update_vehicle, "ssiiiiss", $customer_code, $alamat, $merek_id, $tipe_id, $jenis_id, $warna_id, $tahun_buat, $nopol);
+        $update_vehicle = mysqli_prepare($koneksi, "UPDATE tblkendaraan SET pemilik = ?, alamat = ?, kode_merek = ?, tipe = ?, kode_tipe = ?, jenis = ?, kode_jenis = ?, warna = ?, kode_warna = ?, tahun_buat = ? WHERE nopolisi = ?");
+        mysqli_stmt_bind_param($update_vehicle, "ssisisisiss", $customer_code, $alamat_kendaraan, $merek_id, $tipe_nama, $tipe_id, $jenis_nama, $jenis_id, $warna_nama, $warna_id, $tahun_buat, $nopol);
         mysqli_stmt_execute($update_vehicle);
         mysqli_stmt_close($update_vehicle);
     }

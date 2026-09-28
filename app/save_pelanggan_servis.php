@@ -159,7 +159,7 @@ $id_panggilan = 0;
 // Simpan data pelanggan ke tblpelanggan
 // Perbaikan: menggunakan jenis_id bukan jenis yang tidak ada di tabel
 if ($customer_resolution['status'] === 'existing') {
-    $query = "UPDATE tblpelanggan SET namapelanggan = ?, gender = ?, tgllahir = ?, valid_tgl_lahir = ?, alamat = ?, kota = ?, patokan = ?, telephone = ?, bl_pajak = ?, th_pajak = ?, merek_id = ?, tipe_id = ?, jenis_id = ?, warna_id = ?, propinsi = ?, informasi_sumber = ?, google_maps = ?, foto_rumah = COALESCE(NULLIF(?, ''), foto_rumah) WHERE nopelanggan = ?";
+    $query = "UPDATE tblpelanggan SET namapelanggan = ?, gender = ?, tgllahir = ?, valid_tgl_lahir = ?, alamat = ?, kota = ?, patokan = ?, telephone = ?, bl_pajak = ?, th_pajak = ?, merek_id = ?, tipe_id = ?, jenis_id = ?, warna_id = ?, propinsi = ?, informasi_sumber = ?, link_gmaps = ?, foto_tampak_rumah = COALESCE(NULLIF(?, ''), foto_tampak_rumah) WHERE nopelanggan = ?";
     $stmt = mysqli_prepare($koneksi, $query);
     if ($stmt === false) {
         mysqli_rollback($koneksi);
@@ -178,7 +178,7 @@ if ($customer_resolution['status'] === 'existing') {
         telephone, bl_pajak, th_pajak, merek_id, tipe_id, jenis_id, warna_id,
         propinsi, kodepost, negara, fax, kontakperson, note, potongan, tipepot,
         lavelharga, kgrup, klat, klong, panggilan, saldoawal, pertanggal, id_panggilan, informasi_sumber,
-        google_maps, foto_rumah
+        link_gmaps, foto_tampak_rumah
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($koneksi, $query);
     if ($stmt === false) {

@@ -74,7 +74,7 @@ try {
             "INSERT INTO tblpelanggan (nopelanggan, namapelanggan, telephone, alamat, kota, propinsi, 
              kodepost, negara, fax, kontakperson, note, potongan, tipepot, lavelharga, kgrup, 
              patokan, klat, klong, panggilan, saldoawal, pertanggal, tgllahir, id_panggilan) 
-             VALUES (?, ?, ?, '', '', '', '', '', '', 'WA', '', 0, 'C', '3', '001', '', '', '', '', 0, '0000-00-00', '0000-00-00', 0)");
+             VALUES (?, ?, ?, '', '', '', '', '', '', 'WA', '', 0, 'C', '3', '001', '', '', '', '', 0, CURDATE(), CURDATE(), 0)");
         mysqli_stmt_bind_param($insert_pelanggan, "sss", $customer_code, $owner_name, $phone);
         $success3 = mysqli_stmt_execute($insert_pelanggan);
         mysqli_stmt_close($insert_pelanggan);

@@ -325,7 +325,7 @@ if ($edit_mode) {
                                                                 </span>
                                                                 <input type="url" id="txtgooglemaps" name="txtgooglemaps" class="form-control" 
                                                                        placeholder="https://maps.google.com/..." autocomplete="off" 
-                                                                       value="<?php echo htmlspecialchars($customer_data['google_maps_link'] ?? ''); ?>" />
+                                                                       value="<?php echo htmlspecialchars($customer_data['link_gmaps'] ?? ''); ?>" />
                                                                 <span class="input-group-btn">
                                                                     <button type="button" class="btn btn-info" id="btnOpenMaps" title="Buka Maps">
                                                                         <i class="ace-icon fa fa-external-link"></i>
