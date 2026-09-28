@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../koneksi.php'; // $koneksi (mysqli) sudah tersedia
 require_once __DIR__ . '/../../_include_menu_rbac.php'; // hasRbacPermission(), canAccessPage(), requirePermission()
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (empty($_SESSION['_iduser'])) {
-    header('Location: /index.php'); // root login fitmotor — sesuaikan base path deploy kalau beda
+    header('Location: ../../../index.php'); // login utama (relatif, sama pola halaman app/ lain: ../index.php)
     exit;
 }
 
