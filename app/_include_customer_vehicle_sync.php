@@ -133,7 +133,12 @@ function fitmotorGetCustomerVehicleBundle($koneksi, $noPolisi, $explicitCustomer
     }
 
     if (!$customer && $vehicle && !empty($vehicle['pemilik'])) {
-        $customer = fitmotorFindCustomerByVehicleOwner($koneksi, $vehicle['pemilik']);
+        // Alur "Pelanggan Baru" menyimpan tblkendaraan.pemilik = kode pelanggan (CSTyymmddnnnn),
+        // data lama menyimpan nama. Coba sebagai kode dulu, baru fallback ke pencocokan nama.
+        $customer = fitmotorGetCustomerById($koneksi, $vehicle['pemilik']);
+        if (!$customer) {
+            $customer = fitmotorFindCustomerByVehicleOwner($koneksi, $vehicle['pemilik']);
+        }
     }
 
     return [
