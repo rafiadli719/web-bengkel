@@ -265,8 +265,16 @@
         $no_mesin = '';
     }
 
-        $km_skr="";
-        $km_berikut="";
+        // KM tersimpan di tblservice harus tampil lagi saat halaman dibuka ulang
+        $km_skr = 0;
+        $km_berikut = 0;
+        if (!empty($no_service)) {
+            $___qkm = mysqli_query($koneksi, "SELECT km_skr, km_berikut FROM tblservice WHERE no_service='" . mysqli_real_escape_string($koneksi, $no_service) . "' LIMIT 1");
+            if ($___qkm && ($___rkm = mysqli_fetch_assoc($___qkm))) {
+                $km_skr = (int)$___rkm['km_skr'];
+                $km_berikut = (int)$___rkm['km_berikut'];
+            }
+        }
 
         // Initialize mechanic variables
         $kepala_mekanik1 = "";

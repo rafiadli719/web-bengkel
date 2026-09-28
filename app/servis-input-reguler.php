@@ -888,10 +888,13 @@
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, 
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_serv, 
-                                        jam, no_pelanggan, no_polisi, status_servis 
-                                        FROM tblservice 
+                                        jam, no_pelanggan, no_polisi, status_servis,
+                                        km_skr, km_berikut
+                                        FROM tblservice
                                         WHERE no_service='$no_service'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
+		$tm_cari=mysqli_fetch_array($cari_kd);
+        $km_skr_tersimpan = (int)($tm_cari['km_skr'] ?? 0);
+        $km_berikut_tersimpan = (int)($tm_cari['km_berikut'] ?? 0);
 		$tanggal=$tm_cari['tanggal_serv'] ?? '';     
         $tanggal_srv=$tm_cari['tanggal'] ?? '';
 		$jam=$tm_cari['jam'] ?? '';        
@@ -958,8 +961,10 @@
         }
     }
         
-        $km_skr="";
-        $km_berikut="";
+        // KM tersimpan di tblservice harus tampil lagi saat halaman dibuka ulang
+        // (dulu di-reset "" sehingga KM yang sudah diisi selalu kembali 0).
+        $km_skr = $km_skr_tersimpan ?? 0;
+        $km_berikut = $km_berikut_tersimpan ?? 0;
 
         // Function to determine discount based on customer category
         function getDiscountByCategory($kategori, $potongan_existing = 0, $tipe_pot = '') {
