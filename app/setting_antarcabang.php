@@ -369,7 +369,7 @@
                                                     c.nama_cabang,
                                                     t.cabang_tipe
                                                     FROM tbl_setting_antarcabang s
-                                                    LEFT JOIN tbcabang c ON s.kd_cabang=c.kode_cabang
+                                                    LEFT JOIN tbcabang c ON s.kd_cabang COLLATE utf8mb4_general_ci = c.kode_cabang
                                                     LEFT JOIN tbcabang_tipe t ON s.tipe_cabang_tujuan=t.id
                                                     ORDER BY (s.kd_cabang='') DESC, s.kd_cabang ASC, s.tipe_cabang_tujuan ASC");
                                                 while($r = mysqli_fetch_array($q_list)) {

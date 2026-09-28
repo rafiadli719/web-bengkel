@@ -158,6 +158,21 @@ $stmt_setoran = $pdo->prepare($sql_setoran);
 $stmt_setoran->execute($params);
 $setoran_list = $stmt_setoran->fetchAll(PDO::FETCH_ASSOC);
 
+// Pagination tampilan tabel: ringkasan/kartu di atas tetap dihitung dari SEMUA baris
+// ($setoran_list), tapi tabel cuma render satu halaman. Dulu semua baris dirender
+// (2.350 transaksi = HTML 12,5 MB) sehingga halaman berat dibuka.
+$per_page = 100;
+$total_rows = count($setoran_list);
+$total_pages = max(1, (int)ceil($total_rows / $per_page));
+$page = min($total_pages, max(1, (int)($_GET['page'] ?? 1)));
+$setoran_page = array_slice($setoran_list, ($page - 1) * $per_page, $per_page);
+$pager_query = http_build_query(array_filter([
+    'tanggal_awal' => $tanggal_awal,
+    'tanggal_akhir' => $tanggal_akhir,
+    'cabang' => $cabang !== 'all' ? $cabang : '',
+    'status_filter' => $status_filter !== 'all' ? $status_filter : '',
+], function ($v) { return $v !== ''; }));
+
 // Get cabang list for filter dropdown
 $sql_cabang = "SELECT DISTINCT nama_cabang FROM kasir_transactions_closing_kasir WHERE nama_cabang IS NOT NULL AND nama_cabang != '' ORDER BY nama_cabang";
 $stmt_cabang = $pdo->query($sql_cabang);
@@ -720,7 +735,7 @@ function formatRupiah($angka) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($setoran_list as $transaksi): ?>
+                                    <?php foreach ($setoran_page as $transaksi): ?>
                                         <tr>
                                             <td class="kode-transaksi" style="font-size: 10px;"><?php echo htmlspecialchars(substr($transaksi['kode_transaksi'], -12)); ?></td>
                                             <td style="font-size: 11px;"><?php echo date('d/m/Y', strtotime($transaksi['tanggal_transaksi'])); ?></td>
@@ -852,6 +867,19 @@ function formatRupiah($angka) {
                             </table>
                         </div>
                     </div>
+                    <?php if ($total_pages > 1): ?>
+                        <?php $pager_base = '?' . ($pager_query !== '' ? $pager_query . '&' : '') . 'page='; ?>
+                        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:16px 0;flex-wrap:wrap;">
+                            <?php if ($page > 1): ?>
+                                <a class="btn btn-sm btn-outline-secondary" href="<?php echo htmlspecialchars($pager_base . ($page - 1)); ?>">&laquo; Sebelumnya</a>
+                            <?php endif; ?>
+                            <span style="font-size:13px;">Halaman <strong><?php echo $page; ?></strong> dari <?php echo $total_pages; ?>
+                                (baris <?php echo (($page - 1) * $per_page) + 1; ?>&ndash;<?php echo min($page * $per_page, $total_rows); ?> dari <?php echo $total_rows; ?>)</span>
+                            <?php if ($page < $total_pages): ?>
+                                <a class="btn btn-sm btn-outline-secondary" href="<?php echo htmlspecialchars($pager_base . ($page + 1)); ?>">Berikutnya &raquo;</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 <?php else: ?>
                     <div class="no-data">
                         <i class="fas fa-file-alt"></i><br>
