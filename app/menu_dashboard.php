@@ -13,6 +13,10 @@ require_once '_include_menu_rbac.php';
 // Get user ID from session (should be set by parent page)
 $id_user = $_SESSION['_iduser'] ?? 0;
 
+// Label menu panjang (mis. "Approve Merge Pelanggan") wrap 2 baris tapi tinggi <li>
+// dikunci ACE 40px -> teks terpotong & numpuk ke item bawah. Biarkan tinggi mengikuti isi.
+echo '<style>.nav-list > li, .nav-list > li > a { height: auto !important; min-height: 40px; }</style>';
+
 if ($id_user > 0 && isset($koneksi)) {
     // Get and render RBAC menu
     echo getRBACMenu($koneksi, $id_user);

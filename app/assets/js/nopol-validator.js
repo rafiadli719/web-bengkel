@@ -202,16 +202,25 @@
                 $input.on('input', function() {
                     var cursorPos = this.selectionStart;
                     var oldValue = this.value;
-                    
+                    // Hitung karakter non-spasi sebelum caret, karena autoFormat
+                    // menyisip/membuang spasi sehingga posisi absolut jadi geser
+                    // (bug lama: huruf seri nopol terbalik urutannya saat diketik).
+                    var sigBefore = oldValue.slice(0, cursorPos).replace(/\s/g, '').length;
+
                     if (settings.autoFormat) {
                         this.value = self.autoFormat(this.value);
                     } else {
                         this.value = this.value.toUpperCase().replace(/[^A-Z0-9\s-]/g, '');
                     }
-                    
-                    // Restore cursor position
-                    if (this.value.length !== oldValue.length) {
-                        this.setSelectionRange(cursorPos, cursorPos);
+
+                    // Restore cursor position (setelah karakter signifikan ke-N)
+                    if (this.value !== oldValue && document.activeElement === this) {
+                        var pos = 0, seen = 0;
+                        while (pos < this.value.length && seen < sigBefore) {
+                            if (!/\s/.test(this.value.charAt(pos))) seen++;
+                            pos++;
+                        }
+                        this.setSelectionRange(pos, pos);
                     }
                     
                     // Validasi on input jika diaktifkan
@@ -242,14 +251,14 @@
                     if (result.valid) {
                         $formGroup.removeClass(settings.errorClass).addClass(settings.successClass);
                         if ($errorElement) {
-                            $errorElement.html('<i class="ace-icon fa fa-check green"></i> ' + result.message).show();
+                            $errorElement.css('color', '#5cb85c').html('<i class="ace-icon fa fa-check green"></i> ' + result.message).show();
                         }
                         // Set formatted value
                         $input.val(result.formatted);
                     } else {
                         $formGroup.removeClass(settings.successClass).addClass(settings.errorClass);
                         if ($errorElement) {
-                            $errorElement.html('<i class="ace-icon fa fa-times red"></i> ' + result.message).show();
+                            $errorElement.css('color', '#d9534f').html('<i class="ace-icon fa fa-times red"></i> ' + result.message).show();
                         }
                     }
                     
