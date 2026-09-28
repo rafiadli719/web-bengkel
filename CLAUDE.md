@@ -219,7 +219,16 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `app/koneksi.php` dan file-file lama sejenis — utang teknis
   codebase-wide, bukan regresi baru, belum dibereskan (scope lintas
   banyak file, belum dijadwalkan).
-- Sidebar 9 halaman lain di modul Keuangan Kasir (selain 2 yang
-  di-screenshot: `setoran_keuangan`, `keuangan_pusat`) belum dicek
-  visual satu-satu — CSS sama file jadi kemungkinan besar aman, tapi
-  belum diverifikasi eksplisit.
+- `closing_revisi_admin.php` link `includes/sidebar.css` tapi gak include
+  sidebar sama sekali (TODO Task 15 di baris ~295, sidebar web_kasir gak
+  diport) — halaman tampil tanpa sidebar, bukan regresi.
+- Audit menu_config: Batch 0-7 selesai (Batch 6 Stok+Laporan sudah di
+  commit `2c5db74`/`f79db7e`, Batch 7 Keuangan Kasir bersih per
+  2026-09-28: semua halaman+handler guarded, sidebar 9 halaman
+  terverifikasi live). Sisa Batch 8 Komplain (cek ulang cepat).
+
+**Update 2026-09-28 (commit `7e9c055`):** sidebar 9 halaman Keuangan
+Kasir diverifikasi live (bg dark, 260px, 18 link, 1 active tiap
+halaman). Redirect login `koneksi_kasir.php` & `koneksi_komplain.php`
+diganti dari `/index.php` (root domain, salah di Laragon) ke path
+relatif ke `index.php` login app.
