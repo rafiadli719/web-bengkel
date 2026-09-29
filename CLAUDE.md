@@ -232,3 +232,22 @@ Kasir diverifikasi live (bg dark, 260px, 18 link, 1 active tiap
 halaman). Redirect login `koneksi_kasir.php` & `koneksi_komplain.php`
 diganti dari `/index.php` (root domain, salah di Laragon) ke path
 relatif ke `index.php` login app.
+
+**Update 2026-09-29 (commit `e268742`):** lanjutan E2E lapangan setelah
+fix kritis Penjualan/Pembelian (`fe857f8`/`af2d220`) — ketemu bug baru
+saat verify live browser: `app/penjualan_add_item_cari.php` (menu
+Penjualan > Tambah Data > Item Barang) fatal error tiap kali cari item
+apapun, tabel hasil selalu kosong walau teks bilang "ditemukan N data"
+(gak keliatan di layar karena `display_errors` off). Root cause: query
+`SELECT status_harga_naik FROM tblitem` — kolom itu gak pernah ada di
+skema, fitur badge "HARGA NAIK" per-item ini nyasar/gak nyambung ke
+desain asli alarm harga beli (`db/migrations/2026-07-17_f4_alarm_harga_beli.sql`,
+tabel terpisah `alarm_harga_beli` + trigger DB, bukan kolom di tblitem).
+`mysqli_fetch_array(false)` fatal TypeError PHP 8, while loop mati
+sebelum baris pertama ke-render. Fix: hapus query+cabang logic itu
+(blocked_reason-nya toh gak pernah ditampilkan ke user juga), balik ke
+validasi stok polos. Cuma 1 file kena (`pesanan_penjualan_add_item_cari.php`
+dan `pesanan_penjualan_cab_add_item_cari.php` sudah dicek, bersih).
+Divalidasi live: cari "20W-40MATIC" -> row render -> Pilih -> masuk
+keranjang qty 2 -> item dihapus lagi (cleanup, gak checkout beneran).
+Checklist-projek `feat-pos-cari-item` diupdate ke uat/80%.
