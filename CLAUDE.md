@@ -269,15 +269,28 @@ Divalidasi: php -l lolos 25 file, diff cuma nambah " LIMIT 200", live
 browser 2 sample (stok_masuk_add_item_cari.php, servis-add-item-cari.php
 struktur beda app_score) render normal.
 
-**Belum di-scope (backlog baru):** pencarian PELANGGAN/KENDARAAN/
-PIUTANG-HUTANG (`cari_pelanggan_jl*.php`, `cari_pelanggan_rst.php`,
-`kendaraan_rst.php`, `pelanggan_rst.php`, `pembelian_rst.php`,
-`penjualan_rst.php`, `pesanan_pembelian_rst.php`,
-`pesanan_penjualan_rst.php`, `pesanan_penjualan_add_pelanggan_cari.php`,
-`penjualan_add_pelanggan_cari.php`, `pmby_hutang_rst.php`,
-`pmby_piutang_rst.php`, `pmby_piutang_add_pelanggan_cari.php`,
-`penyesuaian-stok-*-manual-rst.php`) pakai pola query identik tanpa
-LIMIT juga (~15+ file). Beda tabel target (pelanggan 37rb+ baris,
-kendaraan, dsb) — lebih riskan karena beberapa punya WHERE kd_cabang
-filter yang perlu dicek satu-satu sebelum nambah LIMIT. Belum
-divalidasi/difix sesi ini.
+**Update 2026-09-29 lanjutan lagi (commit `f6e98b4`):** backlog di atas
+(pencarian PELANGGAN/KENDARAAN/PIUTANG-HUTANG) SELESAI DISAPU juga, di
+sesi yang sama. Dicek dulu satu-satu apa ada WHERE kd_cabang yang perlu
+hati-hati — ternyata semua view (`view_cari_pelanggan`,
+`view_cari_kendaraan`, `view_penjualan_header`, `view_pembelian_header`,
+`view_pesanan_pembelian_header`, `view_pesanan_penjualan_h`,
+`view_pembayaran_hutang`, `view_pembayaran_piutang`) gak difilter
+kd_cabang di WHERE sql_query-nya (2 file `penyesuaian-stok-*-manual-rst.php`
+malah udah ada WHERE kd_cabang, tinggal nambah LIMIT dalam scope cabang
+itu) — jadi LIMIT aman ditambah tanpa mengubah correctness. 17 file
+disapu LIMIT 200 sekaligus: cari_pelanggan_jl.php + _pesan_rst + _rst,
+cari_pelanggan_rst.php, kendaraan_rst.php, pelanggan_rst.php,
+pembelian_rst.php, penjualan_rst.php, pesanan_pembelian_rst.php,
+pesanan_penjualan_rst.php, penjualan_add_pelanggan_cari.php,
+pesanan_penjualan_add_pelanggan_cari.php, pmby_piutang_add_pelanggan_cari.php,
+pmby_hutang_rst.php, pmby_piutang_rst.php,
+penyesuaian-stok-keluar/masuk-manual-rst.php. php -l lolos semua, diff
+cuma nambah " LIMIT 200". Divalidasi live: pelanggan.php -> klik
+Ascending -> pelanggan_rst.php render cepat walau total 37,674 baris
+pelanggan. Checklist-projek diupdate (`feat-bayar-servis`).
+
+Sapuan LIMIT search-modal lintas app (42 file total: 25 item/jasa +
+17 pelanggan/kendaraan/transaksi/piutang-hutang) TUNTAS per commit
+`d25b18d` + `f6e98b4`. Gak ada backlog serupa yang tersisa dari temuan
+E2E lapangan sesi ini.
