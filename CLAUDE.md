@@ -347,8 +347,19 @@ lengkap dari awal. Divalidasi E2E live 3x (fetch POST sesi test, bukan klik UI):
 Pesanan Pembelian, Pesanan Penjualan Input Manual, Pesanan Penjualan Antar
 Cabang — semua sukses simpan header+detail, data test dihapus. Checklist E2E
 lapangan: Servis, Penjualan, Pembelian, Antar Cabang, Stok Masuk/Keluar,
-Pesanan Pembelian/Penjualan, **Laporan** SELESAI. Sisa: Keuangan Kasir, Komplain,
+Pesanan Pembelian/Penjualan, Laporan, **Keuangan Kasir** SELESAI. Sisa: Komplain,
 Data Master.
+
+**Update 2026-09-30 Keuangan Kasir E2E (commit `66fcc3d`):** bug SISTEMIK
+ketemu & fixed — `requirePermission()` (`_include_menu_rbac.php`, dipakai
+lintas app) redirect `403.php` pakai path relatif, cuma valid dari `app/`
+root. ~40 file `_keuangan/kasir/*.php` (depth 2-3) yang kena permission-denied
+malah 404 mentah (server nginx, gak ada fallback .htaccess). Fix: hitung
+depth direktori dinamis buat prefix `../`. Core transaksi kasir (kas_awal,
+kas_akhir, pemasukan, pengeluaran) pakai PDO prepared statement — gak kena
+pola bug INSERT-kolom-hilang yang ditemuin di modul lain sesi ini.
+`setoran_bank_rekap.php` gak ada default date range (1.2MB HTML kalau filter
+kosong) — belum critical (364 baris/487ms), watchlist aja.
 
 **Update 2026-09-30 Laporan E2E (commit `4118c84`):** crawl otomatis 42 halaman
 `lap_*.php`. Fix `lap_komisi_mekanik.php` 8906ms->1943ms (subquery laba_barang
