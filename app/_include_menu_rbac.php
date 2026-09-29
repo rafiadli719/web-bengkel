@@ -378,7 +378,15 @@ function canAccessPage($koneksi, $id_user, $required_permission) {
  */
 function requirePermission($koneksi, $id_user, $required_permission) {
     if (!canAccessPage($koneksi, $id_user, $required_permission)) {
-        header("Location: 403.php?permission=" . urlencode($required_permission));
+        // 403.php ada di app/ (satu direktori sama file ini) — hitung berapa level
+        // di bawah app/ file pemanggil berada, biar redirect relatif tetap valid
+        // dari subdirektori manapun (mis. _keuangan/kasir/, _keuangan/kasir/export/).
+        $app_dir = str_replace('\\', '/', __DIR__);
+        $script_dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_FILENAME']));
+        $rel = ltrim(str_replace($app_dir, '', $script_dir), '/');
+        $depth = $rel === '' ? 0 : substr_count($rel, '/') + 1;
+        $prefix = str_repeat('../', $depth);
+        header("Location: {$prefix}403.php?permission=" . urlencode($required_permission));
         exit;
     }
 }
