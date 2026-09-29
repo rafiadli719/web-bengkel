@@ -73,27 +73,32 @@ if(empty($_SESSION['_iduser'])){
     // Totals di-JOIN sekali, menghindari N+1 queries di loop
     // F1-A: masa garansi dinamis per tier member pelanggan (jawaban A3, 2026-07-04),
     // di-JOIN sekali di sini juga supaya tidak N+1 di loop tampilan.
-    $sql_query = "SELECT s.*, p.namapelanggan, v.merek, v.tipe, v.warna,
-                         DATE_FORMAT(s.tanggal,'%d/%m/%Y') AS tanggal_trx,
-                         DATEDIFF(CURDATE(), s.tanggal) AS hari_berlalu,
-                         COALESCE(sb.total_barang, 0) AS harga_brg,
-                         COALESCE(sj.total_jasa, 0) AS harga_jasa,
-                         COALESCE(sj.total_waktu, 0) AS totwaktu,
+    // Perbaikan performa: dulu SUM barang/jasa dihitung lewat derived table
+    // GROUP BY atas SELURUH tblservis_barang (361rb baris)/tblservis_jasa (91rb
+    // baris) sebelum LIMIT 100 diterapkan -> 13,7 detik/request. s.* dibatasi
+    // LIMIT 100 dulu di subquery $svc, baru agregat dihitung per no_service
+    // via correlated subquery (pakai index idx_no_service, jalan cepat karena
+    // cuma 100 baris).
+    $sql_query = "SELECT svc.*, p.namapelanggan, v.merek, v.tipe, v.warna,
+                         DATE_FORMAT(svc.tanggal,'%d/%m/%Y') AS tanggal_trx,
+                         DATEDIFF(CURDATE(), svc.tanggal) AS hari_berlalu,
+                         COALESCE((SELECT SUM(b.total) FROM tblservis_barang b WHERE b.no_service = svc.no_service), 0) AS harga_brg,
+                         COALESCE((SELECT SUM(j.total) FROM tblservis_jasa j WHERE j.no_service = svc.no_service), 0) AS harga_jasa,
+                         COALESCE((SELECT SUM(j2.waktu) FROM tblservis_jasa j2 WHERE j2.no_service = svc.no_service), 0) AS totwaktu,
                          COALESCE(mkm.masa_garansi_hari, 7) AS masa_garansi_hari,
                          COALESCE(mkm.masa_garansi_maks_hari, 14) AS masa_garansi_maks_hari
-                  FROM tblservice s
-                  LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-                  LEFT JOIN view_cari_kendaraan v ON s.no_polisi = v.nopolisi
-                  LEFT JOIN (SELECT no_service, SUM(total) AS total_barang
-                             FROM tblservis_barang GROUP BY no_service) sb ON sb.no_service = s.no_service
-                  LEFT JOIN (SELECT no_service, SUM(total) AS total_jasa, SUM(waktu) AS total_waktu
-                             FROM tblservis_jasa GROUP BY no_service) sj ON sj.no_service = s.no_service
-                  LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = s.no_pelanggan
+                  FROM (
+                      SELECT s.* FROM tblservice s
+                      $where_clause
+                      " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status_servis IN ('bayar', 'selesai')
+                      ORDER BY s.tanggal DESC, s.jam DESC
+                      LIMIT 100
+                  ) svc
+                  LEFT JOIN tblpelanggan p ON svc.no_pelanggan = p.nopelanggan
+                  LEFT JOIN view_cari_kendaraan v ON svc.no_polisi = v.nopolisi
+                  LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = svc.no_pelanggan
                   LEFT JOIN tbmaster_kategori_member mkm ON mkm.status_member = COALESCE(sp.status_member, 'Bronze')
-                  $where_clause
-                  " . (!empty($where_clause) ? "AND" : "WHERE") . " s.status_servis IN ('bayar', 'selesai')
-                  ORDER BY s.tanggal DESC, s.jam DESC
-                  LIMIT 100";
+                  ORDER BY svc.tanggal DESC, svc.jam DESC";
 ?>
 
 <!DOCTYPE html>
