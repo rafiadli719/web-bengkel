@@ -424,34 +424,15 @@
                                                         $tm_cari=mysqli_fetch_array($cari_kd);
                                                         $saldo_akhir=$tm_cari['saldo'];	
                                                         
-                                                        // Get status_harga_naik from tblitem
-                                                        $cari_harga=mysqli_query($koneksi,"SELECT status_harga_naik 
-                                                                                        FROM tblitem 
-                                                                                        WHERE noitem='$noitem'");			
-                                                        $tm_harga=mysqli_fetch_array($cari_harga);
-                                                        $status_harga_naik = isset($tm_harga['status_harga_naik']) ? $tm_harga['status_harga_naik'] : 0;
-                                                        
-                                                        // Stock & price validation
+                                                        // Stock validation
                                                         $blocked_reason = "";
-                                                        
-                                                        if($saldo_akhir=='0' && $status_harga_naik=='1') {
-                                                            // CRITICAL: Stok habis DAN harga naik - BLOCK
-                                                            $row_class="danger";
-                                                            $stock_badge="danger";
-                                                            $disabled="disabled";
-                                                            $blocked_reason = "STOK KOSONG & HARGA NAIK";
-                                                        } elseif($saldo_akhir=='0') {
-                                                            // Stok habis tapi harga normal - BLOCK
+
+                                                        if($saldo_akhir=='0') {
+                                                            // Stok habis - BLOCK
                                                             $row_class="danger";
                                                             $stock_badge="danger";
                                                             $disabled="disabled";
                                                             $blocked_reason = "STOK KOSONG";
-                                                        } elseif($status_harga_naik=='1') {
-                                                            // Harga naik tapi ada stok - WARNING (bisa dijual)
-                                                            $row_class="info";
-                                                            $stock_badge="info";
-                                                            $disabled="";
-                                                            $blocked_reason = "HARGA NAIK";
                                                         } elseif($saldo_akhir<=$stokmin) {
                                                             // Stok menipis - WARNING
                                                             $row_class="warning";
