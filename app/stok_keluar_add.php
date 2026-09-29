@@ -106,13 +106,15 @@
                     //window.location=('pesanan_pembelian_add_rst.php?stgl=$tgl_pilih&ssup=$cbo_supplier');</script>";			                                
                     
                     //else 
-                    mysqli_query($koneksi,"INSERT INTO tbitem_keluar_detail 
-                                            (no_transaksi, no_item, harga, quantity, 
-                                            total, user, kd_cabang) 
-                                            VALUES 
+                    // keterangan/stok_sistem/penyesuaian NOT NULL tanpa default gak diisi -> INSERT
+                    // selalu gagal silent (strict mode), item gak pernah masuk keranjang.
+                    mysqli_query($koneksi,"INSERT INTO tbitem_keluar_detail
+                                            (no_transaksi, no_item, harga, quantity,
+                                            total, user, kd_cabang, keterangan, stok_sistem, penyesuaian)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
                                             '$txtqty','$subtotal',
-                                            '$_nama','$kd_cabang')"); 
+                                            '$_nama','$kd_cabang','','0','0')");
                 }
 
             // == Total dari Item Barang ==============

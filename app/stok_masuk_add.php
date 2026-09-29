@@ -403,7 +403,9 @@ if (empty($_SESSION['_iduser'])) {
                 $kdbrg = "";
                 echo "<script>window.alert('Item Barang sudah ada!');window.location=('stok_masuk_add_rst.php?stgl=$tgl_pilih&kd=$kdbrg');</script>";
             } else {
-                mysqli_query($koneksi, "INSERT INTO tbitem_masuk_detail (no_transaksi, no_item, harga, quantity, total, user, kd_cabang) VALUES ('', '$txtkdbarang','$txthargabarang', '$txtqty','$subtotal', '$_nama','$kd_cabang')");
+                // keterangan/stok_sistem/penyesuaian NOT NULL tanpa default gak diisi -> INSERT
+                // selalu gagal silent (strict mode), item gak pernah masuk keranjang.
+                mysqli_query($koneksi, "INSERT INTO tbitem_masuk_detail (no_transaksi, no_item, harga, quantity, total, user, kd_cabang, keterangan, stok_sistem, penyesuaian) VALUES ('', '$txtkdbarang','$txthargabarang', '$txtqty','$subtotal', '$_nama','$kd_cabang','','0','0')");
             }
 
             $cari_kd = mysqli_query($koneksi, "SELECT sum(total) as tot FROM tbitem_masuk_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
