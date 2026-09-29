@@ -347,5 +347,16 @@ lengkap dari awal. Divalidasi E2E live 3x (fetch POST sesi test, bukan klik UI):
 Pesanan Pembelian, Pesanan Penjualan Input Manual, Pesanan Penjualan Antar
 Cabang — semua sukses simpan header+detail, data test dihapus. Checklist E2E
 lapangan: Servis, Penjualan, Pembelian, Antar Cabang, Stok Masuk/Keluar,
-Pesanan Pembelian/Penjualan SELESAI. Sisa: Laporan, Keuangan Kasir, Komplain,
+Pesanan Pembelian/Penjualan, **Laporan** SELESAI. Sisa: Keuangan Kasir, Komplain,
 Data Master.
+
+**Update 2026-09-30 Laporan E2E (commit `4118c84`):** crawl otomatis 42 halaman
+`lap_*.php`. Fix `lap_komisi_mekanik.php` 8906ms->1943ms (subquery laba_barang
+scan 361rb baris `tblservis_barang` tanpa filter tanggal, ditambah `WHERE
+no_service IN (...)` date-filtered). Halaman ini gak dilink `menu_config.php`
+(akses URL langsung), formula referensi buat `_include_komisi_snapshot.php`.
+500 error di `lap_kas_keluar/masuk_pdf/xls.php` + `lap_servis_pdf/xls.php` pas
+crawl tanpa GET params itu artifact crawl doang (halaman utama selalu isi
+default date range dulu), bukan bug reachable — gak difix.
+`laporan-cancel-servis.php` 2111ms bukan N+1, view `view_laporan_cancel_servis`
+sendiri berat (984ms buat 1 baris) — ditunda, fitur jarang dipakai.
