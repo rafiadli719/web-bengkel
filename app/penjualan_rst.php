@@ -102,7 +102,7 @@
                             (no_pelanggan like '%".$txtkey."%') OR 
                             (namapelanggan like '%".$txtkey."%') OR 
                             (carabayar like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
@@ -118,7 +118,7 @@
             } ELSE {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                             FROM view_penjualan_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_penjualan_header 
@@ -136,7 +136,7 @@
                             (no_pelanggan like '%".$txtkey."%') OR 
                             (namapelanggan like '%".$txtkey."%') OR 
                             (carabayar like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
@@ -152,7 +152,7 @@
             } else {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                             FROM view_penjualan_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_penjualan_header 

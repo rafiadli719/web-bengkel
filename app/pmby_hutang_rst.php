@@ -88,7 +88,7 @@
                             (no_transaksi like '%".$txtkey."%') OR 
                             (no_supplier like '%".$txtkey."%') OR 
                             (namasupplier like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
@@ -102,7 +102,7 @@
             } ELSE {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                 FROM view_pembayaran_hutang 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_pembayaran_hutang 
@@ -118,7 +118,7 @@
                             (no_transaksi like '%".$txtkey."%') OR 
                             (no_supplier like '%".$txtkey."%') OR 
                             (namasupplier like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
@@ -132,7 +132,7 @@
             } else {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                 FROM view_pembayaran_hutang 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_pembayaran_hutang 

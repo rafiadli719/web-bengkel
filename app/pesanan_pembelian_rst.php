@@ -90,7 +90,7 @@
                             (no_order like '%".$txtkey."%') OR 
                             (no_supplier like '%".$txtkey."%') OR 
                             (namasupplier like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_pesanan_pembelian_header 
@@ -102,7 +102,7 @@
                 $tot=$tm_cari['tot'];               
             } ELSE {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pesanan_pembelian_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_pesanan_pembelian_header 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
@@ -116,7 +116,7 @@
                             (no_order like '%".$txtkey."%') OR 
                             (no_supplier like '%".$txtkey."%') OR 
                             (namasupplier like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_pesanan_pembelian_header 
@@ -128,7 +128,7 @@
                 $tot=$tm_cari['tot'];                               
             } else {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pesanan_pembelian_header 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_pesanan_pembelian_header 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			

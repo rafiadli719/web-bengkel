@@ -83,7 +83,7 @@
                             WHERE kd_cabang='$kd_cabang' AND 
                             ((no_transaksi like '%".$txtkey."%') OR 
                             (note like '%".$txtkey."%')) 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_masuk_header 
@@ -94,7 +94,7 @@
                 $tot=$tm_cari['tot'];               
             } ELSE {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_masuk_header 
-                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_masuk_header 
                             WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%'");			
@@ -107,7 +107,7 @@
                             WHERE kd_cabang='$kd_cabang' AND 
                             ((no_transaksi like '%".$txtkey."%') OR 
                             (note like '%".$txtkey."%')) 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_masuk_header 
@@ -118,7 +118,7 @@
                 $tot=$tm_cari['tot'];                               
             } else {
                 $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM tbitem_masuk_header 
-                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM tbitem_masuk_header 
                             WHERE kd_cabang='$kd_cabang' AND ".$sql_cari." like '%".$txtkey."%'");			

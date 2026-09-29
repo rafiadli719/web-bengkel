@@ -93,7 +93,7 @@
 
         if($txtflt=='asc') {
             $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
-                        WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                        WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             count(*) as tot FROM view_cari_pelanggan 
@@ -102,7 +102,7 @@
             $tot=$tm_cari['tot'];				        
         } else {
             $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
-                        WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                        WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
             //echo $sql_query;
             $cari_kd=mysqli_query($koneksi,"SELECT 
                                             count(*) as tot FROM view_cari_pelanggan 
