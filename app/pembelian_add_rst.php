@@ -105,14 +105,15 @@
                         //$txtpot=$tampil['potongan'];
                         $subtotal=$tampil['total'];                       
 
-                        mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
-                                                (no_transaksi, no_item, harga_pokok, 
-                                                quantity, qty_order, potongan, total, 
-                                                user, kd_cabang) 
-                                                VALUES 
+                        // nobaris/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default.
+                        mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                                (no_transaksi, no_item, harga_pokok,
+                                                quantity, qty_order, qty_retur, potongan, harga_sp, total,
+                                                user, kd_cabang, nobaris, sts_order, id_inv)
+                                                VALUES
                                                 ('', '$no_item','$txthargabarang',
-                                                '$txtqty','$txtqty','0','$subtotal',
-                                                '$_nama','$kd_cabang')");                          
+                                                '$txtqty','$txtqty','0','0','0','$subtotal',
+                                                '$_nama','$kd_cabang','0','','')");
                     }
                 // End ====
     
@@ -211,13 +212,14 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                     echo"<script>window.alert('Item Barang sudah ada!');
                     window.location=('pembelian_add_rst.php?stgl=$tgl_pilih&ssup=$cbo_supplier&kd=$kdbrg&spesan=$nopesanan');</script>";			                                
                 } else {                
-                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
-                                            (no_transaksi, no_item, harga_pokok, quantity, 
-                                            potongan, total, user, kd_cabang) 
-                                            VALUES 
+                    // nobaris/qty_order/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default.
+                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                            (no_transaksi, no_item, harga_pokok, quantity, qty_order,
+                                            qty_retur, potongan, harga_sp, total, user, kd_cabang, nobaris, sts_order, id_inv)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$txtpot','$subtotal',
-                                            '$_nama','$kd_cabang')");  
+                                            '$txtqty','$txtqty','0','$txtpot','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','','')");
 
                   
                 }
@@ -296,73 +298,83 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                                                 FROM tblorder_header 
                                                 WHERE no_order='$nopesanan'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tanggal_order=$tm_cari['tanggal'];
-                $total_qty_order=$tm_cari['total_qty'];
+                // Kalau $nopesanan kosong, query gak match apa pun -> $tm_cari null/false
+                // -> total_qty_order jadi NULL/'' -> INSERT header gagal (kolom int NOT NULL).
+                $tanggal_order = $tm_cari['tanggal'] ?? '';
+                $total_qty_order = $tm_cari['total_qty'] ?? '0';
                 
-                mysqli_query($koneksi,"INSERT INTO tblpembelian_header 
-                                        (notransaksi, status, carabayar, 
-                                        tanggal, no_order, tanggal_order, 
-                                        no_supplier, note, total_qty_order, 
-                                        total_qty, total_beli, 
-                                        diskon, total_diskon, 
-                                        pajak, total_pajak, 
-                                        total_akhir, total_retur, pembayaran, 
-                                        tanggal_jt, tanggal_lunas, 
-                                        jumlah_bayar, user, kd_cabang, 
-                                        lama_hari) 
-                                        VALUES 
+                // Id_tabel NOT NULL tanpa default gak diisi + total_retur='' (kolom double)
+                // + lama_hari=$txtsyarat gak numerik -> INSERT header gagal silent, sama
+                // kayak Penjualan/pembelian_add.php. Digerbang $header_ok.
+                $header_ok = mysqli_query($koneksi,"INSERT INTO tblpembelian_header
+                                        (notransaksi, status, carabayar,
+                                        tanggal, no_order, tanggal_order,
+                                        no_supplier, note, total_qty_order,
+                                        total_qty, total_beli,
+                                        diskon, total_diskon,
+                                        pajak, total_pajak,
+                                        total_akhir, total_retur, pembayaran,
+                                        tanggal_jt, tanggal_lunas,
+                                        jumlah_bayar, user, kd_cabang,
+                                        lama_hari, Id_tabel)
+                                        VALUES
                                         ('$LastID','Pembelian','$cbocarabyr',
                                         '$txttglpesan','$nopesanan','$tanggal_order',
                                         '$cbosupplier','$txtnote','$total_qty_order',
                                         '$tot_qty','$txttotal_harga',
                                         '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                         '$txtpajak_persen','$txtpajak_nom',
-                                        '$txtnet','','$txtdp',
+                                        '$txtnet','0','$txtdp',
                                         '$tgl_jt','',
                                         '$txtkekurangan',
                                         '$_nama','$kd_cabang',
-                                        '$txtsyarat')");
+                                        '" . (is_numeric($txtsyarat) ? (int)$txtsyarat : 0) . "','')");
 
-                mysqli_query($koneksi,"UPDATE tblpembelian_detail 
-                                        SET 
-                                        no_transaksi='$LastID', status_trx='1' 
-                                        WHERE 
-                                        user='$_nama' and 
-                                        kd_cabang='$kd_cabang' and 
+                if (!$header_ok) {
+                    echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('pembelian_add_rst.php');</script>";
+                } else {
+
+                mysqli_query($koneksi,"UPDATE tblpembelian_detail
+                                        SET
+                                        no_transaksi='$LastID', status_trx='1'
+                                        WHERE
+                                        user='$_nama' and
+                                        kd_cabang='$kd_cabang' and
                                         status_trx='0'");
-                                        
-                $sql = mysqli_query($koneksi,"SELECT * FROM tblpembelian_detail 
+
+                $sql = mysqli_query($koneksi,"SELECT * FROM tblpembelian_detail
                                                 WHERE no_transaksi='$LastID'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_item=$tampil['no_item'];
                     $qty=$tampil['quantity'];
-                    mysqli_query($koneksi,"INSERT INTO tbstok 
-                                        (tipe, no_transaksi, no_item, 
-                                        tanggal, masuk, keluar, keterangan, 
-                                        kd_cabang) 
-                                        VALUES 
+                    mysqli_query($koneksi,"INSERT INTO tbstok
+                                        (tipe, no_transaksi, no_item,
+                                        tanggal, masuk, keluar, keterangan,
+                                        kd_cabang)
+                                        VALUES
                                         ('2','$LastID','$no_item',
                                         '$txttglpesan','$qty','0',
-                                        'Pembelian','$kd_cabang')"); 
+                                        'Pembelian','$kd_cabang')");
 
                     if($nopesanan<>'') {
-                        mysqli_query($koneksi,"UPDATE tblorder_detail 
-                                                SET 
-                                                qty_terima='$qty' 
-                                                WHERE 
-                                                no_order='$nopesanan' and 
-                                                no_item='$no_item'");                        
-                    }                                                                                
+                        mysqli_query($koneksi,"UPDATE tblorder_detail
+                                                SET
+                                                qty_terima='$qty'
+                                                WHERE
+                                                no_order='$nopesanan' and
+                                                no_item='$no_item'");
+                    }
                 }
 
                 if($nopesanan<>'') {
-                        mysqli_query($koneksi,"UPDATE tblorder_header 
-                                                SET 
-                                                status='1' 
-                                                WHERE 
-                                                no_order='$nopesanan'");                                            
-                }                
-                echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";                            
+                        mysqli_query($koneksi,"UPDATE tblorder_header
+                                                SET
+                                                status='1'
+                                                WHERE
+                                                no_order='$nopesanan'");
+                }
+                echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";
+                }
                 }
 
                 

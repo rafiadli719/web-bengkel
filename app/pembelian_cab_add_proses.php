@@ -90,17 +90,20 @@
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
             
-                mysqli_query($koneksi,"INSERT INTO tblpembelian_header 
-                                        (notransaksi, status, carabayar, 
-                                        tanggal, no_order, tanggal_order, 
-                                        no_supplier, note, total_qty_order, 
-                                        total_qty, total_beli, 
-                                        diskon, total_diskon, 
-                                        pajak, total_pajak, 
-                                        total_akhir, total_retur, pembayaran, 
-                                        tanggal_jt, tanggal_lunas, 
-                                        jumlah_bayar, user, kd_cabang) 
-                                        VALUES 
+                // lama_hari/Id_tabel NOT NULL tanpa default gak diisi -> INSERT header
+                // gagal silent (pola sama kayak Penjualan/Pembelian lainnya). Follow-up:
+                // belum digerbang $header_ok kayak pembelian_add.php/_rst.php.
+                mysqli_query($koneksi,"INSERT INTO tblpembelian_header
+                                        (notransaksi, status, carabayar,
+                                        tanggal, no_order, tanggal_order,
+                                        no_supplier, note, total_qty_order,
+                                        total_qty, total_beli,
+                                        diskon, total_diskon,
+                                        pajak, total_pajak,
+                                        total_akhir, total_retur, pembayaran,
+                                        tanggal_jt, tanggal_lunas,
+                                        jumlah_bayar, user, kd_cabang, lama_hari, Id_tabel)
+                                        VALUES
                                         ('$LastID','Pembelian Antar Cabang','$carabayar',
                                         '$txttgljl','$nopesanan','$tgl_pesan',
                                         '$drcabang','','$total_qty',
@@ -110,7 +113,7 @@
                                         '$netto','0','$dp',
                                         '','',
                                         '$kekurangan',
-                                        '$_nama','$kd_cabang')");
+                                        '$_nama','$kd_cabang','0','')");
                                         
             // Pindahkan Data Pesanan ke Pembelian
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail 
@@ -122,14 +125,15 @@
                     //$txtpot=$tampil['potongan'];
                     $subtotal=$tampil['total'];                       
 
-                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
-                                            (no_transaksi, no_item, harga_pokok, 
-                                            quantity, qty_order, potongan, total, 
-                                            user, kd_cabang) 
-                                            VALUES 
+                    // nobaris/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default.
+                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                            (no_transaksi, no_item, harga_pokok,
+                                            quantity, qty_order, qty_retur, potongan, harga_sp, total,
+                                            user, kd_cabang, nobaris, sts_order, id_inv)
+                                            VALUES
                                             ('$LastID', '$no_item','$txthargabarang',
-                                            '$txtqty','$txtqty','0','$subtotal',
-                                            '$_nama','$kd_cabang')");                          
+                                            '$txtqty','$txtqty','0','0','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','','')");
                 }
             // ----- End -----
 

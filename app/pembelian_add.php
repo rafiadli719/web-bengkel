@@ -99,14 +99,16 @@
                         $subtotal = ((float)$txthargabarang) * ((int)$txtqty);
                     }
 
+                    // nobaris/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default
+                    // gak diisi -> INSERT selalu gagal silent (pola sama kayak Penjualan).
                     mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
                                             (no_transaksi, no_item, harga_pokok,
-                                            quantity, qty_order, potongan, total,
-                                            user, kd_cabang)
+                                            quantity, qty_order, qty_retur, potongan, harga_sp, total,
+                                            user, kd_cabang, nobaris, sts_order, id_inv)
                                             VALUES
                                             ('', '$no_item','$txthargabarang',
-                                            '$txtqty','$txtqty','0','$subtotal',
-                                            '$_nama','$kd_cabang')");
+                                            '$txtqty','$txtqty','0','0','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','','')");
                 }
 
                 // Calculate totals
@@ -180,14 +182,15 @@
                             $subtotal = ((float)$txthargabarang) * ((int)$txtqty);
                         }
 
-                        mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
-                                                (no_transaksi, no_item, harga_pokok, 
-                                                quantity, qty_order, potongan, total, 
-                                                user, kd_cabang) 
-                                                VALUES 
+                        // nobaris/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default.
+                        mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                                (no_transaksi, no_item, harga_pokok,
+                                                quantity, qty_order, qty_retur, potongan, harga_sp, total,
+                                                user, kd_cabang, nobaris, sts_order, id_inv)
+                                                VALUES
                                                 ('', '$no_item','$txthargabarang',
-                                                '$txtqty','$txtqty','0','$subtotal',
-                                                '$_nama','$kd_cabang')");                          
+                                                '$txtqty','$txtqty','0','0','0','$subtotal',
+                                                '$_nama','$kd_cabang','0','','')");
                     }
                 // End ====
     
@@ -294,13 +297,14 @@
                     echo"<script>window.alert('Item Barang sudah ada!');
                     window.location=('pembelian_add_rst.php?stgl=$tgl_pilih&ssup=$cbo_supplier&kd=$kdbrg&spesan=$nopesanan');</script>";			                                
                 } else {                
-                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail 
-                                            (no_transaksi, no_item, harga_pokok, quantity, 
-                                            potongan, total, user, kd_cabang) 
-                                            VALUES 
+                    // nobaris/qty_order/qty_retur/harga_sp/sts_order/id_inv NOT NULL tanpa default.
+                    mysqli_query($koneksi,"INSERT INTO tblpembelian_detail
+                                            (no_transaksi, no_item, harga_pokok, quantity, qty_order,
+                                            qty_retur, potongan, harga_sp, total, user, kd_cabang, nobaris, sts_order, id_inv)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$txtpot','$subtotal',
-                                            '$_nama','$kd_cabang')");  
+                                            '$txtqty','$txtqty','0','$txtpot','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','','')");
 
                   
                 }
@@ -439,7 +443,9 @@
                 $kekurangan = $netto - $dp;
 
                 $tanggal_order='';
-                $total_qty_order='';
+                // total_qty_order kolom int NOT NULL -> default harus '0', bukan '' (dulu
+                // '' bikin INSERT header gagal tiap transaksi tanpa referensi pesanan).
+                $total_qty_order='0';
                 if($nopesanan<>'') {
                     $q_po=mysqli_query($koneksi,"SELECT tanggal, total_qty FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$nopesanan)."'");
                     if($q_po) {
@@ -481,31 +487,43 @@
                         exit;
                     }
                 }
-                mysqli_query($koneksi,"INSERT INTO tblpembelian_header 
-                                        (notransaksi, no_faktur, tanggal_faktur,
-                                        status, carabayar, 
-                                        tanggal, no_order, tanggal_order, 
-                                        no_supplier, note, total_qty_order, 
-                                        total_qty, total_beli, 
-                                        diskon, total_diskon, 
-                                        pajak, total_pajak, 
-                                        total_akhir, total_retur, pembayaran, 
-                                        tanggal_jt, tanggal_lunas, 
-                                        jumlah_bayar, user, kd_cabang, 
-                                        lama_hari, tipe_transaksi) 
-                                        VALUES 
-                                        ('$LastID','$txtno_faktur','$txttgl_faktur',
+                // BUG KRITIS pola sama kayak Penjualan (E2E 2026-09-29): Id_tabel NOT NULL
+                // tanpa default gak diisi + total_retur='' (harus '0', kolom double) +
+                // no_faktur/tanggal_faktur/tipe_transaksi BUKAN kolom di skema (gak pernah
+                // ada) -> INSERT header SELALU gagal silent, tapi kode di bawah tetap
+                // lanjut UPDATE detail + INSERT tbstok (nambah stok) gak peduli hasil
+                // insert. Sekarang digerbang $header_ok. no_faktur/tanggal_faktur dari
+                // form gak ke-simpan sama sekali sampai kolomnya ditambahin ke skema
+                // (keputusan Rafi, bukan hal yang boleh diputuskan sepihak di sini).
+                $header_ok = mysqli_query($koneksi,"INSERT INTO tblpembelian_header
+                                        (notransaksi,
+                                        status, carabayar,
+                                        tanggal, no_order, tanggal_order,
+                                        no_supplier, note, total_qty_order,
+                                        total_qty, total_beli,
+                                        diskon, total_diskon,
+                                        pajak, total_pajak,
+                                        total_akhir, total_retur, pembayaran,
+                                        tanggal_jt, tanggal_lunas,
+                                        jumlah_bayar, user, kd_cabang,
+                                        lama_hari, Id_tabel)
+                                        VALUES
+                                        ('$LastID',
                                         'Pembelian','$cbocarabyr',
                                         '$txttglpesan','$nopesanan','$tanggal_order',
                                         '$cbosupplier','$txtnote','$total_qty_order',
                                         '$tot_qty','$subtotal',
                                         '$pot_persen','$pot_nom',
                                         '$pajak_persen','$pajak_nom',
-                                        '$netto','','$dp',
+                                        '$netto','0','$dp',
                                         '$tanggal_jt','',
                                         '$kekurangan',
-                                        '$_nama','$kd_cabang', 
-                                        '$syarat_hari','Normal')");
+                                        '$_nama','$kd_cabang',
+                                        '$syarat_hari','')");
+
+                if (!$header_ok) {
+                    echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('pembelian_add.php');</script>";
+                } else {
 
                 if($no_do!=''){
                     mysqli_query($koneksi,"UPDATE tblpembelian_header SET no_do='".mysqli_real_escape_string($koneksi,$no_do)."' WHERE notransaksi='$LastID'");
@@ -555,10 +573,10 @@
                     }
                 }
                                 
-                echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";                            
+                echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";
 //                }
+                }
 
-                
             }
         }             
 ?>
