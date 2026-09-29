@@ -3,7 +3,8 @@
 	if(empty($_SESSION['_iduser'])){
 		header("location:../index.php");
 	} else {
-		$id_user=$_SESSION['_iduser'];		
+		$id_user=$_SESSION['_iduser'];
+		$kd_cabang=$_SESSION['_cabang'];
 		include "../config/koneksi.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
@@ -62,12 +63,14 @@
             $subtotal=($txthargabarang*$txtqty)-$txtpot;
 
             if($txtkdbarang<>'') {
-                mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail 
-                                        (no_transaksi, no_item, harga_jual, quantity, 
-                                        potongan, total) 
-                                        VALUES 
-                                        ('$nobl', '$txtkdbarang','$txthargabarang','$txtqty',
-                                        '$txtpot','$subtotal')");
+                // qty_order/qty_retur/user/kd_cabang/nobaris/sts_order NOT NULL tanpa
+                // default (beberapa gak diisi sama sekali) -> INSERT selalu gagal silent.
+                mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail
+                                        (no_transaksi, no_item, harga_jual, quantity, qty_order,
+                                        qty_retur, potongan, harga_sp, harga_pokok, total, user, kd_cabang, nobaris, sts_order)
+                                        VALUES
+                                        ('$nobl', '$txtkdbarang','$txthargabarang','$txtqty','$txtqty',
+                                        '0','$txtpot','0','0','$subtotal','$_nama','$kd_cabang','0','')");
 
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tblpenjualan_detail 

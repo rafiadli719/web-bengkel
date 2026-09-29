@@ -126,25 +126,27 @@
                 }
             }
             
-            mysqli_query($koneksi,"INSERT INTO tblpenjualan_header 
-                                    (notransaksi, status, carabayar, tanggal, 
-                                    no_order, tanggal_order, no_sales, no_pelanggan, 
-                                    note, 
-                                    total_qty_order, total_qty, total_jual, 
-                                    diskon, total_diskon, 
-                                    pajak, total_pajak, 
-                                    total_akhir, total_retur, pembayaran, 
-                                    tanggal_jt, tanggal_lunas, 
-                                    jumlah_bayar, user, kd_cabang) 
-                                    VALUES 
+            // lama_hari/id_tabel NOT NULL tanpa default gak diisi -> INSERT header gagal
+            // silent, transaksi hilang tanpa jejak (baris detail tetap ke-mark selesai).
+            mysqli_query($koneksi,"INSERT INTO tblpenjualan_header
+                                    (notransaksi, status, carabayar, tanggal,
+                                    no_order, tanggal_order, no_sales, no_pelanggan,
+                                    note,
+                                    total_qty_order, total_qty, total_jual,
+                                    diskon, total_diskon,
+                                    pajak, total_pajak,
+                                    total_akhir, total_retur, pembayaran,
+                                    tanggal_jt, tanggal_lunas,
+                                    jumlah_bayar, user, kd_cabang, lama_hari, id_tabel)
+                                    VALUES
                                     ('$LastID','Penjualan','$carabayar','$txttgljl',
                                     '$nopesanan','$tgl_pesan','','$drcabang',
                                     '$note',
                                     '$total_qty_order','$total_qty_order','$total_jual',
                                     '$diskon','$total_diskon',
                                     '$pajak','$total_pajak',
-                                    '$netto','','$dp','$tanggal_jt','',
-                                    '$kekurangan','$_nama','$kd_cabang')");
+                                    '$netto','0','$dp','$tanggal_jt','',
+                                    '$kekurangan','$_nama','$kd_cabang','0','')");
 
             // Pindahkan Data Pesanan ke Penjualan
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblorderjual_detail 
@@ -156,14 +158,16 @@
                     $txtpot=$tampil['potongan'];
                     $subtotal=$tampil['total'];                       
 
-                    mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail 
-                                            (no_transaksi, no_item, harga_jual, 
-                                            quantity, qty_order, potongan, total, 
-                                            user, kd_cabang) 
-                                            VALUES 
+                    // nobaris/qty_retur/sts_order NOT NULL tanpa default -> INSERT selalu
+                    // gagal silent kalau gak diisi. Diisi 0/'' sama kayak data lama.
+                    mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail
+                                            (no_transaksi, no_item, harga_jual,
+                                            quantity, qty_order, qty_retur, potongan, harga_sp, harga_pokok, total,
+                                            user, kd_cabang, nobaris, sts_order)
+                                            VALUES
                                             ('$LastID', '$no_item','$txthargabarang',
-                                            '$txtqty','$txtqty','$txtpot','$subtotal',
-                                            '$_nama','$kd_cabang')");                          
+                                            '$txtqty','$txtqty','0','$txtpot','0','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','')");
                 }
             // ----- End -----
 

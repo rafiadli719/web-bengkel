@@ -84,14 +84,17 @@
                                 // 4. Menghitung Sub Total ========  
                                 $subtotal=($txthargabarang*$txtqty)-(($txthargabarang*$txtqty)*($txtpot/100));                          
 
-                                // 5. Simpan Ke Tabel Detail ========  
-                                mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail 
-                                            (no_transaksi, no_item, harga_jual, quantity, 
-                                            potongan, total, user, kd_cabang) 
-                                            VALUES 
+                                // 5. Simpan Ke Tabel Detail ========
+                                // nobaris/qty_retur/sts_order NOT NULL tanpa default di skema
+                                // sekarang tapi gak pernah diisi di sini -> INSERT selalu gagal
+                                // (silent, return value gak dicek). Diisi 0/'' sama kayak data lama.
+                                mysqli_query($koneksi,"INSERT INTO tblpenjualan_detail
+                                            (no_transaksi, no_item, harga_jual, quantity, qty_order,
+                                            qty_retur, potongan, harga_sp, harga_pokok, total, user, kd_cabang, nobaris, sts_order)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$txtpot','$subtotal',
-                                            '$_nama','$kd_cabang')");                                  
+                                            '$txtqty','$txtqty','0','$txtpot','0','0','$subtotal',
+                                            '$_nama','$kd_cabang','0','')");
                             }
                         }
                     }     
