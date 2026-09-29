@@ -580,10 +580,10 @@
       ?>
 
       <?php
-      $SqlQuery = mysqli_query($con, "SELECT * FROM view_cari_item");        
-      
-      //Hitung semua jumlah data yang berada pada tabel Sisawa
-      $JumlahData = mysqli_num_rows($SqlQuery);
+      // Dulu SELECT * (semua kolom+baris view_cari_item) cuma buat dihitung
+      // mysqli_num_rows -> COUNT(*) jauh lebih murah, hasil sama ($total_item
+      // baris 46 sudah punya angka yang sama, reuse saja).
+      $JumlahData = $total_item;
       
       // Hitung jumlah halaman yang tersedia
       $jumlahPage = ceil($JumlahData / $limit); 
