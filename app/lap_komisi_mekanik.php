@@ -72,6 +72,11 @@ if ($show) {
                    SUM(GREATEST(sb.total - sb.quantity * COALESCE(ti.hargapokok,0), 0)) AS laba_barang
             FROM tblservis_barang sb
             LEFT JOIN tblitem ti ON ti.noitem = sb.no_item
+            WHERE sb.no_service IN (
+                SELECT no_service FROM tblservice
+                WHERE tanggal BETWEEN '$tgl_dari_esc' AND '$tgl_sampai_esc'
+                  AND status_servis = 'bayar'
+            )
             GROUP BY sb.no_service
         ) lb ON lb.no_service = s.no_service
         WHERE s.tanggal BETWEEN '$tgl_dari_esc' AND '$tgl_sampai_esc'
