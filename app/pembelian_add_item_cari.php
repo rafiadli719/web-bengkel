@@ -90,55 +90,57 @@
 
         if($txtflt=='asc') {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE 
-                            (noitem like '%".$txtkey."%') OR 
-                            (namaitem like '%".$txtkey."%') OR 
-                            (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                // Tanpa LIMIT: pencarian kosong render SEMUA 5761 baris view_cari_item.
+                // Dibatasi 200 baris; $tot tetap dihitung penuh buat teks "ditemukan N data".
+                $sql_query=" SELECT * FROM view_cari_item
+                            WHERE
+                            (noitem like '%".$txtkey."%') OR
+                            (namaitem like '%".$txtkey."%') OR
+                            (namajenis like '%".$txtkey."%')
+                            order by ".$sql_urut." asc LIMIT 200";
 
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                                                WHERE 
-                                                (noitem like '%".$txtkey."%') OR 
-                                                (namaitem like '%".$txtkey."%') OR 
-                                                (namajenis like '%".$txtkey."%')");			
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot FROM view_cari_item
+                                                WHERE
+                                                (noitem like '%".$txtkey."%') OR
+                                                (namaitem like '%".$txtkey."%') OR
+                                                (namajenis like '%".$txtkey."%')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];               
+                $tot=$tm_cari['tot'];
             } ELSE {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                $sql_query=" SELECT * FROM view_cari_item
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot FROM view_cari_item
+                            WHERE ".$sql_cari." like '%".$txtkey."%'");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];				                        
+                $tot=$tm_cari['tot'];
             }
         } else {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE 
-                            (noitem like '%".$txtkey."%') OR 
-                            (namaitem like '%".$txtkey."%') OR 
-                            (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                $sql_query=" SELECT * FROM view_cari_item
+                            WHERE
+                            (noitem like '%".$txtkey."%') OR
+                            (namaitem like '%".$txtkey."%') OR
+                            (namajenis like '%".$txtkey."%')
+                            order by ".$sql_urut." desc LIMIT 200";
 
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                                                WHERE 
-                                                (noitem like '%".$txtkey."%') OR 
-                                                (namaitem like '%".$txtkey."%') OR 
-                                                (namajenis like '%".$txtkey."%')");			
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot FROM view_cari_item
+                                                WHERE
+                                                (noitem like '%".$txtkey."%') OR
+                                                (namaitem like '%".$txtkey."%') OR
+                                                (namajenis like '%".$txtkey."%')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];                               
+                $tot=$tm_cari['tot'];
             } else {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
-                $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                $sql_query=" SELECT * FROM view_cari_item
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
+                $cari_kd=mysqli_query($koneksi,"SELECT
+                                                count(*) as tot FROM view_cari_item
+                            WHERE ".$sql_cari." like '%".$txtkey."%'");
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $tot=$tm_cari['tot'];				                                    
+                $tot=$tm_cari['tot'];
             }
         }
 
@@ -385,14 +387,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    
-                                                                        <div class="widget-header widget-header-green widget-header-flat">
-                                        <h4 class="widget-title lighter">
-                                            <i class="ace-icon fa fa-list"></i>
-                                            <?php echo $hasil_cari; ?>
-                                        </h4>
-                                    </div>
-                                    
+
                                     <div class="widget-body">
                                         <div class="widget-main no-padding">
                                             <table class="table table-striped table-bordered table-hover">
