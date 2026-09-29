@@ -379,10 +379,10 @@
       ?>
 
       <?php
-      $SqlQuery = mysqli_query($con, "SELECT * FROM view_cari_pelanggan order by namapelanggan");        
-      
-      //Hitung semua jumlah data yang berada pada tabel Sisawa
-      $JumlahData = mysqli_num_rows($SqlQuery);
+      // Dulu SELECT * (semua kolom+baris view_cari_pelanggan) cuma buat
+      // mysqli_num_rows -> COUNT(*) hasilnya sama, jauh lebih murah.
+      $CountQuery = mysqli_query($con, "SELECT COUNT(*) AS jml FROM view_cari_pelanggan");
+      $JumlahData = mysqli_fetch_assoc($CountQuery)['jml'];
       
       // Hitung jumlah halaman yang tersedia
       $jumlahPage = ceil($JumlahData / $limit); 

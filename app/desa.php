@@ -227,37 +227,31 @@
 												<tbody>
 												<?php 
 													$no = 0 ;
-													$sql = mysqli_query($koneksi,"SELECT 
-                                                                                kode, nama, id 
-                                                                                FROM tbl_adm 
-                                                                                WHERE 
+													// Dulu tiap baris desa (1051 baris) trigger 3 query tambahan
+													// (prop/kab/kec) = 3154 query per load halaman ini. tbl_adm cuma
+													// 1140 baris total, jadi di-load sekali ke array kode=>nama lalu
+													// di-lookup dari memori.
+													$peta_adm = [];
+													$sql_adm_all = mysqli_query($koneksi, "SELECT kode, nama FROM tbl_adm");
+													while ($row_adm = mysqli_fetch_assoc($sql_adm_all)) {
+														$peta_adm[$row_adm['kode']] = $row_adm['nama'];
+													}
+													$sql = mysqli_query($koneksi,"SELECT
+                                                                                kode, nama, id
+                                                                                FROM tbl_adm
+                                                                                WHERE
                                                                                 length(kode)='13'");
 													while ($tampil = mysqli_fetch_array($sql)) {
 														$no++;
                                                         $kdprop=substr($tampil['kode'],0,2);
                                                         $kdkab=substr($tampil['kode'],0,5);
-                                                        $kdkec=substr($tampil['kode'],0,8);                                                        
-                                                        
-                                                        $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                        nama 
-                                                                                        FROM tbl_adm 
-                                                                                        WHERE kode='$kdprop'");			
-                                                        $tm_cari=mysqli_fetch_array($cari_kd);
-                                                        $namaprop=$tm_cari['nama'];				        
+                                                        $kdkec=substr($tampil['kode'],0,8);
 
-                                                        $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                        nama 
-                                                                                        FROM tbl_adm 
-                                                                                        WHERE kode='$kdkab'");			
-                                                        $tm_cari=mysqli_fetch_array($cari_kd);
-                                                        $namakab=$tm_cari['nama'];				                                                                
+                                                        $namaprop=$peta_adm[$kdprop] ?? '';
 
-                                                        $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                                                        nama 
-                                                                                        FROM tbl_adm 
-                                                                                        WHERE kode='$kdkec'");			
-                                                        $tm_cari=mysqli_fetch_array($cari_kd);
-                                                        $namakec=$tm_cari['nama'];				                                                                                                                        
+                                                        $namakab=$peta_adm[$kdkab] ?? '';
+
+                                                        $namakec=$peta_adm[$kdkec] ?? '';
 												?>
 													<tr>
 														<td class="center"><?php echo $no ?></td>
