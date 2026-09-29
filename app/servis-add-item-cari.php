@@ -218,7 +218,7 @@
                     $sql_query .= " AND " . $applicable_condition;
                 }
                 $sql_query .= "
-                            order by app_score DESC, ".$sql_urut." asc"; 
+                            order by app_score DESC, ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -234,7 +234,7 @@
                 if ($only_applicable === 1) {
                     $sql_query .= " AND " . $applicable_condition;
                 }
-                $sql_query .= " order by app_score DESC, ".$sql_urut." asc";
+                $sql_query .= " order by app_score DESC, ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
@@ -252,7 +252,7 @@
                     $sql_query .= " AND " . $applicable_condition;
                 }
                 $sql_query .= "
-                            order by app_score DESC, ".$sql_urut." desc"; 
+                            order by app_score DESC, ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -268,7 +268,7 @@
                 if ($only_applicable === 1) {
                     $sql_query .= " AND " . $applicable_condition;
                 }
-                $sql_query .= " order by app_score DESC, ".$sql_urut." desc";
+                $sql_query .= " order by app_score DESC, ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			

@@ -48,7 +48,7 @@
                             (namaitem like '%".$txtcaribrg."%') OR 
                             (namajenis like '%".$txtcaribrg."%') OR 
                             (rakbarang like '%".$txtcaribrg."%') 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 

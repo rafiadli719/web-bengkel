@@ -91,7 +91,7 @@
                             (noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -103,7 +103,7 @@
                 $tot=$tm_cari['tot'];               
             } ELSE {
                 $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
@@ -117,7 +117,7 @@
                             (noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -129,7 +129,7 @@
                 $tot=$tm_cari['tot'];                               
             } else {
                 $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc";
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			

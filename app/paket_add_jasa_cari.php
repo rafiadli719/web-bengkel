@@ -92,7 +92,7 @@
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
                             AND jenis='SERVIS' 
-                            order by ".$sql_urut." asc"; 
+                            order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -106,7 +106,7 @@
             } ELSE {
                 $sql_query=" SELECT * FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS' order by ".$sql_urut." asc";
+                            AND jenis='SERVIS' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%' 
@@ -122,7 +122,7 @@
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
                             AND jenis='SERVIS' 
-                            order by ".$sql_urut." desc"; 
+                            order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
@@ -136,7 +136,7 @@
             } else {
                 $sql_query=" SELECT * FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS' order by ".$sql_urut." desc";
+                            AND jenis='SERVIS' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
                             WHERE ".$sql_cari." like '%".$txtkey."%' 
