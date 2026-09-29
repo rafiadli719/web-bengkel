@@ -332,3 +332,20 @@ Temuan (bukan bug kode, dicatat buat keputusan Rafi):
   DB langsung ke-insert). Bukan bug, tapi jadi catatan buat E2E
   browser session berikutnya: jangan buru-buru nutup tab pas macet,
   cek DB langsung buat verifikasi state, baru lanjut.
+
+**Update 2026-09-30 Pesanan Pembelian/Penjualan E2E (commit `ea2c1a6`):** bug
+KRITIS sama persis pola Penjualan/Pembelian/Stok Masuk-Keluar sebelumnya — INSERT
+ke `tblorder_detail`/`tblorderjual_detail`/`tblorderjual_header` di jalur "Pilih"
+modal cari item (`pesanan_pembelian_add_rst.php`,
+`proses-add-detail/pesanan-penjualan.php`, `pesanan_penjualan_add_rst.php`,
+`pesanan_penjualan_cab_add_rst.php`) hilang kolom NOT NULL tanpa default
+(`nobaris`, `qty_terima`, `harga_sp`, `harga_pokok`, `margin_jual`,
+`total_terima`, `id_tabel`, `tipe_trx`, `order_ke` — beda-beda per file). Fix:
+tambah kolom hilang, `nobaris` dihitung `MAX(nobaris)+1` per user/cabang.
+Halaman `_add.php` utama (form langsung, bukan lewat modal) TIDAK kena, sudah
+lengkap dari awal. Divalidasi E2E live 3x (fetch POST sesi test, bukan klik UI):
+Pesanan Pembelian, Pesanan Penjualan Input Manual, Pesanan Penjualan Antar
+Cabang — semua sukses simpan header+detail, data test dihapus. Checklist E2E
+lapangan: Servis, Penjualan, Pembelian, Antar Cabang, Stok Masuk/Keluar,
+Pesanan Pembelian/Penjualan SELESAI. Sisa: Laporan, Keuangan Kasir, Komplain,
+Data Master.
