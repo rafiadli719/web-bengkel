@@ -248,7 +248,10 @@ $result = mysqli_query($koneksi, $sql);
                                         <td class="text-center" style="white-space:nowrap;">
                                             <?php
                                             $jns_row = (isset($row['jenis']) && $row['jenis']) ? $row['jenis'] : 'pull';
-                                            $can_terima = !$is_pusat && $st=='dikirim' &&
+                                            // Bukan !$is_pusat -- tipe_cabang='1' dipakai lebih dari satu cabang
+                                            // (bukan cuma PST), jadi cabang tujuan push bisa saja is_pusat juga.
+                                            // Hak terima ditentukan posisi cabang di transaksi, bukan tipe cabang.
+                                            $can_terima = $st=='dikirim' &&
                                                 (($jns_row=='push' && $row['kd_cabang_tujuan']==$kd_cabang) ||
                                                  ($jns_row!='push' && $row['kd_cabang_asal']==$kd_cabang));
                                             $no_enc = urlencode($row['no_order']);
