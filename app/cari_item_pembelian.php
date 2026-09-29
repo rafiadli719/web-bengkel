@@ -42,13 +42,16 @@
         //$sql_cari="namaitem";
         $sql_urut="namaitem";
 
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE 
-                            (noitem like '%".$txtcaribrg."%') OR 
-                            (namaitem like '%".$txtcaribrg."%') OR 
-                            (namajenis like '%".$txtcaribrg."%') OR 
-                            (rakbarang like '%".$txtcaribrg."%') 
-                            order by ".$sql_urut." asc"; 
+                // Dulu tanpa LIMIT: pencarian kosong (buka halaman pertama kali) render
+                // SEMUA 5761 baris view_cari_item -> HTML 15,5MB. Dibatasi 200 baris;
+                // user disuruh persempit kalau hasil kepotong ($tot masih dihitung penuh).
+                $sql_query=" SELECT * FROM view_cari_item
+                            WHERE
+                            (noitem like '%".$txtcaribrg."%') OR
+                            (namaitem like '%".$txtcaribrg."%') OR
+                            (namajenis like '%".$txtcaribrg."%') OR
+                            (rakbarang like '%".$txtcaribrg."%')
+                            order by ".$sql_urut." asc LIMIT 200";
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_item 
