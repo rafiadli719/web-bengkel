@@ -251,3 +251,33 @@ dan `pesanan_penjualan_cab_add_item_cari.php` sudah dicek, bersih).
 Divalidasi live: cari "20W-40MATIC" -> row render -> Pilih -> masuk
 keranjang qty 2 -> item dihapus lagi (cleanup, gak checkout beneran).
 Checklist-projek `feat-pos-cari-item` diupdate ke uat/80%.
+
+**Update 2026-09-29 lanjutan (commit `8dc399a`, `d25b18d`):** verify live
+Pembelian Input Manual ketemu pola sama — `pembelian_add_item_cari.php`
+juga render SEMUA 5761 baris `view_cari_item` tanpa LIMIT (beda file dari
+`cari_item_pembelian.php` yang udah dibatasi commit `a5794d9` sebelumnya,
+kelewat). Sekalian header "Hasil Pencarian ditemukan N data" ke-render
+2x (blok HTML kepasang dobel). Fixed (`8dc399a`).
+
+Nyari lebih jauh: pola `SELECT * FROM view_cari_item` 4-varian
+(asc/desc x kosong/isi keyword) tanpa LIMIT ternyata di-copy-paste ke
+25 file modal cari item/jasa lintas modul — Penjualan (jl, jl_pesan),
+Pembelian (bl), Pesanan Pembelian/Penjualan (+cab), Servis (item/jasa,
+jemput, garansi), Stok Masuk/Keluar, Paket, Master Barang. Disapu
+sekaligus LIMIT 200 (commit `d25b18d`), $tot tetap query count terpisah.
+Divalidasi: php -l lolos 25 file, diff cuma nambah " LIMIT 200", live
+browser 2 sample (stok_masuk_add_item_cari.php, servis-add-item-cari.php
+struktur beda app_score) render normal.
+
+**Belum di-scope (backlog baru):** pencarian PELANGGAN/KENDARAAN/
+PIUTANG-HUTANG (`cari_pelanggan_jl*.php`, `cari_pelanggan_rst.php`,
+`kendaraan_rst.php`, `pelanggan_rst.php`, `pembelian_rst.php`,
+`penjualan_rst.php`, `pesanan_pembelian_rst.php`,
+`pesanan_penjualan_rst.php`, `pesanan_penjualan_add_pelanggan_cari.php`,
+`penjualan_add_pelanggan_cari.php`, `pmby_hutang_rst.php`,
+`pmby_piutang_rst.php`, `pmby_piutang_add_pelanggan_cari.php`,
+`penyesuaian-stok-*-manual-rst.php`) pakai pola query identik tanpa
+LIMIT juga (~15+ file). Beda tabel target (pelanggan 37rb+ baris,
+kendaraan, dsb) — lebih riskan karena beberapa punya WHERE kd_cabang
+filter yang perlu dicek satu-satu sebelum nambah LIMIT. Belum
+divalidasi/difix sesi ini.
