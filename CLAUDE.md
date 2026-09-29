@@ -294,3 +294,41 @@ Sapuan LIMIT search-modal lintas app (42 file total: 25 item/jasa +
 17 pelanggan/kendaraan/transaksi/piutang-hutang) TUNTAS per commit
 `d25b18d` + `f6e98b4`. Gak ada backlog serupa yang tersisa dari temuan
 E2E lapangan sesi ini.
+
+**Update 2026-09-29 Servis E2E penuh:** alur booking -> Work Order ->
+item barang/jasa -> halaman bayar divalidasi live pakai data real
+(A 2036 IH / ANDI, MAS / CBR-150, servis SV26000103579, dihapus bersih
+setelah tes — no_service + tbservis_workorder + tblservis_barang/jasa +
+tbservis_pending_items semua ke-cleanup, gak ada sisa).
+
+Temuan (bukan bug kode, dicatat buat keputusan Rafi):
+- **Duplikat kategori motor**: `tbkategori_motor` punya baris dobel
+  untuk kategori yang sama — MATIC (id 2 & 6), SUPERMATIC (id 7 & 8),
+  SUPER SPORT vs SUPERSPORT (id 5 & 10, beda ejaan doang). Akibatnya
+  guard "WO tidak sesuai kategori motor" di `servis-input-reguler.php`
+  (fungsi `_get_kd_kategori_motor_by_service`) BISA nge-block WO yang
+  sebenarnya valid, kalau motor ke-mapping ke kategori id yang beda dari
+  yang dipakai waktu setting mapping WO-nya (kejadian nyata: CBR-150
+  ke-kategori id 5 "SUPER SPORT", tapi WO0001 di-mapping ke id 10
+  "SUPERSPORT" — dianggap gak cocok padahal sama). Guard logic-nya
+  sendiri BENER, cuma kena data kotor. Perlu keputusan Rafi: merge
+  kategori duplikat (butuh cek semua FK/mapping yang nunjuk ke id lama
+  sebelum didrop) — bukan sesuatu yang aman diputuskan sepihak.
+- **Data sampah di `tbworkorderheader`**: WO0003 nama kosong, WO0004
+  nama "2444" + waktu 2147483647 menit (integer overflow, jelas dummy),
+  WO0006 "coba", WO0007 "DUMMYQA WO DUPLICATE TEST", dan WO0001 kode
+  dobel (row lain juga "WO0001" tapi nama "Servis Rutin Matic" beda
+  dari "SERVIS STANDAR MATIC/BEBEK"). Belum dibersihkan sesi ini,
+  bukan bug tapi ganggu kalau dipakai staf beneran.
+- **`view_service_kategori_motor` gak ada** — tapi kode udah defensif
+  (`_tbl_exists_local()` check dulu sebelum query), jadi otomatis
+  fallback ke derive dari `tblkendaraan`+`tbtipe_motor`+`tbkategori_motor`
+  tanpa error. Bukan bug, cuma catatan kalau view itu emang gak pernah
+  dibuat (mungkin sisa rencana lama yang gak jadi dipakai).
+- Setiap klik submit (Tambah WO, dkk) di `servis-input-reguler.php`
+  pakai pola `alert()` + `window.location.href` bawaan legacy — bikin
+  tab browser automation freeze ~10-40 detik nunggu resource/dialog,
+  padahal proses server-side-nya sendiri cepat begitu selesai (row
+  DB langsung ke-insert). Bukan bug, tapi jadi catatan buat E2E
+  browser session berikutnya: jangan buru-buru nutup tab pas macet,
+  cek DB langsung buat verifikasi state, baru lanjut.
