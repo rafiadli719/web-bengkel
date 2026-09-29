@@ -156,13 +156,16 @@
                     echo"<script>window.alert('Item Barang sudah ada!');
                     window.location=('pesanan_penjualan_cab_add_rst.php?stgl=$tgl_pilih&ssup=$cbocabang&kd=$kdbrg');</script>";			                                                                        
                 } else {                
-                    mysqli_query($koneksi,"INSERT INTO tblorderjual_detail 
-                                            (no_order, no_item, harga_jual, quantity, 
-                                            potongan, total, user, kd_cabang) 
-                                            VALUES 
+                    $res_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS nb FROM tblorderjual_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
+                    $nb_row = $res_nb ? mysqli_fetch_assoc($res_nb) : null;
+                    $next_baris = $nb_row ? (int)$nb_row['nb'] : 1;
+                    mysqli_query($koneksi,"INSERT INTO tblorderjual_detail
+                                            (no_order, no_item, harga_jual, quantity, nobaris, qty_terima,
+                                            potongan, harga_sp, harga_pokok, total, margin_jual, user, kd_cabang)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$txtpot','$subtotal',
-                                            '$_nama','$kd_cabang')");  
+                                            '$txtqty',$next_baris,0,'$txtpot',0,'$txthargabarang','$subtotal',0,
+                                            '$_nama','$kd_cabang')");
 
                   
                 }
@@ -238,26 +241,26 @@
                 $txtnet= $txttotal_harga-$txtpotfaktur_nom+$txtpajak_nom; 
                              
 
-                mysqli_query($koneksi,"INSERT INTO tblorderjual_header 
-                                    (no_order, status, tanggal, 
-                                    no_sales, no_pelanggan, 
-                                    note, total_qty, 
-                                    diskon, total_diskon, 
-                                    pajak, total_pajak, 
-                                    total_akhir, pembayaran, 
-                                    user, kd_cabang, 
-                                    tipe_trx, order_ke, 
-                                    total_jual) 
-                                    VALUES 
+                mysqli_query($koneksi,"INSERT INTO tblorderjual_header
+                                    (no_order, status, tanggal,
+                                    no_sales, no_pelanggan,
+                                    note, total_qty, total_terima,
+                                    diskon, total_diskon,
+                                    pajak, total_pajak,
+                                    total_akhir, pembayaran,
+                                    user, id_tabel, kd_cabang,
+                                    tipe_trx, order_ke,
+                                    total_jual)
+                                    VALUES
                                     (
                                     '$LastID','0','$txttglpesan',
                                     '','',
                                     '$txtnote',
-                                    '$total_qty_order',
+                                    '$total_qty_order',0,
                                     '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                     '$txtpajak_persen','$txtpajak_nom',
                                     '$txtnet','$txtdp',
-                                    '$_nama','$kd_cabang',
+                                    '$_nama','','$kd_cabang',
                                     'Antar Cabang','$cbocabang',
                                     '$txttotal_harga')");
 

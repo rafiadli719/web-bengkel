@@ -88,13 +88,16 @@
                                 $subtotal=($txthargabarang*$txtqty)-(($txthargabarang*$txtqty)*($txtpot/100));                          
 
                                 // 5. Simpan Ke Tabel Detail ========  
-                                mysqli_query($koneksi,"INSERT INTO tblorderjual_detail 
-                                                (no_order, no_item, harga_jual, quantity, 
-                                                potongan, total, user, kd_cabang) 
-                                                VALUES 
+                                $res_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS nb FROM tblorderjual_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
+                                $nb_row = $res_nb ? mysqli_fetch_assoc($res_nb) : null;
+                                $next_baris = $nb_row ? (int)$nb_row['nb'] : 1;
+                                mysqli_query($koneksi,"INSERT INTO tblorderjual_detail
+                                                (no_order, no_item, harga_jual, quantity, nobaris, qty_terima,
+                                                potongan, harga_sp, harga_pokok, total, margin_jual, user, kd_cabang)
+                                                VALUES
                                                 ('', '$txtkdbarang','$txthargabarang',
-                                                '$txtqty','$txtpot','$subtotal',
-                                                '$_nama','$kd_cabang')");                                  
+                                                '$txtqty',$next_baris,0,'$txtpot',0,'$txthargabarang','$subtotal',0,
+                                                '$_nama','$kd_cabang')");
                             }
                         }
                     }     

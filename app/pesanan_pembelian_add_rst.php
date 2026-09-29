@@ -129,13 +129,16 @@
                     //window.location=('pesanan_pembelian_add_rst.php?stgl=$tgl_pilih&ssup=$cbo_supplier');</script>";			                                
                     
                     //else  
-                    mysqli_query($koneksi,"INSERT INTO tblorder_detail 
-                                            (no_order, no_item, harga_pokok, quantity, 
-                                            total, user, kd_cabang) 
-                                            VALUES 
+                    $res_nb = mysqli_query($koneksi, "SELECT COALESCE(MAX(nobaris),0)+1 AS nb FROM tblorder_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
+                    $nb_row = $res_nb ? mysqli_fetch_assoc($res_nb) : null;
+                    $next_baris = $nb_row ? (int)$nb_row['nb'] : 1;
+                    mysqli_query($koneksi,"INSERT INTO tblorder_detail
+                                            (no_order, no_item, harga_pokok, quantity, qty_terima,
+                                            total, user, kd_cabang, nobaris)
+                                            VALUES
                                             ('', '$txtkdbarang','$txthargabarang',
-                                            '$txtqty','$subtotal',
-                                            '$_nama','$kd_cabang')");  
+                                            '$txtqty',0,'$subtotal',
+                                            '$_nama','$kd_cabang',$next_baris)");
 
                   
                 }

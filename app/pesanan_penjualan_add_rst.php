@@ -211,24 +211,24 @@
             $total_qty_order=$tm_cari['tot_qty_jual'];                                 
                              
 
-                mysqli_query($koneksi,"INSERT INTO tblorderjual_header 
-                                    (no_order, status, tanggal, 
-                                    no_sales, no_pelanggan, 
-                                    note, total_qty, 
-                                    diskon, total_diskon, 
-                                    pajak, total_pajak, 
-                                    total_akhir, pembayaran, 
-                                    user, kd_cabang, total_jual) 
-                                    VALUES 
+                mysqli_query($koneksi,"INSERT INTO tblorderjual_header
+                                    (no_order, status, tanggal,
+                                    no_sales, no_pelanggan,
+                                    note, total_qty, total_terima,
+                                    diskon, total_diskon,
+                                    pajak, total_pajak,
+                                    total_akhir, pembayaran,
+                                    user, id_tabel, kd_cabang, tipe_trx, order_ke, total_jual)
+                                    VALUES
                                     (
                                     '$LastID','0','$txttglpesan',
                                     '$cbosales','$nopelanggan',
                                     '$txtnote',
-                                    '$total_qty_order',
+                                    '$total_qty_order',0,
                                     '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                     '$txtpajak_persen','$txtpajak_nom',
                                     '$txtnet','$txtdp',
-                                    '$_nama','$kd_cabang','$txttotal_harga')");
+                                    '$_nama','','$kd_cabang','','','$txttotal_harga')");
 
                 mysqli_query($koneksi,"UPDATE tblorderjual_detail 
                                         SET 
