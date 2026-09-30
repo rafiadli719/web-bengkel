@@ -21,6 +21,15 @@ $username = $nama_karyawan_aktif;
 // Fetch filter parameters
 $tanggal_setor_awal = $_POST['tanggal_setor_awal'] ?? $_GET['tanggal_setor_awal'] ?? '';
 $tanggal_setor_akhir = $_POST['tanggal_setor_akhir'] ?? $_GET['tanggal_setor_akhir'] ?? '';
+// Default 30 hari terakhir kalau parameter tanggal sama sekali gak dikirim
+// (buka halaman pertama kali). Dulu tanpa default -> semua riwayat setoran
+// dirender sekaligus (364 baris / 1,2MB HTML, makin berat tiap bulan).
+// Submit filter dengan tanggal dikosongkan tetap = semua data.
+if (!isset($_POST['tanggal_setor_awal']) && !isset($_GET['tanggal_setor_awal'])
+    && !isset($_POST['tanggal_setor_akhir']) && !isset($_GET['tanggal_setor_akhir'])) {
+    $tanggal_setor_awal = date('Y-m-d', strtotime('-30 days'));
+    $tanggal_setor_akhir = date('Y-m-d');
+}
 $cabang = $_POST['cabang'] ?? $_GET['cabang'] ?? 'all';
 $rekening_filter = $_POST['rekening_filter'] ?? $_GET['rekening_filter'] ?? 'all';
 $bank_status = $_GET['bank_status'] ?? '';
