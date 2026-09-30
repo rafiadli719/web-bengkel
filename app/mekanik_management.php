@@ -285,7 +285,7 @@ if(empty($_SESSION['_iduser'])){
                                     <div class="widget-header widget-header-blue widget-header-flat">
                                         <h4 class="widget-title lighter">
                                             <i class="ace-icon fa fa-wrench orange"></i>
-                                            Mechanic Management System
+                                            Manajemen Mekanik
                                         </h4>
                                         <div class="widget-toolbar">
                                             <a href="#" data-action="collapse">
@@ -323,7 +323,7 @@ if(empty($_SESSION['_iduser'])){
                                                                     <th>Status</th>
                                                                     <th>Gaji Pokok</th>
                                                                     <th>User Account</th>
-                                                                    <th>Actions</th>
+                                                                    <th>Aksi</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>

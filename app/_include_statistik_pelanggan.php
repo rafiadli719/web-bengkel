@@ -440,7 +440,7 @@ function displayStatusMemberBadge($status_member, $show_icon = true) {
     
     $display_icon = $show_icon ? $icon . ' ' : '';
     
-    return "<span style='background: {$badge_color}; color: " . ($status_member == 'Gold' || $status_member == 'Platinum' ? '#000' : '#fff') . "; padding: 4px 12px; border-radius: 12px; font-weight: bold; font-size: 11px;'>{$display_icon}{$status_member}</span>";
+    return "<span style='background: {$badge_color}; color: " . ($status_member == 'Gold' || $status_member == 'Platinum' ? '#000' : '#fff') . "; display: inline-block; white-space: nowrap; line-height: 1.4; margin-top: 3px; padding: 4px 12px; border-radius: 12px; font-weight: bold; font-size: 11px;'>{$display_icon}{$status_member}</span>";
 }
 
 // Function untuk get benefit member

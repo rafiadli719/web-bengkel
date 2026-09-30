@@ -300,10 +300,12 @@
                                           // baru join ke view buat 100 baris itu. Dulu view penuh di-sort baru
                                           // di-LIMIT -> 1,4 detik. view_cari_pelanggan 1:1 dengan tblpelanggan.
                                           $SqlQuery = mysqli_query($con, "SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member
-                                              FROM (SELECT nopelanggan FROM tblpelanggan ORDER BY namapelanggan LIMIT ".$limitStart.",".$limit.") pk
+                                              FROM (SELECT nopelanggan FROM tblpelanggan ORDER BY (namapelanggan IS NULL OR TRIM(namapelanggan)=''), namapelanggan LIMIT ".$limitStart.",".$limit.") pk
                                               JOIN view_cari_pelanggan v ON v.nopelanggan = pk.nopelanggan
                                               LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan
-                                              ORDER BY v.namapelanggan");                                      
+                                              ORDER BY (v.namapelanggan IS NULL OR TRIM(v.namapelanggan)=''), v.namapelanggan");
+                                          // Nama kosong (data migrasi, kode = nopol) diurutkan PALING AKHIR supaya halaman
+                                          // pertama tidak berisi ribuan baris kosong (audit UI T1).                                      
                                           $no = $limitStart + 1;
                                           
                                           while($row = mysqli_fetch_array($SqlQuery)){ 
@@ -352,9 +354,9 @@
                                                     echo '<i class="fa fa-map-marker"></i> Maps';
                                                     echo '</a>';
                                                 } else {
-                                                    echo '<span class="label label-warning">';
-                                                    echo '<i class="fa fa-warning"></i> No GPS';
-                                                    echo '</span>';
+                                                    // Hampir semua pelanggan belum punya GPS (4 dari 37 ribu): label
+                                                    // oranye di tiap baris cuma jadi noise -> strip abu-abu (audit UI T2).
+                                                    echo '<span class="text-muted" title="Belum ada koordinat GPS">&ndash;</span>';
                                                 }
                                                 ?>
                                             </td>														                                                                                                                

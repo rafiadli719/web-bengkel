@@ -422,7 +422,7 @@ if(empty($_SESSION['_iduser'])){
                                     <div class="widget-header widget-header-blue widget-header-flat">
                                         <h4 class="widget-title lighter">
                                             <i class="ace-icon fa fa-users orange"></i>
-                                            User Management System
+                                            Manajemen Pengguna
                                         </h4>
                                         <div class="widget-toolbar">
                                             <a href="#" data-action="collapse">
@@ -458,8 +458,8 @@ if(empty($_SESSION['_iduser'])){
                                                                     <th>Role</th>
                                                                     <th>Department</th>
                                                                     <th>Status</th>
-                                                                    <th>Last Login</th>
-                                                                    <th>Actions</th>
+                                                                    <th>Login Terakhir</th>
+                                                                    <th>Aksi</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
