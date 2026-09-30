@@ -394,13 +394,14 @@ lapangan SEMUA MODUL TUNTAS.
   (`0021419`). **Migrasi `db/migrations/2026-09-30_run_cancel_servis_charset.php`
   BELUM dijalankan di produksi** (lokal sudah).
 
-Temuan baru, BELUM difix (di luar scope sesi, dari scan INSERT otomatis):
-`penjualan_mitra_add.php` (header INSERT kolom salah total),
-`pmby_piutang_add.php:86` (tblpiutang_detail kurang 5 kolom),
-`pmby_hutang_add_next.php:71` (tblhutang_header.id_tabel),
-`pengadaan_antarcab_push.php:113` (tbstok.kd_cabang),
-`pesanan_penjualan_add.php:192` (tblorderjual_header id_tabel/order_ke/
-tipe_trx/total_terima) — perlu dicek reachability + bukti live dulu.
+5 temuan lanjutan scan INSERT — SELESAI (commit `bcb061b`, divalidasi live):
+penjualan mitra (fatal TypeError array + header kolom salah + detail
+"disedot" pesanan berikutnya karena status_trx '0'), pembayaran piutang
+(detail+header) & hutang (header) — dulu tabelnya kosong total, pembelian/
+penjualan bisa ketandai lunas walau header gagal (sekarang digerbang),
+pesanan_penjualan_add.php header. `pengadaan_antarcab_push.php:113` false
+positive (cabang fallback gak terjangkau). CATATAN: klaim lama "halaman
+_add.php utama pesanan sudah lengkap" SALAH, header-nya juga kena.
 Juga: tabel `tbmaster_temuan_jasa_mapping` ada di dump produksi tapi gak
 ada di DB lokal (halaman Temuan - Jasa Mapping kosong di lokal saja).
 Watchlist: `statistik_pelanggan_dashboard.php` ~1,8s (3 view agregat,
