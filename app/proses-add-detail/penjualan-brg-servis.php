@@ -86,10 +86,9 @@
                                 // 5. Simpan Ke Tabel Detail ========  
                                 mysqli_query($koneksi,"INSERT INTO tblservis_barang 
                                         (no_service, no_item, harga_jual, quantity, 
-                                        potongan, total) 
-                                        VALUES 
-                                        ('$no_service', '$txtkdbarang','$txthargabarang','$txtqty',
-                                        '$txtpot','$subtotal')");
+                                        potongan, total, nobaris) 
+                                        SELECT '$no_service', '$txtkdbarang','$txthargabarang','$txtqty',
+                                        '$txtpot','$subtotal', COALESCE(MAX(nobaris),0)+1 FROM tblservis_barang WHERE no_service='$no_service'");
                             }
                         }
                     }     

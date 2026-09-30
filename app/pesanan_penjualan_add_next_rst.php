@@ -64,10 +64,11 @@ $cari_kd=mysqli_query($koneksi,"SELECT
             if($txtkdbarang<>'') {
                 mysqli_query($koneksi,"INSERT INTO tblorderjual_detail 
                                         (no_order, no_item, harga_jual, quantity, 
-                                        potongan, total) 
+                                        potongan, total, user, kd_cabang) 
                                         VALUES 
                                         ('$nobl', '$txtkdbarang','$txthargabarang','$txtqty',
-                                        '$txtpot','$subtotal')");
+                                        '$txtpot','$subtotal','" . mysqli_real_escape_string($koneksi, (string)$_nama) . "','" . mysqli_real_escape_string($koneksi, (string)($_SESSION['_cabang'] ?? '')) . "')");
+                // user + kd_cabang NOT NULL tanpa default: dulu gak diisi -> INSERT detail selalu gagal.
 
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tblorderjual_detail 

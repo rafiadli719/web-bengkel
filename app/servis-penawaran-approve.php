@@ -100,8 +100,9 @@ try {
                             diskon_source,
                             diskon_persen,
                             diskon_nominal,
-                            id_promo
-                          ) VALUES (
+                            id_promo,
+                            nobaris
+                          ) SELECT
                             '{$penawaran['no_service']}',
                             '{$penawaran['kode_barang']}',
                             '$quantity',
@@ -112,8 +113,9 @@ try {
                             '$diskon_source',
                             '$diskon_persen',
                             '$diskon_nominal',
-                            $id_promo
-                          )";
+                            $id_promo,
+                            COALESCE(MAX(nobaris),0)+1
+                          FROM tblservis_barang WHERE no_service='{$penawaran['no_service']}'";
 
     if(!mysqli_query($koneksi, $sql_insert_barang)) {
         throw new Exception('Error insert barang: ' . mysqli_error($koneksi));

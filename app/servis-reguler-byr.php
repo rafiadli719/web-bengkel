@@ -177,14 +177,12 @@
                             $waktu = $waktu_data['waktu'] ?? 0;
                             
                             mysqli_query($koneksi,"INSERT INTO tblservis_jasa 
-                                                  (no_service, no_item, harga, waktu, potongan, total) 
-                                                  VALUES 
-                                                  ('$no_service', '{$detail['kode_barang']}', '{$detail['harga']}', '$waktu', '0', '{$detail['total']}')");
+                                                  (no_service, no_item, harga, waktu, potongan, total, nobaris) 
+                                                  SELECT '$no_service', '{$detail['kode_barang']}', '{$detail['harga']}', '$waktu', '0', '{$detail['total']}', COALESCE(MAX(nobaris),0)+1 FROM tblservis_jasa WHERE no_service='$no_service'");
                         } else { // Barang
                             mysqli_query($koneksi,"INSERT INTO tblservis_barang 
-                                                  (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total) 
-                                                  VALUES 
-                                                  ('$no_service', '{$detail['kode_barang']}', '{$detail['jumlah']}', '0', '{$detail['harga']}', '0', '{$detail['total']}')");
+                                                  (no_service, no_item, quantity, qty_retur, harga_jual, potongan, total, nobaris) 
+                                                  SELECT '$no_service', '{$detail['kode_barang']}', '{$detail['jumlah']}', '0', '{$detail['harga']}', '0', '{$detail['total']}', COALESCE(MAX(nobaris),0)+1 FROM tblservis_barang WHERE no_service='$no_service'");
                         }
                     }
                 }
@@ -380,10 +378,9 @@
             if($txtkdsrv<>'') {
                 mysqli_query($koneksi,"INSERT INTO tblservis_jasa 
                                         (no_service, no_item, harga, waktu, 
-                                        potongan, total) 
-                                        VALUES 
-                                        ('$no_service', '$txtkdsrv','$txthargasrv','$waktu',
-                                        '$txtpotsrv','$subtotal')");
+                                        potongan, total, nobaris) 
+                                        SELECT '$no_service', '$txtkdsrv','$txthargasrv','$waktu',
+                                        '$txtpotsrv','$subtotal', COALESCE(MAX(nobaris),0)+1 FROM tblservis_jasa WHERE no_service='$no_service'");
 
             // == Total dari Item & Waktu Service ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot, 
@@ -496,10 +493,9 @@
             if($txtkdbarang<>'') {
                 mysqli_query($koneksi,"INSERT INTO tblservis_barang 
                                         (no_service, no_item, harga_jual, quantity, 
-                                        potongan, total) 
-                                        VALUES 
-                                        ('$no_service', '$txtkdbarang','$txthargabarang','$txtqty',
-                                        '$txtpot','$subtotal')");
+                                        potongan, total, nobaris) 
+                                        SELECT '$no_service', '$txtkdbarang','$txthargabarang','$txtqty',
+                                        '$txtpot','$subtotal', COALESCE(MAX(nobaris),0)+1 FROM tblservis_barang WHERE no_service='$no_service'");
 
             // == Total dari Item & Waktu Service ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot, 

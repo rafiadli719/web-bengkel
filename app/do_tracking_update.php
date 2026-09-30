@@ -40,7 +40,7 @@ if(!$h){
 // Load Tracking History
 $qt = mysqli_query($koneksi, "SELECT * FROM tbldo_tracking
                               WHERE no_do='".mysqli_real_escape_string($koneksi,$no_do)."'
-                              ORDER BY tanggal_update DESC, id DESC");
+                              ORDER BY updated_at DESC, id DESC");
 $tracking = [];
 while($r = mysqli_fetch_assoc($qt)){ $tracking[] = $r; }
 
@@ -70,12 +70,12 @@ if(isset($_POST['btnupdate'])){
             // Update header status
             mysqli_query($koneksi, "UPDATE tbldelivery_order_header
                                    SET status_do='".mysqli_real_escape_string($koneksi,$new_status)."',
-                                       tanggal_update=NOW()
+                                       updated_at=NOW()
                                    WHERE no_do='".mysqli_real_escape_string($koneksi,$no_do)."'");
 
             // Insert tracking record
             mysqli_query($koneksi, "INSERT INTO tbldo_tracking
-                                   (no_do, status, keterangan, lokasi, updated_by, tanggal_update)
+                                   (no_do, status, keterangan, lokasi, updated_by, updated_at)
                                    VALUES
                                    ('".mysqli_real_escape_string($koneksi,$no_do)."',
                                     '".mysqli_real_escape_string($koneksi,$new_status)."',
@@ -97,7 +97,7 @@ if(isset($_POST['btnupdate'])){
             // Reload tracking
             $qt = mysqli_query($koneksi, "SELECT * FROM tbldo_tracking
                                           WHERE no_do='".mysqli_real_escape_string($koneksi,$no_do)."'
-                                          ORDER BY tanggal_update DESC, id DESC");
+                                          ORDER BY updated_at DESC, id DESC");
             $tracking = [];
             while($r = mysqli_fetch_assoc($qt)){ $tracking[] = $r; }
         }
@@ -292,7 +292,7 @@ if(isset($_POST['btnupdate'])){
                                         <h5 style="margin-top:0;">
                                             <strong><?php echo strtoupper($t['status']); ?></strong>
                                             <small class="text-muted pull-right">
-                                                <i class="fa fa-clock-o"></i> <?php echo $t['tanggal_update']; ?>
+                                                <i class="fa fa-clock-o"></i> <?php echo $t['updated_at']; ?>
                                             </small>
                                         </h5>
                                         <?php if($t['lokasi']){ ?>

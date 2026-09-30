@@ -96,11 +96,14 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $saldo_sistem=$tm_cari['saldo'];				 
                 
+                // Baris draft stok opname: no_transaksi/harga/quantity/total NOT NULL tanpa
+                // default (kolom lain sudah punya default lewat migrasi 2026-09-30) —
+                // dulu gak diisi -> INSERT draft SO selalu gagal.
                 mysqli_query($koneksi,"INSERT INTO tbitem_keluar_detail 
-                                        (no_item, 
+                                        (no_transaksi, no_item, harga, quantity, total,
                                         user, kd_cabang, status_trx, 
                                         stok_sistem) VALUES 
-                                        ('$nip',
+                                        ('', '$nip', 0, 0, 0,
                                         '$_nama','$kd_cabang','0',
                                         '$saldo_sistem')");
             }                            

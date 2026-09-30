@@ -137,8 +137,8 @@ if(isset($_POST['btnreceive'])){
                 // Update DO header
                 mysqli_query($koneksi, "UPDATE tbldelivery_order_header
                                        SET status_do='received',
-                                           tanggal_terima='".mysqli_real_escape_string($koneksi,$tanggal_terima)."',
-                                           tanggal_update=NOW()
+                                           tanggal_tiba='".mysqli_real_escape_string($koneksi,$tanggal_terima)."',
+                                           updated_at=NOW()
                                        WHERE no_do='".mysqli_real_escape_string($koneksi,$no_do)."'");
 
                 // Insert tracking
@@ -151,7 +151,7 @@ if(isset($_POST['btnreceive'])){
                 }
 
                 mysqli_query($koneksi, "INSERT INTO tbldo_tracking
-                                       (no_do, status, keterangan, lokasi, updated_by, tanggal_update)
+                                       (no_do, status, keterangan, lokasi, updated_by, updated_at)
                                        VALUES
                                        ('".mysqli_real_escape_string($koneksi,$no_do)."',
                                         'received',
@@ -285,7 +285,7 @@ if(isset($_POST['btnreceive'])){
 
                             <?php if($h['status_do'] == 'received'){ ?>
                             <div class="alert alert-success">
-                                <i class="fa fa-check"></i> DO ini sudah diterima pada tanggal <?php echo $h['tanggal_terima']; ?>
+                                <i class="fa fa-check"></i> DO ini sudah diterima pada tanggal <?php echo $h['tanggal_tiba']; ?>
                             </div>
                             <?php } else { ?>
                             <form method="post" id="formReceive">

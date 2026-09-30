@@ -207,24 +207,28 @@ try {
         $no_antrian = $antrian_data['no_antrian'];
         $status_sebelum = $antrian_data['status_antrian'];
 
+        // Skema asli tb_log_antrian: aktivitas + user_nama wajib, gak ada kolom
+        // aksi/status_sebelum/status_sesudah -> dulu INSERT selalu gagal (ditelan,
+        // tabel kosong). Status sebelum/sesudah dipindah ke keterangan.
+        $nm_user_log = '';
+        $q_nm = mysqli_query($koneksi, "SELECT nama_user FROM tbuser WHERE id='" . mysqli_real_escape_string($koneksi, (string)$id_user) . "'");
+        if ($q_nm && ($r_nm = mysqli_fetch_row($q_nm))) { $nm_user_log = $r_nm[0]; }
+        $ket_log = mysqli_real_escape_string($koneksi, "Service dibatalkan ($status_sebelum -> batal): $alasan_cancel");
+        $nm_user_log = mysqli_real_escape_string($koneksi, $nm_user_log);
         $query_insert_log_antrian = "INSERT INTO tb_log_antrian (
             no_antrian,
             no_service,
-            aksi,
-            status_sebelum,
-            status_sesudah,
+            aktivitas,
             user_id,
-            keterangan,
-            created_at
+            user_nama,
+            keterangan
         ) VALUES (
             '$no_antrian',
             '$no_service',
             'cancel',
-            '$status_sebelum',
-            'batal',
-            $id_user,
-            'Service dibatalkan: $alasan_cancel',
-            NOW()
+            '" . mysqli_real_escape_string($koneksi, (string)$id_user) . "',
+            '$nm_user_log',
+            '$ket_log'
         )";
 
         mysqli_query($koneksi, $query_insert_log_antrian); // Tidak throw error jika gagal

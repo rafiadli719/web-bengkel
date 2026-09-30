@@ -55,10 +55,11 @@
             if($txtkdbarang<>'') {
                 mysqli_query($koneksi,"INSERT INTO tblorder_detail 
                                         (no_order, no_item, harga_pokok, quantity, 
-                                        total, user) 
+                                        total, user, kd_cabang) 
                                         VALUES 
                                         ('$nopesanan', '$txtkdbarang','$txthargabarang','$txtqty',
-                                        '$subtotal','$user_order')");
+                                        '$subtotal','$user_order','" . mysqli_real_escape_string($koneksi, (string)($_SESSION['_cabang'] ?? '')) . "')");
+                // kd_cabang NOT NULL tanpa default: dulu gak diisi -> INSERT detail selalu gagal.
 
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tblorder_detail 
