@@ -7,7 +7,7 @@ if (!cekPermissionKomplain('komplain_review')) {
 }
 
 $stmt = $koneksi_komplain->prepare(
-    "SELECT * FROM tblkomplain WHERE pic_kode_karyawan = :pic AND status IN ('Open','Eskalasi Manajemen') ORDER BY tanggal_lapor ASC"
+    "SELECT * FROM tblkomplain WHERE pic_kode_karyawan = :pic AND status = 'Open' ORDER BY tanggal_lapor ASC"
 );
 $stmt->execute([':pic' => $kode_karyawan_aktif]);
 $antrian = $stmt->fetchAll(PDO::FETCH_ASSOC);

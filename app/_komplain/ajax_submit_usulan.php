@@ -27,10 +27,19 @@ if ($jenis === 'Tolak' && $alasan === '') {
     exit;
 }
 
+// Scope cabang. Status 'Eskalasi Manajemen' sengaja TIDAK boleh — spec
+// (docs/Modul_Penanganan_Komplain_Fit_Motor.md aturan 8) eskalasi mengunci
+// aksi Kepala Mekanik/Kepala Cabang sampai Manajemen memutuskan.
+$row = ambilKomplainDalamScope($koneksi_komplain, $id);
+if (!$row || $row['status'] !== 'Open' || $row['pic_role'] !== 'KEPALA_MEKANIK') {
+    echo json_encode(['success' => false, 'message' => 'Komplain tidak ditemukan atau status tidak valid untuk usulan.']);
+    exit;
+}
+
 $stmt = $koneksi_komplain->prepare(
     "UPDATE tblkomplain SET jenis_usulan = :jenis, mekanik_pelaksana_kode = :mekanik,
      rencana_tanggal_kedatangan = :tanggal, alasan_usulan = :alasan, status = 'Diajukan'
-     WHERE id = :id AND status IN ('Open', 'Eskalasi Manajemen')"
+     WHERE id = :id AND status = 'Open'"
 );
 $stmt->execute([
     ':jenis' => $jenis, ':mekanik' => $mekanik ?: null,

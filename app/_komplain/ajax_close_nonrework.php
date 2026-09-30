@@ -16,6 +16,15 @@ if ($tindakLanjut === '') {
     exit;
 }
 
+// Scope cabang + cuma kategori non-REWORK (pic KEPALA_CABANG). Tanpa cek ini
+// komplain REWORK yang masih Open bisa ditutup "Selesai" lewat sini dan
+// melompati alur usulan Kepala Mekanik -> approval (ditemukan E2E 2026-09-30).
+$row = ambilKomplainDalamScope($koneksi_komplain, $id);
+if (!$row || $row['pic_role'] !== 'KEPALA_CABANG') {
+    echo json_encode(['success' => false, 'message' => 'Komplain tidak ditemukan atau bukan kategori non-REWORK.']);
+    exit;
+}
+
 $stmt = $koneksi_komplain->prepare(
     "UPDATE tblkomplain SET status = 'Selesai', tindak_lanjut_penanganan = :tl, tanggal_ditindaklanjuti = CURDATE()
      WHERE id = :id AND status = 'Open'"

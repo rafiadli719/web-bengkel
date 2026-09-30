@@ -65,6 +65,59 @@ function cekPermissionKomplain(string $kode): bool {
     return hasRbacPermission($komplain_user_permissions, $kode);
 }
 
+// Ambil 1 komplain + pic_role kategorinya, TAPI cuma kalau masih dalam scope
+// cabang user (atau user punya komplain_view_all). Handler AJAX wajib lewat
+// sini — halaman antrian udah filter per cabang, tapi handler nerima
+// komplain_id mentah dari POST, jadi tanpa cek ini staf cabang A bisa
+// approve/close komplain cabang B cuma dengan ganti id (ditemukan E2E 2026-09-30).
+// $lintasCabang=true khusus keputusan eskalasi: spec role Manajemen = semua
+// cabang, dan eskalasi_manajemen.php memang list lintas cabang.
+function ambilKomplainDalamScope(PDO $db, int $id, bool $lintasCabang = false): ?array {
+    global $kode_cabang_aktif;
+    $stmt = $db->prepare(
+        "SELECT k.*, kat.pic_role FROM tblkomplain k
+         LEFT JOIN tblkomplain_kategori kat ON kat.kode_kategori = k.kode_kategori
+         WHERE k.id = :id"
+    );
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$row) return null;
+    if (!$lintasCabang && !cekPermissionKomplain('komplain_view_all') && $row['kode_cabang'] !== $kode_cabang_aktif) {
+        return null;
+    }
+    return $row;
+}
+
+// REWORK yang diterima (lewat approval Kepala Cabang ATAU keputusan final
+// Manajemen setelah eskalasi) wajib masuk jalur servis garansi. Cabang servis
+// = cabang komplain, bukan cabang user yang klik (Manajemen lintas cabang).
+function buatServisGaransiDariKomplain(array $row): array {
+    global $koneksi, $id_user_aktif;
+    require_once __DIR__ . '/../function_servis.php';
+    require_once __DIR__ . '/../_include_kategori_member.php';
+    if (empty($row['no_service_asli'])) {
+        return ['success' => false, 'message' => 'Komplain ini tidak punya No Service Asli, gak bisa dibuatkan servis garansi. Hubungi admin IT.'];
+    }
+    $qRef = mysqli_query($koneksi, "SELECT no_pelanggan, no_polisi FROM tblservice WHERE no_service = '" . mysqli_real_escape_string($koneksi, $row['no_service_asli']) . "'");
+    $refData = $qRef ? mysqli_fetch_assoc($qRef) : null;
+    if (!$refData) {
+        return ['success' => false, 'message' => 'Service asli (' . $row['no_service_asli'] . ') tidak ditemukan di tblservice.'];
+    }
+    $garansi = createServisGaransi(
+        $koneksi,
+        $row['no_service_asli'],
+        $refData['no_pelanggan'],
+        $refData['no_polisi'],
+        'REWORK Komplain: ' . $row['detail_keluhan'],
+        $row['kode_cabang'],
+        $id_user_aktif
+    );
+    if (!$garansi['success']) {
+        return ['success' => false, 'message' => 'Gagal membuat servis garansi: ' . $garansi['message']];
+    }
+    return $garansi;
+}
+
 function generateNoKomplain(PDO $db): string {
     $tanggal = date('Ymd');
     $stmt = $db->prepare("SELECT COUNT(*) FROM tblkomplain WHERE no_komplain LIKE :prefix");
