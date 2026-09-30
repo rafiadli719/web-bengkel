@@ -83,10 +83,17 @@
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
                 $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
+                // Kolom NOT NULL tanpa default wajib diisi (dulu cuma no_transaksi+
+                // no_penjualan -> INSERT selalu gagal, tblpiutang_detail kosong).
+                // Konvensi sama pmby_hutang_add.php: jumlah_bayar = tagihan penuh.
+                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpenjualan_header WHERE notransaksi='$nip'");
+                $rtag = $qtag ? mysqli_fetch_array($qtag) : null;
+                $tag = $rtag ? (float)$rtag['jumlah_bayar'] : 0;
+                $nobaris = $i + 1;
                 mysqli_query($koneksi,"INSERT INTO tblpiutang_detail 
-                                        (no_transaksi, no_penjualan) 
+                                        (no_transaksi, nobaris, no_penjualan, keterangan, jumlah_piutang, jumlah_bayar, status) 
                                         VALUES 
-                                        ('$LastID','$nip')");
+                                        ('$LastID','$nobaris','$nip','','0','$tag','0')");
             }
             echo"<script>window.location=('pmby_piutang_add_next.php?nobyr=$LastID&stgl=$tgl_pilih&ssup=$nopelanggan');</script>";                    
         }

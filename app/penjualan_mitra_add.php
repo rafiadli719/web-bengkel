@@ -50,9 +50,12 @@ if(empty($_SESSION['_iduser'])){
         $keterangan = isset($_POST['keterangan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan']) : '';
 
         // Get items from POST
-        $item_codes = isset($_POST['item_code']) ? mysqli_real_escape_string($koneksi, $_POST['item_code']) : [];
-        $item_qtys = isset($_POST['item_qty']) ? mysqli_real_escape_string($koneksi, $_POST['item_qty']) : [];
-        $item_prices = isset($_POST['item_price']) ? mysqli_real_escape_string($koneksi, $_POST['item_price']) : [];
+        // item_* = array (name="item_code[]"). Dulu langsung dilempar ke
+        // mysqli_real_escape_string() -> TypeError fatal PHP 8, submit selalu mati.
+        // Escape per elemen; no_item di-escape ulang saat INSERT di bawah.
+        $item_codes = isset($_POST['item_code']) ? array_map('strval', (array) $_POST['item_code']) : [];
+        $item_qtys = isset($_POST['item_qty']) ? array_map('strval', (array) $_POST['item_qty']) : [];
+        $item_prices = isset($_POST['item_price']) ? array_map('strval', (array) $_POST['item_price']) : [];
 
         if(isset($_POST['btn_simpan'])){
             // Validate
@@ -79,13 +82,21 @@ if(empty($_SESSION['_iduser'])){
                         }
                     }
 
-                    // Insert header
+                    // Insert header. Dulu pakai kolom yang gak ada di tblorderjual_header
+                    // (total_order/tipe_transaksi/kd_cabang_tujuan/keterangan/user_input)
+                    // -> selalu gagal. Mapping ke skema asli, sama yang dibaca
+                    // penerimaan_mitra.php: tujuan = order_ke, tipe = tipe_trx,
+                    // total = total_jual/total_akhir, keterangan = note (varchar 50).
+                    $note_h = mysqli_real_escape_string($koneksi, mb_substr(stripslashes($keterangan), 0, 50));
+                    $nama_h = mysqli_real_escape_string($koneksi, $_nama);
                     $sql_h = "INSERT INTO tblorderjual_header
-                              (no_order, tanggal, no_pelanggan, no_sales, total_qty, total_order,
-                               status, tipe_transaksi, kd_cabang, kd_cabang_tujuan, keterangan, user_input)
+                              (no_order, status, tanggal, no_sales, no_pelanggan, note,
+                               total_qty, total_terima, total_jual, diskon, total_diskon, pajak, total_pajak,
+                               total_akhir, pembayaran, user, id_tabel, kd_cabang, tipe_trx, order_ke)
                               VALUES
-                              ('$LastID', '$tgl_transaksi', '', '', '$total_qty', '$total_order',
-                               '0', 'MITRA_EKSTERNAL', '$kd_cabang', '$cabang_tujuan', '$keterangan', '$_nama')";
+                              ('$LastID', '0', '$tgl_transaksi', '', '', '$note_h',
+                               '" . (int) $total_qty . "', 0, '$total_order', 0, 0, 0, 0,
+                               '$total_order', '$total_order', '$nama_h', '', '$kd_cabang', 'MITRA_EKSTERNAL', '$cabang_tujuan')";
 
                     if(!mysqli_query($koneksi, $sql_h)){
                         throw new Exception("Gagal insert header: " . mysqli_error($koneksi));
@@ -99,10 +110,21 @@ if(empty($_SESSION['_iduser'])){
                             $price = floatval(str_replace(['.', ','], ['', '.'], $item_prices[$i]));
                             $subtotal = $qty * $price;
 
+                            // Kolom NOT NULL tanpa default wajib diisi (nobaris, qty_terima,
+                            // harga_sp, harga_pokok, margin_jual, user, kd_cabang).
+                            // status_trx='1' WAJIB: default '0' = draft keranjang, dan
+                            // pesanan_penjualan_add.php "menyedot" semua detail
+                            // status_trx='0' milik user ke pesanan berikutnya (terbukti E2E).
+                            $nobaris = $i + 1;
+                            $q_hp = mysqli_query($koneksi, "SELECT hargapokok FROM tblitem WHERE noitem='$no_item'");
+                            $hp_row = $q_hp ? mysqli_fetch_assoc($q_hp) : null;
+                            $harga_pokok = (float) ($hp_row['hargapokok'] ?? 0);
                             $sql_d = "INSERT INTO tblorderjual_detail
-                                      (no_order, no_item, quantity, harga_jual, potongan, total)
+                                      (no_order, nobaris, no_item, quantity, qty_terima, harga_jual, potongan,
+                                       harga_sp, harga_pokok, total, user, kd_cabang, margin_jual, status_trx)
                                       VALUES
-                                      ('$LastID', '$no_item', '$qty', '$price', '0', '$subtotal')";
+                                      ('$LastID', $nobaris, '$no_item', '" . (int) $qty . "', 0, '$price', 0,
+                                       0, '$harga_pokok', '$subtotal', '$nama_h', '$kd_cabang', 0, '1')";
 
                             if(!mysqli_query($koneksi, $sql_d)){
                                 throw new Exception("Gagal insert detail: " . mysqli_error($koneksi));

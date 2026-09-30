@@ -68,14 +68,22 @@
 		//$nobyr=mysqli_real_escape_string($koneksi, $_GET['nobyr']);
 		//$no_supplier=mysqli_real_escape_string($koneksi, $_GET['ssup']);        
         
-                mysqli_query($koneksi,"INSERT INTO tblhutang_header    
+                $header_ok = mysqli_query($koneksi,"INSERT INTO tblhutang_header    
                             (no_transaksi, tanggal, no_supplier, 
                             note, total_bayar, 
-                            user, kd_cabang) 
+                            user, id_tabel, kd_cabang) 
                             VALUES 
                             ('$nobyr','$txttglpesan','$no_supplier',
                             '','$txttot',
-                            '$_nama','$kd_cabang')");
+                            '$_nama','','$kd_cabang')");
+                // Gerbang: tanpa header, jangan ubah sisa/lunas tblpembelian_header
+                // (dulu tetap jalan walau INSERT header gagal karena id_tabel NOT NULL
+                // -> pembelian ketandai lunas tanpa catatan pembayaran hutang).
+                if (!$header_ok) {
+                    error_log('[pmby_hutang] insert header gagal: ' . mysqli_error($koneksi));
+                    echo "<script>window.alert(" . json_encode('Gagal menyimpan pembayaran hutang: ' . mysqli_error($koneksi)) . "); window.history.back();</script>";
+                    exit;
+                }
 
                 $sql = mysqli_query($koneksi,"SELECT 
                                                 no_pembelian, jumlah_bayar 

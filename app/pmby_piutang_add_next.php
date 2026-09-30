@@ -67,14 +67,21 @@
                 $txtnobyr= mysqli_real_escape_string($koneksi, $_POST['txtnobyr']);
                 $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
 
-                mysqli_query($koneksi,"INSERT INTO tblpiutang_header    
+                $header_ok = mysqli_query($koneksi,"INSERT INTO tblpiutang_header    
                             (no_transaksi, tanggal, no_pelanggan, 
                             note, total_bayar, 
-                            user, kd_cabang) 
+                            user, id_tabel, kd_cabang) 
                             VALUES 
                             ('$txtnobyr','$txttglpesan','$nopelanggan',
                             '','$txttot',
-                            '$_nama','$kd_cabang')");
+                            '$_nama','','$kd_cabang')");
+                // Gerbang: tanpa header, jangan tandai penjualan lunas (dulu tetap
+                // jalan walau INSERT header gagal karena id_tabel NOT NULL).
+                if (!$header_ok) {
+                    error_log('[pmby_piutang] insert header gagal: ' . mysqli_error($koneksi));
+                    echo "<script>window.alert(" . json_encode('Gagal menyimpan pembayaran piutang: ' . mysqli_error($koneksi)) . "); window.history.back();</script>";
+                    exit;
+                }
 
                 $sql = mysqli_query($koneksi,"SELECT 
                                                 no_penjualan, jumlah_bayar 

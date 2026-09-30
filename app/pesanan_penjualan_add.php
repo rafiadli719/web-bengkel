@@ -189,24 +189,33 @@
             $total_qty_order=$tm_cari['tot_qty_jual'];                                 
                              
 
-                mysqli_query($koneksi,"INSERT INTO tblorderjual_header 
+                // total_terima/id_tabel/tipe_trx/order_ke NOT NULL tanpa default —
+                // dulu gak diisi -> header gagal, tapi detail tetap ditandai
+                // status_trx='1' dengan no_order yatim. Konvensi non-cab sama
+                // pesanan_penjualan_add_rst.php (tipe_trx/order_ke kosong).
+                $header_ok = mysqli_query($koneksi,"INSERT INTO tblorderjual_header 
                                     (no_order, status, tanggal, 
                                     no_sales, no_pelanggan, 
-                                    note, total_qty, 
+                                    note, total_qty, total_terima, 
                                     diskon, total_diskon, 
                                     pajak, total_pajak, 
                                     total_akhir, pembayaran, 
-                                    user, kd_cabang, total_jual) 
+                                    user, id_tabel, kd_cabang, total_jual, tipe_trx, order_ke) 
                                     VALUES 
                                     (
                                     '$LastID','0','$txttglpesan',
                                     '$cbosales','$nopelanggan',
                                     '$txtnote',
-                                    '$total_qty_order',
+                                    '$total_qty_order', 0,
                                     '$txtpotfaktur_persen','$txtpotfaktur_nom',
                                     '$txtpajak_persen','$txtpajak_nom',
                                     '$txtnet','$txtdp',
-                                    '$_nama','$kd_cabang','$txttotal_harga')");
+                                    '$_nama','','$kd_cabang','$txttotal_harga','','')");
+                if (!$header_ok) {
+                    error_log('[pesanan_penjualan_add] insert header gagal: ' . mysqli_error($koneksi));
+                    echo "<script>window.alert(" . json_encode('Gagal menyimpan pesanan: ' . mysqli_error($koneksi)) . "); window.history.back();</script>";
+                    exit;
+                }
 
                 mysqli_query($koneksi,"UPDATE tblorderjual_detail 
                                         SET 
