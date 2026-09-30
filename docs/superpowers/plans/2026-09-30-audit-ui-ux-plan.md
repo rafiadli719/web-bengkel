@@ -1,6 +1,6 @@
 # Audit UI/UX dan Rencana Perbaikan — 2026-09-30
 
-Status: **RENCANA, belum ada kode yang diubah.** Menunggu keputusan Rafi (lihat bagian 6 dan 9).
+Status: **SEBAGIAN SUDAH DIKERJAKAN dan DIVALIDASI** (lihat bagian 13). Yang tersisa menunggu keputusan Rafi (bagian 6 dan 9).
 Revisi 2 (audit lanjutan): cakupan diperluas ke 152 halaman menu, 24 halaman cetak/struk, dan hak akses per posisi. Temuan baru ada di bagian 8, keputusan tambahan di bagian 9.
 Terkait: fix UI kecil yang sudah masuk di commit `258b5b7` (aset kasir 404, avatar Komplain).
 
@@ -57,7 +57,7 @@ Usulan bertahap di bagian 5. Butuh keputusan K2.
 Usulan: satu titik perubahan di `lib/titel.php` yang menurunkan judul dari `menu_config.php` berdasarkan URL. Tidak perlu edit per halaman.
 
 **T6. Campuran Inggris–Indonesia.**
-- Tombol "Cancel" muncul di **120 halaman** (kemungkinan besar satu komponen bersama, jadi satu perbaikan).
+- ~~Tombol "Cancel" muncul di 120 halaman~~ **DIKOREKSI: false alarm.** Kata itu hanya bagian dari label menu "Laporan Cancel Service" yang tampil di sidebar semua halaman, bukan tombol berbahasa Inggris.
 - Contoh lain: "View Card Mode", "Applicable Motors", "Genuine Part / Aftermarket", tab POS "Sales Details / Payment Information", lencana "Sales Transaction", judul "Procurement Dashboard".
 Usulan: buat glosarium istilah (K4), lalu ganti per komponen. Jangan terjemahkan istilah yang sudah dipakai staf sehari-hari (mis. "Work Order", "Sparepart") tanpa persetujuan.
 
@@ -275,4 +275,47 @@ Termasuk ke K3 (pembersihan data) dan satu pengecekan: apakah `last_login` meman
 
 ### Dampak ke urutan kerja
 T27 dipindah ke **Fase 1** dengan prioritas tertinggi (halaman tidak bisa dipakai, perbaikannya sederhana). T28 masuk Fase 2. T29/T30 dikerjakan bersama saat membuat komponen laporan bersama. T31 masuk Fase 5 (data).
+
+## 13. Status pelaksanaan (revisi 4) - sudah dikerjakan dan divalidasi
+
+Semua yang **tidak butuh keputusan Rafi** sudah dikerjakan, diuji, dan di-commit. Validasi memakai: crawl 152 halaman menu (0 error PHP, 0 halaman tanpa CSS font, judul generik 110 menjadi 1), render PDF ke gambar, pengukuran DOM di browser, dan screenshot.
+
+| Kode | Perbaikan | Commit | Bukti validasi |
+|---|---|---|---|
+| T5 | Judul tab dari `menu_config.php` lewat `lib/titel.php` | `a9a4b34` | 152 halaman: judul generik 110 menjadi 1, judul unik 148 |
+| T7 | CSS font di 20 halaman + fallback `sans-serif` di `ace.min.css` | `a9a4b34` | crawl: 0 halaman ACE tanpa CSS font; DOM: `"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif` |
+| T27 | `lap_profit_insentif.php`: pembungkus `#navbar` yang hilang | `a9a4b34` | screenshot: layout normal; crawl: 0 halaman tanpa pembungkus navbar |
+| T18 | `servis-print-pdf.php`: header/judul seksi jadi tabel (Dompdf), kolom `quantity`/`harga_jual`/`potongan` yang benar | `7136d52` | render PDF: tidak ada teks menimpa; Qty 5, Harga Rp 4.000 (sebelumnya kosong dan Rp 0) |
+| T19 | Alamat kop tidak tertimpa alamat pelanggan/supplier (`penjualan_struk`, `pesanan_pembelian_struk`) | `7136d52` | ekstraksi teks PDF: kop "Ds. Pesalakan, Kec. Adiwerna" |
+| T22 | Tanggal `dd/mm/yyyy` di semua struk (helper `_nota_pdf_parts.php`) | `7136d52` | PDF: 29/09/2026 (sebelumnya 2026-09-29) |
+| T23 (sebagian) | Label "No. Transaksi" tidak terpecah dua baris | `7136d52` | PDF dirender |
+| T24 | DataTables berbahasa Indonesia (112 halaman) + pagination manual 6 halaman | `c463642` | DOM `workorder-list`: "Tampilkan 10 data", "Cari:", "Menampilkan 1 sampai 10 dari 12 data", "Sebelumnya/Berikutnya" |
+| T14 (sebagian) | 4 entri menu langsung ke tujuan akhir | `c463642` | crawl: hanya 3 pengalihan tersisa (entri ganda) |
+| T13 | `.navbar-brand{white-space:nowrap}` di `ace.min.css` | `c463642` | DOM: `nowrap` aktif |
+| T28 | Filter Pelanggan `lap_profit_penjualan`: `<select>` biasa | `c463642` | screenshot: satu baris rapi |
+| T1 | Master Pelanggan: nama kosong diurutkan paling akhir | `188eb3c` | halaman 1 dan 3 berisi nama terisi (0 baris kosong per 100) |
+| T2 | Label "No GPS" jadi strip abu-abu; badge tier `inline-block nowrap` | `188eb3c` | DOM: 0 label oranye, 99 strip; badge `inline-block/nowrap` |
+| T25 (sebagian) | Judul dan kolom Inggris di `mekanik_management`, `user_management` | `188eb3c` | crawl: "Manajemen Mekanik/Pengguna", kolom Aksi |
+
+### Temuan selama pelaksanaan
+- **Invoice servis juga salah data, bukan hanya tampilan:** kolom `qty/harga/diskon` tidak ada di `tblservis_barang`, sehingga Qty kosong dan Harga Rp 0. Sudah diperbaiki bersama T18.
+- **`pesanan_pembelian_struk.php` memang punya bug alamat yang sama** dengan `penjualan_struk.php` (kop mencetak alamat supplier); sudah diperbaiki.
+- **`chosen` di `lap_profit_penjualan`:** memuat `chosen.min.css` membuat halaman membeku, jadi widget dilepas. Penyebab pembekuan belum ditelusuri (halaman lain aman).
+- **Cache browser:** `ace.min.css` dan `jquery.dataTables.bootstrap.min.js` disimpan browser. Staf perlu hard-reload (Ctrl+F5) sekali setelah deploy, atau tambahkan versi (`?v=`) pada link CSS/JS jika ingin otomatis.
+- **T12 (alert), T9 (halaman berat), T10/T11 (kasir inline style, label form)** tidak dikerjakan: perubahannya luas dan lebih baik dikerjakan per modul setelah keputusan K2.
+
+### Yang belum dikerjakan (dan alasannya)
+| Kode | Alasan |
+|---|---|
+| T3, T31 (data uji/sampah) | butuh K3 |
+| T4, T10 (kasir seragam) | butuh K2 |
+| T17, T21 (kop per cabang, placeholder fax) | butuh K6 (data resmi tiap cabang) |
+| T20 (label "Cetak") | butuh K8 |
+| T26 (menu KACAB) | butuh K7 |
+| T29, T30 (gaya dan tanggal bawaan laporan) | butuh K9 dan keputusan komponen laporan bersama |
+| T14 (3 entri menu ganda) | keputusan produk: hapus atau biarkan |
+| T23 sisa (tabel Jasa kosong menampilkan `0`, garis tanda tangan tanpa label) | perlu desain baru dokumen |
+| T15 (KPI 559 di Procurement), T16 (angka tanpa pemisah) | perlu verifikasi query/data, bukan UI |
+
+Ukuran tampilan mobile <500px tidak bisa diuji di lingkungan ini (jendela browser tidak bisa lebih sempit dari ±495px), jadi T13 hanya divalidasi lewat gaya terhitung.
 
