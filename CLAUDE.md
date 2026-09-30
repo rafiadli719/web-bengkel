@@ -219,13 +219,11 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `app/koneksi.php` dan file-file lama sejenis — utang teknis
   codebase-wide, bukan regresi baru, belum dibereskan (scope lintas
   banyak file, belum dijadwalkan).
-- `closing_revisi_admin.php` link `includes/sidebar.css` tapi gak include
-  sidebar sama sekali (TODO Task 15 di baris ~295, sidebar web_kasir gak
-  diport) — halaman tampil tanpa sidebar, bukan regresi.
 - Audit menu_config: Batch 0-7 selesai (Batch 6 Stok+Laporan sudah di
   commit `2c5db74`/`f79db7e`, Batch 7 Keuangan Kasir bersih per
   2026-09-28: semua halaman+handler guarded, sidebar 9 halaman
-  terverifikasi live). Sisa Batch 8 Komplain (cek ulang cepat).
+  terverifikasi live). Batch 8 Komplain SELESAI 2026-09-30 (lihat update
+  di bawah) — audit menu_config TUNTAS.
 
 **Update 2026-09-28 (commit `7e9c055`):** sidebar 9 halaman Keuangan
 Kasir diverifikasi live (bg dark, 260px, 18 link, 1 active tiap
@@ -371,3 +369,39 @@ crawl tanpa GET params itu artifact crawl doang (halaman utama selalu isi
 default date range dulu), bukan bug reachable — gak difix.
 `laporan-cancel-servis.php` 2111ms bukan N+1, view `view_laporan_cancel_servis`
 sendiri berat (984ms buat 1 baris) — ditunda, fitur jarang dipakai.
+
+**Update 2026-09-30 E2E Komplain + Data Master + watchlist (commit `4c17e5c`,
+`7ee23cb`, `9404562`, `58a086f`, `0021419`):** checklist E2E
+lapangan SEMUA MODUL TUNTAS.
+- Komplain (`4c17e5c`): handler AJAX gak cek cabang (KACAB cabang A bisa
+  close/No-show komplain cabang B cuma ganti id), `ajax_close_nonrework` bisa
+  nutup komplain REWORK (lompati approval), usulan masih diterima saat
+  Eskalasi Manajemen (langgar aturan 8 spec), keputusan eskalasi
+  "Dijadwalkan" gak bikin servis garansi. Helper baru
+  `ambilKomplainDalamScope()` + `buatServisGaransiDariKomplain()` di
+  `koneksi_komplain.php`. Divalidasi live 11 skenario.
+- Data Master (`7ee23cb`): 13 INSERT gagal silent (kolom NOT NULL tanpa
+  default / kolom gak ada) — tambah barang ORI/NON-ORI, jasa, satuan,
+  pelanggan, supplier, sales, master temuan, merge log pelanggan, stok
+  cabang, validation log. Helper baru `_include_tblitem_defaults.php`.
+  `save_pelanggan/supplier/sales.php` tanpa session guard -> ditambah.
+  `updateCancelStatistikPelanggan()` gak pernah jalan (3 bug) -> fixed.
+  `pelanggan.php` 2,8s -> 0,5s.
+- `closing_revisi_admin.php` sekarang pakai sidebar, link sidebar lama
+  `admin_closing_revision.php` (404) diganti (`9404562`).
+- `setoran_bank_rekap.php` default 30 hari (1,2MB -> 79KB).
+- `view_laporan_cancel_servis` 3,2s -> 1ms: charset JOIN mismatch
+  (`0021419`). **Migrasi `db/migrations/2026-09-30_run_cancel_servis_charset.php`
+  BELUM dijalankan di produksi** (lokal sudah).
+
+Temuan baru, BELUM difix (di luar scope sesi, dari scan INSERT otomatis):
+`penjualan_mitra_add.php` (header INSERT kolom salah total),
+`pmby_piutang_add.php:86` (tblpiutang_detail kurang 5 kolom),
+`pmby_hutang_add_next.php:71` (tblhutang_header.id_tabel),
+`pengadaan_antarcab_push.php:113` (tbstok.kd_cabang),
+`pesanan_penjualan_add.php:192` (tblorderjual_header id_tabel/order_ke/
+tipe_trx/total_terima) — perlu dicek reachability + bukti live dulu.
+Juga: tabel `tbmaster_temuan_jasa_mapping` ada di dump produksi tapi gak
+ada di DB lokal (halaman Temuan - Jasa Mapping kosong di lokal saja).
+Watchlist: `statistik_pelanggan_dashboard.php` ~1,8s (3 view agregat,
+bukan N+1).
