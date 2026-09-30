@@ -177,7 +177,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-3">
                                                 <label>Pelanggan</label>
-                                                <select class="form-control chosen-select" name="cbopelanggan">
+                                                <select class="form-control" name="cbopelanggan">
                                                     <option value="">-- Semua Pelanggan --</option>
                                                     <?php while($rs = mysqli_fetch_assoc($sql_pel)): ?>
                                                     <option value="<?php echo htmlspecialchars($rs['nopelanggan']); ?>"

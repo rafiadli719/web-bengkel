@@ -85,7 +85,7 @@ return [
                     ['title' => 'Master Pelanggan', 'url' => 'pelanggan.php', 'permission' => 'pelanggan_master_read'],
                     ['title' => 'Kategori Pelanggan', 'url' => 'pelanggan_kategori.php', 'permission' => 'pelanggan_kategori_read'],
                     ['title' => 'Loyalty Member Program', 'url' => 'member-loyalty-program.php', 'permission' => 'member_loyalty_read'],
-                    ['title' => 'Statistik Pelanggan', 'url' => 'statistik-pelanggan.php', 'permission' => 'statistik_pelanggan_read'],
+                    ['title' => 'Statistik Pelanggan', 'url' => 'statistik_pelanggan_dashboard.php', 'permission' => 'statistik_pelanggan_read'],
                 ]
             ],
             [
@@ -109,7 +109,7 @@ return [
                 'icon' => 'fa-caret-right',
                 'permission' => 'mekanik_read',
                 'submenu' => [
-                    ['title' => 'Master Mekanik', 'url' => 'mekanik.php', 'permission' => 'mekanik_master_read'],
+                    ['title' => 'Master Mekanik', 'url' => 'mekanik_management.php', 'permission' => 'mekanik_master_read'],
                     ['title' => 'Level Mekanik', 'url' => 'mekanik_level.php', 'permission' => 'mekanik_level_read'],
                     ['title' => 'Master Kepala Mekanik', 'url' => 'master_kepala_mekanik.php', 'permission' => 'kepala_mekanik_read'],
                     ['title' => 'Tarif Jemput Antar', 'url' => 'master-tarif-jemput.php', 'permission' => 'tarif_jemput_read'],
@@ -164,7 +164,7 @@ return [
             ],
             [
                 'title' => 'Data User',
-                'url' => 'user.php',
+                'url' => 'user_management.php',
                 'icon' => 'fa-caret-right',
                 'permission' => 'user_read'
             ],
@@ -420,7 +420,7 @@ return [
             ['title' => 'Service', 'url' => 'lap_servis.php', 'permission' => 'lap_servis_read'],
             ['title' => 'Rekap Kunjungan Pelanggan', 'url' => 'lap_rekap_kunjungan.php', 'icon' => 'fa-users', 'permission' => 'lap_servis_read'],
             ['title' => 'Konsolidasi Access', 'url' => 'access-sync-report.php', 'permission' => 'laporan_menu_read'],
-            ['title' => 'Laporan Cancel Service', 'url' => 'lap_cancel_servis.php', 'permission' => 'lap_cancel_servis_read'],
+            ['title' => 'Laporan Cancel Service', 'url' => 'laporan-cancel-servis.php', 'permission' => 'lap_cancel_servis_read'],
             ['title' => 'Ringkasan Antar Cabang', 'url' => 'lap_antarcab.php', 'permission' => 'lap_antarcab_read'],
             ['title' => 'Profit & Insentif', 'url' => 'lap_profit_insentif.php', 'permission' => 'laporan_menu_read'],
             ['title' => 'Kas Masuk', 'url' => 'lap_kas_masuk.php', 'permission' => 'lap_kas_masuk_read'],

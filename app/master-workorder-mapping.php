@@ -895,7 +895,7 @@ if(empty($_SESSION['_iduser'])){
                                                     <ul class="pagination">
                                                         <?php if($page > 1): ?>
                                                         <li class="paginate_button previous">
-                                                            <a href="?page=<?php echo $page-1; ?>&search=<?php echo urlencode($search); ?>&prioritas=<?php echo urlencode($prioritas_filter); ?>&status=<?php echo urlencode($status_filter); ?>">Previous</a>
+                                                            <a href="?page=<?php echo $page-1; ?>&search=<?php echo urlencode($search); ?>&prioritas=<?php echo urlencode($prioritas_filter); ?>&status=<?php echo urlencode($status_filter); ?>">Sebelumnya</a>
                                                         </li>
                                                         <?php endif; ?>
                                                         
@@ -907,7 +907,7 @@ if(empty($_SESSION['_iduser'])){
                                                         
                                                         <?php if($page < $total_pages): ?>
                                                         <li class="paginate_button next">
-                                                            <a href="?page=<?php echo $page+1; ?>&search=<?php echo urlencode($search); ?>&prioritas=<?php echo urlencode($prioritas_filter); ?>&status=<?php echo urlencode($status_filter); ?>">Next</a>
+                                                            <a href="?page=<?php echo $page+1; ?>&search=<?php echo urlencode($search); ?>&prioritas=<?php echo urlencode($prioritas_filter); ?>&status=<?php echo urlencode($status_filter); ?>">Berikutnya</a>
                                                         </li>
                                                         <?php endif; ?>
                                                     </ul>

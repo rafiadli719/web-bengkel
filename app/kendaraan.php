@@ -337,14 +337,14 @@
       if($page == 1){ 
       ?>        
         <!-- link Previous Page disable --> 
-        <li class="disabled"><a href="#">Previous</a></li>
+        <li class="disabled"><a href="#">Sebelumnya</a></li>
       <?php
       }
       else{ 
         $LinkPrev = ($page > 1)? $page - 1 : 1;
       ?>
         <!-- link Previous Page --> 
-        <li><a href="kendaraan.php?page=<?php echo $LinkPrev; ?>">Previous</a></li>
+        <li><a href="kendaraan.php?page=<?php echo $LinkPrev; ?>">Sebelumnya</a></li>
       <?php
         }
       ?>
@@ -379,13 +379,13 @@
       <?php       
       if($page == $jumlahPage){ 
       ?>
-        <li class="disabled"><a href="#">Next</a></li>
+        <li class="disabled"><a href="#">Berikutnya</a></li>
       <?php
       }
       else{
         $linkNext = ($page < $jumlahPage)? $page + 1 : $jumlahPage;
       ?>
-        <li><a href="kendaraan.php?page=<?php echo $linkNext; ?>">Next</a></li>
+        <li><a href="kendaraan.php?page=<?php echo $linkNext; ?>">Berikutnya</a></li>
       <?php
       }
       ?>

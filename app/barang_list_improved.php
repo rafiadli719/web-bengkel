@@ -460,7 +460,7 @@ $result = mysqli_query($koneksi, $query);
                                 <div class="text-center">
                                     <ul class="pagination">
                                         <?php if ($page > 1): ?>
-                                            <li><a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page-1])); ?>">Previous</a></li>
+                                            <li><a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page-1])); ?>">Sebelumnya</a></li>
                                         <?php endif; ?>
                                         
                                         <?php for ($i = max(1, $page-2); $i <= min($total_pages, $page+2); $i++): ?>
@@ -470,7 +470,7 @@ $result = mysqli_query($koneksi, $query);
                                         <?php endfor; ?>
                                         
                                         <?php if ($page < $total_pages): ?>
-                                            <li><a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page+1])); ?>">Next</a></li>
+                                            <li><a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page+1])); ?>">Berikutnya</a></li>
                                         <?php endif; ?>
                                     </ul>
                                 </div>
