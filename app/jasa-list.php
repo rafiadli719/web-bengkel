@@ -51,7 +51,7 @@
 		<!-- page specific plugin styles -->
 		<link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css" />
 		<link rel="stylesheet" href="assets/css/chosen.min.css" />
-		<link rel="stylesheet" href="assets/css/ace-fonts.css" />
+		<link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
 		<link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
 
 		<!--[if lte IE 9]>
@@ -391,8 +391,6 @@
 		<!-- page specific plugin scripts -->
 		<script src="assets/js/jquery.dataTables.min.js"></script>
 		<script src="assets/js/jquery.dataTables.bootstrap.min.js"></script>
-		<script src="assets/js/dataTables.tableTools.min.js"></script>
-		<script src="assets/js/dataTables.colVis.min.js"></script>
 
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>

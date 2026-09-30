@@ -22,7 +22,8 @@ $kode_karyawan_aktif = $rowUser['kode_karyawan'] ?? null;
 // Buat navbar tema ACE global (samain kayak servis-reguler.php dkk) — jangan
 // query ulang di tiap halaman komplain, sekali di sini cukup.
 $_nama = $rowUser['nama_user'] ?? '';
-$foto_user = $rowUser['foto_user'] ?? '';
+// Fallback avatar kalau user belum punya foto (src di _ace_header.php diawali ../../).
+$foto_user = ($rowUser['foto_user'] ?? '') ?: 'file_upload/avatar.png';
 // kode_cabang_aktif — modul komplain ikut pola tbuser.kode_cabang (teks
 // pendek, mis. "PST"), BUKAN tbcabang.cabang_ref_kode (numerik) — sesuai
 // Global Constraint plan modul komplain (beda dari modul kasir yang FK-nya
