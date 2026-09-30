@@ -430,3 +430,30 @@ nyata dalam transaksi rollback) -> 50 gagal, kini tinggal 9 kode mati/legacy.
   tb_servis_mekanik_assignment, tb_pickup_details, tbl_whatsapp_messages,
   tb_log_activity, activity_log (service-validation).
 
+**Update 2026-09-30 audit UI/UX + perbaikan (commit `a9a4b34`, `7136d52`, `c463642`,
+`188eb3c`, planning `docs/superpowers/plans/2026-09-30-audit-ui-ux-plan.md`):**
+audit 152 halaman menu + 24 halaman cetak + hak akses 11 posisi. Yang gak butuh
+keputusan Rafi sudah dikerjakan & divalidasi (crawl 0 error, PDF dirender jadi gambar,
+DOM/screenshot browser):
+- Judul tab dinamis dari `menu_config.php` (`lib/titel.php`, generik 110 -> 1).
+- Font serif: 20 halaman gak muat `fonts.googleapis.com.css`; `ace.min.css` diberi
+  fallback sans-serif. `lap_profit_insentif.php` layout pecah (pembungkus `#navbar`
+  hilang) sudah beres. Gotcha: `_include_navbar.php` cuma fragmen dalam navbar, halaman
+  wajib bungkus `<div id="navbar" class="navbar navbar-default"><div class="navbar-container">`.
+- Cetak: `servis-print-pdf.php` (teks saling menimpa di Dompdf lama: hindari div+h2/h3/h4
+  margin, pakai tabel; kolom item = quantity/harga_jual/potongan), kop `penjualan_struk` &
+  `pesanan_pembelian_struk` sempat mencetak alamat pelanggan/supplier, tanggal struk
+  dd/mm/yyyy (helper `_template/_nota_pdf_parts.php`).
+- DataTables Indonesia (`assets/js/jquery.dataTables.bootstrap.min.js`, 112 halaman),
+  pagination manual Sebelumnya/Berikutnya, master pelanggan nama kosong di akhir,
+  label "No GPS" jadi strip, badge tier nowrap, 4 menu ke tujuan akhir.
+- Koreksi: "Cancel di 120 halaman" false alarm (label menu Laporan Cancel Service);
+  format tanggal `09/30/2026` di filter itu dari `<input type=date>` bawaan browser.
+- BELUM (nunggu keputusan Rafi K1-K9): kop struk per cabang (`tbsetting` cuma 1 baris ->
+  semua cabang berkop ADIWERNA, fax berisi "SIMPAN NOMOR WA DI ATAS"), tampilan Keuangan
+  Kasir vs ACE, data uji/duplikat, menu KACAB cuma 1 item, halaman berlabel "Cetak" yang
+  ternyata form edit, gaya/tanggal bawaan laporan.
+- Catatan: browser nyimpen cache `ace.min.css` & DataTables -> hard-reload sekali setelah
+  deploy. Lingkungan tes browser: tab sering `visibilityState=hidden` (screenshot gagal /
+  innerWidth 0); buat tab baru + `resize_window` 1366x768 sebelum ukur/screenshot.
+
