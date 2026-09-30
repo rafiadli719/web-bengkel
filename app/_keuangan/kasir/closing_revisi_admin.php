@@ -292,7 +292,7 @@ $role = $legacy_session_kasir['role'] ?? 'User';
     </style>
 </head>
 <body>
-    <?php /* TODO(Task 15): wire ke sidebar/menu fitmotor, sidebar.php sumber web_kasir tidak diport */ ?>
+    <?php include __DIR__ . '/includes/sidebar.php'; ?>
     <div class="main-content">
     <div class="page">
         <div class="user-profile">

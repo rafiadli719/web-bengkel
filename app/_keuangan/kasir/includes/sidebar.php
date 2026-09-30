@@ -26,7 +26,7 @@ $page_cat = [
     'master_rekening_cabang.php'    => 'master',
     'index_kasir.php'               => 'operasional',
     'konfirmasi_buka_transaksi.php' => 'operasional',
-    'admin_closing_revision.php'    => 'operasional',
+    'closing_revisi_admin.php'    => 'operasional',
     'setoran_keuangan.php'          => 'keuangan',
     'keuangan_pusat.php'            => 'keuangan',
     'setoran_bank_rekap.php'        => 'keuangan',
@@ -147,7 +147,7 @@ function isActive(string $page, string $current): string {
                 <a href="konfirmasi_buka_transaksi.php" class="nav-link sub-item <?= isActive('konfirmasi_buka_transaksi.php', $current_page) ?>">
                     <i class="fas fa-unlock-alt"></i><span>Konfirmasi Transaksi</span>
                 </a>
-                <a href="admin_closing_revision.php" class="nav-link sub-item <?= isActive('admin_closing_revision.php', $current_page) ?>">
+                <a href="closing_revisi_admin.php" class="nav-link sub-item <?= isActive('closing_revisi_admin.php', $current_page) ?>">
                     <i class="fas fa-code-branch"></i><span>Approval Revisi Closing</span>
                 </a>
                 <?php endif; ?>
