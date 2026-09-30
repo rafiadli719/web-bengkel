@@ -406,3 +406,27 @@ Juga: tabel `tbmaster_temuan_jasa_mapping` ada di dump produksi tapi gak
 ada di DB lokal (halaman Temuan - Jasa Mapping kosong di lokal saja).
 Watchlist: `statistik_pelanggan_dashboard.php` ~1,8s (3 view agregat,
 bukan N+1).
+
+**Update 2026-09-30 sapuan INSERT seluruh app (commit `5dd1b32`):** scan semua
+INSERT di `app/` (regex kolom vs skema live, lalu tiap kandidat dibuktikan INSERT
+nyata dalam transaksi rollback) -> 50 gagal, kini tinggal 9 kode mati/legacy.
+- 2 migrasi BARU, lokal sudah jalan, **PRODUKSI BELUM** (Rafi jalankan runner-nya):
+  `db/migrations/2026-09-30_run_default_kolom_warisan_access.php` (DEFAULT kolom
+  NOT NULL warisan Access: qty_retur, waktu, penyesuaian, stok_sistem, dst;
+  reversible, instan) dan `2026-09-30_run_tblservis_jasa_keterangan.php` (kolom
+  keterangan yang di-INSERT garansi & jemput tapi gak ada di skema).
+  Tanpa migrasi ini beberapa kode baru tetap gagal di MySQL strict.
+- `nobaris` servis (barang/jasa) diisi atomik `INSERT..SELECT COALESCE(MAX)+1`.
+- Tab Progress Mekanik (`_ajax/ajax-update-progress-mekanik.php`) ditulis ulang
+  (dulu kolom salah + SQL injection, tabel kosong = gak pernah jalan).
+  Log pembatalan servis (`tb_log_antrian`) juga dulu gak pernah tersimpan.
+- Kode mati (tanpa pemanggil, TIDAK diubah): keluhan-proses.php,
+  servis-input-reguler-jemput-rst.php (btnsimpan), _ajax/ajax-save-service.php,
+  save_*_h.php, save_barang.php. Boleh diarsipkan.
+- Fitur yang tabelnya TIDAK ADA di DB (butuh keputusan Rafi: bangun atau arsip):
+  Rencana Order (tblrencana_order_*), notifications/activity_logs
+  (helper-functions.php), tbdokter, tb_history_service_pelanggan/
+  tb_history_mekanik_servis/tb_log_naik_tier_member (_include_statistik_pelanggan),
+  tb_servis_mekanik_assignment, tb_pickup_details, tbl_whatsapp_messages,
+  tb_log_activity, activity_log (service-validation).
+
