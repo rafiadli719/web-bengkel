@@ -1,6 +1,7 @@
 # Audit UI/UX dan Rencana Perbaikan — 2026-09-30
 
-Status: **RENCANA, belum ada kode yang diubah.** Menunggu keputusan Rafi (lihat bagian 6).
+Status: **RENCANA, belum ada kode yang diubah.** Menunggu keputusan Rafi (lihat bagian 6 dan 9).
+Revisi 2 (audit lanjutan): cakupan diperluas ke 152 halaman menu, 24 halaman cetak/struk, dan hak akses per posisi. Temuan baru ada di bagian 8, keputusan tambahan di bagian 9.
 Terkait: fix UI kecil yang sudah masuk di commit `258b5b7` (aset kasir 404, avatar Komplain).
 
 ## 1. Cakupan audit (jujur soal batasnya)
@@ -8,7 +9,10 @@ Terkait: fix UI kecil yang sudah masuk di commit `258b5b7` (aset kasir 404, avat
 | Lapisan | Cakupan | Metode |
 |---|---|---|
 | Struktur otomatis | **135 halaman** menu (semua modul) + 6 halaman Komplain | GET tiap halaman sebagai user ADM, parse HTML: template, viewport, judul, breadcrumb, tabel, alert, format angka/tanggal, aset, waktu respons |
-| Visual desktop 1366px | **9 halaman** yang mewakili tiap keluarga tampilan | Screenshot di browser |
+| Visual desktop 1366px | **±20 halaman** (mewakili tiap keluarga tampilan + semua yang terindikasi janggal) | Screenshot di browser |
+| Metrik browser (revisi 2) | **±126 halaman menu** | Diukur di dalam browser: overflow horizontal, kolom kosong, teks terpotong, data uji, breadcrumb, font |
+| Cetak/struk (revisi 2) | **24 halaman cetak**, 5 PDF dirender ke gambar dan dilihat | GET dengan ID nyata, render PDF |
+| Hak akses (revisi 2) | 11 posisi x 136 menu | Baca `tb_master_posisi` vs `menu_config.php` |
 | Visual mobile ~495px | **3 halaman** (servis, POS, setoran kasir) | Screenshot + ukur overflow |
 | Belum diperiksa | ±120 halaman lain secara visual, cetak/struk/PDF, role selain ADM, state error/loading | Lihat bagian 7 |
 
@@ -49,7 +53,7 @@ Halaman `kas_awal_config_crud.php`, `index_kasir.php`, `view_transaksi.php` tanp
 Usulan bertahap di bagian 5. Butuh keputusan K2.
 
 **T5. Judul tab browser sama semua.**
-97 dari 135 halaman berjudul "FIT MOTOR". Staf yang membuka beberapa tab tidak bisa membedakannya, riwayat browser juga tidak informatif.
+110 dari 152 halaman berjudul "FIT MOTOR"; sisanya memakai 4 pola berbeda ("FIT MOTOR - X" 8, "X - FIT MOTOR" 5, "X - Web Bengkel/Bengkel System" 3, lain-lain 12). Staf yang membuka beberapa tab tidak bisa membedakannya, riwayat browser juga tidak informatif.
 Usulan: satu titik perubahan di `lib/titel.php` yang menurunkan judul dari `menu_config.php` berdasarkan URL. Tidak perlu edit per halaman.
 
 **T6. Campuran Inggris–Indonesia.**
@@ -57,8 +61,9 @@ Usulan: satu titik perubahan di `lib/titel.php` yang menurunkan judul dari `menu
 - Contoh lain: "View Card Mode", "Applicable Motors", "Genuine Part / Aftermarket", tab POS "Sales Details / Payment Information", lencana "Sales Transaction", judul "Procurement Dashboard".
 Usulan: buat glosarium istilah (K4), lalu ganti per komponen. Jangan terjemahkan istilah yang sudah dipakai staf sehari-hari (mis. "Work Order", "Sparepart") tanpa persetujuan.
 
-**T7. Font serif di Procurement Dashboard.**
-Seluruh halaman, termasuk sidebar, jatuh ke font serif bawaan browser (font yang dipanggil tidak termuat). Halaman lain memakai Open Sans. Perlu dicek apakah pola yang sama ada di halaman lain (belum diukur).
+**T7. Font serif di 20 halaman (akar masalah sudah ditemukan).**
+`body{font-family:"Open Sans"}` tanpa cadangan `sans-serif`, dan 20 halaman tidak memuat `assets/css/fonts.googleapis.com.css`, sehingga jatuh ke font serif bawaan browser (sidebar ikut serif). Daftar: `issue_add`, `customer_merge_approve`, `admin_deteksi_pelanggan_dobel`, `kendaraan_pindah_tangan`, `kendaraan_pindah_tangan_approve`, `workorder-motor-mapping`, `jasa-motor-mapping`, `item-motor-mapping`, `master-fastmoves`, `master-posisi`, `procurement_dashboard`, `pr_add`, `pr_auto_draft`, `master-approval-pembelian`, `do_from_po`, `do_list`, `alarm-harga-beli`, `report-tracking-keluhan`, `lap_cancel_servis`, `lap_profit_insentif`.
+Perbaikan: tambahkan link CSS font di 20 halaman itu **dan** fallback `sans-serif` di CSS global (menyelesaikan semua sekaligus, termasuk halaman baru).
 
 **T8. Nama cabang tidak seragam dalam satu tabel.**
 `pengadaan_antarcab.php`: kolom "Dari" berisi `ADIWERNA` sedangkan "Ke" berisi `FIT MOTOR PACUL` / `FIT MOTOR ADIWERNA`. Sumbernya beda kolom nama; perlu satu fungsi format nama cabang.
@@ -148,3 +153,87 @@ Estimasi total ±8–12 hari kerja bila semua dikerjakan; Fase 0–2 sudah membe
 4. State khusus: pesan error validasi, loading, data kosong, dan hasil pencarian nol.
 5. Ketergantungan CDN (Highcharts, jsdelivr, cdnjs, unpkg, Google): kalau internet cabang putus, grafik dan beberapa halaman kasir tidak tampil. Pertimbangkan menyalin aset ke lokal.
 6. Aksesibilitas dasar: kontras warna, navigasi keyboard, ukuran target sentuh di HP.
+
+## 8. Temuan tambahan (audit lanjutan, revisi 2)
+
+**Koreksi:** format tanggal `09/30/2026` (bulan/hari) di kolom filter tanggal berasal dari `<input type="date">` bawaan browser yang mengikuti bahasa Chrome, **bukan** dari aplikasi. Itu bukan temuan dan tidak dimasukkan ke rencana.
+
+### P0 — dokumen cetak (dilihat pelanggan)
+
+**T17. Kop struk selalu "FIT MOTOR ADIWERNA" untuk semua cabang.**
+Kop (nama, alamat, telepon) semua struk/faktur diambil dari satu baris `tbsetting`. Terbukti: login sebagai CIKDITIRO lalu cetak faktur servis tetap berkop Adiwerna. Untuk 5 cabang berarti 4 cabang mencetak kop yang salah. Butuh keputusan K6.
+
+**T18. `servis-print-pdf.php` (Invoice Servis A4): teks saling menimpa.**
+Nama perusahaan bertumpuk dengan alamat dan kolom No. Service/Status di bagian atas; label "Data Pelanggan" menimpa "Nama" dan "Data Kendaraan" menimpa "No. Polisi". Dokumen ini tidak bisa dibaca. Penyebab ada di CSS blok `.header`/`h4` (dompdf).
+
+**T19. Alamat perusahaan tertimpa alamat pelanggan di kop `penjualan_struk.php`.**
+Variabel `$alamat` diisi dua kali (baris 12 alamat perusahaan, baris 61 alamat pelanggan), lalu dikirim ke kop, jadi kop mencetak alamat pelanggan. `pesanan_penjualan_struk.php` sudah benar (`$alamat_perusahaan` vs `$alamat_pelanggan`). `pesanan_pembelian_struk.php` memiliki pola serupa, perlu diverifikasi.
+
+### P1
+
+**T20. Halaman berlabel "Cetak" ternyata form transaksi penuh.**
+`penjualan_cetak.php` (breadcrumb "Cetak Struk") dan `servis-reguler-cetak.php` ("Cetak Nota") menampilkan form yang masih bisa diedit (tambah item, tambah keluhan, pilih mekanik), bukan dokumen cetak. Tidak ada `@page`/`@media print` di 9 halaman `*_cetak`. Dokumen cetak sebenarnya adalah `*_struk` (PDF). Usulan: ganti label jadi "Detail Transaksi" dan taruh tombol "Cetak Struk" yang jelas.
+
+**T21. Teks placeholder tercetak di dokumen.**
+Kolom fax berisi `SIMPAN NOMOR WA DI ATAS` (tercetak di semua struk), dan data uji seperti `Jl. Dummy No. 1`, `[TEST-E2E] Budi Uji`, `INV-TEST-001`. Perlu dibersihkan bersama T3.
+
+**T22. Format tanggal berbeda antar dokumen.**
+Faktur servis dan bukti pembelian memakai `05/07/2026`, faktur penjualan memakai `2026-09-29`. Seragamkan ke `dd/mm/yyyy`.
+
+**T23. Detail kecil faktur servis dan penjualan.**
+Label "No. Transaksi" terpecah dua baris; tabel "Jasa Bengkel" kosong hanya menampilkan angka `0`; dua garis tanda tangan tanpa label; kolom "Jumlah"/"Satuan" berdempetan; nama item `-` untuk item tanpa nama.
+
+**T24. DataTables berbahasa Inggris.**
+"Showing … entries", "Previous/Next", "Search:", "Actions", dan tautan mentah "Copy CSV Print" tanpa gaya. Terukur di 14 halaman dari ±60 yang diperiksa (`barang`, `pelanggan`, `kendaraan`, `workorder-list`, `jasa-list`, `master-keluhan-crud`, `cabang`, `motor_tipe`, `mekanik_management`, `pmby_hutang`, dll). Perbaikan satu titik: file bahasa DataTables (`language: {url/..}`) di init global.
+
+**T25. Halaman Data Master dengan isi janggal.**
+- `item-motor-mapping.php`: 302 baris, banyak item tanpa kode atau nama (`-`, `--`), kolom "Mapping Kategori" kosong semua. Tombol admin "Cleanup Duplikasi Kategori" dan "Rapikan Kategori Tipe Motor" terbuka untuk semua pemilik izin.
+- `mekanik_management.php`: judul Inggris "Mechanic Management System", format kode campur (`MK001`, `KRY-00010`, `2019120001`, `037`), nomor telepon palsu `081234567890`, dua entri bernama "Kepala Mekanik", kolom Gaji Pokok kosong.
+- `statistik_pelanggan_dashboard.php`: kartu "Perlu Follow Up" = 37.110 = Total Pelanggan (semua pelanggan ditandai follow up, kartunya jadi tidak bermakna); 96% pelanggan berstatus Bronze; kartu "Total Pendapatan" terpecah dua baris sehingga tinggi kartu tidak sama.
+- `master-barang-custom.php`: item dummy `CUSTOM-00006 DMY`, judul tab "- Web Bengkel", nomor urut menurun.
+- `master-temuan-mapping.php`: kolom "Nama Part" kosong. `motor_tipe.php`: kolom "Tahun" kosong.
+- `pelanggan_kategori.php` dan `member-loyalty-program.php`: dua entri menu menuju halaman yang sama ("Master Kategori Member").
+
+### P2 — hak akses (butuh keputusan, bukan bug UI)
+
+**T26. Menu yang terlihat per posisi.**
+| Posisi | User aktif | Menu terlihat |
+|---|---|---|
+| ADM | 9 | 136 dari 136 |
+| KEU | 3 | 29 |
+| MNG | 3 | 26 |
+| PGD | 4 | 22 |
+| CRM | 3 | 17 |
+| KSR | 10 | 16 |
+| KM | 6 | 8 |
+| CS | 4 | 7 |
+| MK | 3 | 4 |
+| HRD | 3 | 4 |
+| **KACAB** | **4** | **1** (hanya approval Komplain) |
+Kepala Cabang hanya melihat satu menu (tanpa Servis, Laporan, Penjualan). Perlu dipastikan itu memang disengaja (K7).
+
+### Yang sudah aman
+Tidak ada teks warning PHP, tidak ada `NaN`, tidak ada scroll horizontal di desktop pada 126 halaman yang diukur, tidak ada teks terpotong berarti, seluruh halaman ACE punya breadcrumb kecuali `master-barang-custom.php`.
+
+## 9. Keputusan tambahan untuk Rafi
+
+- **K6.** Kop struk per cabang: tambah kolom alamat/telepon/WA di `tbcabang` (disarankan) atau tabel pengaturan per cabang? Perlu data resmi tiap cabang (alamat, telepon, WA). Isi "Fax" saat ini hanya placeholder.
+- **K7.** Kepala Cabang (KACAB) memang hanya boleh melihat Komplain? Kalau tidak, izin apa yang perlu ditambah (mis. dashboard, laporan cabang sendiri, servis)?
+- **K8.** Halaman berlabel "Cetak" (`*_cetak.php`): dipertahankan sebagai halaman detail dengan label baru, atau dibuat menjadi dokumen cetak sungguhan (HTML A4 + `@media print`)?
+- **K9.** Format tanggal standar untuk semua dokumen dan tabel: `dd/mm/yyyy`?
+
+## 10. Urutan kerja yang diperbarui
+
+Sisipkan **Fase 1B — Dokumen cetak (prioritas tertinggi setelah Fase 0, 1–2 hari):**
+1. T18 perbaiki tata letak `servis-print-pdf.php`.
+2. T19 perbaiki tabrakan `$alamat` di `penjualan_struk.php` (+ verifikasi `pesanan_pembelian_struk.php`).
+3. T17 kop per cabang (setelah K6), sekaligus mengganti placeholder fax (T21).
+4. T22/T23 seragamkan tanggal dan rapikan detail faktur.
+Alasan diprioritaskan: dokumen ini diterima pelanggan langsung dan T17/T18 membuat dokumen salah atau tidak terbaca.
+
+Fase lain menyesuaikan: T7 (font) dan T24 (DataTables) masuk **Fase 1** karena bisa diselesaikan di satu titik global; T25 dan T26 masuk **Fase 2** setelah keputusan K1, K7.
+
+## 11. Cakupan akhir audit
+
+Sudah: struktur 152 halaman menu, metrik browser ±126 halaman, ±20 screenshot desktop, 3 screenshot mobile, 24 halaman cetak (5 PDF dilihat), hak akses 11 posisi.
+Belum: tampilan mobile untuk sebagian besar halaman, halaman Laporan dan Master lain secara visual satu per satu (hanya lewat metrik), state error/loading, kontras warna dan navigasi keyboard, tampilan cetak dari kertas termal 58/80mm (struk saat ini A4 landscape).
