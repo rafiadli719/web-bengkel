@@ -237,3 +237,42 @@ Fase lain menyesuaikan: T7 (font) dan T24 (DataTables) masuk **Fase 1** karena b
 
 Sudah: struktur 152 halaman menu, metrik browser ±126 halaman, ±20 screenshot desktop, 3 screenshot mobile, 24 halaman cetak (5 PDF dilihat), hak akses 11 posisi.
 Belum: tampilan mobile untuk sebagian besar halaman, halaman Laporan dan Master lain secara visual satu per satu (hanya lewat metrik), state error/loading, kontras warna dan navigasi keyboard, tampilan cetak dari kertas termal 58/80mm (struk saat ini A4 landscape).
+
+## 12. Audit visual Laporan dan Master (revisi 3)
+
+Dilihat satu per satu di browser 1366px: **Laporan** 10 halaman (`lap_pembelian`, `lap_profit_penjualan`, `lap_servis`, `lap_rekap_kunjungan`, `lap_antarcab`, `lap_kas_keluar`, `lap_profit_insentif`, `laporan-cancel-servis`, plus `lap_penjualan` dan `lap_pesanan_pembelian` sebelumnya) dan **Master** 12 halaman (`barang`, `master-temuan`, `pelanggan`, `item-motor-mapping`, `mekanik_management`, `master-barang-custom`, `master-posisi`, `user_management`, `workorder-list`, `jasa-list`, `barang_kategori`, `statistik_pelanggan_dashboard`). Sisanya (±15 Laporan dan ±28 Master) hanya lewat metrik karena satu templatenya sama dengan yang sudah dilihat. Kendala teknis: tab browser beberapa kali membeku dan harus dibuat ulang, jadi tidak semua halaman sempat di-screenshot.
+
+### P0
+
+**T27. `lap_profit_insentif.php`: layout halaman pecah.**
+Sidebar melayang di tengah layar, navbar tidak melebar, isi halaman terdorong ke bawah, dan seluruh teks berfont serif. Terbukti di dua sesi tab. Penyebab: `<head>` ditulis manual dan menyimpang dari template standar (tidak memuat `fonts.googleapis.com.css` dan `ace-rtl.min.css`, urutan CSS berbeda dari `lap_profit_penjualan.php`). Laporan ini praktis tidak bisa dipakai. 19 halaman lain dari daftar T7 hanya kena font serif (layout utuh) kecuali dibuktikan lain.
+Usulan: satu partial `<head>` bersama (`_include_head.php`) yang dipakai semua halaman ACE, menggantikan head manual. Ini juga menutup T5, T7, T24 sekaligus.
+
+### P1
+
+**T28. Filter "Pelanggan" di `lap_profit_penjualan.php` tampil rusak.**
+Kotak pencarian select2 terbuka permanen dan tidak sejajar dengan kolom lain; tombol Tampilkan turun posisi.
+
+**T29. Dua gaya laporan yang berbeda.**
+Mayoritas Laporan memakai gaya lama (filter satu baris, header biru "Hasil Pencarian ditemukan N data", tombol Tampilkan/Cetak/Export lebar). `lap_antarcab.php`, `laporan-cancel-servis.php`, dan `lap_rekap_kunjungan.php` memakai gaya baru (judul besar, kartu KPI, filter kompak). `lap_rekap_kunjungan.php` punya *empty state* dan legenda warna terbaik; usulan menjadikannya acuan.
+
+**T30. Rentang tanggal bawaan tidak seragam.**
+`lap_pembelian` 01/06–30/06, `lap_servis` 01/07–06/07, `lap_profit_penjualan` 01/09–29/09, `lap_kas_keluar` 01/09–30/09. Usulan bawaan seragam: awal bulan berjalan sampai hari ini.
+
+**T31. Data Master berisi sampah yang terlihat jelas.**
+- `workorder-list.php`: WO tanpa nama (WO0003), WO bernama `2444` dengan badge waktu `2147483647 menit` (melebar keluar kolom) dan keterangan `zzzzzz…` yang meluber, WO `coba`.
+- `jasa-list.php`: banyak jasa bernama `-` (mis. GBDBSG, GBLBTS); sebagian besar berstatus Non-Aktif.
+- `user_management.php`: seluruh user berstatus "Last Login: Never" (pelacakan login sepertinya tidak terisi), kolom Department `-` semua, dan akun uji (`e2e_test_*`, `kacab_*`, `km_*`) tampil bersama akun asli.
+Termasuk ke K3 (pembersihan data) dan satu pengecekan: apakah `last_login` memang tidak pernah diisi.
+
+**T32. Bahasa dan gaya DataTables tidak konsisten (lanjutan T24).**
+`user_management` dan `mekanik_management` berjudul "User Management System"/"Mechanic Management System", memakai "Username/Role/Status/Actions", dan tautan `Copy CSV Print` tampil sebagai teks biasa tanpa tombol. `workorder-list`/`jasa-list` memakai "Display 10 records", "Search:", "Export".
+
+### Yang sudah baik (acuan pola)
+- `master-temuan.php`, `master-posisi.php` (form akses sidebar), `jasa-list.php`: tata letak rapi, badge status jelas.
+- `lap_rekap_kunjungan.php`: empty state dan legenda.
+- `barang.php` dan `servis-reguler.php`: bersih, hanya masalah kolom kosong (T2).
+
+### Dampak ke urutan kerja
+T27 dipindah ke **Fase 1** dengan prioritas tertinggi (halaman tidak bisa dipakai, perbaikannya sederhana). T28 masuk Fase 2. T29/T30 dikerjakan bersama saat membuat komponen laporan bersama. T31 masuk Fase 5 (data).
+
