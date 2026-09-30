@@ -102,7 +102,7 @@ if (empty($txtkd) || empty($txtnama)) {
 }
 
 // Save to local database
-$insert_query = "INSERT INTO tblitemsatuan (satuan, namasatuan) VALUES ('$txtkd', '$txtnama')";
+$insert_query = "INSERT INTO tblitemsatuan (satuan, namasatuan, _default) VALUES ('$txtkd', '$txtnama', '0')";
 $local_success = mysqli_query($koneksi, $insert_query);
 
 if ($local_success) {

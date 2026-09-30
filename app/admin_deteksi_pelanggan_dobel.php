@@ -110,7 +110,7 @@ if(isset($_POST['btnsubmit_merge'])){
                 $message = "Pelanggan Sumber ({$source}) sudah dalam antrian merge. Batalkan atau selesaikan antrian lama."; $error_class = 'alert-danger';
             } else {
                 // Auto insert ke customer_merge_log dengan status 'diajukan'
-                $stmt = mysqli_prepare($koneksi, "INSERT INTO customer_merge_log (nopelanggan_source, nopelanggan_target, alasan, dibuat_oleh, status) VALUES (?, ?, ?, ?, 'diajukan')");
+                $stmt = mysqli_prepare($koneksi, "INSERT INTO customer_merge_log (nopelanggan_source, nopelanggan_target, alasan, diajukan_oleh, status) VALUES (?, ?, ?, ?, 'diajukan')");
                 mysqli_stmt_bind_param($stmt, "sssi", $source, $target, $alasan, $id_user);
                 if(mysqli_stmt_execute($stmt)){
                     $new_log_id = mysqli_insert_id($koneksi);

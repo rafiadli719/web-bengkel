@@ -33,9 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_temuan = mysqli_real_escape_string($koneksi, trim($_POST['nama_temuan'] ?? ''));
     $kategori = mysqli_real_escape_string($koneksi, trim($_POST['kategori'] ?? ''));
     $deskripsi = mysqli_real_escape_string($koneksi, trim($_POST['deskripsi'] ?? ''));
-    $penyebab_umum = mysqli_real_escape_string($koneksi, trim($_POST['penyebab_umum'] ?? ''));
-    $solusi_umum = mysqli_real_escape_string($koneksi, trim($_POST['solusi_umum'] ?? ''));
-    $estimasi_waktu = intval($_POST['estimasi_waktu'] ?? 0);
+    // penyebab_umum/solusi_umum/estimasi_waktu/created_by/updated_by dulu ikut
+    // di-INSERT/UPDATE padahal kolomnya gak ada di tbmaster_temuan (lokal
+    // maupun dump produksi tools/sql/fitmotor_dbbengkel.sql) -> tambah & edit
+    // master temuan selalu gagal "Unknown column". Dibuang (E2E 2026-09-30).
     $tingkat_urgensi = mysqli_real_escape_string($koneksi, trim($_POST['tingkat_urgensi'] ?? 'sedang'));
     $is_active = isset($_POST['is_active']) ? 1 : 0;
 
@@ -51,11 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $alert_type = 'warning';
             } else {
                 $sql = "INSERT INTO tbmaster_temuan 
-                        (kode_temuan, nama_temuan, kategori, deskripsi, penyebab_umum, solusi_umum, 
-                         estimasi_waktu, tingkat_urgensi, is_active, created_by, created_at)
+                        (kode_temuan, nama_temuan, kategori, deskripsi, tingkat_urgensi, is_active, created_at)
                         VALUES 
-                        ('$kode_temuan', '$nama_temuan', '$kategori', '$deskripsi', '$penyebab_umum', '$solusi_umum',
-                         '$estimasi_waktu', '$tingkat_urgensi', '$is_active', '$id_user', NOW())";
+                        ('$kode_temuan', '$nama_temuan', '$kategori', '$deskripsi', '$tingkat_urgensi', '$is_active', NOW())";
                 if (mysqli_query($koneksi, $sql)) { 
                     $alert = 'Master temuan berhasil ditambahkan'; 
                     $alert_type = 'success';
@@ -72,9 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $sql = "UPDATE tbmaster_temuan SET 
                         nama_temuan='$nama_temuan', kategori='$kategori', deskripsi='$deskripsi',
-                        penyebab_umum='$penyebab_umum', solusi_umum='$solusi_umum',
-                        estimasi_waktu='$estimasi_waktu', tingkat_urgensi='$tingkat_urgensi', 
-                        is_active='$is_active', updated_by='$id_user', updated_at=NOW()
+                        tingkat_urgensi='$tingkat_urgensi', 
+                        is_active='$is_active', updated_at=NOW()
                     WHERE id='$id'";
             if (mysqli_query($koneksi, $sql)) { 
                 $alert = 'Master temuan berhasil diupdate'; 
@@ -400,24 +398,8 @@ $kode_temuan_baru = 'TMN' . str_pad($next_no, 3, '0', STR_PAD_LEFT);
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Penyebab Umum</label>
+                                                        <label class="col-sm-4 control-label">Status</label>
                                                         <div class="col-sm-8">
-                                                            <textarea class="form-control" name="penyebab_umum" rows="2"><?php echo esc($edit_data['penyebab_umum'] ?? ''); ?></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Solusi Umum</label>
-                                                        <div class="col-sm-8">
-                                                            <textarea class="form-control" name="solusi_umum" rows="2"><?php echo esc($edit_data['solusi_umum'] ?? ''); ?></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Est. Waktu (menit)</label>
-                                                        <div class="col-sm-4">
-                                                            <input type="number" class="form-control" name="estimasi_waktu" min="0"
-                                                                   value="<?php echo $edit_data['estimasi_waktu'] ?? 0; ?>">
-                                                        </div>
-                                                        <div class="col-sm-4">
                                                             <label class="checkbox" style="padding-top: 7px;">
                                                                 <input type="checkbox" name="is_active" value="1" 
                                                                        <?php echo ($edit_data['is_active'] ?? 1) == 1 ? 'checked' : ''; ?>> Aktif
@@ -500,7 +482,6 @@ $kode_temuan_baru = 'TMN' . str_pad($next_no, 3, '0', STR_PAD_LEFT);
                                                         <th width="10%">Kategori</th>
                                                         <th width="20%">Deskripsi</th>
                                                         <th width="8%">Urgensi</th>
-                                                        <th width="7%">Est. Waktu</th>
                                                         <th width="7%">Status</th>
                                                         <th width="15%">Aksi</th>
                                                     </tr>
@@ -533,7 +514,7 @@ $kode_temuan_baru = 'TMN' . str_pad($next_no, 3, '0', STR_PAD_LEFT);
                                                         <td class="center">
                                                             <span class="label <?php echo $urgensi_class; ?>"><?php echo ucfirst($d['tingkat_urgensi']); ?></span>
                                                         </td>
-                                                        <td class="center"><?php echo $d['estimasi_waktu']; ?> mnt</td>
+                                                        
                                                         <td class="center">
                                                             <?php if($d['is_active']): ?>
                                                             <span class="label label-success">Aktif</span>
@@ -565,7 +546,7 @@ $kode_temuan_baru = 'TMN' . str_pad($next_no, 3, '0', STR_PAD_LEFT);
                                                         }
                                                     } else { 
                                                     ?>
-                                                    <tr><td colspan="9" class="center text-muted">Tidak ada data</td></tr>
+                                                    <tr><td colspan="8" class="center text-muted">Tidak ada data</td></tr>
                                                     <?php } ?>
                                                 </tbody>
                                             </table>

@@ -195,8 +195,8 @@ if (empty($_SESSION['_iduser'])) {
                 }
             } else {
                 // Insert new stock data
-                $stock_insert = "INSERT INTO tblitem_stok (noitem, kode_cabang, stokmin, stok_maks, stok_awal)
-                                VALUES ('$kd_item', '$kd_cabang', '$stokmin', '$stok_maks', '$stok_awal')";
+                $stock_insert = "INSERT INTO tblitem_stok (noitem, kode_cabang, stokmin, stok_maks, stok_awal, rakbarang)
+                                VALUES ('$kd_item', '$kd_cabang', '$stokmin', '$stok_maks', '$stok_awal', 0)";
 
                 if (!mysqli_query($koneksi, $stock_insert)) {
                     throw new Exception("Gagal insert stok: " . mysqli_error($koneksi));
@@ -204,9 +204,12 @@ if (empty($_SESSION['_iduser'])) {
             }
 
             // Log the edit action (with error handling)
-            $log_notes = "Item diedit: $nama_item (Tipe: $tipe_item)";
-            $log_query = "INSERT INTO tbitem_validation_log (noitem, action, notes, user_id, created_at)
-                         VALUES ('$kd_item', 'edited', '$log_notes', '$id_user', NOW())";
+            // Kolom asli tabel: status_baru/keterangan/validated_by (lihat
+            // save_barang_improved.php) — dulu pakai action/notes/user_id yang
+            // gak ada, log edit gak pernah tersimpan (ditelan @).
+            $log_notes = mysqli_real_escape_string($koneksi, "Item diedit: $nama_item (Tipe: $tipe_item)");
+            $log_query = "INSERT INTO tbitem_validation_log (noitem, status_baru, keterangan, validated_by)
+                         VALUES ('$kd_item', 'edited', '$log_notes', '" . (int)$id_user . "')";
             @mysqli_query($koneksi, $log_query);
 
             mysqli_commit($koneksi);

@@ -1,5 +1,7 @@
 <?php
 	include "../config/koneksi.php";
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
 	require_once __DIR__ . '/_customer_identity.php';
 
                 date_default_timezone_set('Asia/Jakarta');
@@ -11,7 +13,10 @@
                     return $satukan;
                 }
                 
-                $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']);
+                $txttglpesan = ubahformatTgl($_POST['id-date-picker-1'] ?? '');
+                // tgllahir NOT NULL (date): tanggal kosong/format salah -> hari ini,
+                // sama konvensi save_pelanggan_only.php. Tanpa ini strict mode nolak '--'.
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $txttglpesan)) $txttglpesan = date('Y-m-d');
 	    
 	$txtkd= $_POST['txtkd'];
 	$txtnama= $_POST['txtnama'];
@@ -55,14 +60,20 @@
                             alamat, kota, propinsi, kodepost, negara,
                             telephone, fax, kontakperson, note, kgrup,
                             patokan, klat, klong, panggilan, tgllahir,
-                            tipepot)
-                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                            tipepot, id_panggilan, lavelharga, pertanggal, potongan, saldoawal)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 0, '3', CURDATE(), 0, 0)");
         mysqli_stmt_bind_param($ins_stmt, str_repeat('s', 18),
             $txtkd, $txtnama, $txtalamat, $txtkota, $txtprop, $txtpos, $txtnegara,
             $txttlp, $txtfax, $txtkontak, $txtnote, $cbolevel,
             $txtpatokan, $txtlat, $txtlong, $txtpanggilan, $txttglpesan, $cbopot);
-        mysqli_stmt_execute($ins_stmt);
+        $ins_ok = mysqli_stmt_execute($ins_stmt);
+        $ins_err = mysqli_stmt_error($ins_stmt);
         mysqli_stmt_close($ins_stmt);
+        if (!$ins_ok) {
+            error_log('[save_pelanggan] insert gagal: ' . $ins_err);
+            echo "<script>window.alert(" . json_encode('Gagal menyimpan pelanggan: ' . $ins_err) . "); window.history.back();</script>";
+            exit;
+        }
 
         echo"<script>window.alert('Data Pelanggan Berhasil disimpan!');
         window.location=('pelanggan.php');</script>";

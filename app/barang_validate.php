@@ -152,8 +152,8 @@ if (empty($_SESSION['_iduser'])) {
             try {
                 // Initialize stock if missing
                 if (!$stock_data) {
-                    $init_stock = "INSERT INTO tblitem_stok (noitem, kode_cabang, stokmin, stok_maks, stok_awal)
-                                  VALUES ('$kd_item', '$kd_cabang', 0, 0, 0)";
+                    $init_stock = "INSERT INTO tblitem_stok (noitem, kode_cabang, stokmin, stok_maks, stok_awal, rakbarang)
+                                  VALUES ('$kd_item', '$kd_cabang', 0, 0, 0, 0)";
                     if (@mysqli_query($koneksi, $init_stock)) {
                         $fixes_applied[] = "Inisialisasi data stok";
                     } else {

@@ -7,6 +7,7 @@ if (empty($_SESSION['_iduser'])) {
     $id_user = $_SESSION['_iduser'];
     $kd_cabang = $_SESSION['_cabang'];
     include "../config/koneksi.php";
+    require_once __DIR__ . "/_include_tblitem_defaults.php";
 
     // Data User
     $cari_kd = mysqli_query($koneksi, "SELECT nama_user, password, user_akses, foto_user FROM tbuser WHERE id='$id_user'");
@@ -57,6 +58,7 @@ if (empty($_SESSION['_iduser'])) {
                     'validated', '1', '$id_user'
                 )";
                 
+                $insert_query = tblitemLengkapiInsert($insert_query, $harga_jual);
                 if (mysqli_query($koneksi, $insert_query)) {
                     $success_msg = "Item ORI berhasil ditambahkan!";
                 } else {
@@ -94,7 +96,8 @@ if (empty($_SESSION['_iduser'])) {
                 '$kategori_rak', 'pending_validation', '1', '$id_user'
             )";
             
-            if (mysqli_query($koneksi, $insert_query)) {
+            $insert_query = tblitemLengkapiInsert($insert_query, $harga_jual);
+                if (mysqli_query($koneksi, $insert_query)) {
                 $success_msg = "Item NON-ORI berhasil ditambahkan dengan kode: $kode_auto";
             } else {
                 $error_msg = "Gagal menambahkan item: " . mysqli_error($koneksi);

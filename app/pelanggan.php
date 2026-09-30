@@ -296,7 +296,14 @@
                                           $limit = 100;
                                           $limitStart = ($page - 1) * $limit;
                                                     
-                                          $SqlQuery = mysqli_query($con, "SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan order by namapelanggan LIMIT ".$limitStart.",".$limit);                                      
+                                          // Deferred join: urut+LIMIT di tblpelanggan dulu (37rb baris, kolom sempit),
+                                          // baru join ke view buat 100 baris itu. Dulu view penuh di-sort baru
+                                          // di-LIMIT -> 1,4 detik. view_cari_pelanggan 1:1 dengan tblpelanggan.
+                                          $SqlQuery = mysqli_query($con, "SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member
+                                              FROM (SELECT nopelanggan FROM tblpelanggan ORDER BY namapelanggan LIMIT ".$limitStart.",".$limit.") pk
+                                              JOIN view_cari_pelanggan v ON v.nopelanggan = pk.nopelanggan
+                                              LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan
+                                              ORDER BY v.namapelanggan");                                      
                                           $no = $limitStart + 1;
                                           
                                           while($row = mysqli_fetch_array($SqlQuery)){ 
@@ -333,9 +340,9 @@
                                             <td class="center"><?php echo $row['grup']?><br><?php echo displayStatusMemberBadge(isset($row['kategori_member']) ? $row['kategori_member'] : 'Bronze'); ?></td>
                                             <td class="center">
                                                 <?php
-                                                // Check GPS coordinates
-                                                $check_gps = mysqli_query($con, "SELECT klat, klong FROM tblpelanggan WHERE nopelanggan='{$row['nopelanggan']}'");
-                                                $gps_data = mysqli_fetch_array($check_gps);
+                                                // klat/klong sudah ada di view_cari_pelanggan - dulu query
+                                                // ulang tblpelanggan per baris (N+1, 100 query/halaman).
+                                                $gps_data = ['klat' => $row['klat'], 'klong' => $row['klong']];
                                                 if(!empty($gps_data['klat']) && !empty($gps_data['klong'])) {
                                                     $maps_url = "https://www.google.com/maps/@{$gps_data['klat']},{$gps_data['klong']},17z";
                                                     echo '<span class="label label-success" title="Latitude: ' . $gps_data['klat'] . ', Longitude: ' . $gps_data['klong'] . '">';
@@ -381,8 +388,8 @@
       <?php
       // Dulu SELECT * (semua kolom+baris view_cari_pelanggan) cuma buat
       // mysqli_num_rows -> COUNT(*) hasilnya sama, jauh lebih murah.
-      $CountQuery = mysqli_query($con, "SELECT COUNT(*) AS jml FROM view_cari_pelanggan");
-      $JumlahData = mysqli_fetch_assoc($CountQuery)['jml'];
+      // Total sudah dihitung di atas ($total_item), gak perlu COUNT kedua.
+      $JumlahData = $total_item;
       
       // Hitung jumlah halaman yang tersedia
       $jumlahPage = ceil($JumlahData / $limit); 

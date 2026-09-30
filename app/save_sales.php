@@ -1,5 +1,7 @@
 <?php
 	include "../config/koneksi.php";
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
 	            
 	$txtkd= mysqli_real_escape_string($koneksi, $_POST['txtkd']);
 	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
@@ -14,17 +16,17 @@
     if($cbokomisi2=='1') {
         mysqli_query($koneksi,"INSERT INTO tblsales 
                             (nosales, namasales, alamat, kota, telephone, 
-                            op_pil_hitung, op_pil_sistem_komisi, komisijual) 
+                            op_pil_hitung, op_pil_sistem_komisi, komisijual, komisi_nominal, _default) 
                             VALUES 
                             ('$txtkd','$txtnama','$txtalamat','$txtkota','$txttlp',
-                            '$cbokomisi1','$cbokomisi2','$txtilai')");        
+                            '$cbokomisi1','$cbokomisi2','$txtilai', 0, '')");        
     } else {
         mysqli_query($koneksi,"INSERT INTO tblsales 
                             (nosales, namasales, alamat, kota, telephone, 
-                            op_pil_hitung, op_pil_sistem_komisi, komisi_nominal) 
+                            op_pil_hitung, op_pil_sistem_komisi, komisi_nominal, komisijual, _default) 
                             VALUES 
                             ('$txtkd','$txtnama','$txtalamat','$txtkota','$txttlp',
-                            '$cbokomisi1','$cbokomisi2','$txtilai')");                
+                            '$cbokomisi1','$cbokomisi2','$txtilai', 0, '')");                
     }
 
 								

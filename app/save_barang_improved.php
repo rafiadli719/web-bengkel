@@ -6,6 +6,7 @@ if (empty($_SESSION['_iduser'])) {
 }
 
 include "../config/koneksi.php";
+require_once __DIR__ . "/_include_tblitem_defaults.php";
 
 $id_user = $_SESSION['_iduser'];
 $kd_cabang = $_SESSION['_cabang'];
@@ -62,6 +63,7 @@ if (isset($_POST['btnsimpan'])) {
                 'validated', '1', '$id_user', 0, 0, 0, ''
             )";
             
+            $insert_query = tblitemLengkapiInsert($insert_query, $harga_jual);
             if (!mysqli_query($koneksi, $insert_query)) {
                 throw new Exception("Gagal menambahkan item ORI: " . mysqli_error($koneksi));
             }
@@ -137,6 +139,7 @@ if (isset($_POST['btnsimpan'])) {
                 0, 0, 0, ''
             )";
             
+            $insert_query = tblitemLengkapiInsert($insert_query, $harga_jual);
             if (!mysqli_query($koneksi, $insert_query)) {
                 throw new Exception("Gagal menambahkan item NON-ORI: " . mysqli_error($koneksi));
             }

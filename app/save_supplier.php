@@ -1,11 +1,13 @@
 <?php
 // Aktifkan error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
 
 // Include file konfigurasi database
 include "../config/koneksi.php";
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
 
 // Ambil data dari form
 $txtkd = $_POST['txtkd'] ?? null;
@@ -122,11 +124,13 @@ $escape_cbocabang = mysqli_real_escape_string($koneksi, $cbocabang);
 $insert_query = "INSERT INTO tblsupplier 
                 (nosupplier, namasupplier, tipe_pemasok, alamat, kota, propinsi, kodepost, 
                  negara, telephone, no_whatsapp, fax, namabank, noaccount, atasnama, 
-                 kontakperson, email, note, kd_cabang) 
+                 kontakperson, email, note, kd_cabang,
+                 jangka_waktu_kredit, jmlbayar, lama_hari_kirim, pertanggal, saldoawal, sisa) 
                 VALUES 
                 ('$escape_txtkd', '$escape_txtnama', '$escape_cbotipe', '$escape_txtalamat', '$escape_txtkota', '$escape_txtprop', '$escape_txtpos',
                  '$escape_txtnegara', '$escape_txttlp', '$escape_txtwa', '$escape_txtfax', '$escape_txtbank', '$escape_txtnorek', '$escape_txtnmrek',
-                 '$escape_txtkontak', '$escape_txtemail', '$escape_txtnote', '$escape_cbocabang')";
+                 '$escape_txtkontak', '$escape_txtemail', '$escape_txtnote', '$escape_cbocabang',
+                 0, 0, 0, CURDATE(), 0, 0)";
 
 $result = mysqli_query($koneksi, $insert_query);
 if (!$result) {

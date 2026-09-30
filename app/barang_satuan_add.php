@@ -199,13 +199,13 @@ if (empty($_SESSION['_iduser'])) {
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label no-padding-right" for="txtkd"> Kode </label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-6" required autocomplete="off" />
+                                        <input type="text" id="txtkd" name="txtkd" class="col-xs-10 col-sm-6" required autocomplete="off" maxlength="3" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label no-padding-right" for="txtnama"> Satuan Barang </label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-6" required autocomplete="off" />
+                                        <input type="text" id="txtnama" name="txtnama" class="col-xs-10 col-sm-6" required autocomplete="off" maxlength="30" />
                                     </div>
                                 </div>
                                 <div class="form-group">

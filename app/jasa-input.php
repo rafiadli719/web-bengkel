@@ -6,6 +6,7 @@
 		$id_user=$_SESSION['_iduser'];		
         $kd_cabang=$_SESSION['_cabang'];        
 		include "../config/koneksi.php";
+		require_once __DIR__ . "/_include_tblitem_defaults.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -89,18 +90,22 @@
             
             if($mode == 'add') {
                 // Insert jasa baru
-                $insert = mysqli_query($koneksi,"INSERT INTO tblitem 
+                $sql_insert = tblitemLengkapiInsert("INSERT INTO tblitem 
                                                 (noitem, kodebarcode, namaitem, jenis, satuan, hargapokok, hargajual, 
                                                  totalpokok, quantity, statusitem, jasawaktu, jasasatuanwaktu, 
                                                  jenis_jasa, note, stokmin, stok_maks) 
                                                 VALUES 
                                                 ('$kode_jasa', '$kode_jasa', '$namaitem', '$jenis', '$satuan', 
                                                  '$hargapokok', '$hargajual', '$hargapokok', '1', '$statusitem', 
-                                                 '$jasawaktu', '$jasasatuanwaktu', '$jenis_jasa', '$note', '0', '999')");
-                                                 
+                                                 '$jasawaktu', '$jasasatuanwaktu', '$jenis_jasa', '$note', '0', '999')", $hargajual);
+                $insert = mysqli_query($koneksi, $sql_insert);
+
                 if($insert) {
                     echo"<script>window.alert('Jasa service berhasil ditambahkan!');
                     window.location=('jasa-list.php');</script>";
+                } else {
+                    error_log('[jasa-input] insert gagal: ' . mysqli_error($koneksi));
+                    echo "<script>window.alert(" . json_encode('Gagal menyimpan jasa: ' . mysqli_error($koneksi)) . ");</script>";
                 }
             } else {
                 // Update jasa

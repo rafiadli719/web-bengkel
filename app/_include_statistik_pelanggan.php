@@ -308,12 +308,12 @@ function updateCancelStatistikPelanggan($koneksi, $no_pelanggan) {
     // 1. Calculate cancel statistics from tb_log_cancel_servis
     $query_cancel = "SELECT 
                         COUNT(*) as total_cancel,
-                        MAX(tanggal_cancel) as tanggal_terakhir,
-                        SUM(CASE WHEN kategori_alasan = 'customer_request' THEN 1 ELSE 0 END) as cancel_request,
-                        SUM(CASE WHEN kategori_alasan = 'no_stock' THEN 1 ELSE 0 END) as cancel_stock,
-                        SUM(CASE WHEN kategori_alasan = 'no_mekanik' THEN 1 ELSE 0 END) as cancel_mekanik,
-                        SUM(CASE WHEN kategori_alasan = 'customer_no_show' THEN 1 ELSE 0 END) as cancel_noshow,
-                        SUM(CASE WHEN kategori_alasan = 'lainnya' THEN 1 ELSE 0 END) as cancel_lainnya
+                        MAX(lc.tanggal_cancel) as tanggal_terakhir,
+                        SUM(CASE WHEN lc.kategori_alasan = 'customer_request' THEN 1 ELSE 0 END) as cancel_request,
+                        SUM(CASE WHEN lc.kategori_alasan = 'no_stock' THEN 1 ELSE 0 END) as cancel_stock,
+                        SUM(CASE WHEN lc.kategori_alasan = 'no_mekanik' THEN 1 ELSE 0 END) as cancel_mekanik,
+                        SUM(CASE WHEN lc.kategori_alasan = 'customer_no_show' THEN 1 ELSE 0 END) as cancel_noshow,
+                        SUM(CASE WHEN lc.kategori_alasan = 'lainnya' THEN 1 ELSE 0 END) as cancel_lainnya
                     FROM tb_log_cancel_servis lc
                     JOIN tblservice s ON lc.no_service = s.no_service
                     WHERE s.no_pelanggan = '$no_pelanggan'";
@@ -326,6 +326,11 @@ function updateCancelStatistikPelanggan($koneksi, $no_pelanggan) {
     }
     
     $cancel_data = mysqli_fetch_assoc($result_cancel);
+    // SUM() = NULL kalau pelanggan belum pernah cancel -> UPDATE jadi "kolom = ,"
+    // (syntax error). Cast semua hitungan ke int.
+    foreach (['total_cancel', 'cancel_request', 'cancel_stock', 'cancel_mekanik', 'cancel_noshow', 'cancel_lainnya'] as $k) {
+        $cancel_data[$k] = (int) ($cancel_data[$k] ?? 0);
+    }
     
     // 2. Get total transaksi (jadi service) from statistik_pelanggan
     $query_transaksi = "SELECT jumlah_kunjungan FROM statistik_pelanggan WHERE no_pelanggan = '$no_pelanggan'";
@@ -350,7 +355,7 @@ function updateCancelStatistikPelanggan($koneksi, $no_pelanggan) {
         cancel_no_mekanik = {$cancel_data['cancel_mekanik']},
         cancel_no_show = {$cancel_data['cancel_noshow']},
         cancel_lainnya = {$cancel_data['cancel_lainnya']},
-        last_updated = NOW()
+        updated_at = NOW() -- kolomnya updated_at; dulu last_updated (gak ada) -> UPDATE selalu gagal
         WHERE no_pelanggan = '$no_pelanggan'";
         
     $success = mysqli_query($koneksi, $query_update);
