@@ -153,6 +153,7 @@ while($row = mysqli_fetch_assoc($qr)){ $riwayat[] = $row; }
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
     <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
     <script src="assets/js/ace-extra.min.js"></script>
 </head>

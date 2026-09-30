@@ -130,6 +130,7 @@ function clsLaba($n){ return ((float)$n >= 0) ? 'text-success' : 'text-danger'; 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
     <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
     <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
     <script src="assets/js/ace-extra.min.js"></script>
@@ -142,7 +143,11 @@ function clsLaba($n){ return ((float)$n >= 0) ? 'text-success' : 'text-danger'; 
     </style>
 </head>
 <body class="no-skin">
-    <?php include "_include_navbar.php"; ?>
+    <div id="navbar" class="navbar navbar-default ace-save-state">
+        <div class="navbar-container ace-save-state" id="navbar-container">
+            <?php include "_include_navbar.php"; ?>
+        </div><!-- /.navbar-container -->
+    </div>
     <div class="main-container ace-save-state" id="main-container">
         <script>try{ace.settings.loadState('main-container')}catch(e){}</script>
         <div id="sidebar" class="sidebar responsive ace-save-state">
