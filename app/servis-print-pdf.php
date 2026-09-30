@@ -86,15 +86,28 @@ ob_start();
             font-size: 11px;
             margin: 20px;
         }
-        .header {
-            text-align: center;
+        .header-tbl {
+            width: 100%;
+            border-collapse: collapse;
             border-bottom: 3px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
-        .header h2 {
-            margin: 5px 0;
-            font-size: 18px;
+        .header-tbl td {
+            text-align: center;
+            padding: 2px 0;
+        }
+        .header-nama { font-size: 18px; font-weight: bold; }
+        .header-alamat { font-size: 11px; }
+        .header-judul { font-size: 14px; font-weight: bold; padding-bottom: 8px; }
+        .judul-seksi {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+        .judul-seksi td {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 0 3px 0;
         }
         .info-table {
             width: 100%;
@@ -132,11 +145,19 @@ ob_start();
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2><?php echo htmlspecialchars($nama_perusahaan); ?></h2>
-        <p><?php echo htmlspecialchars($alamat_perusahaan); ?></p>
-        <h3>INVOICE SERVIS</h3>
-    </div>
+    <!-- Header pakai tabel, bukan div+h2/h3: Dompdf versi lama menghitung tinggi
+         div .header = 0 sehingga isinya menimpa tabel info di bawahnya (T18). -->
+    <table class="header-tbl">
+        <tr>
+            <td class="header-nama"><?php echo htmlspecialchars($nama_perusahaan); ?></td>
+        </tr>
+        <tr>
+            <td class="header-alamat"><?php echo htmlspecialchars($alamat_perusahaan); ?></td>
+        </tr>
+        <tr>
+            <td class="header-judul">INVOICE SERVIS</td>
+        </tr>
+    </table>
     
     <table class="info-table">
         <tr>
@@ -165,7 +186,7 @@ ob_start();
         </tr>
     </table>
     
-    <h4>Data Pelanggan</h4>
+    <table class="judul-seksi"><tr><td>Data Pelanggan</td></tr></table>
     <table class="info-table">
         <tr>
             <td width="15%"><strong>Nama</strong></td>
@@ -184,7 +205,7 @@ ob_start();
         </tr>
     </table>
     
-    <h4>Data Kendaraan</h4>
+    <table class="judul-seksi"><tr><td>Data Kendaraan</td></tr></table>
     <table class="info-table">
         <tr>
             <td width="15%"><strong>No. Polisi</strong></td>
@@ -212,7 +233,7 @@ ob_start();
         </tr>
     </table>
     
-    <h4>Detail Jasa Service</h4>
+    <table class="judul-seksi"><tr><td>Detail Jasa Service</td></tr></table>
     <table class="detail-table">
         <thead>
             <tr>
@@ -236,7 +257,7 @@ ob_start();
                 <td><?php echo $jasa['nama_item']; ?></td>
                 <td class="text-center"><?php echo $jasa['waktu']; ?> mnt</td>
                 <td class="text-right">Rp <?php echo number_format($jasa['harga'], 0, ',', '.'); ?></td>
-                <td class="text-right">Rp <?php echo number_format($jasa['diskon'], 0, ',', '.'); ?></td>
+                <td class="text-right"><?php echo (float)$jasa['potongan']; ?>%</td>
                 <td class="text-right">Rp <?php echo number_format($jasa['total'], 0, ',', '.'); ?></td>
             </tr>
             <?php endwhile; ?>
@@ -247,7 +268,7 @@ ob_start();
         </tbody>
     </table>
     
-    <h4>Detail Barang/Sparepart</h4>
+    <table class="judul-seksi"><tr><td>Detail Barang/Sparepart</td></tr></table>
     <table class="detail-table">
         <thead>
             <tr>
@@ -270,10 +291,12 @@ ob_start();
             <tr>
                 <td class="text-center"><?php echo $no++; ?></td>
                 <td><?php echo $barang['nama_item']; ?></td>
-                <td class="text-center"><?php echo $barang['qty']; ?></td>
+                <?php /* Kolom asli tblservis_barang: quantity, harga_jual, potongan (persen).
+                         Dulu qty/harga/diskon (tidak ada) -> Qty kosong & Harga Rp 0 di invoice. */ ?>
+                <td class="text-center"><?php echo (int)$barang['quantity']; ?></td>
                 <td class="text-center"><?php echo $barang['satuan']; ?></td>
-                <td class="text-right">Rp <?php echo number_format($barang['harga'], 0, ',', '.'); ?></td>
-                <td class="text-right">Rp <?php echo number_format($barang['diskon'], 0, ',', '.'); ?></td>
+                <td class="text-right">Rp <?php echo number_format($barang['harga_jual'], 0, ',', '.'); ?></td>
+                <td class="text-right"><?php echo (float)$barang['potongan']; ?>%</td>
                 <td class="text-right">Rp <?php echo number_format($barang['total'], 0, ',', '.'); ?></td>
             </tr>
             <?php endwhile; ?>

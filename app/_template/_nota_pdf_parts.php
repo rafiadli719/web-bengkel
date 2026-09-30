@@ -50,13 +50,18 @@ function nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, $j
     foreach ($rows as $i => $r) {
         $label = $r[0];
         $value = $r[1];
+        // Tanggal seragam dd/mm/yyyy di semua dokumen (faktur penjualan dulu
+        // mencetak 2026-09-29 sedangkan faktur servis/pembelian 05/07/2026).
+        if ($label === 'Tanggal' && preg_match('/^(\d{4})-(\d{2})-(\d{2})/', (string)$value, $mt)) {
+            $value = $mt[3].'/'.$mt[2].'/'.$mt[1];
+        }
         $bold_open  = ($i === 0) ? '<b>' : '';
         $bold_close = ($i === 0) ? '</b>' : '';
         $rows_html .= '
             <tr>
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 20%;"><font size="2">'.$bold_open.$label.$bold_close.'</font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2">'.$bold_open.':'.$bold_close.'</font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 75%;"><font size="2">'.$bold_open.$value.$bold_close.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 28%; white-space: nowrap;"><font size="2">'.$bold_open.$label.$bold_close.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 4%;"><font size="2">'.$bold_open.':'.$bold_close.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 68%;"><font size="2">'.$bold_open.$value.$bold_close.'</font></td>
             </tr>';
     }
 

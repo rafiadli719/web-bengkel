@@ -9,7 +9,7 @@
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
-    $alamat=$tm_cari['alamat'];
+    $alamat_perusahaan=$tm_cari['alamat'];
     $notlp=$tm_cari['notlp'];
     $fax=$tm_cari['fax'];
     $file_logo=$tm_cari['file_logo'];
@@ -30,7 +30,7 @@
                                         WHERE nosupplier='$no_supplier'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$namasupplier=$tm_cari['namasupplier'];				        
-        $alamat=$tm_cari['alamat'];
+        $alamat_supplier=$tm_cari['alamat'];
         
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot, 
                                         sum(quantity) as tot_order
@@ -55,11 +55,11 @@
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PESANAN PEMBELIAN', array(
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat_perusahaan, $notlp, $fax, 'FAKTUR PESANAN PEMBELIAN', array(
             array('No. Pesanan', $nopesanan),
             array('Tanggal', $tanggal_order),
             array('Supplier', $no_supplier.'&nbsp;'.$namasupplier),
-            array('Alamat', $alamat),
+            array('Alamat', $alamat_supplier),
         )).'
         <table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">
             <tr>

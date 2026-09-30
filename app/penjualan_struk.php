@@ -9,7 +9,7 @@
 	$cari_kd=mysqli_query($koneksi,"SELECT * FROM tbsetting");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
-    $alamat=$tm_cari['alamat'];	
+    $alamat_perusahaan=$tm_cari['alamat'];	
     $notlp=$tm_cari['notlp'];	
     $fax=$tm_cari['fax'];	
     $file_logo=$tm_cari['file_logo'];	    
@@ -58,7 +58,7 @@
                                         WHERE nopelanggan='$no_supplier'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$namapelanggan=$tm_cari['namapelanggan'];
-        $alamat=$tm_cari['alamat'];
+        $alamat_pelanggan=$tm_cari['alamat'];
 
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         sum(qty_order) as tot_order, 
@@ -86,11 +86,11 @@
 			</head>
 			<body>
 		<div style="margin-top: -20pt; padding: 10pt; overflow: none; text-align: justify;">
-'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR PENJUALAN', array_filter(array(
+'.nota_pdf_header($file_logo, $nama_perusahaan, $alamat_perusahaan, $notlp, $fax, 'FAKTUR PENJUALAN', array_filter(array(
             array('No. Transaksi', $nobl),
             array('Tanggal', $tanggal_order),
             array('Pelanggan', $no_supplier.'&nbsp;'.$namapelanggan),
-            array('Alamat', $alamat),
+            array('Alamat', $alamat_pelanggan),
             !empty($nama_sales) ? array('Sales', $nama_sales) : null,
             !empty($user_order) ? array('User', $user_order) : null,
             !empty($keterangan) ? array('Keterangan', $keterangan) : null,
