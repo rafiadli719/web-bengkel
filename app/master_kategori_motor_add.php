@@ -30,8 +30,8 @@
     // --------------------
 
 		if(isset($_POST['submit'])){
-			$kategori = strtoupper(trim($_POST['kategori']));
-			$keterangan = trim($_POST['keterangan']);
+			$kategori = mysqli_real_escape_string($koneksi, strtoupper(trim($_POST['kategori'])));
+			$keterangan = mysqli_real_escape_string($koneksi, trim($_POST['keterangan']));
 
 			// Validasi input sesuai Excel MASTER KATEGORI MOTOR
 			if(empty($kategori)) {
@@ -42,7 +42,7 @@
 				$pesan = "Keterangan tidak boleh kosong!";
 			} else {
 				// Cek duplikasi kategori
-				$cek_kategori = mysqli_query($koneksi, "SELECT id FROM tbkategori_motor WHERE kategori='$kategori'");
+				$cek_kategori = mysqli_query($koneksi, "SELECT id FROM tbkategori_motor WHERE REPLACE(kategori,' ','')=REPLACE('$kategori',' ','')");
 				if(mysqli_num_rows($cek_kategori) > 0) {
 					$pesan = "KATEGORI MOTOR harus diganti";
 				} else {

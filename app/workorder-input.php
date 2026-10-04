@@ -65,6 +65,12 @@
             $nama_wo = mysqli_real_escape_string($koneksi, $_POST['nama_wo']);
             $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
 
+            // Nama WO wajib diisi (cegah header tanpa nama di picker servis)
+            if (trim($nama_wo) === '') {
+                echo "<script>window.alert('Nama Work Order wajib diisi!');history.back();</script>";
+                exit;
+            }
+
             // Hitung total waktu dan harga dari detail
             $total_waktu_calc = 0;
             $total_harga_calc = 0;
@@ -85,6 +91,9 @@
                 $total_harga_calc += $detail['total'];
             }
             
+            // Batasi waktu (menit) agar tidak overflow kolom int
+            $total_waktu_calc = max(0, min((int)$total_waktu_calc, 100000));
+
             if($mode == 'add') {
                 // Insert work order header
                 $insert = mysqli_query($koneksi,"INSERT INTO tbworkorderheader 
