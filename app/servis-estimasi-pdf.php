@@ -13,7 +13,7 @@ require_once '../config/koneksi.php';
 require_once '_template/_nota_pdf_parts.php';
 
 // Data Perusahaan ===========
-$cari_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting");
+$cari_setting = fm_kop_query($koneksi);
 $tm_setting = mysqli_fetch_array($cari_setting);
 $nama_perusahaan = $tm_setting['nama_perusahaan'];
 $alamat_perusahaan = $tm_setting['alamat'];

@@ -20,6 +20,8 @@
 			@mysqli_query($koneksi, "SET @kd_cabang_filter = '$_kd_f'");
 		}
 	}
+	// Helper kop dokumen per cabang (fm_kop_query)
+	if (is_file(__DIR__ . '/kop_cabang.php')) { require_once __DIR__ . '/kop_cabang.php'; }
 	if (mysqli_connect_errno()){
 		// Don't output HTML errors - let calling script handle it
 		// echo "Koneksi database gagal : " . mysqli_connect_error();

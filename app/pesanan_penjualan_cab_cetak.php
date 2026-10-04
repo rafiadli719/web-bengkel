@@ -225,7 +225,7 @@
                             <li>
 								<a href="">Buat Pesanan</a>
 							</li>                            
-							<li class="active">Cetak Nota</li>
+							<li class="active">Detail Pesanan Penjualan</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

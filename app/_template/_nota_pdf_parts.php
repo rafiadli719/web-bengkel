@@ -76,8 +76,8 @@ function nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, $j
                         <b>'.$nama_perusahaan.'</b><br>
                         <font size="2">
                             '.$alamat.'<br>
-                            Telp. '.$notlp.'<br>
-                            Fax. '.$fax.'
+                            Telp. '.$notlp.(trim((string)$fax) !== '' ? '<br>
+                            Fax. '.$fax : '').'
                         </font>
                     </td>
                     <td style="padding: 1pt 2pt; vertical-align:top; width: 40%;">

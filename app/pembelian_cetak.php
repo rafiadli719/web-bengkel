@@ -240,7 +240,7 @@
                             <li>
 								<a href="#">Pembelian</a>
 							</li>                            
-							<li class="active">Cetak Nota</li>
+							<li class="active">Detail Pembelian</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

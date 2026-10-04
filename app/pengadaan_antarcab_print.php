@@ -44,7 +44,7 @@ $details = [];
 while($r = mysqli_fetch_assoc($qd)) $details[] = $r;
 
 // Ambil nama perusahaan dari setting
-$q_setting = mysqli_query($koneksi,"SELECT * FROM tbsetting LIMIT 1");
+$q_setting = fm_kop_query($koneksi);
 $setting = ($q_setting && mysqli_num_rows($q_setting)>0) ? mysqli_fetch_assoc($q_setting) : [];
 $nama_perusahaan  = $setting['nama_perusahaan'] ?? 'FitMotor';
 $alamat_perusahaan = $setting['alamat'] ?? '';

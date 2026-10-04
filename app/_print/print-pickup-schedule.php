@@ -19,7 +19,7 @@ if ($no_service === '') {
     exit;
 }
 
-$setting = mysqli_query($koneksi, "SELECT nama_perusahaan, alamat, notlp, file_logo FROM tbsetting LIMIT 1");
+$setting = fm_kop_query($koneksi);
 $setting_data = $setting ? mysqli_fetch_assoc($setting) : null;
 $nama_perusahaan = $setting_data['nama_perusahaan'] ?? '';
 $alamat_perusahaan = $setting_data['alamat'] ?? '';

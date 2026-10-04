@@ -29,7 +29,7 @@ $det = mysqli_query($koneksi, "SELECT d.*, COALESCE(i.namaitem, d.no_item) AS na
 $cari_cab = mysqli_query($koneksi, "SELECT * FROM tbcabang WHERE kode_cabang='$kd_cabang'");
 $cab = mysqli_fetch_assoc($cari_cab);
 
-$q_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting LIMIT 1");
+$q_setting = fm_kop_query($koneksi);
 $setting = ($q_setting && mysqli_num_rows($q_setting) > 0) ? mysqli_fetch_assoc($q_setting) : [];
 $nama_perusahaan   = $setting['nama_perusahaan'] ?? ($cab['nama_cabang'] ?? 'BENGKEL');
 $alamat_perusahaan = $setting['alamat'] ?? ($cab['alamat_cabang'] ?? '');

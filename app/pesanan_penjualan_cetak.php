@@ -237,7 +237,7 @@
                             <li>
 								<a href="pesanan_penjualan.php">Pesanan Penjualan</a>
 							</li>                            
-							<li class="active">Cetak Struk</li>
+							<li class="active">Detail Pesanan Penjualan</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

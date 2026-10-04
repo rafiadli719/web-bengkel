@@ -252,7 +252,7 @@
                             <li>
 								<a href="#">Pembayaran Servis</a>
 							</li>                            
-							<li class="active">Cetak Nota</li>
+							<li class="active">Detail Servis</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

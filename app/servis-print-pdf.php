@@ -67,7 +67,7 @@ $query_barang = "SELECT
 $result_barang = mysqli_query($koneksi, $query_barang);
 
 // Data Perusahaan (sumber sama dengan nota lain, bukan hardcode per-cabang)
-$cari_perusahaan = mysqli_query($koneksi, "SELECT * FROM tbsetting");
+$cari_perusahaan = fm_kop_query($koneksi);
 $tm_perusahaan = mysqli_fetch_array($cari_perusahaan);
 $nama_perusahaan = $tm_perusahaan['nama_perusahaan'] ?? 'FIT MOTOR';
 $alamat_perusahaan = $tm_perusahaan['alamat'] ?? '';

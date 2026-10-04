@@ -11,7 +11,7 @@ if (empty($no_service)) {
 }
 
 // Data Perusahaan ===========
-$cari_kd = mysqli_query($koneksi, "SELECT * FROM tbsetting");
+$cari_kd = fm_kop_query($koneksi);
 $tm_cari = mysqli_fetch_array($cari_kd);
 $nama_perusahaan = $tm_cari['nama_perusahaan'] ?? '';
 $alamat_perusahaan = $tm_cari['alamat'] ?? '';

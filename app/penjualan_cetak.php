@@ -253,7 +253,7 @@ if($carabayar<>'Kredit') {
                             <li>
 								<a href="penjualan.php">Penjualan</a>
 							</li>                            
-							<li class="active">Cetak Struk</li>
+							<li class="active">Detail Penjualan</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

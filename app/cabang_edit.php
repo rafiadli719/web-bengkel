@@ -23,6 +23,7 @@
 		$cari_kd=mysqli_query($koneksi,"SELECT
                                         nama_cabang,
                                         tipe_cabang,
+                                        *,
                                         alamat_cabang,
                                         google_maps_cabang,
                                         lat_cabang,
@@ -35,7 +36,9 @@
 	$alamat_cabang=$tm_cari['alamat_cabang'] ?? '';
 	$google_maps_cabang=$tm_cari['google_maps_cabang'] ?? '';
 	$lat_cabang=$tm_cari['lat_cabang'] ?? '';
-	$long_cabang=$tm_cari['long_cabang'] ?? '';	
+	$long_cabang=$tm_cari['long_cabang'] ?? '';
+	$telepon_cabang=$tm_cari['telepon_cabang'] ?? '';
+	$ada_kolom_telepon=array_key_exists('telepon_cabang', (array)$tm_cari);	
     // --------------------        
     
 		$tgl_skr=date('d');	
@@ -276,6 +279,16 @@
 									<textarea id="txtalamat" name="txtalamat" class="col-xs-10 col-sm-6" rows="3" placeholder="Alamat lengkap cabang..."><?php echo isset($alamat_cabang) ? htmlspecialchars($alamat_cabang) : ''; ?></textarea>
 								</div>
 							</div>
+
+							<?php if (!empty($ada_kolom_telepon)) { ?>
+								<div class="form-group">
+									<label class="col-sm-2 control-label no-padding-right"> Telepon / WA (kop struk) </label>
+									<div class="col-sm-9">
+										<input type="text" id="txttelepon" name="txttelepon" class="col-xs-10 col-sm-4" maxlength="30" placeholder="mis. 0815 7839 1970" value="<?php echo htmlspecialchars($telepon_cabang); ?>" />
+										<span class="help-inline col-xs-12 col-sm-7"><span class="middle">Kosong = memakai nomor pengaturan umum.</span></span>
+									</div>
+								</div>
+								<?php } ?>
 
 							<div class="form-group">
 								<label class="col-sm-2 control-label no-padding-right"> Google Maps Link </label>

@@ -331,7 +331,7 @@
                             <li>
 								<a href="">Pesanan Pembelian</a>
 							</li>                            
-							<li class="active">Cetak Nota</li>
+							<li class="active">Detail Pesanan Pembelian</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

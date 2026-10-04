@@ -18,7 +18,7 @@
 		$cab=mysqli_fetch_array($cari_kd);
 		$nama_cabang=$cab['nama_cabang'];
 
-        $q_setting = mysqli_query($koneksi, "SELECT * FROM tbsetting LIMIT 1");
+        $q_setting = fm_kop_query($koneksi);
         $setting = ($q_setting && mysqli_num_rows($q_setting) > 0) ? mysqli_fetch_assoc($q_setting) : [];
         $nama_perusahaan   = $nama_cabang ?: ($setting['nama_perusahaan'] ?? 'BENGKEL');
         $alamat_perusahaan = $cab['alamat_cabang'] ?? ($setting['alamat'] ?? '');

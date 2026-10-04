@@ -8,6 +8,13 @@
     $txtgooglemaps= mysqli_real_escape_string($koneksi, $_POST['txtgooglemaps'] ?? '');
     $txtlat= mysqli_real_escape_string($koneksi, $_POST['txtlat'] ?? '');
     $txtlong= mysqli_real_escape_string($koneksi, $_POST['txtlong'] ?? '');
+    $txttelepon= mysqli_real_escape_string($koneksi, trim($_POST['txttelepon'] ?? ''));
+
+    // telepon_cabang baru ada setelah migrasi 2026-10-04; tanpa kolom, simpan tetap jalan.
+    $cek_tel = mysqli_query($koneksi, "SHOW COLUMNS FROM tbcabang LIKE 'telepon_cabang'");
+    if ($cek_tel && mysqli_num_rows($cek_tel) > 0 && isset($_POST['txttelepon'])) {
+        mysqli_query($koneksi, "UPDATE tbcabang SET telepon_cabang=" . ($txttelepon === '' ? "NULL" : "'$txttelepon'") . " WHERE kode_cabang='$txtid'");
+    }
 
 	mysqli_query($koneksi,"UPDATE tbcabang
                         SET nama_cabang='$txtnama',
