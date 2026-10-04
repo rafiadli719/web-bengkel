@@ -208,7 +208,12 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   PESALAKAN, TRAYEMAN, CIKDITIRO (cuma PST yang punya KM sekarang).
   BLOCKING approval REWORK/non-REWORK beneran jalan di 4 cabang itu.
   Butuh dari Rafi: nama staf real + kode karyawan per cabang — JANGAN
-  auto-generate akun/password.
+  auto-generate akun/password STAF ASLI. UPDATE 2026-10-04: akun TEST
+  (`kode_karyawan` `TEST-KACAB-*`/`TEST-KM-*`, password `test123`,
+  tbuser id 125-135 lokal) sudah ada untuk SEMUA cabang (KACAB x5 incl.
+  PST, KM x4 di PACUL/PESALAKAN/TRAYEMAN/CIKDITIRO) atas izin Rafi, jadi
+  testing approval komplain tidak terblokir lagi. Akun staf asli tetap
+  pending dan akun TEST wajib dinonaktifkan sebelum produksi.
 - **Task 34** (retire `masterkey.php`) — masih blocked Task 21 (migrasi
   SSO bridge `priori-tech` → `tbuser`), Task 21 butuh koordinasi
   eksternal, belum ada progress baru.
@@ -457,3 +462,23 @@ DOM/screenshot browser):
   deploy. Lingkungan tes browser: tab sering `visibilityState=hidden` (screenshot gagal /
   innerWidth 0); buat tab baru + `resize_window` 1366x768 sebelum ukur/screenshot.
 
+
+**Update 2026-10-04 (commit `8238769`):** keputusan Rafi atas backlog:
+- Kategori motor duplikat DI-MERGE (migrasi reversible
+  `db/migrations/2026-10-04_run_merge_kategori_motor_cleanup_wo.php [up|down]`,
+  backup `bak_20261004_*`): 6->2, 7/8->3, 10->5. Kanonik = id yang dipakai
+  `tbtipe_motor` (BEBEK 1, MATIC 2, SUPER MATIC 3, SPORT 4, SUPER SPORT 5);
+  mapping WO0001 sekarang mencakup 1-5 (guard "WO tidak sesuai kategori"
+  tidak salah blok lagi). WO0004/WO0006/WO0007 dihapus, WO0003 dinamai
+  "GANTI KARET VAKUM". WO001-WO005 (seed demo, dipakai 9 servis lama
+  2025) sengaja TIDAK dihapus. **Migrasi BELUM dijalankan di produksi.**
+  `workorder-input.php` kini tolak nama kosong + clamp waktu; master
+  kategori motor cek duplikat abaikan spasi.
+- Item 5 (bangun fitur yang tabelnya hilang) SEDANG ditriase: Rencana Order
+  butuh `tblsupplier_tempo` (juga hilang, perlu data tempo supplier dari
+  Rafi); `tbdokter`, `webhook_whatsapp`, `tb_log_activity` = sisa template
+  / kode komentar, bukan fitur bisnis bengkel; history service pelanggan
+  punya kode yang gak cocok skema asli (tblcabang/tbmaster_workorder/
+  tbservis_barang gak ada) dan jalan di alur bayar, jadi perlu perbaikan
+  hati-hati, bukan sekadar CREATE TABLE.
+- 3 gap desain Komplain tetap ditunda sesuai Rafi.
