@@ -18,6 +18,18 @@ if ($bolehApproveRework) {
     $rework = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+$dijadwalkan = [];
+$batasNoShow = max(1, (int)getSettingKomplain($koneksi_komplain, 'noshow_hari', '7'));
+if ($bolehApproveRework) {
+    $stmtJ = $koneksi_komplain->prepare(
+        "SELECT *, DATEDIFF(CURDATE(), rencana_tanggal_kedatangan) AS telat_hari FROM tblkomplain
+         WHERE kode_cabang = :cabang AND status = 'Dijadwalkan' AND rencana_tanggal_kedatangan IS NOT NULL
+         ORDER BY rencana_tanggal_kedatangan ASC"
+    );
+    $stmtJ->execute([':cabang' => $kode_cabang_aktif]);
+    $dijadwalkan = $stmtJ->fetchAll(PDO::FETCH_ASSOC);
+}
+
 $nonRework = [];
 if ($bolehCloseNonRework) {
     $stmt2 = $koneksi_komplain->prepare(
@@ -69,6 +81,28 @@ include __DIR__ . '/_ace_header.php';
         <td><?= (int)$k['aging_hari'] ?></td>
         <td><input type="text" class="form-control form-control-sm" id="tl_<?= (int)$k['id'] ?>"></td>
         <td><button class="btn btn-sm btn-primary" onclick="closeNonRework(<?= (int)$k['id'] ?>)">Selesai</button></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+  <?php endif; ?>
+<?php if ($bolehApproveRework): ?>
+  <h6 class="mt-4">Dijadwalkan (pantau No-show, batas <?= (int)$batasNoShow ?> hari)</h6>
+  <table class="table table-sm table-bordered">
+    <thead><tr><th>No Komplain</th><th>Nopol</th><th>Jadwal Datang</th><th>Terlambat (hari)</th><th>Aksi</th></tr></thead>
+    <tbody>
+    <?php if (empty($dijadwalkan)): ?><tr><td colspan="5" class="text-center text-muted">Kosong.</td></tr><?php endif; ?>
+    <?php foreach ($dijadwalkan as $k): $telat = (int)$k['telat_hari']; ?>
+      <tr>
+        <td><?= htmlspecialchars($k['no_komplain']) ?></td>
+        <td><?= htmlspecialchars($k['nopol']) ?></td>
+        <td><?= htmlspecialchars($k['rencana_tanggal_kedatangan']) ?></td>
+        <td><?= $telat > 0 ? $telat : 0 ?></td>
+        <td>
+          <?php if ($telat > $batasNoShow): ?>
+            <button class="btn btn-sm btn-secondary" onclick="keputusanRework(<?= (int)$k['id'] ?>,'No-show')">No-show</button>
+          <?php else: ?><span class="text-muted">Belum melewati batas</span><?php endif; ?>
+        </td>
       </tr>
     <?php endforeach; ?>
     </tbody>

@@ -51,6 +51,22 @@ $pic = $picRole === 'KEPALA_MEKANIK'
     ? getPicRework($koneksi_komplain, $kodeCabang)
     : getPicNonRework($koneksi_komplain, $kodeCabang);
 
+// Idempotent (spec: koneksi putus saat submit tidak boleh bikin submit ganda):
+// komplain identik dari cabang+nopol+no HP+kategori+detail yang sama dalam 60
+// detik terakhir dianggap retry, kembalikan nomor yang sudah ada.
+$stmtDup = $koneksi_komplain->prepare(
+    "SELECT no_komplain FROM tblkomplain
+     WHERE kode_cabang = :cabang AND nopol = :nopol AND no_hp = :hp AND kode_kategori = :kategori
+       AND detail_keluhan = :detail AND created_at >= (NOW() - INTERVAL 60 SECOND)
+     ORDER BY id DESC LIMIT 1"
+);
+$stmtDup->execute([':cabang' => $kodeCabang, ':nopol' => $nopol, ':hp' => $hp, ':kategori' => $kategori, ':detail' => $detail]);
+$noDuplikat = $stmtDup->fetchColumn();
+if ($noDuplikat !== false) {
+    echo json_encode(['success' => true, 'no_komplain' => $noDuplikat, 'duplikat' => true, 'message' => 'Komplain ini sudah tersimpan sebelumnya (tidak dibuat ganda).']);
+    exit;
+}
+
 // generateNoKomplain() pakai COUNT()+INSERT terpisah (no lock) - 2 submit
 // bersamaan bisa dapet nomor sama & tabrak UNIQUE constraint. Retry beberapa
 // kali dengan nomor baru daripada biarin PDOException nembus jadi fatal error

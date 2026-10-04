@@ -10,7 +10,24 @@ $pesan = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $aksi = $_POST['aksi'] ?? '';
-    if ($aksi === 'tambah') {
+    if ($aksi === 'setting_noshow') {
+        $hari = (int)($_POST['noshow_hari'] ?? 0);
+        if ($hari < 1 || $hari > 90) {
+            $pesan = 'Batas No-show harus 1 sampai 90 hari.';
+        } else {
+            try {
+                $stmt = $koneksi_komplain->prepare(
+                    "INSERT INTO tblkomplain_setting (kunci, nilai, updated_by) VALUES ('noshow_hari', :n, :u)
+                     ON DUPLICATE KEY UPDATE nilai = VALUES(nilai), updated_by = VALUES(updated_by)"
+                );
+                $stmt->execute([':n' => (string)$hari, ':u' => $kode_karyawan_aktif]);
+                $pesan = "Batas No-show disimpan: $hari hari.";
+            } catch (PDOException $e) {
+                error_log('[komplain] simpan setting gagal: ' . $e->getMessage());
+                $pesan = 'Gagal menyimpan pengaturan (jalankan migrasi tblkomplain_setting).';
+            }
+        }
+    } elseif ($aksi === 'tambah') {
         try {
             $stmt = $koneksi_komplain->prepare(
                 "INSERT INTO tblkomplain_kategori (kode_kategori, nama_kategori, pic_role, jenis_penyelesaian) VALUES (:kode, :nama, :pic, :jenis)"
@@ -54,6 +71,16 @@ $pageTitle = 'Master Kategori Komplain';
 include __DIR__ . '/_ace_header.php';
 ?>
   <?php if ($pesan): ?><div class="alert alert-success"><?= htmlspecialchars($pesan) ?></div><?php endif; ?>
+
+  <div class="card mb-4"><div class="card-body">
+    <h6>Batas No-show (hari) <a class="btn btn-xs btn-default pull-right" href="import_massal.php">Impor Massal CSV</a></h6>
+    <p class="text-muted mb-2">Pelanggan REWORK yang tidak datang melewati jadwal lebih dari batas ini bisa ditetapkan No-show oleh Kepala Cabang. Default 7 hari.</p>
+    <form method="post" class="row g-2">
+      <input type="hidden" name="aksi" value="setting_noshow">
+      <div class="col-auto"><input type="number" name="noshow_hari" class="form-control" min="1" max="90" value="<?= (int)getSettingKomplain($koneksi_komplain, 'noshow_hari', '7') ?>" required></div>
+      <div class="col-auto"><button class="btn btn-primary" type="submit">Simpan</button></div>
+    </form>
+  </div></div>
 
   <div class="card mb-4"><div class="card-body">
     <h6>Tambah Kategori</h6>

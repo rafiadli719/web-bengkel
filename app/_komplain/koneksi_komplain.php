@@ -61,6 +61,19 @@ try {
     die('Koneksi database gagal.');
 }
 
+// Pengaturan modul komplain (mis. noshow_hari). Tabel baru ada setelah migrasi
+// 2026-10-04; kalau belum ada/kosong, pakai $default supaya modul tetap jalan.
+function getSettingKomplain(PDO $db, string $kunci, string $default): string {
+    try {
+        $stmt = $db->prepare("SELECT nilai FROM tblkomplain_setting WHERE kunci = :k");
+        $stmt->execute([':k' => $kunci]);
+        $v = $stmt->fetchColumn();
+        return $v === false ? $default : (string)$v;
+    } catch (PDOException $e) {
+        return $default;
+    }
+}
+
 function cekPermissionKomplain(string $kode): bool {
     global $komplain_user_permissions;
     return hasRbacPermission($komplain_user_permissions, $kode);

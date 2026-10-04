@@ -482,3 +482,22 @@ DOM/screenshot browser):
   tbservis_barang gak ada) dan jalan di alur bayar, jadi perlu perbaikan
   hati-hati, bukan sekadar CREATE TABLE.
 - 3 gap desain Komplain tetap ditunda sesuai Rafi.
+
+**Update 2026-10-04 (sesi lanjutan, commit `da8795b` + commit gap Komplain):**
+- Migrasi lokal (DB Laragon) SUDAH terpasang semua: 3 migrasi 2026-09-30, merge kategori motor,
+  merge merek motor (`2026-10-04_run_merge_merek_motor_duplikat.php`, FK nyata
+  `tblpelanggan.merek_id` & `tbmaster_tipe_header.id_brand`), `tbcabang.telepon_cabang`,
+  `tblkomplain_setting`. **Semua migrasi 2026-09-30 dan 2026-10-04 BELUM di produksi** (shared hosting,
+  Rafi jalankan runner-nya). Orphan merek legacy id 1-4 (`tblkendaraan.kode_merek`, `tblitem.kd_pabrik`,
+  `tbtipe_motor.kode_pabrik=3`) TIDAK disentuh: pemetaan butuh keputusan Rafi.
+- K6 kop struk per cabang: `config/kop_cabang.php` `fm_kop_query()` dipakai 18 file struk/cetak,
+  ambil nama/alamat/telepon dari cabang login, fallback `tbsetting`. Alamat CIKDITIRO & PACUL
+  masih kosong, alamat PESALAKAN ("Jl. Pesalakan No. 10") dan PST ("Jl. Industri No. 1") tampak
+  dummy, telepon cabang belum diisi -> **Rafi isi di Master Cabang (field Telepon/WA baru)**.
+- K8: breadcrumb halaman `*_cetak` jadi "Detail ..." (tombol Cetak sudah ada). K9 tanggal struk sudah dd/mm/yyyy.
+- `dokter*.php`, `webhook_whatsapp.php` diarsipkan ke `archive/dokter-whatsapp/`.
+- Komplain 3 gap SELESAI & diuji browser: batas No-show configurable (`tblkomplain_setting.noshow_hari`,
+  default 7, diatur di Master Kategori, No-show juga dari status Dijadwalkan), idempotent submit 60 detik,
+  uploader CSV massal (`_komplain/import_massal.php`, validasi dulu, all-or-nothing).
+- Masih menunggu keputusan Rafi: K2 (Keuangan Kasir vs ACE), K4 (glosarium), K5 (mobile), K7 (menu KACAB),
+  Rencana Order (butuh data tempo supplier), history service pelanggan.
