@@ -257,6 +257,7 @@
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
                 require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
                 $kurang_live = inv_live_cek_keranjang($koneksi, $kd_cabang, $_nama, 'tblpenjualan_detail'); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', diminta: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
+                inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
                 $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                 $nopelanggan=mysqli_real_escape_string($koneksi, $_POST['txtkey']);
                 $cbosales=mysqli_real_escape_string($koneksi, $_POST['cbosales']);
@@ -351,7 +352,7 @@ VALUES
                                         ('3','$LastID','$no_item',
                                         '$txttglpesan','0','$qty',
                                         'Penjualan','$kd_cabang')");
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $hasil_inv, $LastID, $no_item, $kd_cabang); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_atomic_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $hasil_inv, $LastID, $no_item, $kd_cabang); // Moving Average shadow
 
                     if($nopesanan<>'') {
                         mysqli_query($koneksi,"UPDATE tblorderjual_detail

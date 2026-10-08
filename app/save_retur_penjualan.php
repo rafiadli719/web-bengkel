@@ -94,7 +94,7 @@ try {
         $sql_stok = "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                      VALUES ('8','$no_retur','$no_item','$tanggal',$qty,0,'$ket_stok','$kd_cabang')";
         if(!mysqli_query($koneksi, $sql_stok)) throw new Exception("Gagal simpan stok: ".mysqli_error($koneksi));
-        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, inv_hpp_asal($koneksi, 'PENJUALAN', $nopenjualan, $no_item), 'RETUR_JUAL', $no_retur, 'Retur Penjualan', ($user_input ?? '')); // Moving Average shadow
+        require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_in($koneksi, $kd_cabang, $no_item, $qty, inv_hpp_asal($koneksi, 'PENJUALAN', $nopenjualan, $no_item), 'RETUR_JUAL', $no_retur, 'Retur Penjualan', ($user_input ?? '')); // Moving Average shadow
     }
 
     $res_tot = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_qty_retur),0) AS tot

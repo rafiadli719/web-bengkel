@@ -119,6 +119,7 @@
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
             require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgljl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
             $tanggal_jt='';
             if($carabayar=='Kredit') {
                 $tempo_int=(int)$tempo_hari_rule;
@@ -186,7 +187,7 @@
                                         ('3','$LastID','$no_item',
                                         '$txttgljl','0','$qty',
                                         'Penjualan Antar Cabang','$kd_cabang')"); 
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
                 }
             // ----- End -----         
 

@@ -966,6 +966,7 @@
         $no_service = $_POST['txtnosrv'] ?? '';
         require_once __DIR__ . '/_include_inv_shadow.php'; // Moving Average live BR-05
         $kurang_live = inv_live_cek_servis($koneksi, $kd_cabang, $no_service, true); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', dibutuhkan: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
+        inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
         $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
         $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
@@ -1167,7 +1168,7 @@
                             (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                             VALUES
                             ('4','$no_service','$no_item_garansi', CURDATE(),'0','$qty_garansi','Servis Garansi','$kd_cabang')");
-                            require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item_garansi, $qty_garansi, 'SERVIS', $no_service, 'Servis Garansi', ($_nama ?? ''), (int)($tampil_garansi['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item_garansi, $kd_cabang); // Moving Average shadow
+                            require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_atomic_out($koneksi, $kd_cabang, $no_item_garansi, $qty_garansi, 'SERVIS', $no_service, 'Servis Garansi', ($_nama ?? ''), (int)($tampil_garansi['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item_garansi, $kd_cabang); // Moving Average shadow
                     }
                 }
 

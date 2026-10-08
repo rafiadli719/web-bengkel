@@ -215,6 +215,105 @@ function inv_servis_hpp_sql($koneksi, $aliasServis = 'sb', $aliasItem = 'i')
     return $kolomAda ? "COALESCE(NULLIF({$aliasServis}.harga_pokok,0), {$master})" : $master;
 }
 
+/**
+ * Posting yang ikut transaksi pemanggil (untuk alur yang sudah memakai mysqli_begin_transaction + try/catch).
+ * Cabang live: ledger diposting di KONEKSI YANG SAMA dengan manage_tx=false, jadi komit/rollback bersama penulisan lama;
+ * penolakan (stok kurang, periode closed) dilempar sebagai InventoryException agar alur pemanggil rollback.
+ * Cabang bukan live: sama dengan inv_shadow_* (tidak pernah melempar).
+ */
+function inv_live_post_out($koneksi, $lokasi, $item, $qty, $refType, $refNo, $keterangan = '', $user = '', $refLine = 0)
+{
+    if (!inv_cabang_live($koneksi, $lokasi)) {
+        return inv_shadow_out($koneksi, $lokasi, $item, $qty, $refType, $refNo, $keterangan, $user, $refLine);
+    }
+    $svc = new InventoryService($koneksi);
+    return $svc->postOut($lokasi, $item, $qty, $refType, $refNo, [
+        'trx_type' => $refType, 'keterangan' => $keterangan, 'user' => $user, 'ref_line' => (int) $refLine, 'manage_tx' => false,
+    ]);
+}
+
+function inv_live_post_in($koneksi, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $keterangan = '', $user = '', $refLine = 0)
+{
+    if (!inv_cabang_live($koneksi, $lokasi)) {
+        return inv_shadow_in($koneksi, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $keterangan, $user, $refLine);
+    }
+    $svc = new InventoryService($koneksi);
+    return $svc->postIn($lokasi, $item, $qty, $unitCost, $refType, $refNo, [
+        'trx_type' => $refType, 'keterangan' => $keterangan, 'user' => $user, 'ref_line' => (int) $refLine, 'manage_tx' => false,
+    ]);
+}
+
+/**
+ * Atomik untuk alur NON-transaksional (cabang live). Mulai transaksi DB sebelum penulisan lama; posting ledger memakai
+ * koneksi yang sama (inv_atomic_*); penolakan ledger = rollback seluruh penulisan lama + pesan + exit. Komit otomatis di
+ * akhir request lewat shutdown handler (aman terhadap redirect/exit di tengah alur); fatal error = rollback.
+ * Jangan dipakai di file yang memanggil layanan eksternal atau memakai transaksi sendiri.
+ * Cabang bukan live: inv_live_tx_begin() tidak melakukan apa pun dan inv_atomic_* sama dengan inv_shadow_*.
+ */
+function inv_live_tx_begin($koneksi, $lokasi)
+{
+    if (!empty($GLOBALS['__inv_tx']) || !inv_cabang_live($koneksi, $lokasi)) {
+        return false;
+    }
+    mysqli_begin_transaction($koneksi);
+    $GLOBALS['__inv_tx'] = ['k' => $koneksi, 'selesai' => false];
+    register_shutdown_function('inv_live_tx_shutdown');
+    return true;
+}
+
+function inv_live_tx_shutdown()
+{
+    $t = $GLOBALS['__inv_tx'] ?? null;
+    if (!$t || $t['selesai']) {
+        return;
+    }
+    $err = error_get_last();
+    $fatal = $err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true);
+    if ($fatal) {
+        @mysqli_rollback($t['k']);
+    } else {
+        @mysqli_commit($t['k']);
+    }
+    $GLOBALS['__inv_tx']['selesai'] = true;
+}
+
+function inv_atomic_abort($e)
+{
+    $t = $GLOBALS['__inv_tx'] ?? null;
+    if ($t && !$t['selesai']) {
+        @mysqli_rollback($t['k']);
+        $GLOBALS['__inv_tx']['selesai'] = true;
+    }
+    echo "<script>window.alert(" . json_encode('Transaksi dibatalkan, tidak ada yang tersimpan: ' . $e->getMessage()) . ");window.history.back();</script>";
+    exit;
+}
+
+function inv_atomic_out($koneksi, $lokasi, $item, $qty, $refType, $refNo, $keterangan = '', $user = '', $refLine = 0)
+{
+    $t = $GLOBALS['__inv_tx'] ?? null;
+    if (!$t || $t['selesai']) {
+        return inv_shadow_out($koneksi, $lokasi, $item, $qty, $refType, $refNo, $keterangan, $user, $refLine);
+    }
+    try {
+        return inv_live_post_out($koneksi, $lokasi, $item, $qty, $refType, $refNo, $keterangan, $user, $refLine);
+    } catch (Throwable $e) {
+        inv_atomic_abort($e);
+    }
+}
+
+function inv_atomic_in($koneksi, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $keterangan = '', $user = '', $refLine = 0)
+{
+    $t = $GLOBALS['__inv_tx'] ?? null;
+    if (!$t || $t['selesai']) {
+        return inv_shadow_in($koneksi, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $keterangan, $user, $refLine);
+    }
+    try {
+        return inv_live_post_in($koneksi, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $keterangan, $user, $refLine);
+    } catch (Throwable $e) {
+        inv_atomic_abort($e);
+    }
+}
+
 /** Biaya satuan bersih dari total baris: total / qty, jatuh ke $fallback bila total/qty tidak ada. */
 function inv_biaya_satuan($total, $qty, $fallback = 0)
 {

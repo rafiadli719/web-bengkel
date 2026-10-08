@@ -101,7 +101,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnterima'])){
                             VALUES ('$no_safe','$ni','$tgl_terima','2','$qt','0','$ket')");
                     }
                     if(!$qs) throw new Exception(mysqli_error($koneksi));
-                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_penerima, $ni, $qt, (inv_hpp_asal($koneksi, 'TRANSFER_OUT', $no_order, $ni) ?? number_format($hpp, 2, '.', '')), 'TRANSFER_IN', $no_order, 'Terima antar cabang', ''); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_in($koneksi, $kd_penerima, $ni, $qt, (inv_hpp_asal($koneksi, 'TRANSFER_OUT', $no_order, $ni) ?? number_format($hpp, 2, '.', '')), 'TRANSFER_IN', $no_order, 'Terima antar cabang', ''); // Moving Average shadow
                 }
             }
 

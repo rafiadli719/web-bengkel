@@ -89,7 +89,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnkirim'])){
                             VALUES ('$no_safe','$ni','$tgl_kirim','3','0','$qk','$ket')");
                     }
                     if(!$qs) throw new Exception(mysqli_error($koneksi));
-                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_safe, $ni, $qk, 'TRANSFER_OUT', $no_order, 'Kirim antar cabang', ''); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_out($koneksi, $kd_safe, $ni, $qk, 'TRANSFER_OUT', $no_order, 'Kirim antar cabang', ''); // Moving Average shadow
                 }
             }
 

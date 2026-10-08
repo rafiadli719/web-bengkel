@@ -534,6 +534,7 @@
             $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
             require_once __DIR__ . '/_include_inv_shadow.php'; // Moving Average live BR-05
             $kurang_live = inv_live_cek_servis($koneksi, $kd_cabang, $no_service, false); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', dibutuhkan: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
             $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
             $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);    
 
@@ -595,7 +596,7 @@
                                         ('4','$no_service','$no_item',
                                         '$tanggal_srv','0','$qty',
                                         'Penjualan Service','$kd_cabang')"); 
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_atomic_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
                 }
                 
             echo"<script>window.alert('Data Service Berhasil disimpan!');

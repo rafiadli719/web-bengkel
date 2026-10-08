@@ -147,6 +147,29 @@ if ($modeOff) {
         && (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT harga_pokok FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'"))[0] === 0.0);
     cek('Tabel di luar daftar ditolak', inv_snapshot_hpp($koneksi, 'tbuser', $h, 'x', 'y', 'PACUL') === false);
 
+    echo "== Posting ikut transaksi pemanggil (retur, transfer, DO)\n";
+    $svcAdmin->postIn('PACUL', 'ZZTEST-AD5', 10, '200', 'OPENING', 'ZZTAD-OP5', ['trx_type' => 'OPENING', 'user' => 'tes-adapter']);
+    mysqli_begin_transaction($koneksi);
+    $hh = inv_live_post_out($koneksi, 'PACUL', 'ZZTEST-AD5', 4, 'RETUR_BELI', 'ZZTAD-RB', 'tes', 'tes-adapter');
+    $dalam = (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT qty_on_hand FROM inv_balance WHERE kd_cabang='PACUL' AND no_item='ZZTEST-AD5'"))[0];
+    mysqli_rollback($koneksi);
+    $sesudah = (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT qty_on_hand FROM inv_balance WHERE kd_cabang='PACUL' AND no_item='ZZTEST-AD5'"))[0];
+    cek('Live: ledger terposting di koneksi yang sama (saldo 6 dalam transaksi)', is_array($hh) && $dalam === 6.0);
+    cek('Rollback transaksi pemanggil membatalkan ledger (saldo kembali 10)', $sesudah === 10.0
+        && (int) mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM inv_ledger WHERE ref_no='ZZTAD-RB'"))[0] === 0);
+    mysqli_begin_transaction($koneksi);
+    $komit = inv_live_post_in($koneksi, 'PACUL', 'ZZTEST-AD5', 3, '200', 'TRANSFER_IN', 'ZZTAD-TI', 'tes', 'tes-adapter');
+    mysqli_commit($koneksi);
+    cek('Komit pemanggil mempertahankan ledger (saldo 13)', is_array($komit)
+        && (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT qty_on_hand FROM inv_balance WHERE kd_cabang='PACUL' AND no_item='ZZTEST-AD5'"))[0] === 13.0);
+    $kodeTolak = '';
+    mysqli_begin_transaction($koneksi);
+    try { inv_live_post_out($koneksi, 'PACUL', 'ZZTEST-AD5', 99, 'TRANSFER_OUT', 'ZZTAD-TO', 'tes', 'tes-adapter'); } catch (InventoryException $e) { $kodeTolak = $e->kode; }
+    mysqli_rollback($koneksi);
+    cek('Live: penolakan stok dilempar agar alur pemanggil rollback', $kodeTolak === 'stok_tidak_cukup');
+    $n = inv_live_post_out($koneksi, 'PST', 'ZZTEST-AD5', 99, 'TRANSFER_OUT', 'ZZTAD-TO2', 'tes', 'tes-adapter');
+    cek('Bukan live: tidak melempar (perilaku shadow lama)', $n === null || is_array($n));
+
     echo "== HPP laporan komisi: snapshot lebih dulu, master sebagai fallback\n";
     $it = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT noitem, hargapokok FROM tblitem WHERE hargapokok > 0 AND TRIM(noitem) NOT IN ('','-') LIMIT 1"));
     mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service,kd_cabang,nobaris,no_item,quantity,qty_retur,harga_jual,potongan,total,asal_barang,harga_pokok) VALUES ('ZZ-SV-3','PACUL',1,'" . mysqli_real_escape_string($koneksi, $it['noitem']) . "',1,0,999,0,999,'SERVIS',777),('ZZ-SV-3','PACUL',2,'" . mysqli_real_escape_string($koneksi, $it['noitem']) . "',1,0,999,0,999,'SERVIS',0)");

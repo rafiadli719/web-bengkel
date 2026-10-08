@@ -115,7 +115,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnsimpan'])){
                             VALUES ('$no_order','$ni','$tgl_kirim','3','0','$qty','$ket')");
                     }
                     if(!$qs) throw new Exception(mysqli_error($koneksi));
-                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_safe, $ni, $qty, 'TRANSFER_OUT', $no_order, 'Kirim antar cabang (push)', ''); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_out($koneksi, $kd_safe, $ni, $qty, 'TRANSFER_OUT', $no_order, 'Kirim antar cabang (push)', ''); // Moving Average shadow
                     $baris++;
                 }
 

@@ -90,6 +90,7 @@
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
             require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgljl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
             
                 // lama_hari/Id_tabel NOT NULL tanpa default gak diisi -> INSERT header
                 // gagal silent (pola sama kayak Penjualan/Pembelian lainnya). Follow-up:
@@ -152,7 +153,7 @@
                                         ('2','$LastID','$no_item',
                                         '$txttgljl','$qty','0',
                                         'Pembelian Antar Cabang','$kd_cabang')"); 
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, inv_biaya_satuan($tampil['total'], $qty, $tampil['harga_pokok']), 'PEMBELIAN', $LastID, 'Pembelian', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_in($koneksi, $kd_cabang, $no_item, $qty, inv_biaya_satuan($tampil['total'], $qty, $tampil['harga_pokok']), 'PEMBELIAN', $LastID, 'Pembelian', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
                 }
             // ----- End -----         
                         

@@ -46,6 +46,7 @@
             $txttgl = ubahformatTgl($_POST['id-date-picker-1']);             
             require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
             $kurang_live = inv_live_cek_keranjang($koneksi, $kd_cabang, $_nama, 'tbitem_keluar_detail'); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', diminta: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
             
             mysqli_query($koneksi,"INSERT INTO tbitem_keluar_header 
                                     (no_transaksi, tanggal, 
@@ -76,7 +77,7 @@
                                         ('6','$LastID','$no_item',
                                         '$txttgl','0','$qty',
                                         'Stok Opname (Keluar)','$kd_cabang')");
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'OPNAME_KELUAR', $LastID, 'Stok opname keluar', ($_nama ?? '')); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_out($koneksi, $kd_cabang, $no_item, $qty, 'OPNAME_KELUAR', $LastID, 'Stok opname keluar', ($_nama ?? '')); // Moving Average shadow
             } 
             echo"<script>window.location=('so-keluar-add-cetak.php?nopesanan=$LastID');</script>";                                                                           
         }

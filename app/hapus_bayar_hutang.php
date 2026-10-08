@@ -7,7 +7,7 @@
 	$ssup = mysqli_real_escape_string($koneksi, $_GET['ssup']);
     
 	$modal=mysqli_query($koneksi,"Delete FROM tblhutang_detail 
-    WHERE no_transaksi='$nobyr' and no_pembelian='$nobl'");
+    WHERE no_transaksi='$nobyr' and no_pembelian='$nobl' AND NOT EXISTS (SELECT 1 FROM tblhutang_header h WHERE h.no_transaksi = tblhutang_detail.no_transaksi)");
 
     echo"<script>window.location=('pmby_hutang_add_next.php?nobyr=$nobyr&stgl=$stgl&ssup=$ssup');</script>";                    								
 ?>

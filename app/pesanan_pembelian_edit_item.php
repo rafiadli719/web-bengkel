@@ -36,7 +36,7 @@
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, harga_pokok, total 
                                         FROM tblorder_detail 
-                                        WHERE id='$sid'");			
+                                        WHERE id='$sid' AND status_trx='0'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $no_item=$tm_cari['no_item'];
         $qty=$tm_cari['quantity'];

@@ -264,6 +264,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
                 require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+                inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
                 $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                 $cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
                 $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
@@ -356,7 +357,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                                         ('2','$LastID','$no_item',
                                         '$txttglpesan','$qty','0',
                                         'Pembelian','$kd_cabang')");
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, inv_biaya_satuan($tampil['total'], $qty, $tampil['harga_pokok']), 'PEMBELIAN', $LastID, 'Pembelian', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_in($koneksi, $kd_cabang, $no_item, $qty, inv_biaya_satuan($tampil['total'], $qty, $tampil['harga_pokok']), 'PEMBELIAN', $LastID, 'Pembelian', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
 
                     if($nopesanan<>'') {
                         mysqli_query($koneksi,"UPDATE tblorder_detail

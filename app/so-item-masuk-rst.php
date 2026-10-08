@@ -45,6 +45,7 @@
                 
             $txttgl = ubahformatTgl($_POST['id-date-picker-1']);             
             require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik (komit otomatis di akhir request)
             
             mysqli_query($koneksi,"INSERT INTO tbitem_masuk_header 
                                     (no_transaksi, tanggal, 
@@ -75,7 +76,7 @@
                                         ('5','$LastID','$no_item',
                                         '$txttgl','$qty','0',
                                         'Stok Opname (Masuk)','$kd_cabang')");
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, null, 'OPNAME_MASUK', $LastID, 'Stok opname masuk', ($_nama ?? '')); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_in($koneksi, $kd_cabang, $no_item, $qty, null, 'OPNAME_MASUK', $LastID, 'Stok opname masuk', ($_nama ?? '')); // Moving Average shadow
             } 
             echo"<script>window.location=('so-masuk-add-cetak.php?nopesanan=$LastID');</script>";                                                                           
         }
