@@ -10,7 +10,7 @@
 	$modal=mysqli_query($koneksi,"Delete 
                                     FROM tblpembelian_detail 
                                     WHERE 
-                                    id='$sid'");
+                                    id='$sid' AND status_trx='0'");
 
     echo"<script>window.location=('pembelian_add_rst.php?stgl=$stgl&ssup=$ssup&kd=$kdbrg&spesan=$spesan');</script>";			            
 ?>

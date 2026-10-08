@@ -197,8 +197,9 @@ function eksekusi_revisi_komisi($koneksi, $id_issue, $payload, $id_user, $kd_cab
     $jasa_bersih = (float)($svc['subtotal_jasa'] ?? 0);
     // Live schema belum punya snapshot laba_barang di tblservice.
     // Hitung dari detail servis vs hargapokok master item: total line - (qty * hargapokok).
+    require_once __DIR__ . '/_include_inv_shadow.php'; $hpp_expr = inv_servis_hpp_sql($koneksi, 'sb', 'i');
     $laba_barang = 0;
-    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, COALESCE(i.hargapokok,0) AS hargapokok FROM tblservis_barang sb LEFT JOIN tblitem i ON i.noitem=sb.no_item WHERE sb.no_service='{$esc_svc}' AND sb.kd_cabang='{$esc_cab}'");
+    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, {$hpp_expr} AS hargapokok FROM tblservis_barang sb LEFT JOIN tblitem i ON i.noitem=sb.no_item WHERE sb.no_service='{$esc_svc}' AND sb.kd_cabang='{$esc_cab}'");
     if($qbarang){
         while($rb = mysqli_fetch_assoc($qbarang)){
             $qty = (float)($rb['quantity'] ?? 0);

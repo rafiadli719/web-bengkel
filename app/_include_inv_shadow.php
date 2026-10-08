@@ -197,6 +197,24 @@ function inv_snapshot_hpp($koneksi, $tabel, $hasil, $noTrx, $item, $lokasi)
     }
 }
 
+/**
+ * Ekspresi SQL HPP satuan barang servis untuk laporan laba/komisi: pakai snapshot Moving Average
+ * (tblservis_barang.harga_pokok) bila terisi, selain itu HPP master lama. Aman sebelum migrasi kolom dijalankan:
+ * bila kolom belum ada, hasilnya sama dengan perilaku lama (HPP master saja).
+ */
+function inv_servis_hpp_sql($koneksi, $aliasServis = 'sb', $aliasItem = 'i')
+{
+    static $kolomAda = null;
+    if ($kolomAda === null) {
+        $r = @mysqli_query($koneksi, "SHOW COLUMNS FROM tblservis_barang LIKE 'harga_pokok'");
+        $kolomAda = $r && mysqli_num_rows($r) > 0;
+    }
+    $aliasServis = preg_replace('/[^A-Za-z0-9_]/', '', $aliasServis);
+    $aliasItem = preg_replace('/[^A-Za-z0-9_]/', '', $aliasItem);
+    $master = "COALESCE({$aliasItem}.hargapokok,0)";
+    return $kolomAda ? "COALESCE(NULLIF({$aliasServis}.harga_pokok,0), {$master})" : $master;
+}
+
 /** Biaya satuan bersih dari total baris: total / qty, jatuh ke $fallback bila total/qty tidak ada. */
 function inv_biaya_satuan($total, $qty, $fallback = 0)
 {

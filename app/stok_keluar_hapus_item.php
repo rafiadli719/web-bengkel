@@ -8,7 +8,7 @@
 	$modal=mysqli_query($koneksi,"Delete 
                                     FROM tbitem_keluar_detail 
                                     WHERE 
-                                    id='$sid'");
+                                    id='$sid' AND status_trx='0'");
 
     echo"<script>window.location=('stok_keluar_add_rst.php?stgl=$stgl&kd=$kdbrg');</script>";			            
 ?>

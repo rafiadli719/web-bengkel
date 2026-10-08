@@ -7,6 +7,7 @@ include "../config/koneksi.php";
 include_once "../lib/rbac.php";
 rbac_require_any(['laporan_menu_read', 'lap_servis_read']);
 include "helper-functions.php";
+require_once __DIR__ . '/_include_inv_shadow.php'; $hpp_expr = inv_servis_hpp_sql($koneksi, 'sb', 'ti'); // HPP snapshot Moving Average bila ada, else master
 
 include_once "includes/report-default-range.php";
 $_default_range = app_report_default_range($koneksi, 'tblservice', 'tanggal', "status_servis='bayar'");
@@ -69,7 +70,7 @@ if ($show) {
         ) slot ON slot.no_service = s.no_service
         LEFT JOIN (
             SELECT sb.no_service,
-                   SUM(GREATEST(sb.total - sb.quantity * COALESCE(ti.hargapokok,0), 0)) AS laba_barang
+                   SUM(GREATEST(sb.total - sb.quantity * {$hpp_expr}, 0)) AS laba_barang
             FROM tblservis_barang sb
             LEFT JOIN tblitem ti ON ti.noitem = sb.no_item
             WHERE sb.no_service IN (

@@ -28,8 +28,9 @@ function snapshot_komisi_servis($koneksi, $no_service, $kd_cabang) {
 
     $jasa_bersih = (float)($svc['subtotal_jasa'] ?? 0);
 
+    require_once __DIR__ . '/_include_inv_shadow.php'; $hpp_expr = inv_servis_hpp_sql($koneksi, 'sb', 'i');
     $laba_barang = 0.0;
-    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, COALESCE(i.hargapokok,0) AS hargapokok
+    $qbarang = mysqli_query($koneksi, "SELECT sb.quantity, sb.total, {$hpp_expr} AS hargapokok
                                         FROM tblservis_barang sb
                                         LEFT JOIN tblitem i ON i.noitem = sb.no_item
                                         WHERE sb.no_service='{$esc_svc}' AND sb.kd_cabang='{$esc_cab}'");

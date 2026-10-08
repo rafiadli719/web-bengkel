@@ -38,9 +38,9 @@ Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dit
 **Masih harus dikerjakan sebelum cabang pilot boleh `live` (mode `live` di halaman Pengaturan sengaja belum ditawarkan; setel lewat `InventoryService::setMode` hanya untuk uji):**
 - E2E browser di cabang pilot untuk Servis bayar (semua varian), Transfer, Retur, dan Terima DO.
 - Atomisitas: posting ledger berjalan setelah penulisan lama di koneksi terpisah. Race dua kasir pada stok terakhir dicegah ledger (tidak pernah minus) tetapi `tbstok` lama bisa berbeda; rekonsiliasi harian menandainya. Untuk atomik penuh, alur harus dipindah ke satu transaksi.
-- Laporan laba dan komisi (`lap_profit_penjualan.php`, `lap_komisi_mekanik.php`, `_include_komisi_snapshot.php`) masih perlu dialihkan membaca `harga_pokok` snapshot; baris lama bernilai 0 sehingga harus tetap memakai fallback `tblitem.hargapokok` untuk data sebelum cutover.
+- Laporan laba/komisi sudah membaca snapshot dengan fallback ke HPP master (`inv_servis_hpp_sql`): `lap_komisi_mekanik.php`, `_include_komisi_snapshot.php`, `issue_add.php`; `lap_profit_penjualan.php` sudah memakai `tblpenjualan_detail.harga_pokok`. Data sebelum cutover tidak berubah.
 - `tbstok` lama: opening stock hanya masuk ledger baru. Pembaca lama (`view_stok_master`, kartu stok lama, MinMax) masih membaca `tbstok` yang saldonya historis negatif; normalisasi/proyeksi `tbstok` perlu diputuskan saat cutover.
-- Larang edit/hapus transaksi posted di semua endpoint (F3-07) dan arahkan ke Koreksi.
+- Larang edit/hapus transaksi posted (F3-07): endpoint hapus/edit item keranjang kini wajib `status_trx='0'` (pembelian, penjualan, stok masuk/keluar) dan hapus barang servis diblokir bila servis sudah bayar/selesai (berlaku semua cabang). Belum diperiksa: endpoint edit item servis (`servis_edit_item_*`), pesanan, dan pembayaran hutang/piutang.
 
 ## Tahap E — Pengamatan dan cabang berikutnya
 1. 1-2 minggu pengamatan di pilot: rekonsiliasi harian, antrian koreksi, keluhan stok ditolak.

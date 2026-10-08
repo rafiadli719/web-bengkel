@@ -31,7 +31,7 @@ function bersih($k) {
     mysqli_query($k, "DELETE FROM tbstok WHERE no_item LIKE 'ZZTEST-AD%'");
     mysqli_query($k, "DELETE FROM inv_audit_log WHERE actor IN ('tes-adapter') OR ref LIKE 'ZZTAD%'");
     mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
-    mysqli_query($k, "DELETE FROM tblservis_barang WHERE no_service IN ('ZZ-SV-1','ZZ-SV-2')");
+    mysqli_query($k, "DELETE FROM tblservis_barang WHERE no_service IN ('ZZ-SV-1','ZZ-SV-2','ZZ-SV-3')");
     mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'");
 }
 bersih($koneksi);
@@ -146,6 +146,16 @@ if ($modeOff) {
     cek('Cabang bukan live tidak disentuh snapshot', inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $h, 'ZZ-JL-1', 'ZZTEST-AD7', 'PST') === false
         && (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT harga_pokok FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'"))[0] === 0.0);
     cek('Tabel di luar daftar ditolak', inv_snapshot_hpp($koneksi, 'tbuser', $h, 'x', 'y', 'PACUL') === false);
+
+    echo "== HPP laporan komisi: snapshot lebih dulu, master sebagai fallback\n";
+    $it = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT noitem, hargapokok FROM tblitem WHERE hargapokok > 0 AND TRIM(noitem) NOT IN ('','-') LIMIT 1"));
+    mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service,kd_cabang,nobaris,no_item,quantity,qty_retur,harga_jual,potongan,total,asal_barang,harga_pokok) VALUES ('ZZ-SV-3','PACUL',1,'" . mysqli_real_escape_string($koneksi, $it['noitem']) . "',1,0,999,0,999,'SERVIS',777),('ZZ-SV-3','PACUL',2,'" . mysqli_real_escape_string($koneksi, $it['noitem']) . "',1,0,999,0,999,'SERVIS',0)");
+    $expr = inv_servis_hpp_sql($koneksi, 'sb', 'i');
+    $rs = mysqli_query($koneksi, "SELECT sb.nobaris, $expr AS hpp FROM tblservis_barang sb LEFT JOIN tblitem i ON i.noitem = sb.no_item WHERE sb.no_service='ZZ-SV-3' ORDER BY sb.nobaris");
+    $hp = []; while ($x = mysqli_fetch_assoc($rs)) { $hp[(int) $x['nobaris']] = (float) $x['hpp']; }
+    cek('Snapshot terisi dipakai (777)', ($hp[1] ?? 0) == 777.0);
+    cek('Snapshot 0 jatuh ke HPP master (perilaku lama tidak berubah)', abs(($hp[2] ?? -1) - (float) $it['hargapokok']) < 0.001);
+    mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-3'");
     mysqli_query($koneksi, "DELETE FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'");
     mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-2'");
 }
