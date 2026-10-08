@@ -123,7 +123,95 @@ class InventoryService
         mysqli_stmt_bind_param($st, 'sss', $kd, $mode, $oleh);
         mysqli_stmt_execute($st);
         mysqli_stmt_close($st);
+        if ($mode !== self::MODE_OFF) {
+            // baseline rekonsiliasi: hanya transaksi tbstok SETELAH shadow aktif yang dibandingkan
+            $r = mysqli_query($this->db, "SELECT COALESCE(MAX(id), 0) m FROM tbstok");
+            $maks = $r ? (int) mysqli_fetch_assoc($r)['m'] : 0;
+            $st = mysqli_prepare($this->db,
+                "INSERT IGNORE INTO inv_config (kd_cabang, config_key, config_value, updated_by) VALUES (?, 'shadow_since_tbstok_id', ?, ?)");
+            $mk = (string) $maks;
+            mysqli_stmt_bind_param($st, 'sss', $kd, $mk, $oleh);
+            mysqli_stmt_execute($st);
+            mysqli_stmt_close($st);
+        }
         $this->audit($oleh, 'set_mode', $kd, "mode=$mode", null, ['mode' => $mode]);
+    }
+
+    public function getConfig($lokasi, $key, $default = null)
+    {
+        $kd = $this->resolveLocation($lokasi);
+        $st = mysqli_prepare($this->db, "SELECT config_value FROM inv_config WHERE kd_cabang = ? AND config_key = ?");
+        mysqli_stmt_bind_param($st, 'ss', $kd, $key);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $row = $res ? mysqli_fetch_assoc($res) : null;
+        mysqli_stmt_close($st);
+        return $row ? $row['config_value'] : $default;
+    }
+
+    // ---------- rekonsiliasi shadow (F1-09) ----------
+
+    /**
+     * Bandingkan pergerakan qty per item sejak shadow aktif: jalur lama (tbstok, id > baseline, semua alias lokasi)
+     * lawan inv_ledger (tanpa OPENING). Hasil: daftar selisih + ringkasan. Hanya baca.
+     */
+    public function reconcile($lokasi)
+    {
+        $kd = $this->resolveLocation($lokasi);
+        $baseline = (int) $this->getConfig($kd, 'shadow_since_tbstok_id', 0);
+
+        $alias = [];
+        $st = mysqli_prepare($this->db, "SELECT alias FROM inv_location WHERE kode = ?");
+        mysqli_stmt_bind_param($st, 's', $kd);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        while ($r = mysqli_fetch_assoc($res)) {
+            $alias[] = $r['alias'];
+        }
+        mysqli_stmt_close($st);
+        if (!$alias) {
+            $alias = [$kd];
+        }
+        $in = "'" . implode("','", array_map(function ($x) {
+            return mysqli_real_escape_string($this->db, $x);
+        }, $alias)) . "'";
+
+        $lama = [];
+        $r = mysqli_query($this->db,
+            "SELECT no_item, SUM(masuk - keluar) q FROM tbstok WHERE id > $baseline AND kd_cabang IN ($in) GROUP BY no_item");
+        while ($x = mysqli_fetch_assoc($r)) {
+            $lama[$x['no_item']] = (float) $x['q'];
+        }
+        $baru = [];
+        $kdq = mysqli_real_escape_string($this->db, $kd);
+        $r = mysqli_query($this->db,
+            "SELECT no_item, SUM(qty_in - qty_out) q FROM inv_ledger WHERE kd_cabang = '$kdq' AND trx_type <> 'OPENING' GROUP BY no_item");
+        while ($x = mysqli_fetch_assoc($r)) {
+            $baru[$x['no_item']] = (float) $x['q'];
+        }
+        $gagal = 0;
+        $r = mysqli_query($this->db,
+            "SELECT COUNT(*) c FROM inv_audit_log WHERE action IN ('shadow_gagal','shadow_void_gagal') AND JSON_UNQUOTE(JSON_EXTRACT(after_json, '$.lokasi')) IN ($in)");
+        if ($r) {
+            $gagal = (int) mysqli_fetch_assoc($r)['c'];
+        }
+
+        $selisih = [];
+        foreach (array_unique(array_merge(array_keys($lama), array_keys($baru))) as $item) {
+            $a = $lama[$item] ?? 0.0;
+            $b = $baru[$item] ?? 0.0;
+            if (abs($a - $b) > 0.0005) {
+                $selisih[] = ['no_item' => $item, 'tbstok' => $a, 'inv' => $b, 'selisih' => $b - $a];
+            }
+        }
+        usort($selisih, function ($x, $y) {
+            return abs($y['selisih']) <=> abs($x['selisih']);
+        });
+        return [
+            'lokasi' => $kd, 'baseline_tbstok_id' => $baseline,
+            'item_tbstok' => count($lama), 'item_inv' => count($baru),
+            'item_selisih' => count($selisih), 'shadow_gagal' => $gagal, 'selisih' => $selisih,
+        ];
     }
 
     // ---------- posting ----------

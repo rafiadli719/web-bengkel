@@ -473,4 +473,15 @@ return [
             ['title' => 'Master Kategori Komplain', 'url' => '_komplain/master_kategori.php', 'permission' => 'komplain_master_kategori'],
         ],
     ],
+    [
+        'title' => 'Persediaan (Moving Average)',
+        'icon' => 'fa-cubes',
+        // Tanpa 'permission' di level grup: grup tampil bila minimal satu submenu lolos permission-nya.
+        'submenu' => [
+            ['title' => 'Valuasi Persediaan', 'url' => '_inventory/laporan_valuasi.php', 'permission' => 'inv_laporan'],
+            ['title' => 'Kartu Stok Bernilai', 'url' => '_inventory/laporan_kartu_stok.php', 'permission' => 'inv_laporan'],
+            ['title' => 'Opening Stock', 'url' => '_inventory/opening_stock.php', 'permission' => 'inv_opening'],
+            ['title' => 'Pengaturan & Rekonsiliasi', 'url' => '_inventory/admin.php', 'permission' => 'inv_admin'],
+        ],
+    ],
 ];

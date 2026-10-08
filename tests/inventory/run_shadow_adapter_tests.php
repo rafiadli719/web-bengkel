@@ -82,6 +82,19 @@ if ($modeOff) {
     cek('Batal retur membalik 1 posting; saldo kembali 10 @300', $n === 1 && $b['qty_on_hand'] === '10.000' && $b['average_cost'] === '300.00');
     cek('Pembalikan kedua tidak menggandakan', inv_shadow_reverse($koneksi, 'RETUR_BELI', 'ZZTAD-K', 'batal', 'tes-adapter') === 0);
     cek('Ledger tetap append-only (baris asli + VOID)', hit($koneksi, "SELECT COUNT(*) FROM inv_ledger WHERE ref_no='ZZTAD-K'") === 2);
+
+    echo "== Rekonsiliasi (F1-09)\n";
+    $adaBase = $svcAdmin->getConfig('PST', 'shadow_since_tbstok_id', null) !== null;
+    cek('Baseline tbstok tercatat saat shadow aktif', $adaBase);
+    mysqli_query($koneksi, "INSERT INTO tbstok (tipe,no_transaksi,no_item,tanggal,masuk,keluar,keterangan,kd_cabang) VALUES ('2','ZZTAD-R1','ZZTEST-AD9',CURDATE(),5,0,'tes','PST')");
+    inv_shadow_in($koneksi, 'PST', 'ZZTEST-AD9', 5, '100', 'PEMBELIAN', 'ZZTAD-R1', 'tes', 'tes-adapter');
+    mysqli_query($koneksi, "INSERT INTO tbstok (tipe,no_transaksi,no_item,tanggal,masuk,keluar,keterangan,kd_cabang) VALUES ('2','ZZTAD-R2','ZZTEST-AD8',CURDATE(),3,0,'tes','PST')");
+    $rk = $svcAdmin->reconcile('PST');
+    $peta = [];
+    foreach ($rk['selisih'] as $s) { $peta[$s['no_item']] = $s['selisih']; }
+    cek('Item yang tercatat di kedua jalur tidak muncul sebagai selisih', !isset($peta['ZZTEST-AD9']));
+    cek('Item hanya di jalur lama muncul dengan selisih -3', isset($peta['ZZTEST-AD8']) && abs($peta['ZZTEST-AD8'] + 3) < 0.001);
+    mysqli_query($koneksi, "DELETE FROM inv_config WHERE kd_cabang='PST' AND config_key='shadow_since_tbstok_id' AND updated_by='tes-adapter'");
 }
 
 bersih($koneksi);
