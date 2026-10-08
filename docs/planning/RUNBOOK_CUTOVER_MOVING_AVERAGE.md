@@ -1,7 +1,7 @@
 # Runbook Cutover Moving Average (F5-06, F5-07, F5-10)
 
 Urutan wajib. Setiap tahap punya syarat lanjut dan cara mundur. Dikerjakan **satu cabang per giliran**; urutan cabang: PST, lalu cabang kecil, terakhir cabang besar (D-12).
-Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dites ada di `.ai/changelog/2026-10-08-moving-average.md`.
+Penjelasan lengkap perubahan (file, tabel, alur): `docs/PENJELASAN_PERUBAHAN_MOVING_AVERAGE.md`. Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dites ada di `.ai/changelog/2026-10-08-moving-average.md`.
 
 ## Tahap A — Siapkan produksi (sekali)
 1. (Rafi) Backup database produksi penuh.
