@@ -261,6 +261,7 @@ if(isset($_POST['btnreceive_do'])){
                         $q3 = mysqli_query($koneksi, "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                             VALUES ('2', '".mysqli_real_escape_string($koneksi,$no_do)."', '".mysqli_real_escape_string($koneksi,$no_item)."', '{$tanggal_do}', {$qty_terima}, 0, 'Penerimaan (DO)', '".mysqli_real_escape_string($koneksi,$kd_cabang)."')");
                         if(!$q3){ $db_error = mysqli_error($koneksi); break; }
+                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $no_po, $no_item), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); // Moving Average shadow
                     }
 
                     $q4 = mysqli_query($koneksi, "UPDATE tblorder_detail SET qty_terima = qty_terima + {$qty_terima}

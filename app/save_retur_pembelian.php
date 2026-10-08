@@ -95,6 +95,7 @@ try {
         $sql_stok = "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                      VALUES ('7','$no_retur','$no_item','$tanggal',0,$qty,'$ket_stok','$kd_cabang')";
         if(!mysqli_query($koneksi, $sql_stok)) throw new Exception("Gagal simpan stok: ".mysqli_error($koneksi));
+        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'RETUR_BELI', $no_retur, 'Retur Pembelian', ($user_input ?? '')); // Moving Average shadow
     }
 
     // Recalculate total_retur di header pembelian

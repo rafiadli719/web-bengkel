@@ -120,6 +120,7 @@ if(isset($_POST['btnreceive'])){
                                                 {$qty_terima}, 0,
                                                 'Penerimaan DO',
                                                 '".mysqli_real_escape_string($koneksi,$kd_cabang)."')");
+                                                require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $h['no_po'], $no_item), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); // Moving Average shadow
                     }
 
                     // Update PO qty_terima

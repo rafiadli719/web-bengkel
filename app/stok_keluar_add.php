@@ -202,6 +202,7 @@
                                             ('6','$LastID','$no_item',
                                             '$txttglpesan','0','$qty',
                                             'Penyesuaian Stok Item Keluar','$kd_cabang')");
+                                            require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'STOK_KELUAR', $LastID, 'Penyesuaian stok keluar', ($_nama ?? '')); // Moving Average shadow
                         }                                                
                         echo"<script>window.location=('stok_keluar_add_cetak.php?nopesanan=$LastID');</script>";                            
                     }                

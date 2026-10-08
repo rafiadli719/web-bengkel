@@ -145,7 +145,24 @@ class InventoryService
         return $this->post('out', $lokasi, $item, $qty, 0, $refType, $refNo, $opts);
     }
 
+    /** Retry otomatis bila deadlock/timeout (hanya saat service sendiri yang memegang transaksi). */
     private function post($arah, $lokasi, $item, $qty, $unitCost, $refType, $refNo, array $opts)
+    {
+        $manageTx = array_key_exists('manage_tx', $opts) ? (bool) $opts['manage_tx'] : true;
+        $maks = $manageTx ? 5 : 1;
+        for ($coba = 1; ; $coba++) {
+            try {
+                return $this->postSekali($arah, $lokasi, $item, $qty, $unitCost, $refType, $refNo, $opts);
+            } catch (InventoryException $e) {
+                if ($e->kode !== 'lock_gagal' || $coba >= $maks) {
+                    throw $e;
+                }
+                usleep(20000 * $coba * mt_rand(1, 3));
+            }
+        }
+    }
+
+    private function postSekali($arah, $lokasi, $item, $qty, $unitCost, $refType, $refNo, array $opts)
     {
         $item = trim((string) $item);
         $refType = trim((string) $refType);
@@ -158,7 +175,9 @@ class InventoryService
             throw new InventoryException('Qty harus lebih dari 0', 'qty_invalid');
         }
         $costC = 0;
-        if ($arah === 'in') {
+        // unitCost null pada barang masuk = pakai average saat ini (mis. retur masuk tanpa harga asal)
+        $pakaiAvg = ($arah === 'in' && $unitCost === null);
+        if ($arah === 'in' && !$pakaiAvg) {
             $costC = self::toSen($unitCost);
             if ($costC < 0) {
                 throw new InventoryException('Biaya tidak boleh negatif', 'biaya_invalid');
@@ -185,25 +204,16 @@ class InventoryService
                 return $this->hasil($dup, true);
             }
 
-            // pastikan baris saldo ada, lalu kunci
-            $st = mysqli_prepare($this->db, "INSERT IGNORE INTO inv_balance (kd_cabang, no_item) VALUES (?, ?)");
-            mysqli_stmt_bind_param($st, 'ss', $kd, $item);
-            mysqli_stmt_execute($st);
-            mysqli_stmt_close($st);
-
-            $st = mysqli_prepare($this->db,
-                "SELECT qty_on_hand, average_cost, total_value FROM inv_balance WHERE kd_cabang = ? AND no_item = ? FOR UPDATE");
-            mysqli_stmt_bind_param($st, 'ss', $kd, $item);
-            mysqli_stmt_execute($st);
-            $res = mysqli_stmt_get_result($st);
-            $bal = mysqli_fetch_assoc($res);
-            mysqli_stmt_close($st);
+            $bal = $this->lockBalance($kd, $item);
 
             $oldQ = self::toMilli($bal['qty_on_hand']);
             $oldAvg = self::toSen($bal['average_cost']);
             $oldTv = self::toSen($bal['total_value']);
 
             if ($arah === 'in') {
+                if ($pakaiAvg) {
+                    $costC = $oldAvg;
+                }
                 $addValue = self::divRound($qtyM * $costC, 1000);
                 $newQ = $oldQ + $qtyM;
                 $newTv = $oldTv + $addValue;
@@ -247,9 +257,10 @@ class InventoryService
             mysqli_stmt_bind_param($st, 'sssssisssssssssss', $kd, $item, $trxType, $refType, $refNo, $refLine,
                 $qIn, $qOut, $uc, $vd, $ab, $aa, $qa, $va, $tgl, $ket, $user);
             if (!mysqli_stmt_execute($st)) {
+                $no = mysqli_stmt_errno($st);
                 $err = mysqli_stmt_error($st);
                 mysqli_stmt_close($st);
-                throw new InventoryException('Gagal menulis ledger: ' . $err, 'ledger_gagal');
+                throw new InventoryException('Gagal menulis ledger: ' . $err, in_array($no, [1213, 1205], true) ? 'lock_gagal' : 'ledger_gagal');
             }
             $ledgerId = mysqli_insert_id($this->db);
             mysqli_stmt_close($st);
@@ -269,9 +280,10 @@ class InventoryService
                  WHERE kd_cabang = ? AND no_item = ?");
             mysqli_stmt_bind_param($st, 'sssss', $qa, $aa, $va, $kd, $item);
             if (!mysqli_stmt_execute($st)) {
+                $no = mysqli_stmt_errno($st);
                 $err = mysqli_stmt_error($st);
                 mysqli_stmt_close($st);
-                throw new InventoryException('Gagal update saldo: ' . $err, 'saldo_gagal');
+                throw new InventoryException('Gagal update saldo: ' . $err, in_array($no, [1213, 1205], true) ? 'lock_gagal' : 'saldo_gagal');
             }
             mysqli_stmt_close($st);
 
@@ -307,6 +319,42 @@ class InventoryService
             }
             throw $e;
         }
+    }
+
+    /**
+     * Kunci baris saldo. FOR UPDATE dulu; baris dibuat hanya bila belum ada. INSERT IGNORE di depan akan
+     * mengambil lock S pada baris yang sudah ada dan menimbulkan deadlock saat banyak proses naik ke lock X.
+     * Kegagalan lock (deadlock 1213 / timeout 1205) dilempar sebagai 'lock_gagal' agar bisa di-retry.
+     */
+    private function lockBalance($kd, $item)
+    {
+        for ($i = 0; $i < 2; $i++) {
+            $st = mysqli_prepare($this->db,
+                "SELECT qty_on_hand, average_cost, total_value FROM inv_balance WHERE kd_cabang = ? AND no_item = ? FOR UPDATE");
+            mysqli_stmt_bind_param($st, 'ss', $kd, $item);
+            if (!mysqli_stmt_execute($st)) {
+                $no = mysqli_stmt_errno($st);
+                $err = mysqli_stmt_error($st);
+                mysqli_stmt_close($st);
+                throw new InventoryException('Gagal mengunci saldo: ' . $err, in_array($no, [1213, 1205], true) ? 'lock_gagal' : 'saldo_gagal');
+            }
+            $res = mysqli_stmt_get_result($st);
+            $row = $res ? mysqli_fetch_assoc($res) : null;
+            mysqli_stmt_close($st);
+            if ($row) {
+                return $row;
+            }
+            $st = mysqli_prepare($this->db, "INSERT IGNORE INTO inv_balance (kd_cabang, no_item) VALUES (?, ?)");
+            mysqli_stmt_bind_param($st, 'ss', $kd, $item);
+            if (!mysqli_stmt_execute($st)) {
+                $no = mysqli_stmt_errno($st);
+                $err = mysqli_stmt_error($st);
+                mysqli_stmt_close($st);
+                throw new InventoryException('Gagal membuat saldo: ' . $err, in_array($no, [1213, 1205], true) ? 'lock_gagal' : 'saldo_gagal');
+            }
+            mysqli_stmt_close($st);
+        }
+        throw new InventoryException('Saldo tidak ditemukan setelah dibuat', 'saldo_gagal');
     }
 
     private function proyeksiTbstok($tipe, $noTransaksi, $item, $tgl, $masuk, $keluar, $ket, $kdCabang)
@@ -394,6 +442,54 @@ class InventoryService
         return $arah === 'in'
             ? $this->postIn($lokasi, $item, $qty, $unitCost, $refType, $refNo, $opts)
             : $this->postOut($lokasi, $item, $qty, $refType, $refNo, $opts);
+    }
+
+    // ---------- pembalikan ----------
+
+    /**
+     * Balikkan semua posting (ref_type, ref_no) yang belum dibalik, sebagai transaksi pembalik baru
+     * (ledger tetap append-only; BR-06/P8 melarang DELETE). Masuk dibalik jadi keluar pada average saat ini
+     * bila stok cukup, keluar dibalik jadi masuk pada unit_cost aslinya.
+     * Mengembalikan jumlah baris yang dibalik. Di mode off tidak melakukan apa pun.
+     */
+    public function reverseShadow($refType, $refNo, $keterangan = '', $user = '')
+    {
+        $st = mysqli_prepare($this->db,
+            "SELECT l.* FROM inv_ledger l
+             WHERE l.ref_type = ? AND l.ref_no = ? AND l.trx_type NOT LIKE 'VOID\\_%'
+               AND NOT EXISTS (SELECT 1 FROM inv_ledger v WHERE v.kd_cabang = l.kd_cabang AND v.no_item = l.no_item
+                               AND v.ref_type = l.ref_type AND v.ref_no = l.ref_no AND v.ref_line = l.ref_line
+                               AND v.trx_type = CONCAT('VOID_', l.trx_type))
+             ORDER BY l.id");
+        mysqli_stmt_bind_param($st, 'ss', $refType, $refNo);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $rows = [];
+        while ($r = mysqli_fetch_assoc($res)) {
+            $rows[] = $r;
+        }
+        mysqli_stmt_close($st);
+
+        $n = 0;
+        foreach ($rows as $l) {
+            if ($this->getMode($l['kd_cabang']) === self::MODE_OFF) {
+                continue;
+            }
+            $opts = ['trx_type' => 'VOID_' . $l['trx_type'], 'ref_line' => (int) $l['ref_line'],
+                     'keterangan' => $keterangan, 'user' => $user];
+            try {
+                if ((float) $l['qty_in'] > 0) {
+                    $this->postOut($l['kd_cabang'], $l['no_item'], $l['qty_in'], $l['ref_type'], $l['ref_no'], $opts);
+                } else {
+                    $this->postIn($l['kd_cabang'], $l['no_item'], $l['qty_out'], $l['unit_cost'], $l['ref_type'], $l['ref_no'], $opts);
+                }
+                $n++;
+            } catch (Throwable $e) {
+                $this->audit($user, 'shadow_void_gagal', $refType . ':' . $refNo, $e->getMessage(), null,
+                    ['item' => $l['no_item'], 'lokasi' => $l['kd_cabang']]);
+            }
+        }
+        return $n;
     }
 
     // ---------- audit ----------

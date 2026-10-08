@@ -151,6 +151,7 @@
                                         ('2','$LastID','$no_item',
                                         '$txttgljl','$qty','0',
                                         'Pembelian Antar Cabang','$kd_cabang')"); 
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, inv_biaya_satuan($tampil['total'], $qty, $tampil['harga_pokok']), 'PEMBELIAN', $LastID, 'Pembelian', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
                 }
             // ----- End -----         
                         

@@ -35,6 +35,7 @@ try {
             if(!mysqli_query($koneksi, "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                                         VALUES ('9','$noretur','$no_item','$tanggal',$qty,0,'$ket','$kd_cabang')"))
                 throw new Exception("Gagal insert stok: ".mysqli_error($koneksi));
+                require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $d['no_item'], $qty, null, 'RETUR_SERVIS', $noretur, 'Retur Servis', ''); // Moving Average shadow
         }
     }
 

@@ -34,6 +34,7 @@ try {
 
     if(!mysqli_query($koneksi, "DELETE FROM tbstok WHERE no_transaksi='$noretur' AND tipe='8'"))
         throw new Exception("Gagal hapus stok: ".mysqli_error($koneksi));
+        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_reverse($koneksi, 'RETUR_JUAL', $noretur, 'Batal retur penjualan', ''); // Moving Average shadow
 
     if(!mysqli_query($koneksi, "DELETE FROM tblretur_penjualan_detail WHERE no_retur='$noretur'"))
         throw new Exception("Gagal hapus detail: ".mysqli_error($koneksi));

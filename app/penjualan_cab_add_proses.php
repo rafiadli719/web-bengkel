@@ -185,6 +185,7 @@
                                         ('3','$LastID','$no_item',
                                         '$txttgljl','0','$qty',
                                         'Penjualan Antar Cabang','$kd_cabang')"); 
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
                 }
             // ----- End -----         
 

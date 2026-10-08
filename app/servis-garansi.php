@@ -1165,6 +1165,7 @@
                             (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                             VALUES
                             ('4','$no_service','$no_item_garansi', CURDATE(),'0','$qty_garansi','Servis Garansi','$kd_cabang')");
+                            require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item_garansi, $qty_garansi, 'SERVIS', $no_service, 'Servis Garansi', ($_nama ?? ''), (int)($tampil_garansi['nobaris'] ?? 0)); // Moving Average shadow
                     }
                 }
 

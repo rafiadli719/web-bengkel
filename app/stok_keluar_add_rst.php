@@ -680,6 +680,7 @@ if(empty($_SESSION['_iduser'])){
                         if(!$stok_result) {
                             throw new Exception("Gagal update stok untuk item $no_item: " . mysqli_error($koneksi));
                         }
+                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'STOK_KELUAR', $LastID, 'Penyesuaian stok keluar', ($_nama ?? '')); // Moving Average shadow
                     }
 
                     // PERBAIKAN: Prepare data untuk sinkronisasi dengan validasi lebih ketat

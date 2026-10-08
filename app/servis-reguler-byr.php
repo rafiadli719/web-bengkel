@@ -590,6 +590,7 @@
                                         ('4','$no_service','$no_item',
                                         '$tanggal_srv','0','$qty',
                                         'Penjualan Service','$kd_cabang')"); 
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
                 }
                 
             echo"<script>window.alert('Data Service Berhasil disimpan!');

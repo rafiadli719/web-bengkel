@@ -163,7 +163,7 @@ $ok = 0; $tolak = 0; $lain = 0;
 foreach ($procs as [$p, $pipes]) {
     $out = trim(stream_get_contents($pipes[1]));
     fclose($pipes[1]); fclose($pipes[2]); proc_close($p);
-    if ($out === 'OK') $ok++; elseif (strpos($out, 'GAGAL:stok_tidak_cukup') === 0) $tolak++; else $lain++;
+    if ($out === 'OK') $ok++; elseif (strpos($out, 'GAGAL:stok_tidak_cukup') === 0) $tolak++; else { $lain++; echo "    worker lain: " . substr($out, 0, 300) . "\n"; }
 }
 $sisa = bal($koneksi, 'PST', 'ZZTEST-K');
 cek("12 penjual paralel, stok 5: tepat 5 berhasil (ok=$ok, ditolak=$tolak, lain=$lain)", $ok === 5 && $tolak === 7 && $lain === 0);

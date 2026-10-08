@@ -349,6 +349,7 @@ VALUES
                                         ('3','$LastID','$no_item',
                                         '$txttglpesan','0','$qty',
                                         'Penjualan','$kd_cabang')");
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
 
                     if($nopesanan<>'') {
                         mysqli_query($koneksi,"UPDATE tblorderjual_detail

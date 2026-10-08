@@ -74,6 +74,7 @@
                                         ('5','$LastID','$no_item',
                                         '$txttgl','$qty','0',
                                         'Stok Opname (Masuk)','$kd_cabang')");
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, null, 'OPNAME_MASUK', $LastID, 'Stok opname masuk', ($_nama ?? '')); // Moving Average shadow
             } 
             echo"<script>window.location=('so-masuk-add-cetak.php?nopesanan=$LastID');</script>";                                                                           
         }

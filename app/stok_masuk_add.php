@@ -475,6 +475,7 @@ if (empty($_SESSION['_iduser'])) {
 
                     // Update stok lokal
                     mysqli_query($koneksi, "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang) VALUES ('5','$LastID','$no_item', '$txttglpesan','$qty','0', 'Penyesuaian Stok Item Masuk','$kd_cabang')");
+                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, number_format((float)$harga, 2, '.', ''), 'STOK_MASUK', $LastID, 'Penyesuaian stok masuk', ($_nama ?? '')); // Moving Average shadow
 
                     $items_to_update[] = [
                         'itemNo' => $no_item,
