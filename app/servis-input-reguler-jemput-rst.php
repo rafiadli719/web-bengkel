@@ -1187,7 +1187,7 @@
 
         // Update stock for items used in service
         // Guard agar tidak double-insert tbstok saat bayar ulang
-        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+        $chk_stok = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4' AND kd_cabang='$kd_cabang'");
         $r_chk = mysqli_fetch_assoc($chk_stok);
         if ((int)$r_chk['cnt'] === 0) {
             $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang WHERE no_service='$no_service'");
@@ -1198,7 +1198,7 @@
                     (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                     VALUES
                     ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
-                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
             }
         }
 

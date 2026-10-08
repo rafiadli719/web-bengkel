@@ -209,11 +209,11 @@ adapter `app/_include_inv_shadow.php` di 29 titik tulis `tbstok`, modul `app/_in
 valuasi, kartu stok, koreksi maker-checker, laporan transit/PPV/klaim/HPP), permission `inv_*`, `scripts/inv_harian.php`.
 `inv_mode` default `off` di semua cabang = nol efek ke jalur lama. Keputusan D-01..D-12 memakai rekomendasi planning
 (`.ai/decisions/2026-10-08-moving-average-keputusan-default.md`); `tbstok.kd_cabang` sengaja TIDAK dinormalisasi.
-Tes CLI 152 lulus (`tests/inventory/`) dan E2E browser lulus (pembelian+penjualan nyata dengan PST shadow, rekonsiliasi 0
+Tes CLI 157 lulus (`tests/inventory/`) dan E2E browser lulus (pembelian+penjualan nyata dengan PST shadow, rekonsiliasi 0
 selisih, maker-checker ADM->KEU, opening stock, RBAC). Bug penjualan langsung tanpa pesanan (`penjualan_add_rst.php`) ikut diperbaiki. Penegakan LIVE (stok dari ledger, tanggal hari ini) sudah dipasang di penjualan, stok keluar/opname, servis bayar x6, transfer kirim, retur pembelian, pembelian; E2E browser PST lulus untuk POS, stok keluar, pembelian (servis/transfer/retur baru teruji CLI) (lihat `docs/planning/RUNBOOK_CUTOVER_MOVING_AVERAGE.md`, SOP: `docs/SOP_PERSEDIAAN_MOVING_AVERAGE.md`).
 BELUM: migrasi `2026-10-08_*` di produksi, opening stock dari opname fisik (D-03), mode `live` per cabang + BR-05/larang
 backdate di tiap alur (F5-06), kode akun COA (D-07; jurnal otomatis aktif begitu `inv_config acct_*` diisi), checklist-projek.
-Temuan F0-08: `servis-reguler-byr.php` tanpa guard potong ganda (`docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`).
+Temuan F0-08 (guard potong ganda servis) sudah DIPERBAIKI (semua cabang); detail di `docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`. Snapshot HPP ke detail penjualan/servis aktif untuk cabang live (migrasi `2026-10-08_run_inv_hpp_snapshot.php`).
 Aturan project "HPP FIFO" sudah usang, ganti ke Moving Average.
 
 **Masih pending/backlog beneran (bukan salah baca history):**

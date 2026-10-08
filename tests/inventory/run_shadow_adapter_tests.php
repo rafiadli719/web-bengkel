@@ -31,7 +31,8 @@ function bersih($k) {
     mysqli_query($k, "DELETE FROM tbstok WHERE no_item LIKE 'ZZTEST-AD%'");
     mysqli_query($k, "DELETE FROM inv_audit_log WHERE actor IN ('tes-adapter') OR ref LIKE 'ZZTAD%'");
     mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
-    mysqli_query($k, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-1'");
+    mysqli_query($k, "DELETE FROM tblservis_barang WHERE no_service IN ('ZZ-SV-1','ZZ-SV-2')");
+    mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'");
 }
 bersih($koneksi);
 
@@ -128,6 +129,25 @@ if ($modeOff) {
     cek('Servis dalam batas saldo lolos (jalur berfilter)', inv_live_cek_servis($koneksi, 'PACUL', 'ZZ-SV-1', true) === null);
     cek('Servis nomor sama di cabang lain tidak ikut terhitung', inv_live_cek_servis($koneksi, 'PST', 'ZZ-SV-1', true) === null);
     mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-1'");
+
+    echo "== Snapshot HPP ke detail transaksi (F2-02/F2-04)\n";
+    mysqli_query($koneksi, "INSERT INTO tblpenjualan_detail (no_transaksi,nobaris,no_item,qty_order,quantity,qty_retur,harga_jual,potongan,harga_sp,harga_pokok,total,sts_order,user,kd_cabang,status_trx) VALUES ('ZZ-JL-1',0,'ZZTEST-AD7',2,2,0,500,0,0,0,1000,'','zz-snap','PACUL','1')");
+    mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service,kd_cabang,nobaris,no_item,quantity,qty_retur,harga_jual,potongan,total,asal_barang) VALUES ('ZZ-SV-2','PACUL',1,'ZZTEST-AD7',1,0,500,0,500,'SERVIS')");
+    $h = inv_shadow_out($koneksi, 'PACUL', 'ZZTEST-AD7', 2, 'PENJUALAN', 'ZZ-JL-1', 'tes', 'tes-adapter');
+    cek('Posting live mengembalikan HPP unit', is_array($h) && $h['hpp_unit'] === '100.00');
+    inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $h, 'ZZ-JL-1', 'ZZTEST-AD7', 'PACUL');
+    $hp = mysqli_fetch_row(mysqli_query($koneksi, "SELECT harga_pokok FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'"))[0];
+    cek('Snapshot menulis harga_pokok penjualan = HPP average (100)', (float) $hp === 100.0);
+    $h2 = inv_shadow_out($koneksi, 'PACUL', 'ZZTEST-AD7', 1, 'SERVIS', 'ZZ-SV-2', 'tes', 'tes-adapter');
+    inv_snapshot_hpp($koneksi, 'tblservis_barang', $h2, 'ZZ-SV-2', 'ZZTEST-AD7', 'PACUL');
+    $hs = mysqli_fetch_row(mysqli_query($koneksi, "SELECT harga_pokok FROM tblservis_barang WHERE no_service='ZZ-SV-2'"))[0];
+    cek('Snapshot menulis harga_pokok barang servis (kolom baru)', (float) $hs === 100.0);
+    mysqli_query($koneksi, "UPDATE tblpenjualan_detail SET harga_pokok = 0 WHERE no_transaksi='ZZ-JL-1'");
+    cek('Cabang bukan live tidak disentuh snapshot', inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $h, 'ZZ-JL-1', 'ZZTEST-AD7', 'PST') === false
+        && (float) mysqli_fetch_row(mysqli_query($koneksi, "SELECT harga_pokok FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'"))[0] === 0.0);
+    cek('Tabel di luar daftar ditolak', inv_snapshot_hpp($koneksi, 'tbuser', $h, 'x', 'y', 'PACUL') === false);
+    mysqli_query($koneksi, "DELETE FROM tblpenjualan_detail WHERE no_transaksi='ZZ-JL-1'");
+    mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-2'");
 }
 
 bersih($koneksi);

@@ -1156,7 +1156,7 @@
 
                 // Update stock for items used in warranty service — guard agar tidak double-insert
                 // Barang bukan asal stok bengkel (PART-CUST milik customer, atau dari nota Penjualan yg sudah kepotong stok) — exclude dari kartu stok
-                $chk_stok_garansi = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4'");
+                $chk_stok_garansi = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4' AND kd_cabang='$kd_cabang'");
                 $r_chk_garansi = mysqli_fetch_assoc($chk_stok_garansi);
                 if ((int)$r_chk_garansi['cnt'] === 0) {
                     $sql_garansi = mysqli_query($koneksi, "SELECT * FROM tblservis_barang WHERE no_service='$no_service' AND asal_barang='SERVIS'");
@@ -1167,7 +1167,7 @@
                             (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                             VALUES
                             ('4','$no_service','$no_item_garansi', CURDATE(),'0','$qty_garansi','Servis Garansi','$kd_cabang')");
-                            require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item_garansi, $qty_garansi, 'SERVIS', $no_service, 'Servis Garansi', ($_nama ?? ''), (int)($tampil_garansi['nobaris'] ?? 0)); // Moving Average shadow
+                            require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item_garansi, $qty_garansi, 'SERVIS', $no_service, 'Servis Garansi', ($_nama ?? ''), (int)($tampil_garansi['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item_garansi, $kd_cabang); // Moving Average shadow
                     }
                 }
 

@@ -15,12 +15,14 @@
 - Halaman Koreksi (maker-checker), Laporan Transit/PPV/Klaim/HPP. Guard sync Access untuk cabang live.
 - E2E browser (akun uji lokal, sudah dihapus): pembelian dan penjualan nyata dengan PST shadow, kartu stok bernilai, rekonsiliasi 0 selisih, maker-checker ADM ke KEU, opening stock (validasi, muat, tolak muat kedua), RBAC 403.
 
+- Penegakan live (BR-05 + tanpa backdate) di penjualan, stok keluar/opname, servis bayar x6, transfer kirim, retur pembelian, pembelian; snapshot HPP ke detail penjualan/servis (migrasi `2026-10-08_run_inv_hpp_snapshot.php`). E2E browser PST: POS, stok keluar, pembelian.
+
 ## Changed
 - Tidak ada perubahan perilaku jalur lama selama `inv_mode=off` (default semua cabang).
 
 ## Fixed
 - `penjualan_add_rst.php`: penjualan langsung tanpa pesanan gagal simpan header (total_qty_order NULL, MySQL strict). Ditemukan E2E browser. Plus `error_log` pada cabang gagal.
-- Temuan F0-08 (servis-reguler-byr tanpa guard, guard tanpa cabang) dicatat, belum diubah.
+- F0-08: `servis-reguler-byr.php` kini punya guard potong ganda; guard lima jalur servis lain memperhitungkan cabang (berlaku semua cabang).
 
 ## Removed
 - —

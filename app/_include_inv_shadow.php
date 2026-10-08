@@ -170,6 +170,33 @@ function inv_live_cek_servis($koneksi, $lokasi, $noService, $hanyaServis = true)
     }
 }
 
+/**
+ * Snapshot HPP Moving Average ke baris detail transaksi (F2-02/F2-04), HANYA bila cabang live, supaya laporan laba
+ * dan komisi memakai HPP baru. Cabang off/shadow tidak disentuh. $hasil = keluaran inv_shadow_out().
+ * Tabel yang diizinkan: tblpenjualan_detail (kunci no_transaksi) dan tblservis_barang (kunci no_service).
+ */
+function inv_snapshot_hpp($koneksi, $tabel, $hasil, $noTrx, $item, $lokasi)
+{
+    try {
+        static $kolom = ['tblpenjualan_detail' => 'no_transaksi', 'tblservis_barang' => 'no_service'];
+        if (!is_array($hasil) || !isset($kolom[$tabel]) || !isset($hasil['hpp_unit']) || !inv_cabang_live($koneksi, $lokasi)) {
+            return false;
+        }
+        $k = $kolom[$tabel];
+        $st = @mysqli_prepare($koneksi, "UPDATE $tabel SET harga_pokok = ? WHERE $k = ? AND no_item = ? AND kd_cabang = ?");
+        if (!$st) {
+            return false;
+        }
+        $h = (string) $hasil['hpp_unit'];
+        mysqli_stmt_bind_param($st, 'ssss', $h, $noTrx, $item, $lokasi);
+        $ok = mysqli_stmt_execute($st);
+        mysqli_stmt_close($st);
+        return (bool) $ok;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
 /** Biaya satuan bersih dari total baris: total / qty, jatuh ke $fallback bila total/qty tidak ada. */
 function inv_biaya_satuan($total, $qty, $fallback = 0)
 {

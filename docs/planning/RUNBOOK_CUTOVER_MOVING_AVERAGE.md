@@ -6,7 +6,7 @@ Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dit
 ## Tahap A — Siapkan produksi (sekali)
 1. (Rafi) Backup database produksi penuh.
 2. (Rafi) Unggah kode terbaru, lalu jalankan runner berurutan:
-   `db/migrations/2026-10-08_run_inv_core.php up`, `..._run_inv_koreksi.php up`, `..._run_inv_permissions.php up`.
+   `db/migrations/2026-10-08_run_inv_core.php up`, `..._run_inv_koreksi.php up`, `..._run_inv_permissions.php up`, `..._run_inv_hpp_snapshot.php up`.
 3. Syarat lanjut: halaman **Persediaan, Pengaturan & Rekonsiliasi** terbuka untuk ADM, semua cabang `off`, `php scripts/inv_harian.php` mengembalikan "sehat".
 4. Mundur: `... up` bisa dibalik dengan `down` (permission) dan `down` untuk tabel (hanya bila kosong, atau argumen `force`). Backup `bak_20261008_tb_master_posisi` dibuat otomatis.
 
@@ -30,16 +30,17 @@ Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dit
 **Sudah dibangun (hanya aktif bila cabang `live`; cabang `off/shadow` tidak berubah sama sekali):**
 - Stok yang berlaku = saldo ledger baru (`inv_balance`), dicek saat tambah item dan/atau saat simpan: Penjualan POS (`penjualan_add_rst.php`, `penjualan_add.php`), Stok Keluar manual dan opname keluar (aslinya tidak ada cek stok sama sekali), Servis bayar di 6 titik (reguler, rst, jemput, jemput-rst, garansi, halaman bayar), Transfer kirim (`pengadaan_antarcab_proses/push`), Retur pembelian.
 - Tanggal transaksi dipaksa hari ini (tanpa backdate, BR-06): penjualan, pembelian (4 varian), stok masuk/keluar, opname, penjualan/pembelian antar cabang.
+- Snapshot HPP Moving Average ke `tblpenjualan_detail.harga_pokok` dan `tblservis_barang.harga_pokok` (kolom baru, migrasi `inv_hpp_snapshot`) hanya untuk cabang live.
 - Guard sync Access: tidak menimpa saldo cabang live.
+- Perbaikan bug produksi (berlaku semua cabang, aman): `servis-reguler-byr.php` kini punya guard potong ganda, dan guard lima jalur servis lain memperhitungkan cabang (sebelumnya servis cabang lain dengan nomor sama bisa melewati potong stok).
 - E2E browser lulus (PST, 2026-10-08): Penjualan POS, Stok Keluar (6 > saldo 5 ditolak, 2 lolos), Pembelian (tanggal mundur dipaksa hari ini). Servis dan Transfer/Retur teruji di tingkat fungsi (CLI), belum di browser.
 
 **Masih harus dikerjakan sebelum cabang pilot boleh `live` (mode `live` di halaman Pengaturan sengaja belum ditawarkan; setel lewat `InventoryService::setMode` hanya untuk uji):**
 - E2E browser di cabang pilot untuk Servis bayar (semua varian), Transfer, Retur, dan Terima DO.
 - Atomisitas: posting ledger berjalan setelah penulisan lama di koneksi terpisah. Race dua kasir pada stok terakhir dicegah ledger (tidak pernah minus) tetapi `tbstok` lama bisa berbeda; rekonsiliasi harian menandainya. Untuk atomik penuh, alur harus dipindah ke satu transaksi.
-- Isi `harga_pokok` snapshot di `tblpenjualan_detail` dan `tblservis_barang` (kolom baru, migrasi terpisah) agar laporan laba memakai HPP Moving Average.
+- Laporan laba dan komisi (`lap_profit_penjualan.php`, `lap_komisi_mekanik.php`, `_include_komisi_snapshot.php`) masih perlu dialihkan membaca `harga_pokok` snapshot; baris lama bernilai 0 sehingga harus tetap memakai fallback `tblitem.hargapokok` untuk data sebelum cutover.
 - `tbstok` lama: opening stock hanya masuk ledger baru. Pembaca lama (`view_stok_master`, kartu stok lama, MinMax) masih membaca `tbstok` yang saldonya historis negatif; normalisasi/proyeksi `tbstok` perlu diputuskan saat cutover.
 - Larang edit/hapus transaksi posted di semua endpoint (F3-07) dan arahkan ke Koreksi.
-- Perbaiki `servis-reguler-byr.php` (guard potong ganda) dan guard servis per cabang (temuan F0-08).
 
 ## Tahap E — Pengamatan dan cabang berikutnya
 1. 1-2 minggu pengamatan di pilot: rekonsiliasi harian, antrian koreksi, keluhan stok ditolak.

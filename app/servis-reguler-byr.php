@@ -581,7 +581,10 @@
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblservis_barang 
                                                 WHERE 
                                                 no_service='$no_service'");
-                while ($tampil = mysqli_fetch_array($sql)) {
+                // Guard potong ganda (temuan F0-08): sama dengan jalur servis lain, per nomor servis DAN cabang
+                $chk_stok_byr = mysqli_query($koneksi, "SELECT COUNT(*) AS cnt FROM tbstok WHERE no_transaksi='$no_service' AND tipe='4' AND kd_cabang='$kd_cabang'");
+                $sudah_potong_byr = $chk_stok_byr && (int) mysqli_fetch_assoc($chk_stok_byr)['cnt'] > 0;
+                while (!$sudah_potong_byr && ($tampil = mysqli_fetch_array($sql))) {
                     $no_item=$tampil['no_item'];
                     $qty=$tampil['quantity'];
                     mysqli_query($koneksi,"INSERT INTO tbstok 
@@ -592,7 +595,7 @@
                                         ('4','$no_service','$no_item',
                                         '$tanggal_srv','0','$qty',
                                         'Penjualan Service','$kd_cabang')"); 
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
                 }
                 
             echo"<script>window.alert('Data Service Berhasil disimpan!');
