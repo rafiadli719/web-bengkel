@@ -3,7 +3,8 @@
 // Pakai: php 2026-10-08_run_inv_permissions.php [up|down]
 // up   : backup tb_master_posisi -> bak_20261008_tb_master_posisi, tambah kode inv_* bila belum ada
 // down : cabut kode inv_* dari semua posisi (backup dibiarkan)
-// ADM: inv_admin, inv_opening, inv_laporan, inv_view_all. MNG dan KEU: inv_laporan, inv_view_all.
+// ADM: inv_admin, inv_opening, inv_laporan, inv_view_all, inv_koreksi (maker). MNG: laporan, view_all, inv_approve (checker).
+// KEU: laporan, view_all, inv_approve, inv_finance (checker revaluasi/Finance HQ).
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once __DIR__ . '/../../config/koneksi.php';
@@ -12,11 +13,11 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $mode = $argv[1] ?? 'up';
 
 $grant = [
-    'ADM' => ['inv_admin', 'inv_opening', 'inv_laporan', 'inv_view_all'],
-    'MNG' => ['inv_laporan', 'inv_view_all'],
-    'KEU' => ['inv_laporan', 'inv_view_all'],
+    'ADM' => ['inv_admin', 'inv_opening', 'inv_laporan', 'inv_view_all', 'inv_koreksi'],
+    'MNG' => ['inv_laporan', 'inv_view_all', 'inv_approve'],
+    'KEU' => ['inv_laporan', 'inv_view_all', 'inv_approve', 'inv_finance'],
 ];
-$semuaKode = ['inv_admin', 'inv_opening', 'inv_laporan', 'inv_view_all'];
+$semuaKode = ['inv_admin', 'inv_opening', 'inv_laporan', 'inv_view_all', 'inv_koreksi', 'inv_approve', 'inv_finance'];
 
 if ($mode === 'up') {
     mysqli_query($koneksi, "CREATE TABLE IF NOT EXISTS bak_20261008_tb_master_posisi AS SELECT * FROM tb_master_posisi");

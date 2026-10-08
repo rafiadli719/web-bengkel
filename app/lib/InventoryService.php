@@ -139,7 +139,7 @@ class InventoryService
 
     public function getConfig($lokasi, $key, $default = null)
     {
-        $kd = $this->resolveLocation($lokasi);
+        $kd = $lokasi === '*' ? '*' : $this->resolveLocation($lokasi);
         $st = mysqli_prepare($this->db, "SELECT config_value FROM inv_config WHERE kd_cabang = ? AND config_key = ?");
         mysqli_stmt_bind_param($st, 'ss', $kd, $key);
         mysqli_stmt_execute($st);
@@ -279,6 +279,7 @@ class InventoryService
         $user = substr((string) ($opts['user'] ?? ''), 0, 50);
         $manageTx = array_key_exists('manage_tx', $opts) ? (bool) $opts['manage_tx'] : true;
 
+        $this->assertPeriodOpen($kd, $tgl, !empty($opts['is_correction']));
         if ($manageTx) {
             mysqli_begin_transaction($this->db);
         }
@@ -340,10 +341,13 @@ class InventoryService
 
             $st = mysqli_prepare($this->db,
                 "INSERT INTO inv_ledger (kd_cabang, no_item, trx_type, ref_type, ref_no, ref_line, qty_in, qty_out, unit_cost,
-                    value_delta, avg_before, avg_after, qty_after, value_after, transaction_date, keterangan, created_by)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            mysqli_stmt_bind_param($st, 'sssssisssssssssss', $kd, $item, $trxType, $refType, $refNo, $refLine,
-                $qIn, $qOut, $uc, $vd, $ab, $aa, $qa, $va, $tgl, $ket, $user);
+                    value_delta, avg_before, avg_after, qty_after, value_after, transaction_date, keterangan, created_by,
+                    is_correction, correction_date)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $isKoreksi = !empty($opts['is_correction']) ? 1 : 0;
+            $tglKoreksi = $isKoreksi ? date('Y-m-d') : null;
+            mysqli_stmt_bind_param($st, 'sssssisssssssssssis', $kd, $item, $trxType, $refType, $refNo, $refLine,
+                $qIn, $qOut, $uc, $vd, $ab, $aa, $qa, $va, $tgl, $ket, $user, $isKoreksi, $tglKoreksi);
             if (!mysqli_stmt_execute($st)) {
                 $no = mysqli_stmt_errno($st);
                 $err = mysqli_stmt_error($st);
@@ -530,6 +534,155 @@ class InventoryService
         return $arah === 'in'
             ? $this->postIn($lokasi, $item, $qty, $unitCost, $refType, $refNo, $opts)
             : $this->postOut($lokasi, $item, $qty, $refType, $refNo, $opts);
+    }
+
+    // ---------- periode (BR-08) ----------
+
+    /**
+     * Periode closed menolak transaksi biasa; koreksi (is_correction) tetap boleh karena dicatat pada hari ini (EC-10).
+     * Periode locked menolak semuanya. Tabel/baris periode tidak ada = open.
+     */
+    public function assertPeriodOpen($kd, $tanggal, $koreksi = false)
+    {
+        $per = substr((string) $tanggal, 0, 7);
+        $st = @mysqli_prepare($this->db, "SELECT status FROM inv_period WHERE period = ? AND kd_cabang = ?");
+        if (!$st) {
+            return;
+        }
+        mysqli_stmt_bind_param($st, 'ss', $per, $kd);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $row = $res ? mysqli_fetch_assoc($res) : null;
+        mysqli_stmt_close($st);
+        if (!$row || $row['status'] === 'open') {
+            return;
+        }
+        if ($row['status'] === 'locked' || !$koreksi) {
+            throw new InventoryException("Periode $per di $kd berstatus {$row['status']}", 'periode_tertutup');
+        }
+    }
+
+    public function setPeriod($lokasi, $period, $status, $oleh)
+    {
+        if (!preg_match('/^\d{4}-\d{2}$/', $period) || !in_array($status, ['open', 'closed', 'locked'], true)) {
+            throw new InventoryException('Periode/status tidak valid', 'param_invalid');
+        }
+        $kd = $this->resolveLocation($lokasi);
+        $st = mysqli_prepare($this->db,
+            "INSERT INTO inv_period (period, kd_cabang, status, updated_by) VALUES (?,?,?,?)
+             ON DUPLICATE KEY UPDATE status = VALUES(status), updated_by = VALUES(updated_by)");
+        mysqli_stmt_bind_param($st, 'ssss', $period, $kd, $status, $oleh);
+        mysqli_stmt_execute($st);
+        mysqli_stmt_close($st);
+        $this->audit($oleh, 'set_period', "$kd:$period", "status=$status", null, ['status' => $status]);
+    }
+
+    // ---------- koreksi nilai ----------
+
+    /**
+     * Koreksi NILAI persediaan tanpa mengubah qty (mis. koreksi harga pembelian atas sisa barang, revaluasi).
+     * Average dihitung ulang dari total_value baru. Baris ledger bertanda is_correction dengan correction_date hari ini.
+     * $delta bertanda (string, maks 2 desimal). Stok 0 tidak bisa diberi nilai.
+     */
+    public function postValueAdjust($lokasi, $item, $delta, $refType, $refNo, array $opts = [])
+    {
+        $item = trim((string) $item);
+        $deltaC = self::toSen($delta);
+        $kd = $this->resolveLocation($lokasi);
+        $user = substr((string) ($opts['user'] ?? ''), 0, 50);
+        $ket = substr((string) ($opts['keterangan'] ?? ''), 0, 100);
+        $refLine = (int) ($opts['ref_line'] ?? 0);
+        $tgl = date('Y-m-d');
+        $this->assertPeriodOpen($kd, $tgl, true);
+        $manageTx = array_key_exists('manage_tx', $opts) ? (bool) $opts['manage_tx'] : true;
+        if ($manageTx) {
+            mysqli_begin_transaction($this->db);
+        }
+        try {
+            $dup = $this->findLedger($kd, $item, $refType, $refNo, $refLine, 'CORR_VALUE');
+            if ($dup) {
+                if ($manageTx) {
+                    mysqli_commit($this->db);
+                }
+                return $this->hasil($dup, true);
+            }
+            $bal = $this->lockBalance($kd, $item);
+            $q = self::toMilli($bal['qty_on_hand']);
+            $oldAvg = self::toSen($bal['average_cost']);
+            $oldTv = self::toSen($bal['total_value']);
+            if ($q <= 0) {
+                throw new InventoryException('Stok 0: tidak ada nilai yang bisa dikoreksi', 'stok_kosong');
+            }
+            $newTv = $oldTv + $deltaC;
+            if ($newTv < 0) {
+                throw new InventoryException('Koreksi membuat nilai persediaan negatif', 'nilai_negatif');
+            }
+            $newAvg = self::divRound($newTv * 1000, $q);
+            $vd = self::fromSen($deltaC);
+            $ab = self::fromSen($oldAvg);
+            $aa = self::fromSen($newAvg);
+            $qa = self::fromMilli($q);
+            $va = self::fromSen($newTv);
+            $st = mysqli_prepare($this->db,
+                "INSERT INTO inv_ledger (kd_cabang, no_item, trx_type, ref_type, ref_no, ref_line, qty_in, qty_out, unit_cost,
+                    value_delta, avg_before, avg_after, qty_after, value_after, transaction_date, correction_date, is_correction, keterangan, created_by)
+                 VALUES (?,?,'CORR_VALUE',?,?,?,0,0,0,?,?,?,?,?,?,?,1,?,?)");
+            mysqli_stmt_bind_param($st, 'ssssisssssssss', $kd, $item, $refType, $refNo, $refLine, $vd, $ab, $aa, $qa, $va, $tgl, $tgl, $ket, $user);
+            if (!mysqli_stmt_execute($st)) {
+                $err = mysqli_stmt_error($st);
+                mysqli_stmt_close($st);
+                throw new InventoryException('Gagal menulis ledger koreksi: ' . $err, 'ledger_gagal');
+            }
+            $lid = mysqli_insert_id($this->db);
+            mysqli_stmt_close($st);
+            if ($newAvg !== $oldAvg) {
+                $st = mysqli_prepare($this->db,
+                    "INSERT INTO inv_avg_history (kd_cabang, no_item, avg_before, avg_after, trigger_type, trigger_ref, is_correction, changed_by)
+                     VALUES (?,?,?,?,'CORR_VALUE',?,1,?)");
+                $tr = substr($refType . ':' . $refNo, 0, 40);
+                mysqli_stmt_bind_param($st, 'ssssss', $kd, $item, $ab, $aa, $tr, $user);
+                mysqli_stmt_execute($st);
+                mysqli_stmt_close($st);
+            }
+            $st = mysqli_prepare($this->db,
+                "UPDATE inv_balance SET average_cost = ?, total_value = ?, version = version + 1 WHERE kd_cabang = ? AND no_item = ?");
+            mysqli_stmt_bind_param($st, 'ssss', $aa, $va, $kd, $item);
+            mysqli_stmt_execute($st);
+            mysqli_stmt_close($st);
+            if ($manageTx) {
+                mysqli_commit($this->db);
+            }
+            return ['idempotent' => false, 'ledger_id' => $lid, 'lokasi' => $kd, 'item' => $item, 'avg_before' => $ab,
+                    'avg_after' => $aa, 'qty_after' => $qa, 'value_after' => $va, 'value_delta' => $vd];
+        } catch (Throwable $e) {
+            if ($manageTx) {
+                mysqli_rollback($this->db);
+            }
+            throw $e;
+        }
+    }
+
+    /** Qty terjual/keluar di lokasi+item setelah ledger id tertentu (untuk membagi sisa vs terjual saat koreksi harga). */
+    public function qtyKeluarSejak($lokasi, $item, $ledgerId)
+    {
+        $kd = $this->resolveLocation($lokasi);
+        $st = mysqli_prepare($this->db, "SELECT COALESCE(SUM(qty_out),0) FROM inv_ledger WHERE kd_cabang = ? AND no_item = ? AND id > ?");
+        mysqli_stmt_bind_param($st, 'ssi', $kd, $item, $ledgerId);
+        mysqli_stmt_execute($st);
+        $q = mysqli_fetch_row(mysqli_stmt_get_result($st))[0];
+        mysqli_stmt_close($st);
+        return (string) $q;
+    }
+
+    public function saldo($lokasi, $item)
+    {
+        $kd = $this->resolveLocation($lokasi);
+        $st = mysqli_prepare($this->db, "SELECT * FROM inv_balance WHERE kd_cabang = ? AND no_item = ?");
+        mysqli_stmt_bind_param($st, 'ss', $kd, $item);
+        mysqli_stmt_execute($st);
+        $row = mysqli_fetch_assoc(mysqli_stmt_get_result($st));
+        mysqli_stmt_close($st);
+        return $row ?: ['qty_on_hand' => '0.000', 'average_cost' => '0.00', 'total_value' => '0.00'];
     }
 
     // ---------- pembalikan ----------

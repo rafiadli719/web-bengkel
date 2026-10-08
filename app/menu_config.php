@@ -480,6 +480,9 @@ return [
         'submenu' => [
             ['title' => 'Valuasi Persediaan', 'url' => '_inventory/laporan_valuasi.php', 'permission' => 'inv_laporan'],
             ['title' => 'Kartu Stok Bernilai', 'url' => '_inventory/laporan_kartu_stok.php', 'permission' => 'inv_laporan'],
+            ['title' => 'Transit, PPV, Klaim, HPP', 'url' => '_inventory/laporan_lain.php', 'permission' => 'inv_laporan'],
+            ['title' => 'Koreksi (Maker-Checker)', 'url' => '_inventory/koreksi.php', 'permission' => 'inv_koreksi'],
+            ['title' => 'Persetujuan Koreksi', 'url' => '_inventory/koreksi.php', 'permission' => 'inv_approve'],
             ['title' => 'Opening Stock', 'url' => '_inventory/opening_stock.php', 'permission' => 'inv_opening'],
             ['title' => 'Pengaturan & Rekonsiliasi', 'url' => '_inventory/admin.php', 'permission' => 'inv_admin'],
         ],

@@ -194,3 +194,16 @@
 2025-11-19 10:30:22 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
 2025-11-19 10:30:22 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
 2025-11-19 10:30:22 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)
+
+======= NEW TRANSACTION: IM26000000085 =======
+[2026-09-29 20:09:36 WIB] 💾 LOCAL DATABASE: Rows = 1, LastID = IM26000000085 - SUCCESS ✅
+2026-09-29 20:09:36 WIB - 🌐 ACCURATE API SYNC: Starting dengan 1 items
+2026-09-29 20:09:36 WIB - 📦 Processing Item 1/1: 20W-40MATIC (Qty: 2.000000)
+2026-09-29 20:09:36 WIB - 🚀 STARTING FIXED API CALL: /accurate/api/item-adjustment/save.do
+2026-09-29 20:09:36 WIB - 🔍 Calling api-token.do: https://account.accurate.id/api/api-token.do
+2026-09-29 20:09:36 WIB - 📊 api-token.do HTTP Code: 500
+2026-09-29 20:09:36 WIB - ❌ api-token.do HTTP Error: 500
+2026-09-29 20:09:36 WIB - 📄 Response: {"s":false,"d":["Data Usaha tidak tepat"]}
+2026-09-29 20:09:36 WIB - ❌ Item 1 FAILED: Cannot get Accurate host
+2026-09-29 20:09:36 WIB - 🏁 SYNC COMPLETED. Success: NO, Count: 0/1
+2026-09-29 20:09:36 WIB - ❌ ACCURATE SYNC FAILED: Cannot get Accurate host (Processed: 0/1)
