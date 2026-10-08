@@ -31,6 +31,7 @@ function bersih($k) {
     mysqli_query($k, "DELETE FROM tbstok WHERE no_item LIKE 'ZZTEST-AD%'");
     mysqli_query($k, "DELETE FROM inv_audit_log WHERE actor IN ('tes-adapter') OR ref LIKE 'ZZTAD%'");
     mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
+    mysqli_query($k, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-1'");
 }
 bersih($koneksi);
 
@@ -117,6 +118,16 @@ if ($modeOff) {
     cek('Keranjang dalam batas saldo lolos', inv_live_cek_keranjang($koneksi, 'PACUL', 'zz-keranjang') === null);
     mysqli_query($koneksi, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
     cek('Bukan live: cek keranjang tidak mengganggu', inv_live_cek_keranjang($koneksi, 'PST', 'zz-keranjang') === null);
+    mysqli_query($koneksi, "INSERT INTO tblservis_barang (no_service,kd_cabang,nobaris,no_item,quantity,qty_retur,harga_jual,potongan,total,asal_barang) VALUES ('ZZ-SV-1','PACUL',1,'ZZTEST-AD7',9,0,1,0,9,'SERVIS'),('ZZ-SV-1','PACUL',2,'ZZTEST-AD6',50,0,1,0,50,'PART-CUST')");
+    $sv = inv_live_cek_servis($koneksi, 'PACUL', 'ZZ-SV-1', true);
+    cek('Servis: barang SERVIS melebihi saldo ledger ditolak', is_array($sv) && $sv['item'] === 'ZZTEST-AD7' && $sv['diminta'] === 9.0);
+    cek('Servis: PART-CUST (milik pelanggan) tidak dihitung pada jalur berfilter', is_array($sv) && $sv['item'] !== 'ZZTEST-AD6');
+    $sv2 = inv_live_cek_servis($koneksi, 'PACUL', 'ZZ-SV-1', false);
+    cek('Servis tanpa filter (jalur rst) ikut menghitung semua baris', is_array($sv2));
+    mysqli_query($koneksi, "UPDATE tblservis_barang SET quantity=3 WHERE no_service='ZZ-SV-1' AND no_item='ZZTEST-AD7'");
+    cek('Servis dalam batas saldo lolos (jalur berfilter)', inv_live_cek_servis($koneksi, 'PACUL', 'ZZ-SV-1', true) === null);
+    cek('Servis nomor sama di cabang lain tidak ikut terhitung', inv_live_cek_servis($koneksi, 'PST', 'ZZ-SV-1', true) === null);
+    mysqli_query($koneksi, "DELETE FROM tblservis_barang WHERE no_service='ZZ-SV-1'");
 }
 
 bersih($koneksi);

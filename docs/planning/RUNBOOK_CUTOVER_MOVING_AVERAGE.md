@@ -27,12 +27,15 @@ Yang dikerjakan IT/Rafi ditandai (Rafi). Hal yang sudah dibangun di kode dan dit
 6. Mundur sebelum Tahap D: hapus baris OPENING hanya lewat IT dengan backup (ledger append-only, jangan lewat UI).
 
 ## Tahap D — Live
-**Sudah ada dan lulus E2E browser (PST, 2026-10-08), hanya alur Penjualan POS (`penjualan_add_rst.php`, `proses-add-detail/penjualan.php`):**
-stok yang berlaku saat tambah item dan saat simpan = saldo ledger baru; tanggal dipaksa hari ini; transaksi dicatat ke ledger dengan HPP. Guard sync Access: tidak menimpa saldo cabang live.
+**Sudah dibangun (hanya aktif bila cabang `live`; cabang `off/shadow` tidak berubah sama sekali):**
+- Stok yang berlaku = saldo ledger baru (`inv_balance`), dicek saat tambah item dan/atau saat simpan: Penjualan POS (`penjualan_add_rst.php`, `penjualan_add.php`), Stok Keluar manual dan opname keluar (aslinya tidak ada cek stok sama sekali), Servis bayar di 6 titik (reguler, rst, jemput, jemput-rst, garansi, halaman bayar), Transfer kirim (`pengadaan_antarcab_proses/push`), Retur pembelian.
+- Tanggal transaksi dipaksa hari ini (tanpa backdate, BR-06): penjualan, pembelian (4 varian), stok masuk/keluar, opname, penjualan/pembelian antar cabang.
+- Guard sync Access: tidak menimpa saldo cabang live.
+- E2E browser lulus (PST, 2026-10-08): Penjualan POS, Stok Keluar (6 > saldo 5 ditolak, 2 lolos), Pembelian (tanggal mundur dipaksa hari ini). Servis dan Transfer/Retur teruji di tingkat fungsi (CLI), belum di browser.
 
-**Masih harus dibangun dan dites E2E per alur sebelum cabang pilot boleh `live`** (mode `live` di halaman Pengaturan sengaja belum ditawarkan; setel lewat `InventoryService::setMode` hanya untuk uji):
-- Penegakan BR-05 + larang backdate di alur lain: servis bayar (6 titik), pembelian, retur, transfer antar cabang, stok manual, opname.
-- Atomisitas: posting ledger kini berjalan setelah penulisan lama di koneksi terpisah. Race dua kasir pada stok terakhir dicegah ledger (tidak pernah minus) tetapi `tbstok` lama bisa berbeda; rekonsiliasi harian menandainya. Untuk atomik penuh, alur harus dipindah ke satu transaksi.
+**Masih harus dikerjakan sebelum cabang pilot boleh `live` (mode `live` di halaman Pengaturan sengaja belum ditawarkan; setel lewat `InventoryService::setMode` hanya untuk uji):**
+- E2E browser di cabang pilot untuk Servis bayar (semua varian), Transfer, Retur, dan Terima DO.
+- Atomisitas: posting ledger berjalan setelah penulisan lama di koneksi terpisah. Race dua kasir pada stok terakhir dicegah ledger (tidak pernah minus) tetapi `tbstok` lama bisa berbeda; rekonsiliasi harian menandainya. Untuk atomik penuh, alur harus dipindah ke satu transaksi.
 - Isi `harga_pokok` snapshot di `tblpenjualan_detail` dan `tblservis_barang` (kolom baru, migrasi terpisah) agar laporan laba memakai HPP Moving Average.
 - `tbstok` lama: opening stock hanya masuk ledger baru. Pembaca lama (`view_stok_master`, kartu stok lama, MinMax) masih membaca `tbstok` yang saldonya historis negatif; normalisasi/proyeksi `tbstok` perlu diputuskan saat cutover.
 - Larang edit/hapus transaksi posted di semua endpoint (F3-07) dan arahkan ke Koreksi.

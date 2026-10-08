@@ -67,6 +67,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnkirim'])){
             foreach($items_kirim as $it){
                 $ni  = mysqli_real_escape_string($koneksi, $it['no_item']);
                 $qk  = (int)$it['qty_kirim'];
+                require_once __DIR__ . '/_include_inv_shadow.php'; $ada_live = inv_live_saldo($koneksi, $kd_safe, $ni); if ($ada_live !== null && $qk > $ada_live + 0.0005) { throw new Exception('Stok tidak mencukupi untuk ' . $ni . '. Tersedia: ' . $ada_live . ', diminta: ' . $qk . ' (kirim antar cabang)'); }
                 $hpp = (float)$it['harga_pokok'];
                 $nb  = (int)$it['no_baris'];
                 $sub = $qk * $hpp;

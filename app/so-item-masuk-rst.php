@@ -44,6 +44,7 @@
             }
                 
             $txttgl = ubahformatTgl($_POST['id-date-picker-1']);             
+            require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
             
             mysqli_query($koneksi,"INSERT INTO tbitem_masuk_header 
                                     (no_transaksi, tanggal, 

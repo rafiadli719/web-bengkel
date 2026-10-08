@@ -89,6 +89,7 @@
                     return $satukan;
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
+            require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgljl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
             
                 // lama_hari/Id_tabel NOT NULL tanpa default gak diisi -> INSERT header
                 // gagal silent (pola sama kayak Penjualan/Pembelian lainnya). Follow-up:

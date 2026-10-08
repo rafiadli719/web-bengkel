@@ -113,6 +113,7 @@
                     return $satukan;
             }                
             $txttgljl = ubahformatTgl($_POST['id-date-picker-1']); 
+            require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttgljl = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
             $cbocarabyr = mysqli_real_escape_string($koneksi, $_POST['cbocarabyr']); 
             $txtsyarat = mysqli_real_escape_string($koneksi, $_POST['txtsyarat']); 
             $txtnote = mysqli_real_escape_string($koneksi, $_POST['txtnote']); 

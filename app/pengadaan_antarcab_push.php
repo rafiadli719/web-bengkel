@@ -97,6 +97,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnsimpan'])){
                 foreach($items as $it){
                     $ni  = mysqli_real_escape_string($koneksi,$it['no_item']);
                     $qty = (int)$it['qty'];
+                    require_once __DIR__ . '/_include_inv_shadow.php'; $ada_live = inv_live_saldo($koneksi, $kd_safe, $ni); if ($ada_live !== null && $qty > $ada_live + 0.0005) { throw new Exception('Stok tidak mencukupi untuk ' . $ni . '. Tersedia: ' . $ada_live . ', diminta: ' . $qty . ' (kirim antar cabang)'); }
                     $hpp = (float)$it['hpp'];
                     $sub = (float)$it['subtotal'];
                     $qd  = mysqli_query($koneksi,

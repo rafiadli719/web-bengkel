@@ -532,6 +532,8 @@
 
         if(isset($_POST['btnsimpan'])) {	
             $no_service= mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);			
+            require_once __DIR__ . '/_include_inv_shadow.php'; // Moving Average live BR-05
+            $kurang_live = inv_live_cek_servis($koneksi, $kd_cabang, $no_service, false); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', dibutuhkan: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
             $km_skr=mysqli_real_escape_string($koneksi, $_POST['txtkm_skr']);
             $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);    
 

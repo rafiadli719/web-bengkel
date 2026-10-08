@@ -263,6 +263,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
+                require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
                 $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                 $cbosupplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
                 $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);

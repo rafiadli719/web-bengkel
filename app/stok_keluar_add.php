@@ -151,6 +151,8 @@
                 }
                 
                 $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
+                require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+                $kurang_live = inv_live_cek_keranjang($koneksi, $kd_cabang, $_nama, 'tbitem_keluar_detail'); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', diminta: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
                 $txttotal_harga= mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
                 $txtket= mysqli_real_escape_string($koneksi, $_POST['txtket']);
         

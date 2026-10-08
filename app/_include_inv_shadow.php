@@ -109,15 +109,48 @@ function inv_live_saldo($koneksi, $lokasi, $item)
  * Periksa seluruh keranjang penjualan (status_trx 0) terhadap saldo ledger baru. null = aman atau bukan live;
  * array = item pertama yang kurang ['item', 'tersedia', 'diminta'].
  */
-function inv_live_cek_keranjang($koneksi, $lokasi, $user)
+function inv_live_cek_keranjang($koneksi, $lokasi, $user, $tabel = 'tblpenjualan_detail')
+{
+    try {
+        if (!in_array($tabel, ['tblpenjualan_detail', 'tbitem_keluar_detail'], true) || !inv_cabang_live($koneksi, $lokasi)) {
+            return null;
+        }
+        $st = mysqli_prepare($koneksi,
+            "SELECT no_item, SUM(quantity) q FROM $tabel WHERE user = ? AND kd_cabang = ? AND status_trx = '0' GROUP BY no_item");
+        mysqli_stmt_bind_param($st, 'ss', $user, $lokasi);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $baris = [];
+        while ($r = mysqli_fetch_assoc($res)) {
+            $baris[] = $r;
+        }
+        mysqli_stmt_close($st);
+        foreach ($baris as $r) {
+            $ada = inv_live_saldo($koneksi, $lokasi, $r['no_item']);
+            if ($ada !== null && (float) $r['q'] > $ada + 0.0005) {
+                return ['item' => $r['no_item'], 'tersedia' => $ada, 'diminta' => (float) $r['q']];
+            }
+        }
+        return null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/**
+ * Periksa barang sebuah servis terhadap saldo ledger baru sebelum dibayar. null = aman atau bukan live;
+ * array = item pertama yang kurang. $hanyaServis=true meniru jalur yang hanya memotong asal_barang='SERVIS'.
+ */
+function inv_live_cek_servis($koneksi, $lokasi, $noService, $hanyaServis = true)
 {
     try {
         if (!inv_cabang_live($koneksi, $lokasi)) {
             return null;
         }
-        $st = mysqli_prepare($koneksi,
-            "SELECT no_item, SUM(quantity) q FROM tblpenjualan_detail WHERE user = ? AND kd_cabang = ? AND status_trx = '0' GROUP BY no_item");
-        mysqli_stmt_bind_param($st, 'ss', $user, $lokasi);
+        $sql = "SELECT no_item, SUM(quantity) q FROM tblservis_barang WHERE no_service = ? AND kd_cabang = ?"
+             . ($hanyaServis ? " AND asal_barang = 'SERVIS'" : '') . " GROUP BY no_item";
+        $st = mysqli_prepare($koneksi, $sql);
+        mysqli_stmt_bind_param($st, 'ss', $noService, $lokasi);
         mysqli_stmt_execute($st);
         $res = mysqli_stmt_get_result($st);
         $baris = [];

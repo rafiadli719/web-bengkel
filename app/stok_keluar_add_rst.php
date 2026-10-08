@@ -622,6 +622,8 @@ if(empty($_SESSION['_iduser'])){
             }
             
             $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']); 
+            require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+            $kurang_live = inv_live_cek_keranjang($koneksi, $kd_cabang, $_nama, 'tbitem_keluar_detail'); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', diminta: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
             $txtket = $_POST['txtket'] ?? 'Penyesuaian Stok Item Keluar';
                          
             $data = mysqli_query($koneksi,"SELECT no_transaksi 

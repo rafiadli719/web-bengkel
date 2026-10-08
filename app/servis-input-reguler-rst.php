@@ -696,6 +696,8 @@
     // Payment Processing for RST
     if(isset($_POST['btnbayar'])) {
         $no_service= $_POST['txtnosrv'] ?? $no_service;
+        require_once __DIR__ . '/_include_inv_shadow.php'; // Moving Average live BR-05
+        $kurang_live = inv_live_cek_servis($koneksi, $kd_cabang, $no_service, false); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', dibutuhkan: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
         $km_skr=$_POST['txtkm_skr'] ?? 0;
         $km_berikut=$_POST['txtkm_next'] ?? 0;
 

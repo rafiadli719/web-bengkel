@@ -78,6 +78,7 @@ try {
         $sisa  = (int)$row_d['quantity'] - (int)$row_d['qty_retur'];
         if($qty > $sisa) $qty = $sisa;
         if($qty <= 0) continue;
+        require_once __DIR__ . '/_include_inv_shadow.php'; $ada_live = inv_live_saldo($koneksi, $kd_cabang, $no_item); if ($ada_live !== null && $qty > $ada_live + 0.0005) { throw new Exception('Stok tidak mencukupi untuk ' . $no_item . '. Tersedia: ' . $ada_live . ', diminta: ' . $qty . ' (retur pembelian)'); }
         $subtotal = $qty * $harga;
 
         $sql_d = "INSERT INTO tblretur_pembelian_detail
