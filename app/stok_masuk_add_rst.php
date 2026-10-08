@@ -396,6 +396,7 @@ if (empty($_SESSION['_iduser'])) {
 
             $txttglpesan = ubahformatTgl($_POST['id-date-picker-1']);
             require_once __DIR__ . '/_include_inv_shadow.php'; if (inv_cabang_live($koneksi, $kd_cabang)) { $txttglpesan = date('Y-m-d'); } // Moving Average live: tanpa backdate (BR-06)
+            inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik sampai stok lokal selesai
             $txttglpesan_accurate = ubahformatTglToAccurate($_POST['id-date-picker-1']);
             $txttotal_harga = mysqli_real_escape_string($koneksi, $_POST['txttotal_harga']);
             $txtket = mysqli_real_escape_string($koneksi, $_POST['txtket']);
@@ -429,7 +430,7 @@ if (empty($_SESSION['_iduser'])) {
 
                     // Update stok lokal
                     mysqli_query($koneksi, "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang) VALUES ('5','$LastID','$no_item', '$txttglpesan','$qty','0', 'Penyesuaian Stok Item Masuk','$kd_cabang')");
-                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_in($koneksi, $kd_cabang, $no_item, $qty, number_format((float)$harga, 2, '.', ''), 'STOK_MASUK', $LastID, 'Penyesuaian stok masuk', ($_nama ?? '')); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; inv_atomic_in($koneksi, $kd_cabang, $no_item, $qty, number_format((float)$harga, 2, '.', ''), 'STOK_MASUK', $LastID, 'Penyesuaian stok masuk', ($_nama ?? '')); // Moving Average shadow
 
                     $items_to_update[] = [
                         'itemNo' => $no_item,
@@ -443,6 +444,7 @@ if (empty($_SESSION['_iduser'])) {
                     ];
                 }
 
+                inv_live_tx_commit(); // Moving Average live: komit sebelum sinkronisasi Accurate (HTTP)
                 if (empty($items_to_update)) {
                     file_put_contents($log_file, date('Y-m-d H:i:s') . " WIB - ⚠️ No items to sync\n", FILE_APPEND);
                     echo "<script>window.alert('✅ Data berhasil disimpan ke database lokal.');window.location=('stok_masuk_add_cetak.php?nopesanan=$LastID');</script>";
