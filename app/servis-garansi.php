@@ -293,6 +293,7 @@
     $persen_kerja3 = 0;
         $mekanik4 = "";
     $persen_kerja4 = 0;
+    $persen_mekanik1 = 0; $persen_mekanik2 = 0; $persen_mekanik3 = 0; $persen_mekanik4 = 0; // dipakai UPDATE pembayaran (sebelumnya tidak terinisialisasi -> '' gagal di strict)
 
     // Initialize additional variables for templates
     $txtcaribrg = mysqli_real_escape_string($koneksi, $_GET['kd'] ?? '');
@@ -851,6 +852,13 @@
             $persen_kerja3 = $existing_data['persen_kerja3'] ?? 0;
             $mekanik4 = $existing_data['mekanik4'] ?? '';
             $persen_kerja4 = $existing_data['persen_kerja4'] ?? 0;
+            $persen_mekanik1 = $existing_data['persen_mekanik1'] ?? 0;
+            $persen_mekanik2 = $existing_data['persen_mekanik2'] ?? 0;
+            $persen_mekanik3 = $existing_data['persen_mekanik3'] ?? 0;
+            $persen_mekanik4 = $existing_data['persen_mekanik4'] ?? 0;
+            $persen_kepala1 = $existing_data['persen_kepala_mekanik1'] ?? $persen_kepala1;
+            $persen_kepala2 = $existing_data['persen_kepala_mekanik2'] ?? $persen_kepala2;
+            $kepala_mekanik2 = $existing_data['kepala_mekanik2'] ?? $kepala_mekanik2;
         }
     }
 
