@@ -202,6 +202,17 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `.impeccable/config.json` dengan alasan tercatat (accordion click-
   triggered, max 4 kategori, bukan animasi scroll/frequent).
 
+**Update 2026-10-08 Moving Average (commit `ff6c48b`, `1c028b6`, `8acbaa1`):** HPP resmi = Moving Average per lokasi
+(planning `docs/planning/PLANNING_MOVING_AVERAGE_WEBBASE_2026-10-05.md`). Fase 0-2 DIKERJAKAN SEBAGAI SHADOW saja:
+tabel `inv_*`, `app/lib/InventoryService.php`, adapter `app/_include_inv_shadow.php` di 29 titik tulis `tbstok`,
+modul `app/_inventory/` (admin mode, rekonsiliasi, opening stock, valuasi, kartu stok), permission `inv_*`.
+`inv_mode` default `off` di semua cabang = nol efek ke jalur lama. Keputusan D-01..D-12 memakai rekomendasi planning
+(`.ai/decisions/2026-10-08-moving-average-keputusan-default.md`); `tbstok.kd_cabang` sengaja TIDAK dinormalisasi.
+Tes CLI 60 lulus (`tests/inventory/`). BELUM: E2E UI browser (butuh login), migrasi `2026-10-08_*` di produksi,
+opening stock dari opname fisik, mode `live`/BR-05 (F5-06), Fase 3-4 (koreksi, maker-checker, periode, opname,
+klaim supplier), jurnal/COA (D-07). Temuan F0-08: `servis-reguler-byr.php` tanpa guard potong ganda
+(`docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`). Aturan project "HPP FIFO" sudah usang, ganti ke Moving Average.
+
 **Masih pending/backlog beneran (bukan salah baca history):**
 - **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
   per cabang + lengkapi akun Kepala Mekanik (`KM`) di cabang PACUL,
