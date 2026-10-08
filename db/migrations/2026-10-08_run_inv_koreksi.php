@@ -9,7 +9,7 @@ if (!$koneksi) { echo "Koneksi gagal: " . mysqli_connect_error() . "\n"; exit(1)
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $mode = $argv[1] ?? 'up';
 $force = ($argv[2] ?? '') === 'force';
-$tabel = ['inv_ppv_log', 'inv_claim_receivable', 'inv_correction_request', 'inv_period', 'inv_transit'];
+$tabel = ['inv_journal_line', 'inv_journal', 'inv_ppv_log', 'inv_claim_receivable', 'inv_correction_request', 'inv_period', 'inv_transit'];
 
 if ($mode === 'down') {
     $isi = 0;
@@ -84,6 +84,30 @@ $ddl = [
   decided_at DATETIME NULL,
   PRIMARY KEY (id),
   KEY idx_inv_corr_status (status, kd_cabang)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+"CREATE TABLE IF NOT EXISTS inv_journal (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  source_type VARCHAR(10) NOT NULL,
+  source_id BIGINT NOT NULL,
+  kd_cabang VARCHAR(10) NOT NULL,
+  jdate DATE NOT NULL,
+  ref_type VARCHAR(30) NOT NULL,
+  ref_no VARCHAR(40) NOT NULL,
+  description VARCHAR(120) NOT NULL DEFAULT '',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_inv_journal_src (source_type, source_id),
+  KEY idx_inv_journal_date (jdate, kd_cabang)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+"CREATE TABLE IF NOT EXISTS inv_journal_line (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  journal_id BIGINT NOT NULL,
+  account VARCHAR(30) NOT NULL,
+  debit DECIMAL(18,2) NOT NULL DEFAULT 0,
+  credit DECIMAL(18,2) NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  KEY idx_inv_jl_journal (journal_id),
+  KEY idx_inv_jl_account (account)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
 "CREATE TABLE IF NOT EXISTS inv_period (
   period CHAR(7) NOT NULL,

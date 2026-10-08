@@ -664,6 +664,107 @@ class InventoryService
         }
     }
 
+    /**
+     * Konversi satuan (F4-08, Test 9): qty x rasio, total_value tetap, average = average lama / rasio.
+     * Contoh: 10 dus @ Rp12.000 dengan rasio 12 menjadi 120 pcs @ Rp1.000. Dicatat sebagai selisih qty bernilai 0.
+     * $rasio > 0, maks 3 desimal; hasil qty harus terwakili dalam 3 desimal. Ledger tetap append-only.
+     */
+    public function convertUnit($lokasi, $item, $rasio, $refNo, array $opts = [])
+    {
+        $item = trim((string) $item);
+        $rM = self::toMilli($rasio);
+        if ($rM <= 0) {
+            throw new InventoryException('Rasio harus lebih dari 0', 'rasio_invalid');
+        }
+        $kd = $this->resolveLocation($lokasi);
+        $user = substr((string) ($opts['user'] ?? ''), 0, 50);
+        $tgl = date('Y-m-d');
+        $this->assertPeriodOpen($kd, $tgl, true);
+        mysqli_begin_transaction($this->db);
+        try {
+            $dup = $this->findLedger($kd, $item, 'UNIT_CONV', $refNo, 0, 'UNIT_CONV');
+            if ($dup) {
+                mysqli_commit($this->db);
+                return $this->hasil($dup, true);
+            }
+            $bal = $this->lockBalance($kd, $item);
+            $oldQ = self::toMilli($bal['qty_on_hand']);
+            $oldAvg = self::toSen($bal['average_cost']);
+            $tv = self::toSen($bal['total_value']);
+            if ($oldQ <= 0) {
+                throw new InventoryException('Stok 0: tidak ada yang dikonversi', 'stok_kosong');
+            }
+            $prod = $oldQ * $rM;                     // milli x milli
+            if ($prod % 1000 !== 0) {
+                throw new InventoryException('Hasil konversi qty melebihi 3 desimal', 'rasio_invalid');
+            }
+            $newQ = intdiv($prod, 1000);
+            $newAvg = self::divRound($tv * 1000, $newQ);
+            $dq = $newQ - $oldQ;
+            $qIn = self::fromMilli(max($dq, 0));
+            $qOut = self::fromMilli(max(-$dq, 0));
+            $ab = self::fromSen($oldAvg);
+            $aa = self::fromSen($newAvg);
+            $qa = self::fromMilli($newQ);
+            $va = self::fromSen($tv);
+            $ket = substr('Konversi satuan x' . rtrim(rtrim(self::fromMilli($rM), '0'), '.'), 0, 100);
+            $st = mysqli_prepare($this->db,
+                "INSERT INTO inv_ledger (kd_cabang, no_item, trx_type, ref_type, ref_no, ref_line, qty_in, qty_out, unit_cost,
+                    value_delta, avg_before, avg_after, qty_after, value_after, transaction_date, correction_date, is_correction, keterangan, created_by)
+                 VALUES (?,?,'UNIT_CONV','UNIT_CONV',?,0,?,?,0,0,?,?,?,?,?,?,1,?,?)");
+            mysqli_stmt_bind_param($st, 'sssssssssssss', $kd, $item, $refNo, $qIn, $qOut, $ab, $aa, $qa, $va, $tgl, $tgl, $ket, $user);
+            mysqli_stmt_execute($st);
+            $lid = mysqli_insert_id($this->db);
+            mysqli_stmt_close($st);
+            $st = mysqli_prepare($this->db,
+                "INSERT INTO inv_avg_history (kd_cabang, no_item, avg_before, avg_after, trigger_type, trigger_ref, is_correction, changed_by)
+                 VALUES (?,?,?,?,'UNIT_CONV',?,1,?)");
+            $tr = substr('UNIT_CONV:' . $refNo, 0, 40);
+            mysqli_stmt_bind_param($st, 'ssssss', $kd, $item, $ab, $aa, $tr, $user);
+            mysqli_stmt_execute($st);
+            mysqli_stmt_close($st);
+            $st = mysqli_prepare($this->db,
+                "UPDATE inv_balance SET qty_on_hand = ?, average_cost = ?, version = version + 1 WHERE kd_cabang = ? AND no_item = ?");
+            mysqli_stmt_bind_param($st, 'ssss', $qa, $aa, $kd, $item);
+            mysqli_stmt_execute($st);
+            mysqli_stmt_close($st);
+            mysqli_commit($this->db);
+            return ['idempotent' => false, 'ledger_id' => $lid, 'lokasi' => $kd, 'item' => $item, 'qty_after' => $qa,
+                    'avg_before' => $ab, 'avg_after' => $aa, 'value_after' => $va];
+        } catch (Throwable $e) {
+            mysqli_rollback($this->db);
+            throw $e;
+        }
+    }
+
+    /**
+     * Cek integritas (F5-05): untuk setiap item, saldo = jumlah ledger (qty dan nilai). Hanya baca.
+     * Mengembalikan ['item_dicek' => n, 'selisih' => [...]]. Selisih kosong berarti sehat.
+     */
+    public function selfCheck($lokasi = null)
+    {
+        $w = '';
+        if ($lokasi !== null) {
+            $w = "WHERE b.kd_cabang = '" . mysqli_real_escape_string($this->db, $this->resolveLocation($lokasi)) . "'";
+        }
+        $r = mysqli_query($this->db,
+            "SELECT b.kd_cabang, b.no_item, b.qty_on_hand, b.total_value,
+                    COALESCE(SUM(l.qty_in - l.qty_out), 0) q_ledger, COALESCE(SUM(l.value_delta), 0) v_ledger
+             FROM inv_balance b LEFT JOIN inv_ledger l ON l.kd_cabang = b.kd_cabang AND l.no_item = b.no_item
+             $w GROUP BY b.kd_cabang, b.no_item, b.qty_on_hand, b.total_value");
+        $n = 0;
+        $selisih = [];
+        while ($x = mysqli_fetch_assoc($r)) {
+            $n++;
+            $dq = round((float) $x['qty_on_hand'] - (float) $x['q_ledger'], 3);
+            $dv = round((float) $x['total_value'] - (float) $x['v_ledger'], 2);
+            if ($dq != 0 || $dv != 0) {
+                $selisih[] = ['lokasi' => $x['kd_cabang'], 'item' => $x['no_item'], 'selisih_qty' => $dq, 'selisih_nilai' => $dv];
+            }
+        }
+        return ['item_dicek' => $n, 'selisih' => $selisih];
+    }
+
     /** Qty terjual/keluar di lokasi+item setelah ledger id tertentu (untuk membagi sisa vs terjual saat koreksi harga). */
     public function qtyKeluarSejak($lokasi, $item, $ledgerId)
     {

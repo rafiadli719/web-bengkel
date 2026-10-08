@@ -202,16 +202,19 @@ berubah (jangan biarin basi lagi kayak sebelumnya).
   `.impeccable/config.json` dengan alasan tercatat (accordion click-
   triggered, max 4 kategori, bukan animasi scroll/frequent).
 
-**Update 2026-10-08 Moving Average (commit `ff6c48b`, `1c028b6`, `8acbaa1`):** HPP resmi = Moving Average per lokasi
-(planning `docs/planning/PLANNING_MOVING_AVERAGE_WEBBASE_2026-10-05.md`). Fase 0-2 DIKERJAKAN SEBAGAI SHADOW saja:
-tabel `inv_*`, `app/lib/InventoryService.php`, adapter `app/_include_inv_shadow.php` di 29 titik tulis `tbstok`,
-modul `app/_inventory/` (admin mode, rekonsiliasi, opening stock, valuasi, kartu stok), permission `inv_*`.
+**Update 2026-10-08 Moving Average (commit `ff6c48b`..`58b9103` dan lanjutan):** HPP resmi = Moving Average per lokasi
+(planning `docs/planning/PLANNING_MOVING_AVERAGE_WEBBASE_2026-10-05.md`). Fase 0-4 + jurnal + cek harian SELESAI di lokal,
+semuanya mode shadow/off: tabel `inv_*`, `app/lib/InventoryService.php`/`InventoryCorrection.php`/`InventoryJournal.php`,
+adapter `app/_include_inv_shadow.php` di 29 titik tulis `tbstok`, modul `app/_inventory/` (pengaturan+rekonsiliasi, opening stock,
+valuasi, kartu stok, koreksi maker-checker, laporan transit/PPV/klaim/HPP), permission `inv_*`, `scripts/inv_harian.php`.
 `inv_mode` default `off` di semua cabang = nol efek ke jalur lama. Keputusan D-01..D-12 memakai rekomendasi planning
 (`.ai/decisions/2026-10-08-moving-average-keputusan-default.md`); `tbstok.kd_cabang` sengaja TIDAK dinormalisasi.
-Tes CLI 60 lulus (`tests/inventory/`). BELUM: E2E UI browser (butuh login), migrasi `2026-10-08_*` di produksi,
-opening stock dari opname fisik, mode `live`/BR-05 (F5-06), Fase 3-4 (koreksi, maker-checker, periode, opname,
-klaim supplier), jurnal/COA (D-07). Temuan F0-08: `servis-reguler-byr.php` tanpa guard potong ganda
-(`docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`). Aturan project "HPP FIFO" sudah usang, ganti ke Moving Average.
+Tes CLI 139 lulus (`tests/inventory/`) dan E2E browser lulus (pembelian+penjualan nyata dengan PST shadow, rekonsiliasi 0
+selisih, maker-checker ADM->KEU, opening stock, RBAC). Bug penjualan langsung tanpa pesanan (`penjualan_add_rst.php`) ikut diperbaiki.
+BELUM: migrasi `2026-10-08_*` di produksi, opening stock dari opname fisik (D-03), mode `live` per cabang + BR-05/larang
+backdate di tiap alur (F5-06), kode akun COA (D-07; jurnal otomatis aktif begitu `inv_config acct_*` diisi), checklist-projek.
+Temuan F0-08: `servis-reguler-byr.php` tanpa guard potong ganda (`docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`).
+Aturan project "HPP FIFO" sudah usang, ganti ke Moving Average.
 
 **Masih pending/backlog beneran (bukan salah baca history):**
 - **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
