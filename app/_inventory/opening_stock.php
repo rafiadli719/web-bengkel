@@ -44,7 +44,7 @@ if (isset($_GET['template'])) {
     header('Content-Disposition: attachment; filename="opening_stock_' . $lok . '.csv"');
     $out = fopen('php://output', 'w');
     fputcsv($out, ['kd_cabang', 'no_item', 'nama_item', 'qty_fisik', 'unit_cost', 'sumber_biaya']);
-    $ri = mysqli_query($koneksi, "SELECT noitem, namaitem, hargapokok FROM tblitem WHERE statusproduk <> '0' OR statusproduk IS NULL ORDER BY noitem");
+    $ri = mysqli_query($koneksi, "SELECT noitem, namaitem, hargapokok FROM tblitem WHERE (statusproduk <> '0' OR statusproduk IS NULL) AND TRIM(noitem) NOT IN ('', '-') ORDER BY noitem");
     while ($it = mysqli_fetch_assoc($ri)) {
         [$biaya, $sumber] = saranBiayaInv($koneksi, $it['noitem'], $acuan);
         if ($biaya === '' && (float) $it['hargapokok'] > 0) {

@@ -425,8 +425,8 @@
                                                 WHERE no_order='$nopesanan'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tanggal_order=$tm_cari['tanggal'];
-                $total_qty_order=$tm_cari['total_qty'];
-                
+                $total_qty_order=$tm_cari['total_qty'] ?? '0'; // penjualan langsung tanpa pesanan: NULL -> '' gagal di kolom int (strict)
+
                 // id_tabel NOT NULL tanpa default gak diisi -> INSERT header gagal silent,
                 // padahal UPDATE detail sesudahnya tetap jalan (data hilang). Historis '' terus.
                 $header_ok = mysqli_query($koneksi,"INSERT INTO tblpenjualan_header
@@ -452,6 +452,7 @@ VALUES
 '$txtkekurangan','$_nama','$kd_cabang','" . (is_numeric($txtsyarat) ? (int)$txtsyarat : 0) . "','')");
 
                 if (!$header_ok) {
+                    error_log('[penjualan_add_rst] INSERT header ' . $LastID . ' gagal: ' . mysqli_error($koneksi));
                     echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('penjualan_add_rst.php');</script>";
                 } else {
 
