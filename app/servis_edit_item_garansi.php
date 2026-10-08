@@ -36,7 +36,7 @@
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         no_item, quantity, harga_jual, total, potongan 
                                         FROM tblservis_barang 
-                                        WHERE id='$sid'");			
+                                        WHERE id='$sid' AND NOT EXISTS (SELECT 1 FROM tblservice sv WHERE sv.no_service = tblservis_barang.no_service AND sv.kd_cabang = tblservis_barang.kd_cabang AND sv.status_servis IN ('bayar','selesai'))");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $no_item=$tm_cari['no_item'];
         $qty=$tm_cari['quantity'];
