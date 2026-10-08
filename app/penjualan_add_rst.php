@@ -440,6 +440,9 @@
 
                 // id_tabel NOT NULL tanpa default gak diisi -> INSERT header gagal silent,
                 // padahal UPDATE detail sesudahnya tetap jalan (data hilang). Historis '' terus.
+                // Moving Average live: header + detail + tbstok + ledger dalam SATU transaksi (BR-05 atomik, tanpa race antar kasir)
+                $live_atomik = inv_cabang_live($koneksi, $kd_cabang);
+                if ($live_atomik) { $svc_live = new InventoryService($koneksi); mysqli_begin_transaction($koneksi); }
                 $header_ok = mysqli_query($koneksi,"INSERT INTO tblpenjualan_header
 (notransaksi, status, carabayar, tanggal,
 no_order, tanggal_order, no_sales, no_pelanggan,
@@ -463,6 +466,7 @@ VALUES
 '$txtkekurangan','$_nama','$kd_cabang','" . (is_numeric($txtsyarat) ? (int)$txtsyarat : 0) . "','')");
 
                 if (!$header_ok) {
+                    if ($live_atomik) { mysqli_rollback($koneksi); }
                     error_log('[penjualan_add_rst] INSERT header ' . $LastID . ' gagal: ' . mysqli_error($koneksi));
                     echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('penjualan_add_rst.php');</script>";
                 } else {
@@ -488,7 +492,19 @@ VALUES
                                         ('3','$LastID','$no_item',
                                         '$txttglpesan','0','$qty',
                                         'Penjualan','$kd_cabang')");
-                                        require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $hasil_inv, $LastID, $no_item, $kd_cabang); // Moving Average shadow
+                                        require_once __DIR__ . '/_include_inv_shadow.php';
+                                        if ($live_atomik) {
+                                            try {
+                                                $hasil_inv = $svc_live->postOut($kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, ['trx_type' => 'PENJUALAN', 'user' => ($_nama ?? ''), 'ref_line' => (int)($tampil['nobaris'] ?? 0), 'manage_tx' => false]);
+                                                inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $hasil_inv, $LastID, $no_item, $kd_cabang);
+                                            } catch (Throwable $e_live) {
+                                                mysqli_rollback($koneksi);
+                                                echo "<script>window.alert(" . json_encode('Transaksi dibatalkan, tidak ada yang tersimpan: ' . $e_live->getMessage()) . ");window.location=('penjualan_add_rst.php');</script>";
+                                                exit;
+                                            }
+                                        } else {
+                                            require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'PENJUALAN', $LastID, 'Penjualan', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblpenjualan_detail', $hasil_inv, $LastID, $no_item, $kd_cabang); // Moving Average shadow
+                                        }
 
                     if($nopesanan<>'') {
                         mysqli_query($koneksi,"UPDATE tblorderjual_detail
@@ -507,6 +523,7 @@ VALUES
                                                 WHERE
                                                 no_order='$nopesanan'");
                 }
+                if ($live_atomik) { mysqli_commit($koneksi); }
                 echo"<script>window.location=('penjualan_cetak.php?nopesanan=$LastID');</script>";
                 }
 
