@@ -277,6 +277,16 @@ function inv_live_tx_shutdown()
     $GLOBALS['__inv_tx']['selesai'] = true;
 }
 
+/** Komit eksplisit (mis. sebelum panggilan WhatsApp/HTTP agar transaksi tidak terbuka menunggu jaringan). Tanpa efek bila tidak ada transaksi. */
+function inv_live_tx_commit()
+{
+    $t = $GLOBALS['__inv_tx'] ?? null;
+    if ($t && !$t['selesai']) {
+        @mysqli_commit($t['k']);
+        $GLOBALS['__inv_tx']['selesai'] = true;
+    }
+}
+
 function inv_atomic_abort($e)
 {
     $t = $GLOBALS['__inv_tx'] ?? null;

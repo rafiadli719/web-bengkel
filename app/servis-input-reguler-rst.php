@@ -698,6 +698,7 @@
         $no_service= $_POST['txtnosrv'] ?? $no_service;
         require_once __DIR__ . '/_include_inv_shadow.php'; // Moving Average live BR-05
         $kurang_live = inv_live_cek_servis($koneksi, $kd_cabang, $no_service, false); if ($kurang_live) { echo "<script>window.alert(" . json_encode('Stok tidak mencukupi untuk ' . $kurang_live['item'] . '. Tersedia: ' . $kurang_live['tersedia'] . ', dibutuhkan: ' . $kurang_live['diminta']) . ");window.history.back();</script>"; exit; }
+        inv_live_tx_begin($koneksi, $kd_cabang); // Moving Average live: transaksi atomik sampai potong stok selesai
         $km_skr=$_POST['txtkm_skr'] ?? 0;
         $km_berikut=$_POST['txtkm_next'] ?? 0;
 
@@ -967,7 +968,7 @@
                     (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                     VALUES
                     ('4','$no_service','$no_item','$tanggal_srv','0','$qty','Servis','$kd_cabang')");
-                    require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_shadow_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
+                    require_once __DIR__ . '/_include_inv_shadow.php'; $hasil_inv = inv_atomic_out($koneksi, $kd_cabang, $no_item, $qty, 'SERVIS', $no_service, 'Servis', ($_nama ?? ''), (int)($tampil['nobaris'] ?? 0)); inv_snapshot_hpp($koneksi, 'tblservis_barang', $hasil_inv, $no_service, $no_item, $kd_cabang); // Moving Average shadow
             }
         }
 
@@ -1000,6 +1001,7 @@
             // Update jam_selesai karena langsung bayar
             mysqli_query($koneksi, "UPDATE tb_antrian_servis SET jam_selesai=NOW() WHERE no_service='$no_service'");
 
+            inv_live_tx_commit(); // Moving Average live: komit sebelum panggilan WhatsApp/HTTP
             // ========== KIRIM WHATSAPP OTOMATIS ==========
             try {
                 if(file_exists('config_whatsapp.php')) {
