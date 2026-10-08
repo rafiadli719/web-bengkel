@@ -52,6 +52,31 @@ function inv_shadow_svc($koneksi)
     return $svc;
 }
 
+/**
+ * True bila lokasi (alias atau kode kanonik) berstatus live. Baca-saja di koneksi utama; false bila tabel belum ada.
+ * Dipakai untuk menghentikan penulis lama (mis. sync Access) menimpa saldo cabang yang sudah dikelola ledger baru.
+ */
+function inv_cabang_live($koneksi, $lokasi)
+{
+    try {
+        $lok = strtoupper(trim((string) $lokasi));
+        $st = @mysqli_prepare($koneksi,
+            "SELECT c.config_value FROM inv_location l JOIN inv_config c ON c.kd_cabang = l.kode AND c.config_key = 'inv_mode'
+             WHERE l.alias = ? LIMIT 1");
+        if (!$st) {
+            return false;
+        }
+        mysqli_stmt_bind_param($st, 's', $lok);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $row = $res ? mysqli_fetch_assoc($res) : null;
+        mysqli_stmt_close($st);
+        return $row && $row['config_value'] === 'live';
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
 /** Biaya satuan bersih dari total baris: total / qty, jatuh ke $fallback bila total/qty tidak ada. */
 function inv_biaya_satuan($total, $qty, $fallback = 0)
 {

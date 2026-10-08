@@ -1094,6 +1094,10 @@ function accessSyncUpsertStokCabang($koneksi, $defaults) {
     $qty      = (int)($defaults['quantity'] ?? 0);
     if ($noItem === '' || $kdCabang === '' || $qty <= 0) return;
 
+    // Moving Average F2-13: cabang yang sudah live dikelola ledger inv_*; sync Access tidak boleh menimpa saldo.
+    require_once __DIR__ . '/_include_inv_shadow.php';
+    if (inv_cabang_live($koneksi, $kdCabang)) return;
+
     // Marker khusus saldo awal dari Access — DELETE lama lalu INSERT baru
     $noTrxSync = 'SYNC-ACC-' . strtoupper($kdCabang);
 

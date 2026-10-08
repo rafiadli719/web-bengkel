@@ -95,6 +95,13 @@ if ($modeOff) {
     cek('Item yang tercatat di kedua jalur tidak muncul sebagai selisih', !isset($peta['ZZTEST-AD9']));
     cek('Item hanya di jalur lama muncul dengan selisih -3', isset($peta['ZZTEST-AD8']) && abs($peta['ZZTEST-AD8'] + 3) < 0.001);
     mysqli_query($koneksi, "DELETE FROM inv_config WHERE kd_cabang='PST' AND config_key='shadow_since_tbstok_id' AND updated_by='tes-adapter'");
+
+    echo "== Guard cabang live (F2-13 sync Access)\n";
+    cek('Shadow bukan live', inv_cabang_live($koneksi, 'PST') === false);
+    $svcAdmin->setMode('PACUL', 'live', 'tes-adapter');
+    cek('Live terdeteksi lewat kode kanonik dan alias (PCL)', inv_cabang_live($koneksi, 'PACUL') === true && inv_cabang_live($koneksi, 'PCL') === true);
+    cek('Cabang lain tidak ikut live', inv_cabang_live($koneksi, 'CDT') === false);
+    cek('Lokasi tak dikenal = bukan live', inv_cabang_live($koneksi, 'XYZ') === false);
 }
 
 bersih($koneksi);

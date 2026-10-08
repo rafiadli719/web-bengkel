@@ -117,6 +117,7 @@ class InventoryService
             throw new InventoryException("Mode tidak valid: $mode", 'mode_invalid');
         }
         $kd = $this->resolveLocation($lokasi);
+        $modeSebelum = $this->getMode($kd);
         $st = mysqli_prepare($this->db,
             "INSERT INTO inv_config (kd_cabang, config_key, config_value, updated_by) VALUES (?, 'inv_mode', ?, ?)
              ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), updated_by = VALUES(updated_by)");
@@ -128,7 +129,8 @@ class InventoryService
             $r = mysqli_query($this->db, "SELECT COALESCE(MAX(id), 0) m FROM tbstok");
             $maks = $r ? (int) mysqli_fetch_assoc($r)['m'] : 0;
             $st = mysqli_prepare($this->db,
-                "INSERT IGNORE INTO inv_config (kd_cabang, config_key, config_value, updated_by) VALUES (?, 'shadow_since_tbstok_id', ?, ?)");
+                "INSERT INTO inv_config (kd_cabang, config_key, config_value, updated_by) VALUES (?, 'shadow_since_tbstok_id', ?, ?)"
+                . ($modeSebelum === self::MODE_OFF ? " ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), updated_by = VALUES(updated_by)" : " ON DUPLICATE KEY UPDATE kd_cabang = kd_cabang"));
             $mk = (string) $maks;
             mysqli_stmt_bind_param($st, 'sss', $kd, $mk, $oleh);
             mysqli_stmt_execute($st);
