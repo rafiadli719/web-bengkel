@@ -30,6 +30,7 @@ function bersih($k) {
     mysqli_query($k, "DELETE FROM inv_balance WHERE no_item LIKE 'ZZTEST-AD%'");
     mysqli_query($k, "DELETE FROM tbstok WHERE no_item LIKE 'ZZTEST-AD%'");
     mysqli_query($k, "DELETE FROM inv_audit_log WHERE actor IN ('tes-adapter') OR ref LIKE 'ZZTAD%'");
+    mysqli_query($k, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
 }
 bersih($koneksi);
 
@@ -102,6 +103,20 @@ if ($modeOff) {
     cek('Live terdeteksi lewat kode kanonik dan alias (PCL)', inv_cabang_live($koneksi, 'PACUL') === true && inv_cabang_live($koneksi, 'PCL') === true);
     cek('Cabang lain tidak ikut live', inv_cabang_live($koneksi, 'CDT') === false);
     cek('Lokasi tak dikenal = bukan live', inv_cabang_live($koneksi, 'XYZ') === false);
+
+    echo "== Penegakan live (BR-05)\n";
+    cek('Cabang bukan live: inv_live_saldo null (alur lama berlaku)', inv_live_saldo($koneksi, 'PST', 'ZZTEST-AD7') === null);
+    $svcAdmin->postIn('PACUL', 'ZZTEST-AD7', 5, '100', 'OPENING', 'ZZTAD-OP', ['trx_type' => 'OPENING', 'user' => 'tes-adapter']);
+    cek('Cabang live: inv_live_saldo = saldo ledger (5)', inv_live_saldo($koneksi, 'PACUL', 'ZZTEST-AD7') === 5.0);
+    cek('Alias cabang live juga terbaca', inv_live_saldo($koneksi, 'PCL', 'ZZTEST-AD7') === 5.0);
+    cek('Item tanpa saldo di cabang live = 0', inv_live_saldo($koneksi, 'PACUL', 'ZZTEST-AD-TIDAKADA') === 0.0);
+    mysqli_query($koneksi, "INSERT INTO tblpenjualan_detail (no_transaksi,nobaris,no_item,qty_order,quantity,qty_retur,harga_jual,potongan,harga_sp,harga_pokok,total,sts_order,user,kd_cabang,status_trx) VALUES ('',0,'ZZTEST-AD7',9,9,0,1,0,0,0,9,'','zz-keranjang','PACUL','0')");
+    $kk = inv_live_cek_keranjang($koneksi, 'PACUL', 'zz-keranjang');
+    cek('Keranjang melebihi saldo ledger ditolak dengan item dan jumlahnya', is_array($kk) && $kk['item'] === 'ZZTEST-AD7' && $kk['tersedia'] === 5.0 && $kk['diminta'] === 9.0);
+    mysqli_query($koneksi, "UPDATE tblpenjualan_detail SET quantity=4, qty_order=4 WHERE user='zz-keranjang'");
+    cek('Keranjang dalam batas saldo lolos', inv_live_cek_keranjang($koneksi, 'PACUL', 'zz-keranjang') === null);
+    mysqli_query($koneksi, "DELETE FROM tblpenjualan_detail WHERE user='zz-keranjang'");
+    cek('Bukan live: cek keranjang tidak mengganggu', inv_live_cek_keranjang($koneksi, 'PST', 'zz-keranjang') === null);
 }
 
 bersih($koneksi);

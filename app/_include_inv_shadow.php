@@ -77,6 +77,66 @@ function inv_cabang_live($koneksi, $lokasi)
     }
 }
 
+/**
+ * Saldo ledger baru (float) bila lokasi live, null bila bukan live. Dipakai penegakan BR-05 saat cabang live:
+ * stok yang berlaku adalah inv_balance, bukan tbstok.
+ */
+function inv_live_saldo($koneksi, $lokasi, $item)
+{
+    try {
+        if (!inv_cabang_live($koneksi, $lokasi)) {
+            return null;
+        }
+        $lok = strtoupper(trim((string) $lokasi));
+        $st = @mysqli_prepare($koneksi,
+            "SELECT COALESCE(b.qty_on_hand, 0) FROM inv_location l LEFT JOIN inv_balance b ON b.kd_cabang = l.kode AND b.no_item = ?
+             WHERE l.alias = ? LIMIT 1");
+        if (!$st) {
+            return null;
+        }
+        mysqli_stmt_bind_param($st, 'ss', $item, $lok);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $row = $res ? mysqli_fetch_row($res) : null;
+        mysqli_stmt_close($st);
+        return $row ? (float) $row[0] : 0.0;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/**
+ * Periksa seluruh keranjang penjualan (status_trx 0) terhadap saldo ledger baru. null = aman atau bukan live;
+ * array = item pertama yang kurang ['item', 'tersedia', 'diminta'].
+ */
+function inv_live_cek_keranjang($koneksi, $lokasi, $user)
+{
+    try {
+        if (!inv_cabang_live($koneksi, $lokasi)) {
+            return null;
+        }
+        $st = mysqli_prepare($koneksi,
+            "SELECT no_item, SUM(quantity) q FROM tblpenjualan_detail WHERE user = ? AND kd_cabang = ? AND status_trx = '0' GROUP BY no_item");
+        mysqli_stmt_bind_param($st, 'ss', $user, $lokasi);
+        mysqli_stmt_execute($st);
+        $res = mysqli_stmt_get_result($st);
+        $baris = [];
+        while ($r = mysqli_fetch_assoc($res)) {
+            $baris[] = $r;
+        }
+        mysqli_stmt_close($st);
+        foreach ($baris as $r) {
+            $ada = inv_live_saldo($koneksi, $lokasi, $r['no_item']);
+            if ($ada !== null && (float) $r['q'] > $ada + 0.0005) {
+                return ['item' => $r['no_item'], 'tersedia' => $ada, 'diminta' => (float) $r['q']];
+            }
+        }
+        return null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
 /** Biaya satuan bersih dari total baris: total / qty, jatuh ke $fallback bila total/qty tidak ada. */
 function inv_biaya_satuan($total, $qty, $fallback = 0)
 {

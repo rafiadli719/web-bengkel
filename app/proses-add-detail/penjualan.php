@@ -20,8 +20,12 @@
                                                 no_item='$txtkdbarang'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $stok_akhir=$tm_cari['saldo'];				                                                                                                                                         
+                // Moving Average live (BR-05): stok yang berlaku = saldo ledger baru; bukan live -> tidak berubah
+                require_once __DIR__ . '/../_include_inv_shadow.php';
+                $stok_live = inv_live_saldo($koneksi, $kd_cabang, $txtkdbarang);
+                if ($stok_live !== null) { $stok_akhir = $stok_live; }
             // ---------------------
-            
+
                 if($stok_akhir=='0') {
                     // Pesan Stok Kosong
                     echo"<script>window.alert('Stok Barang kosong!');
