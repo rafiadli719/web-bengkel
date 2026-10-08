@@ -65,7 +65,8 @@ $periode_awal = date('Y-m-d', strtotime('-84 days'));
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rencana'])) {
-    $items = isset($_POST['items']) ? mysqli_real_escape_string($koneksi, $_POST['items']) : [];
+    // $_POST['items'] adalah array; mysqli_real_escape_string(array) = TypeError fatal di PHP 8.
+    $items = (isset($_POST['items']) && is_array($_POST['items'])) ? $_POST['items'] : [];
 
     if (empty($items)) {
         $error_message = "Pilih minimal satu item untuk dibuat rencana order.";

@@ -183,7 +183,8 @@ if(isset($_POST['btnreceive_do'])){
     }
 
     // Items
-    $items = isset($_POST['items']) ? mysqli_real_escape_string($koneksi, $_POST['items']) : [];
+    // $_POST['items'] adalah array; mysqli_real_escape_string(array) = TypeError fatal di PHP 8. Nilai dipakai lewat cast int / escape per item di bawah.
+    $items = (isset($_POST['items']) && is_array($_POST['items'])) ? $_POST['items'] : [];
     $has_qty = false; foreach($items as $ni=>$it){ if(((int)$it['qty_terima'])>0){ $has_qty = true; break; }}
     if($msg!==''){
         // approval gate blocked above
