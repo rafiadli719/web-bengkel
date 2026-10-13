@@ -259,6 +259,7 @@
                                     Tambah Kendaraan
                                     </button>
                                 </a>
+                                <a href="kendaraan_nopol_lama.php" class="btn btn-default btn-sm" title="Catat plat lama kendaraan"><i class="ace-icon fa fa-history"></i> Catat Nopol Lama</a>
 							</div>
 						</div>
                         <div class="space space-8"></div>

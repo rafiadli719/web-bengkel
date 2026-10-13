@@ -1,5 +1,6 @@
 <?php
 	include "../config/koneksi.php";
+	if (session_status() === PHP_SESSION_NONE) { session_start(); }
 	    
 	$txtnopol= mysqli_real_escape_string($koneksi, $_POST['txtnopol']);    
 	$txtnama= mysqli_real_escape_string($koneksi, $_POST['txtnama']);
@@ -84,6 +85,17 @@
                             '$cbowarna','$txtnorangka','$txtnomesin',
                             '$txtnote',
                             '$tipe_motor','$jenis_motor','$warna_motor')");
+
+        // Catat plat aktif pertama ke riwayat nopol (dipakai cek duplikasi nopol lama).
+        $q_idk = mysqli_query($koneksi,"SELECT id_kendaraan FROM tblkendaraan WHERE nopolisi='$txtnopol' LIMIT 1");
+        $r_idk = $q_idk ? mysqli_fetch_assoc($q_idk) : null;
+        if($r_idk && !empty($r_idk['id_kendaraan'])) {
+            $id_k = (int)$r_idk['id_kendaraan'];
+            $uid_k = isset($_SESSION['_iduser']) ? (int)$_SESSION['_iduser'] : 0;
+            mysqli_query($koneksi,"INSERT INTO kendaraan_plat_history 
+                                    (id_kendaraan, nopolisi, tanggal_mulai, is_current, alasan, diinput_oleh) 
+                                    VALUES ($id_k, '$txtnopol', CURDATE(), 1, 'kendaraan_baru', $uid_k)");
+        }
                                     
         echo"<script>window.alert('Data Kendaraan Berhasil disimpan!');
         window.location=('kendaraan.php');</script>";        

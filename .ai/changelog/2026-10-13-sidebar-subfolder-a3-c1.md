@@ -61,3 +61,15 @@ Semua halaman menu dibuka satu per satu di browser (screenshot per halaman). Tem
 - Tautan "[ Tambah ]" di header tabel master (±25 halaman) tampil sebagai teks putih kecil tanpa
   affordance; kini tampil sebagai tombol hijau (CSS di `assets/css/ace.min.css`).
 Catatan data (bukan bug kode): stok negatif banyak di master barang; beberapa baris mapping bernama "-".
+
+## Tambahan (B4 selesai, izin, server)
+- B4: `kendaraan_plat_history` kini terisi. Migrasi `2026-10-13_run_plat_history_seed.php` (reversible) mengisi
+  plat aktif tiap kendaraan; `save_kendaraan.php` mencatat plat pertama kendaraan baru; halaman baru
+  `kendaraan_nopol_lama.php` (tombol "Catat Nopol Lama" di Kendaraan) mencatat plat lama. Nopol yang pernah
+  tercatat tidak bisa dipakai mendaftar kendaraan baru.
+- Unduh PDF/Excel di `view_transaksi_admin.php` kini juga terbuka untuk izin `kasir_approve` (KEU), tidak 403.
+- Label satuan "keping_closing_kasir" (artefak porting) di detail transaksi diganti "keping/lembar".
+- Migrasi `2026-10-13_run_komplain_perm_adm.php`: posisi ADM di server hanya punya `komplain_input` dan
+  `komplain_master_kategori` sehingga antrian approval/dashboard 403; disamakan dengan lokal.
+- Server fitmotor1: `app/db_env.php` dan `config/db_env.php` (gitignored) dibuat agar modul Komplain tidak
+  "Konfigurasi database belum lengkap"; grup file `www-data` supaya php-fpm bisa membacanya.

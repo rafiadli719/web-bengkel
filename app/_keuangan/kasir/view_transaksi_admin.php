@@ -1259,7 +1259,7 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
                             <?php foreach ($kas_awal_detail as $row): ?>
                                 <tr>
                                     <td>Rp <?php echo number_format($row['nominal'], 0, ',', '.'); ?></td>
-                                    <td><?php echo number_format($row['jumlah_keping']); ?> keping_closing_kasir</td>
+                                    <td><?php echo number_format($row['jumlah_keping']); ?> keping/lembar</td>
                                     <td class="amount-cell amount-neutral">Rp <?php echo number_format($row['nominal'] * $row['jumlah_keping'], 0, ',', '.'); ?></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -1298,7 +1298,7 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
                             <?php foreach ($kas_akhir_detail as $row): ?>
                                 <tr>
                                     <td>Rp <?php echo number_format($row['nominal'], 0, ',', '.'); ?></td>
-                                    <td><?php echo number_format($row['jumlah_keping']); ?> keping_closing_kasir</td>
+                                    <td><?php echo number_format($row['jumlah_keping']); ?> keping/lembar</td>
                                     <td class="amount-cell amount-neutral">Rp <?php echo number_format($row['nominal'] * $row['jumlah_keping'], 0, ',', '.'); ?></td>
                                 </tr>
                             <?php endforeach; ?>

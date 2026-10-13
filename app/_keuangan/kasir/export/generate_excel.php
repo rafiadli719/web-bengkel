@@ -9,7 +9,11 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../koneksi_kasir.php';
-requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
+// Admin/keuangan (kasir_approve) membuka detail transaksi lewat view_transaksi_admin.php, jadi unduhan
+// PDF/Excel juga harus terbuka untuk mereka (query hanya per kode_transaksi, tanpa filter pemilik).
+if (!canAccessPage($koneksi, $id_user_aktif, 'kasir_operate') && !canAccessPage($koneksi, $id_user_aktif, 'kasir_approve')) {
+    requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
+}
 require_once __DIR__ . '/../closing_revision_helpers.php';
 
 function formatRevisionExcelValue($value, string $field): string

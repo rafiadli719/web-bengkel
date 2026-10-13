@@ -3,7 +3,11 @@
 // Gerbang asli role IN (kasir,admin,super_admin) -> kasir_operate (Task 10,
 // paling longgar - sama pola view_transaksi.php).
 require_once __DIR__ . '/../koneksi_kasir.php';
-requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
+// Admin/keuangan (kasir_approve) membuka detail transaksi lewat view_transaksi_admin.php, jadi unduhan
+// PDF/Excel juga harus terbuka untuk mereka (query hanya per kode_transaksi, tanpa filter pemilik).
+if (!canAccessPage($koneksi, $id_user_aktif, 'kasir_operate') && !canAccessPage($koneksi, $id_user_aktif, 'kasir_approve')) {
+    requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
+}
 
 // Include TCPDF library
 require_once __DIR__ . '/../../../../vendor/tecnickcom/tcpdf/tcpdf.php';
