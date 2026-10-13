@@ -53,3 +53,11 @@ berdasarkan tabel `*_pusat_closing_kasir` dan `pengambilan_setoran_closing_kasir
 - `print_serah_terima_pengambilan.php` (bukti serah terima + kolom tanda tangan)
 - helper: `includes/page_open.php`, `page_close.php`, `keuangan_pusat_helpers.php`
 Kesalahan sebelumnya di bagian "Belum" di atas untuk tombol-tombol ini sudah tidak berlaku.
+
+## Tambahan (pemeriksaan browser 156 halaman)
+Semua halaman menu dibuka satu per satu di browser (screenshot per halaman). Temuan UX yang diperbaiki:
+- `penyesuaian-stok-otomatis.php`: sebelumnya hanya dua tombol tanpa judul/penjelasan; sekarang ada judul,
+  penjelasan alur stok opname, dan keterangan selisih lebih/kurang.
+- Tautan "[ Tambah ]" di header tabel master (±25 halaman) tampil sebagai teks putih kecil tanpa
+  affordance; kini tampil sebagai tombol hijau (CSS di `assets/css/ace.min.css`).
+Catatan data (bukan bug kode): stok negatif banyak di master barang; beberapa baris mapping bernama "-".

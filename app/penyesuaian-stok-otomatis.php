@@ -248,30 +248,38 @@
 
 					<div class="page-content">
 
-						<br>
+						<div class="page-header">
+							<h1>Penyesuaian Stok Otomatis <small><i class="ace-icon fa fa-angle-double-right"></i> stok opname</small></h1>
+						</div>
 						<div class="row">
 							<div class="col-xs-12 col-sm-6">
 								<div class="widget-box">
 									<div class="widget-body">
 										<div class="widget-main">	
+                                            <p class="text-muted" style="margin-top:0">
+                                                Pilih jenis selisih hasil stok opname. Sistem mengambil stok sistem per tanggal yang dipilih,
+                                                Anda mengisi hasil hitung fisik, lalu sistem memposting selisihnya ke kartu stok.
+                                            </p>
                                             <form class="form-horizontal" action="" method="post" role="form">
                                                 <div class="row">
-                                                    <div class="col-xs-8 col-sm-12">
+                                                    <div class="col-xs-12 col-sm-12">
                                                         <a href="so-item-masuk.php">
                                                         <button class="btn btn-primary btn-block" type="button">
-                                                            Item Masuk (otomatis)
+                                                            <i class="ace-icon fa fa-plus"></i> Item Masuk (selisih lebih)
                                                         </button>  
                                                         </a>
+                                                        <p class="help-block">Dipakai bila stok fisik lebih banyak dari stok sistem.</p>
                                                     </div>
                                                 </div>
                                                 <div class="space space-8"></div>
                                                 <div class="row">                                                
-                                                    <div class="col-xs-8 col-sm-12">
+                                                    <div class="col-xs-12 col-sm-12">
                                                         <a href="so-item-keluar.php">
                                                         <button class="btn btn-danger btn-block" type="button">
-                                                            Item Keluar (otomatis)
+                                                            <i class="ace-icon fa fa-minus"></i> Item Keluar (selisih kurang)
                                                         </button>  
                                                         </a>
+                                                        <p class="help-block">Dipakai bila stok fisik lebih sedikit dari stok sistem.</p>
                                                     </div>
                                                 </div>    
                                             </form>
