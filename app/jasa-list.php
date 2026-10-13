@@ -318,12 +318,6 @@
                                                                             Edit
                                                                         </a>
                                                                     </li>
-                                                                    <li>
-                                                                        <a href="jasa-detail.php?kode=<?php echo $tampil['noitem']; ?>">
-                                                                            <i class="ace-icon fa fa-eye"></i>
-                                                                            Lihat Detail
-                                                                        </a>
-                                                                    </li>
                                                                     <li class="divider"></li>
                                                                     <li>
                                                                         <a href="jasa-hapus.php?kode=<?php echo $tampil['noitem']; ?>" 

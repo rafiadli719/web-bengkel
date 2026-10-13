@@ -1331,7 +1331,7 @@ $closing_detect_nama_cabang = $user_nama_cabang ?: $cabang_user;
                             <?php if (!empty($row['kode_pengambilan_ref'])): ?>
                                 <span style="color: var(--text-muted);"></span>
                             <?php elseif (!empty($row['nomor_transaksi_closing'])): ?>
-                                <a href="detail_closing.php?kode_transaksi=<?php echo $row['nomor_transaksi_closing']; ?>" 
+                                <a href="view_transaksi.php?kode_transaksi=<?php echo $row['nomor_transaksi_closing']; ?>" 
                                    class="btn btn-info btn-sm" style="text-decoration: none;">
                                     <i class="fas fa-link"></i> <?php echo htmlspecialchars($row['nomor_transaksi_closing']); ?>
                                 </a>
@@ -1341,7 +1341,7 @@ $closing_detect_nama_cabang = $user_nama_cabang ?: $cabang_user;
                         </td>
                         <td>
                             <?php if (!empty($row['kode_pengambilan_ref'])): ?>
-                            <a href="hapus_pemasukan.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan pengambilan dana ini?')">
+                            <a href="hapus_pemasukan1.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan pengambilan dana ini?')">
                                 <i class="fas fa-trash"></i> Hapus
                             </a>
                             <?php elseif (($row['kode_akun'] ?? '') === 'DRKUAN'): ?>
@@ -1352,7 +1352,7 @@ $closing_detect_nama_cabang = $user_nama_cabang ?: $cabang_user;
                             <a href="edit_pemasukan.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a href="hapus_pemasukan.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                            <a href="hapus_pemasukan1.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                 <i class="fas fa-trash"></i> Hapus
                             </a>
                             <?php endif; ?>

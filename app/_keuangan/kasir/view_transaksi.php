@@ -867,11 +867,11 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
             </table>
 
             <div class="btn-group mb-3">
-                <a href="generate_pdf.php?kode_transaksi=<?php echo $kode_transaksi; ?>" class="btn btn-info"><i class="fas fa-file-pdf"></i> Unduh PDF</a>
+                <a href="export/export_pdf_closing_kasir.php?kode_transaksi=<?php echo $kode_transaksi; ?>" class="btn btn-info"><i class="fas fa-file-pdf"></i> Unduh PDF</a>
                 <a href="export/generate_excel.php?kode_transaksi=<?php echo $kode_transaksi; ?>" class="btn btn-success" download="Laporan_Closing_Kasir_<?php echo htmlspecialchars($kode_transaksi); ?>.xlsx"><i class="fas fa-file-excel"></i> Unduh Excel</a>
                 <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print"></i> Cetak</button>
                 <?php if ($canRequestRevision): ?>
-                    <a href="closing_revision_request.php?kode_transaksi=<?php echo urlencode($kode_transaksi); ?>" class="btn btn-warning"><i class="fas fa-code-branch"></i> Ajukan Revisi</a>
+                    <a href="closing_revisi.php?kode_transaksi=<?php echo urlencode($kode_transaksi); ?>" class="btn btn-warning"><i class="fas fa-code-branch"></i> Ajukan Revisi</a>
                 <?php endif; ?>
             </div>
             <div>

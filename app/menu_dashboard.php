@@ -23,7 +23,7 @@ if ($id_user > 0 && isset($koneksi)) {
 } else {
     // Fallback if session or connection not available
     echo '<ul class="nav nav-list">
-            <li class=""><a href="index.php">
+            <li class=""><a href="' . menuLinkHref('index.php') . '">
                 <i class="menu-icon fa fa-home"></i>
                 <span class="menu-text">Dashboard</span>
             </a></li>

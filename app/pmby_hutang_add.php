@@ -34,6 +34,16 @@
 
         $no_supplier="00";
         $tgl_pilih=date('d/m/Y');
+        $flt_tipe_sup='';
+        $flt_jt_dari='';
+        $flt_jt_sampai='';
+        // dd/mm/yyyy -> Y-m-d ('' jika tidak valid)
+        $jt_ke_sql=function($tgl) {
+            if(preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $tgl, $m) && checkdate((int)$m[2], (int)$m[1], (int)$m[3])) {
+                return $m[3].'-'.$m[2].'-'.$m[1];
+            }
+            return '';
+        };
         $sql_cari="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
         FROM tblpembelian_header 
                 WHERE 
@@ -43,13 +53,22 @@
         if(isset($_POST['btncari_pesanan'])) {
             $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
             $no_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
+            $flt_tipe_sup= (isset($_POST['cbotipe_supplier']) && in_array($_POST['cbotipe_supplier'], array('eksternal','antarcabang'), true)) ? $_POST['cbotipe_supplier'] : '';
+            $flt_jt_dari= isset($_POST['txtjt_dari']) ? trim($_POST['txtjt_dari']) : '';
+            $flt_jt_sampai= isset($_POST['txtjt_sampai']) ? trim($_POST['txtjt_sampai']) : '';
+            $jt_cond='';
+            $jt_d=$jt_ke_sql($flt_jt_dari);
+            $jt_s=$jt_ke_sql($flt_jt_sampai);
+            if($jt_d!=='') { $jt_cond.=" AND tanggal_jt>='$jt_d'"; }
+            if($jt_s!=='') { $jt_cond.=" AND tanggal_jt<='$jt_s'"; }
             $sql_cari="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
             FROM tblpembelian_header 
                     WHERE 
                     no_supplier='$no_supplier' and 
                     carabayar='Kredit' AND 
                     status_lunas='0' AND
-                    jumlah_bayar>0";            
+                    jumlah_bayar>0".$jt_cond." 
+                    ORDER BY tanggal_jt ASC, tanggal ASC";            
         }
         if(isset($_POST['btnsimpan'])) {
             $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);

@@ -38,6 +38,9 @@
         $txtcari="";
         $txturut="7";
         $txtflt="asc";
+        $pemb_filter_enabled=true;
+        $flt_status='';
+        $flt_tipe='';
         $tipebtn1="btn-danger";
         $tipebtn2="btn-info";
         $hasil_cari="Silakan isi kata kunci di atas lalu klik Ascending/Descending untuk menampilkan data transaksi pembelian.";
@@ -51,14 +54,18 @@
 			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
 			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
 			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
-			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";            
+			$cbostatus= mysqli_real_escape_string($koneksi, $_POST['cbostatus'] ?? '');
+			$cbotipe_sup= mysqli_real_escape_string($koneksi, $_POST['cbotipe_supplier'] ?? '');
+			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&_status=$cbostatus&_tipe=$cbotipe_sup');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
 			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
 			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
 			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
-			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";            
+			$cbostatus= mysqli_real_escape_string($koneksi, $_POST['cbostatus'] ?? '');
+			$cbotipe_sup= mysqli_real_escape_string($koneksi, $_POST['cbotipe_supplier'] ?? '');
+			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&_status=$cbostatus&_tipe=$cbotipe_sup');</script>";            
         }
 ?>
 

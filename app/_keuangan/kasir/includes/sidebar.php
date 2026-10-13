@@ -69,7 +69,7 @@ function isActive(string $page, string $current): string {
     <nav class="sidebar-nav">
 
         <!-- Dashboard -->
-        <a href="admin_dashboard.php" class="nav-link <?= isActive('admin_dashboard.php', $current_page) ?>">
+        <a href="index_kasir.php" class="nav-link <?= isActive('admin_dashboard.php', $current_page) ?>">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
@@ -83,14 +83,14 @@ function isActive(string $page, string $current): string {
                 <i class="fas fa-chevron-right nav-chevron <?= chevRot('laporan', $active_cat) ?>"></i>
             </div>
             <div class="nav-cat-items <?= catOpen('laporan', $active_cat) ?>" id="cat-laporan">
-                <a href="detail_pemasukan.php" class="nav-link sub-item <?= isActive('detail_pemasukan.php', $current_page) ?>">
-                    <i class="fas fa-arrow-circle-down"></i><span>Detail Pemasukan</span>
+                <a href="../../lap_kas_masuk.php" class="nav-link sub-item <?= isActive('detail_pemasukan.php', $current_page) ?>">
+                    <i class="fas fa-arrow-circle-down"></i><span>Laporan Kas Masuk</span>
                 </a>
-                <a href="detail_pengeluaran.php" class="nav-link sub-item <?= isActive('detail_pengeluaran.php', $current_page) ?>">
-                    <i class="fas fa-arrow-circle-up"></i><span>Detail Pengeluaran</span>
+                <a href="../../lap_kas_keluar.php" class="nav-link sub-item <?= isActive('detail_pengeluaran.php', $current_page) ?>">
+                    <i class="fas fa-arrow-circle-up"></i><span>Laporan Kas Keluar</span>
                 </a>
-                <a href="detail_omset.php" class="nav-link sub-item <?= isActive('detail_omset.php', $current_page) ?>">
-                    <i class="fas fa-chart-line"></i><span>Detail Omset</span>
+                <a href="../../lap_penjualan.php" class="nav-link sub-item <?= isActive('detail_omset.php', $current_page) ?>">
+                    <i class="fas fa-chart-line"></i><span>Laporan Penjualan</span>
                 </a>
             </div>
         </div>
@@ -114,13 +114,13 @@ function isActive(string $page, string $current): string {
                     <i class="fas fa-coins"></i><span>Master Nominal</span>
                 </a>
                 <?php if ($is_super_admin): ?>
-                <a href="users.php" class="nav-link sub-item <?= isActive('users.php', $current_page) ?>">
+                <a href="../../user_management.php" class="nav-link sub-item <?= isActive('users.php', $current_page) ?>">
                     <i class="fas fa-user-friends"></i><span>Master User</span>
                 </a>
-                <a href="masterkey.php" class="nav-link sub-item <?= isActive('masterkey.php', $current_page) ?>">
+                <a href="../../master_karyawan.php" class="nav-link sub-item <?= isActive('masterkey.php', $current_page) ?>">
                     <i class="fas fa-id-card"></i><span>Master Karyawan</span>
                 </a>
-                <a href="cabang.php" class="nav-link sub-item <?= isActive('cabang.php', $current_page) ?>">
+                <a href="../../cabang.php" class="nav-link sub-item <?= isActive('cabang.php', $current_page) ?>">
                     <i class="fas fa-building"></i><span>Master Cabang</span>
                 </a>
                 <a href="master_rekening_cabang.php" class="nav-link sub-item <?= isActive('master_rekening_cabang.php', $current_page) ?>">

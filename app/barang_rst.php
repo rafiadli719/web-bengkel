@@ -348,7 +348,12 @@
 							<div class="col-xs-12 col-sm-12">
 								<div class="table-header">
 									Jumlah Data Yang ditemukan : <?php echo number_format($tot,0); ?>
-								</div>                            
+								</div>
+                                <div style="margin:8px 0;">
+                                    <span style="display:inline-block;width:14px;height:14px;background:#f2dede;border:1px solid #ddd;vertical-align:middle;"></span> Stok kosong
+                                    &nbsp;&nbsp;
+                                    <span style="display:inline-block;width:14px;height:14px;background:#fcf8e3;border:1px solid #ddd;vertical-align:middle;"></span> Stok di/bawah minimal cabang
+                                </div>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -364,6 +369,7 @@
                                             <td width="9%">Stok Min.</td>
                                             <td width="9%">Stok Max.</td>
                                             <td width="9%">Stok Akhir</td>
+                                            <td width="9%">Stok Semua Cabang</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -398,8 +404,26 @@
                                                                                 kd_cabang='$kd_cabang'");			
                                                 $tm_cari=mysqli_fetch_array($cari_kd);
                                                 $stok_akhir=$tm_cari['saldo'];
+
+                                                // Total stok semua cabang (kolom pembanding)
+                                                $cari_tot=mysqli_query($koneksi,"SELECT
+                                                                                SUM(saldo) AS total
+                                                                                FROM view_stok_master
+                                                                                WHERE no_item='$noitem'");
+                                                $tm_tot=mysqli_fetch_array($cari_tot);
+                                                $stok_total=(float)($tm_tot['total'] ?? 0);
+
+                                                // Penanda stok: merah = kosong, kuning = sudah di/bawah minimal cabang ini
+                                                $stok_num=(float)$stok_akhir;
+                                                $min_num=(float)$stokmin;
+                                                $row_style='';
+                                                if ($stok_num <= 0) {
+                                                    $row_style=' style="background-color:#f2dede;" title="Stok kosong"';
+                                                } elseif ($min_num > 0 && $stok_num <= $min_num) {
+                                                    $row_style=' style="background-color:#fcf8e3;" title="Stok di/bawah minimal"';
+                                                }
                                         ?>
-                                        <tr>
+                                        <tr<?php echo $row_style; ?>>
                                             <td>
                                                 <div class="btn-group">
                                                     <button data-toggle="dropdown" class="btn dropdown-toggle btn-minier btn-yellow">
@@ -439,6 +463,7 @@
                                             <td><?php echo $stokmin; ?></td>
                                             <td><?php echo $stok_maks; ?></td>
                                             <td><?php echo $stok_akhir; ?></td>
+                                            <td><?php echo $stok_total + 0; ?></td>
                                         </tr>
                                     <?php
                                         }

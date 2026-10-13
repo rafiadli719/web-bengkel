@@ -5797,7 +5797,7 @@ body.tab-setor_bank #setorBankTableWrapper {
                                             <td><?php echo htmlspecialchars($row['validasi_by'] ?? '-'); ?></td>
                                             <td>
                                                 <div class="action-buttons">
-                                                    <a href="detail_closing.php?kode_transaksi=<?php echo $row['kode_transaksi']; ?>"
+                                                    <a href="view_transaksi_admin.php?kode_transaksi=<?php echo $row['kode_transaksi']; ?>"
                                                        class="btn btn-info btn-sm" target="_blank"
                                                        title="Lihat detail transaksi">
                                                         <i class="fas fa-eye"></i> Detail

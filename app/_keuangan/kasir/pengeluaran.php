@@ -734,7 +734,7 @@ $cabang_user = $nama_cabang_aktif ?? 'Unknown Cabang';
                                 <a href="edit_pengeluaran.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <a href="hapus_pengeluaran.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                <a href="hapus_pengeluaran1.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                     <i class="fas fa-trash"></i> Hapus
                                 </a>
                             </td>

@@ -261,12 +261,35 @@ function menuItemHasActiveDescendant($item, $current_page) {
     return false;
 }
 
+/**
+ * Prefix '../' sesuai kedalaman script pemanggil di bawah app/. URL di menu_config.php
+ * relatif ke app/, jadi dari subfolder (_komplain/, _inventory/, _keuangan/kasir/)
+ * tanpa prefix semua link sidebar jadi 404.
+ */
+function menuLinkPrefix() {
+    static $prefix = null;
+    if ($prefix === null) {
+        $app_dir = rtrim(str_replace('\\', '/', __DIR__), '/');
+        $script_dir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_FILENAME'] ?? '')), '/');
+        $rel = (strpos($script_dir, $app_dir) === 0) ? trim(substr($script_dir, strlen($app_dir)), '/') : '';
+        $prefix = $rel === '' ? '' : str_repeat('../', substr_count($rel, '/') + 1);
+    }
+    return $prefix;
+}
+
+function menuLinkHref($url) {
+    if ($url === '' || $url[0] === '#' || $url[0] === '/' || preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+        return $url;
+    }
+    return menuLinkPrefix() . $url;
+}
+
 function renderMenu($menu_items, $current_page = '', $level = 0) {
     if (empty($menu_items)) {
         if ($level === 0) {
             // No menu items at all - show message
             return '<ul class="nav nav-list">
-                        <li class=""><a href="index.php">
+                        <li class=""><a href="' . menuLinkHref('index.php') . '">
                             <i class="menu-icon fa fa-home"></i>
                             <span class="menu-text">Dashboard</span>
                         </a></li>
@@ -312,7 +335,7 @@ function renderMenu($menu_items, $current_page = '', $level = 0) {
             $html .= renderMenu($item['submenu'], $current_page, $level + 1);
         } else {
             // Simple menu item
-            $html .= "\t\t<a href=\"" . htmlspecialchars($item_url) . "\">\n";
+            $html .= "\t\t<a href=\"" . htmlspecialchars(menuLinkHref($item_url)) . "\">\n";
             $html .= "\t\t\t<i class=\"menu-icon fa " . ($item['icon'] ?? 'fa-caret-right') . "\"></i>\n";
             $html .= "\t\t\t<span class=\"menu-text\">" . htmlspecialchars($item['title']) . "</span>\n";
             $html .= "\t\t</a>\n";

@@ -38,6 +38,34 @@
         $txturut= mysqli_real_escape_string($koneksi, $_GET['_urut']);
         $txtflt= mysqli_real_escape_string($koneksi, $_GET['_flt']);
 
+        // Filter tambahan: status pembayaran dan tipe supplier (eksternal / antar cabang).
+        // Antar cabang = no_supplier berisi kode cabang pengirim (lihat penerimaan_antarcab_proses.php).
+        $pemb_filter_enabled=true;
+        $flt_status= (isset($_GET['_status']) && in_array($_GET['_status'], array('lunas','belum'), true)) ? $_GET['_status'] : '';
+        $flt_tipe= (isset($_GET['_tipe']) && in_array($_GET['_tipe'], array('eksternal','antarcabang'), true)) ? $_GET['_tipe'] : '';
+        $pemb_extra='';
+        if($flt_status=='lunas') {
+            $pemb_extra.=" AND v.notransaksi IN (SELECT notransaksi FROM tblpembelian_header WHERE status_lunas='1')";
+        } elseif($flt_status=='belum') {
+            $pemb_extra.=" AND v.notransaksi NOT IN (SELECT notransaksi FROM tblpembelian_header WHERE status_lunas='1')";
+        }
+        if($flt_tipe!='') {
+            // Daftar kode cabang diambil di PHP supaya tidak kena collation mismatch antar tabel.
+            $kode_cab_in="''";
+            $q_cab=mysqli_query($koneksi,"SELECT kode_cabang FROM tbcabang");
+            $arr_cab=array();
+            while($r_cab=mysqli_fetch_array($q_cab)) {
+                $arr_cab[]="'".mysqli_real_escape_string($koneksi,$r_cab['kode_cabang'])."'";
+            }
+            if(count($arr_cab)>0) { $kode_cab_in=implode(',',$arr_cab); }
+            if($flt_tipe=='antarcabang') {
+                $pemb_extra.=" AND v.no_supplier IN ($kode_cab_in)";
+            } else {
+                $pemb_extra.=" AND v.no_supplier NOT IN ($kode_cab_in)";
+            }
+        }
+        $pemb_src="(SELECT v.* FROM view_pembelian_header v WHERE 1=1".$pemb_extra.") AS view_pembelian_header";
+
         if($txtflt=='asc') {
             $tipebtn1="btn-danger";
             $tipebtn2="btn-info";
@@ -94,7 +122,7 @@
     
         if($txtflt=='asc') {
             IF($sql_cari=="") {
-                $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pembelian_header 
+                $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM {$pemb_src} 
                             WHERE 
                             (notransaksi like '%".$txtkey."%') OR 
                             (no_order like '%".$txtkey."%') OR 
@@ -104,7 +132,7 @@
                             order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_pembelian_header 
+                                                count(*) as tot FROM {$pemb_src} 
                                                 WHERE 
                                                 (notransaksi like '%".$txtkey."%') OR 
                             (no_order like '%".$txtkey."%') OR 
@@ -114,17 +142,17 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
-                $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pembelian_header 
+                $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM {$pemb_src} 
                             WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_pembelian_header 
+                                                count(*) as tot FROM {$pemb_src} 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                        
             }
         } else {
             IF($sql_cari=="") {
-                $sql_query="SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pembelian_header 
+                $sql_query="SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM {$pemb_src} 
                             WHERE 
                             (notransaksi like '%".$txtkey."%') OR 
                             (no_order like '%".$txtkey."%') OR 
@@ -134,7 +162,7 @@
                             order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_pembelian_header 
+                                                count(*) as tot FROM {$pemb_src} 
                                                 WHERE 
                                                 (notransaksi like '%".$txtkey."%') OR 
                             (no_order like '%".$txtkey."%') OR 
@@ -144,10 +172,10 @@
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
-                $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_pembelian_header 
+                $sql_query=" SELECT *,DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM {$pemb_src} 
                             WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_pembelian_header 
+                                                count(*) as tot FROM {$pemb_src} 
                             WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                                    
@@ -161,14 +189,18 @@
 			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
 			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
 			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
-			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc');</script>";            
+			$cbostatus= mysqli_real_escape_string($koneksi, $_POST['cbostatus'] ?? '');
+			$cbotipe_sup= mysqli_real_escape_string($koneksi, $_POST['cbotipe_supplier'] ?? '');
+			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=asc&_status=$cbostatus&_tipe=$cbotipe_sup');</script>";            
         }
 
 		if(isset($_POST['btndesc'])) {				
 			$txtkey= mysqli_real_escape_string($koneksi, $_POST['txtkey']);	
 			$cbocari= mysqli_real_escape_string($koneksi, $_POST['cbocari']);	
 			$cbourut= mysqli_real_escape_string($koneksi, $_POST['cbourut']);
-			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc');</script>";            
+			$cbostatus= mysqli_real_escape_string($koneksi, $_POST['cbostatus'] ?? '');
+			$cbotipe_sup= mysqli_real_escape_string($koneksi, $_POST['cbotipe_supplier'] ?? '');
+			echo"<script>window.location=('pembelian_rst.php?_key=$txtkey&_cari=$cbocari&_urut=$cbourut&_flt=desc&_status=$cbostatus&_tipe=$cbotipe_sup');</script>";            
         }
 ?>
 

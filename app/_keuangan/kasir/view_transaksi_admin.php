@@ -1321,14 +1321,14 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <form method="post" action="ganerate_pdf_admin.php" style="display: inline;">
+        <form method="get" action="export/export_pdf_closing_kasir.php" style="display: inline;">
             <input type="hidden" name="kode_transaksi" value="<?php echo htmlspecialchars($kode_transaksi); ?>">
             <button type="submit" class="btn btn-danger">
                 <i class="fas fa-file-pdf"></i> Unduh PDF
             </button>
         </form>
         
-        <form method="post" action="ganerate_excel_admin.php" style="display: inline;">
+        <form method="get" action="export/generate_excel.php" style="display: inline;">
             <input type="hidden" name="kode_transaksi" value="<?php echo htmlspecialchars($kode_transaksi); ?>">
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-file-excel"></i> Unduh Excel
@@ -1339,7 +1339,7 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
             <i class="fas fa-print"></i> Cetak Laporan
         </button>
         
-        <button class="btn btn-secondary" onclick="window.location.href='admin_dashboard.php'">
+        <button class="btn btn-secondary" onclick="window.location.href='index_kasir.php'">
             <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
         </button>
     </div>
@@ -1454,12 +1454,12 @@ $formatRevisionDetailValue = static function (?string $valueLabel, $value): stri
         // Ctrl+E for Excel export
         if (e.ctrlKey && e.key === 'e') {
             e.preventDefault();
-            document.querySelector('form[action="ganerate_excel_admin.php"] button').click();
+            document.querySelector('form[action="export/generate_excel.php"] button').click();
         }
         
         // Escape to go back
         if (e.key === 'Escape') {
-            window.location.href = 'admin_dashboard.php';
+            window.location.href = 'index_kasir.php';
         }
     });
 

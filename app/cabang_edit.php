@@ -20,16 +20,11 @@
 		}
 
     // ------- Data Cabang ----------
-		$cari_kd=mysqli_query($koneksi,"SELECT
-                                        nama_cabang,
-                                        tipe_cabang,
-                                        *,
-                                        alamat_cabang,
-                                        google_maps_cabang,
-                                        lat_cabang,
-                                        long_cabang 
-                                        FROM tbcabang 
-                                        WHERE kode_cabang='$kd_cabang'");			
+		// SELECT * : kolom opsional (alamat/maps/lat/long/telepon) dibaca dengan "?? ''" di bawah,
+		// jadi halaman tetap terbuka walau salah satu kolom belum ada di DB (dulu HTTP 500).
+		$cari_kd=mysqli_query($koneksi,"SELECT *
+                                        FROM tbcabang
+                                        WHERE kode_cabang='$kd_cabang'");
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$nama_cabang=$tm_cari['nama_cabang'];				        
         $tipe_cabang=$tm_cari['tipe_cabang'];

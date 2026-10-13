@@ -41,6 +41,22 @@ if(!$cabang_list){
 
 // Get all suppliers
 $supplier_list = mysqli_query($koneksi, "SELECT kode_supplier, nama_supplier, tempo_hari, kategori_tempo FROM tblsupplier_tempo WHERE is_active=1 ORDER BY nama_supplier");
+if(!$supplier_list){
+    // Tabel tblsupplier_tempo (data tempo supplier) belum ada di database ini. Jangan 500:
+    // tampilkan penjelasan. Pembangunan fitur menunggu data tempo supplier dari Rafi.
+    echo '<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Rencana Order</title>'
+       . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+       . '<style>body{font-family:Arial,sans-serif;background:#f5f6f8;margin:0;padding:40px 16px}'
+       . '.box{max-width:560px;margin:0 auto;background:#fff;border:1px solid #dde1e6;border-radius:6px;padding:24px}'
+       . 'h3{margin-top:0;color:#8a6d3b}a{color:#2679b5}</style></head><body><div class="box">'
+       . '<h3>Rencana Order belum bisa dibuat</h3>'
+       . '<p>Data tempo supplier (<code>tblsupplier_tempo</code>) belum tersedia di database ini, '
+       . 'sehingga form Rencana Order baru belum dapat dipakai.</p>'
+       . '<p>Hubungi administrator sistem untuk melengkapi data tempo supplier.</p>'
+       . '<p><a href="rencana_order.php">&larr; Kembali ke daftar Rencana Order</a></p>'
+       . '</div></body></html>';
+    exit;
+}
 $suppliers = [];
 while ($s = mysqli_fetch_assoc($supplier_list)) {
     $suppliers[$s['kode_supplier']] = $s;

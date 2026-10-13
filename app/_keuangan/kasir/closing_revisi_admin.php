@@ -308,7 +308,7 @@ $role = $legacy_session_kasir['role'] ?? 'User';
                 <h1><i class="fas fa-user-check"></i> Approval Revisi Closing</h1>
                 <p>Setujui atau tolak permintaan revisi closing. Jika disetujui, transaksi lama akan dibatalkan dan sistem membuat transaksi baru dengan nomor urut baru.</p>
             </div>
-            <a href="admin_dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard Admin</a>
+            <a href="index_kasir.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard Kasir</a>
         </div>
 
         <?php if ($flash !== ''): ?>
@@ -347,7 +347,7 @@ $role = $legacy_session_kasir['role'] ?? 'User';
                                 <div class="actions">
                                     <button type="submit" name="action" value="approve_request" class="btn btn-success"><i class="fas fa-check"></i> Setujui & Buat Revisi</button>
                                     <button type="submit" name="action" value="reject_request" class="btn btn-danger"><i class="fas fa-times"></i> Tolak</button>
-                                    <a href="view_transaksi.php?kode_transaksi=<?= urlencode($request['kode_transaksi_lama']) ?>" class="btn btn-secondary"><i class="fas fa-eye"></i> Lihat Detail</a>
+                                    <a href="view_transaksi_admin.php?kode_transaksi=<?= urlencode($request['kode_transaksi_lama']) ?>" class="btn btn-secondary"><i class="fas fa-eye"></i> Lihat Detail</a>
                                 </div>
                             </form>
                         </div>
@@ -380,7 +380,7 @@ $role = $legacy_session_kasir['role'] ?? 'User';
                                 <td><?= htmlspecialchars($history['kode_transaksi_lama']) ?></td>
                                 <td>
                                     <?php if (!empty($history['kode_transaksi_baru'])): ?>
-                                        <a href="view_transaksi.php?kode_transaksi=<?= urlencode($history['kode_transaksi_baru']) ?>"><?= htmlspecialchars($history['kode_transaksi_baru']) ?></a>
+                                        <a href="view_transaksi_admin.php?kode_transaksi=<?= urlencode($history['kode_transaksi_baru']) ?>"><?= htmlspecialchars($history['kode_transaksi_baru']) ?></a>
                                     <?php else: ?>
                                         -
                                     <?php endif; ?>
