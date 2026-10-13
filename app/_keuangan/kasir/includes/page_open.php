@@ -16,6 +16,7 @@ $page_icon  = $page_icon ?? 'fa-file-invoice-dollar';
         :root { --primary-color:#2563eb; --secondary-color:#64748b; --success-color:#16a34a; --danger-color:#dc2626;
                 --warning-color:#d97706; --border-color:#e2e8f0; --text-muted:#64748b; --bg-color:#f8fafc; --card-bg:#fff; }
         body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:#f1f5f9; color:#1e293b; }
+        .main-content { width:auto !important; box-sizing:border-box; padding:20px; }
         .kp-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:16px; }
         .kp-card h1 { margin:0 0 4px; font-size:22px; }
         .kp-card p.sub { margin:0; color:#64748b; font-size:13px; }
