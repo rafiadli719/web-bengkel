@@ -47,7 +47,26 @@
             </div>
         </div>
     </div>
-    <?php if (!empty($pemb_filter_enabled)) { ?>
+    <div class="col-xs-8 col-sm-3">
+        <label>&nbsp;</label>
+        <div class="row">
+            <div class="col-xs-8 col-sm-6">
+                <button class="btn <?php echo $tipebtn1; ?> btn-block" type="submit"
+                id="btnasc" name="btnasc">
+                <i class="ace-icon fa fa-arrow-up icon-on-right"></i> Ascending
+                </button>
+            </div>
+            <div class="col-xs-8 col-sm-6">    
+                <button class="btn <?php echo $tipebtn2; ?> btn-block" type="submit" 
+                id="btndesc" name="btndesc">
+                <i class="ace-icon fa fa-arrow-down icon-on-right"></i> Descending
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if (!empty($pemb_filter_enabled)) { ?>
+<div class="row" style="margin-top:10px;">
     <div class="col-xs-8 col-sm-3">
         <label>Status Pembayaran :</label>
         <div class="row">
@@ -72,22 +91,5 @@
             </div>
         </div>
     </div>
-    <?php } ?>
-    <div class="col-xs-8 col-sm-3">
-        <label>&nbsp;</label>
-        <div class="row">
-            <div class="col-xs-8 col-sm-6">
-                <button class="btn <?php echo $tipebtn1; ?> btn-block" type="submit"
-                id="btnasc" name="btnasc">
-                <i class="ace-icon fa fa-arrow-up icon-on-right"></i> Ascending
-                </button>
-            </div>
-            <div class="col-xs-8 col-sm-6">    
-                <button class="btn <?php echo $tipebtn2; ?> btn-block" type="submit" 
-                id="btndesc" name="btndesc">
-                <i class="ace-icon fa fa-arrow-down icon-on-right"></i> Descending
-                </button>
-            </div>
-        </div>
-    </div>
 </div>
+<?php } ?>

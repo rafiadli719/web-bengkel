@@ -241,8 +241,11 @@ function getStatusBadge($status) {
         .stats-card .card-body { padding: 1.5rem; }
         .breadcrumb-item a { text-decoration: none; }
     </style>
+    <link href="includes/sidebar.css" rel="stylesheet">
 </head>
 <body>
+<?php include __DIR__ . '/includes/sidebar.php'; ?>
+<div class="main-content">
 
     <!-- Page Header -->
     <div class="page-header">
@@ -709,5 +712,6 @@ function getStatusBadge($status) {
         });
     </script>
 
+</div><!-- /.main-content -->
 </body>
 </html>

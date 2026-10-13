@@ -35,3 +35,11 @@
   `hapus_keuangan_pusat`, `detail_pemasukan`/`detail_pengeluaran?jenis_data=pusat`), `histori_gudang.php`,
   `print_serah_terima_pengambilan.php` di `setoran_keuangan.php` masih menuju file yang belum di-port.
 - Unduh PDF/Excel di `view_transaksi_admin.php` memakai `export/*` yang butuh permission `kasir_operate`.
+
+## Tambahan (audit UI/UX)
+- Audit statis 156 halaman menu: 0 aset (css/js/img) rusak. Temuan kecil: `report-tracking-keluhan.php` dan
+  `kas_awal_config_crud.php` tampil tanpa sidebar -> sidebar ditambahkan. Layout filter baru di Daftar
+  Pembelian dipindah ke baris kedua supaya tombol Ascending/Descending tidak terpotong.
+- B4: `save_kendaraan.php` kini menolak nopol yang sudah ada di `tblkendaraan` atau tercatat di
+  `kendaraan_plat_history` (nopol lama). Tabel history masih 0 baris; pengisiannya (ganti plat / pindah
+  kepemilikan) belum dibangun.
