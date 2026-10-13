@@ -43,3 +43,13 @@
 - B4: `save_kendaraan.php` kini menolak nopol yang sudah ada di `tblkendaraan` atau tercatat di
   `kendaraan_plat_history` (nopol lama). Tabel history masih 0 baris; pengisiannya (ganti plat / pindah
   kepemilikan) belum dibangun.
+
+## Tambahan (port halaman Keuangan Kasir yang tidak ada di sumber)
+Halaman berikut tidak ada di sumber web_kasir (tautannya sudah menggantung sejak awal), jadi dibuat baru
+berdasarkan tabel `*_pusat_closing_kasir` dan `pengambilan_setoran_closing_kasir`:
+- `edit_keuangan_pusat.php`, `hapus_keuangan_pusat.php` (izin `kasir_admin`, nama tabel whitelist)
+- `detail_pemasukan.php`, `detail_pengeluaran.php` (filter periode + cabang, maks 1.000 baris)
+- `histori_gudang.php` (pengambilan setoran ke pemasukan gudang / klasifikasi hutang)
+- `print_serah_terima_pengambilan.php` (bukti serah terima + kolom tanda tangan)
+- helper: `includes/page_open.php`, `page_close.php`, `keuangan_pusat_helpers.php`
+Kesalahan sebelumnya di bagian "Belum" di atas untuk tombol-tombol ini sudah tidak berlaku.
