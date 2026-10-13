@@ -1,4 +1,6 @@
 <?php
+	if (session_status() === PHP_SESSION_NONE) { session_start(); }
+	if (empty($_SESSION["_iduser"])) { header("location:../index.php"); exit; } // hanya user login
     include "../config/koneksi.php";
 
     $sid        = (int)($_GET['sid'] ?? 0);

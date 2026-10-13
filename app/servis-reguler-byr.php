@@ -79,8 +79,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu'];  
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict  
 
             // == Total dari Item Barang ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -88,7 +88,7 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_barang=$tm_cari['tot']; 
+                $total_barang=(float)($tm_cari['tot'] ?? 0); 
         
         $tot=$total_service+$total_barang;
         $diskon_rp=($diskon_persen/100)*$tot;
@@ -330,8 +330,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu'];  
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict  
 
                 // == Total dari Item Barang ==============
                     $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -339,7 +339,7 @@
                                                     WHERE 
                                                     no_service='$no_service'");			
                     $tm_cari=mysqli_fetch_array($cari_kd);
-                    $total_barang=$tm_cari['tot']; 
+                    $total_barang=(float)($tm_cari['tot'] ?? 0); 
                     
                     $tot=$total_service+$total_barang;
                     $diskon_rp=($diskon_persen/100)*$tot;
@@ -389,8 +389,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu']; 
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict 
 
             // == Total dari Item Barang ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -398,7 +398,7 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_barang=$tm_cari['tot']; 
+                $total_barang=(float)($tm_cari['tot'] ?? 0); 
                 
                 $tot=$total_service+$total_barang;
                 $diskon_rp=($diskon_persen/100)*$tot;
@@ -448,8 +448,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu']; 
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict 
 
                 // == Total dari Item Barang ==============
                     $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -457,7 +457,7 @@
                                                     WHERE 
                                                     no_service='$no_service'");			
                     $tm_cari=mysqli_fetch_array($cari_kd);
-                    $total_barang=$tm_cari['tot']; 
+                    $total_barang=(float)($tm_cari['tot'] ?? 0); 
                     
                     $tot=$total_service+$total_barang;
                     $diskon_rp=($diskon_persen/100)*$tot;
@@ -504,8 +504,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu']; 
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict 
 
             // == Total dari Item Barang ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -513,7 +513,7 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_barang=$tm_cari['tot']; 
+                $total_barang=(float)($tm_cari['tot'] ?? 0); 
                 
                 $tot=$total_service+$total_barang;
                 $diskon_rp=($diskon_persen/100)*$tot;
@@ -550,8 +550,8 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_service=$tm_cari['tot']; 
-                $total_waktu=$tm_cari['tot_waktu']; 
+                $total_service=(float)($tm_cari['tot'] ?? 0); 
+                $total_waktu=(int)($tm_cari['tot_waktu'] ?? 0); // NULL (tanpa jasa) -> 0, kolom int strict 
 
             // == Total dari Item Barang ==============
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
@@ -559,7 +559,7 @@
                                                 WHERE 
                                                 no_service='$no_service'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
-                $total_barang=$tm_cari['tot']; 
+                $total_barang=(float)($tm_cari['tot'] ?? 0); 
 
                 $tot=$total_service+$total_barang;
                 $ppn=$tot*($txtpajak_persen/100);

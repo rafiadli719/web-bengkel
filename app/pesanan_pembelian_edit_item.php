@@ -62,7 +62,7 @@
                                     quantity='$txtqty', 
                                     total='$subtotal' 
                                     WHERE 
-                                    id='$sid'");                                         
+                                    id='$sid' AND status_trx='0'");                                         
             $kdbrg="";
             echo"<script>window.location=('pesanan_pembelian_add_rst.php?stgl=$stgl&ssup=$ssup&kd=$kdbrg');</script>";			            
         }

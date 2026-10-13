@@ -61,7 +61,7 @@
                                     quantity='$txtqty', 
                                     total='$subtotal' 
                                     WHERE 
-                                    id='$sid'");                                         
+                                    id='$sid' AND status_trx='0'");                                         
             $kdbrg="";
             echo"<script>window.location=('stok_keluar_add_rst.php?stgl=$stgl&kd=$kdbrg');</script>";			            
         }

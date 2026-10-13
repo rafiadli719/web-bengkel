@@ -272,6 +272,10 @@ class InventoryService
             if ($costC < 0) {
                 throw new InventoryException('Biaya tidak boleh negatif', 'biaya_invalid');
             }
+            // EC-03/V-05: harga nol pada barang masuk transaksional menurunkan average tanpa alasan; bonus lewat alokasi proporsional (BR-17)
+            if ($costC == 0 && empty($opts['allow_zero_cost']) && in_array($refType, ['PEMBELIAN', 'DO_TERIMA', 'STOK_MASUK'], true)) {
+                throw new InventoryException('Harga/biaya nol ditolak. Isi harga beli; bonus supplier dialokasikan proporsional (BR-17).', 'biaya_nol');
+            }
         }
         $kd = $this->resolveLocation($lokasi);
         $refLine = (int) ($opts['ref_line'] ?? 0);

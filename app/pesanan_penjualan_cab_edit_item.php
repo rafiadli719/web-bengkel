@@ -68,7 +68,7 @@
                                     potongan='$txtpot', 
                                     total='$subtotal' 
                                     WHERE 
-                                    id='$sid'");                                         
+                                    id='$sid' AND status_trx='0'");                                         
             $kdbrg="";
             echo"<script>window.location=('pesanan_penjualan_cab_add_rst.php?stgl=$stgl&ssup=$cbocabang&kd=$kdbrg');</script>";			            
         }

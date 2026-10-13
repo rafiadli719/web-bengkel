@@ -27,6 +27,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// BR-08: status periode Open/Closed/Locked per cabang. Locked hanya boleh dibuka lagi lewat IT (tidak ditawarkan di sini).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'set_period') {
+    try {
+        csrfCekInv();
+        $perLok = (string) ($_POST['lokasi'] ?? '');
+        $perBln = (string) ($_POST['period'] ?? '');
+        $perSt = (string) ($_POST['status'] ?? '');
+        if (!in_array($perSt, ['open', 'closed'], true)) {
+            throw new InventoryException('Status periode dari halaman ini hanya open atau closed.', 'param_invalid');
+        }
+        $kdPer = $svc->resolveLocation($perLok);
+        $cur = mysqli_prepare($koneksi, "SELECT status FROM inv_period WHERE period = ? AND kd_cabang = ?");
+        mysqli_stmt_bind_param($cur, 'ss', $perBln, $kdPer);
+        mysqli_stmt_execute($cur);
+        $rowCur = mysqli_fetch_assoc(mysqli_stmt_get_result($cur));
+        mysqli_stmt_close($cur);
+        if ($rowCur && $rowCur['status'] === 'locked') {
+            throw new InventoryException("Periode $perBln di $kdPer berstatus locked, hanya IT yang dapat mengubah.", 'dilarang');
+        }
+        $svc->setPeriod($perLok, $perBln, $perSt, $kode_karyawan_aktif);
+        $pesan = "Periode $perBln di $kdPer diubah ke $perSt.";
+    } catch (InventoryException $e) {
+        $pesan = $e->getMessage();
+        $pesanErr = true;
+    }
+}
+
 $cabang = [];
 $r = mysqli_query($koneksi, "SELECT kode_cabang, nama_cabang FROM tbcabang ORDER BY kode_cabang");
 while ($x = mysqli_fetch_assoc($r)) {
@@ -123,6 +150,32 @@ include __DIR__ . '/_ace_header.php';
         </table>
         <?php if (count($rekon['selisih']) > 100): ?><p class="text-muted">Menampilkan 100 selisih terbesar dari <?= count($rekon['selisih']) ?>.</p><?php endif; ?>
     <?php endif; ?>
+<?php endif; ?>
+
+<h4>Periode persediaan (BR-08)</h4>
+<p class="text-muted">Periode <strong>closed</strong>: transaksi biasa ditolak, koreksi lewat menu Koreksi tetap bisa (bertanggal hari ini). Periode yang belum diset dianggap open. Status <em>locked</em> hanya diatur IT.</p>
+<form method="post" class="form-inline" style="margin-bottom:10px">
+    <input type="hidden" name="csrf" value="<?= einv(csrfTokenInv()) ?>">
+    <input type="hidden" name="aksi" value="set_period">
+    <select name="lokasi" class="form-control input-sm">
+        <?php foreach ($cabang as $c): ?><option value="<?= einv($c['kode_cabang']) ?>"><?= einv($c['kode_cabang']) ?></option><?php endforeach; ?>
+    </select>
+    <input type="month" name="period" class="form-control input-sm" value="<?= einv(date('Y-m')) ?>" required>
+    <select name="status" class="form-control input-sm"><option value="closed">closed</option><option value="open">open</option></select>
+    <button type="submit" class="btn btn-sm btn-primary">Simpan periode</button>
+</form>
+<?php
+$rp = mysqli_query($koneksi, "SELECT period, kd_cabang, status, updated_by, updated_at FROM inv_period ORDER BY period DESC, kd_cabang LIMIT 24");
+if ($rp && mysqli_num_rows($rp) > 0): ?>
+    <table class="table table-condensed table-bordered">
+        <thead><tr><th>Periode</th><th>Cabang</th><th>Status</th><th>Diubah oleh</th><th>Waktu</th></tr></thead><tbody>
+        <?php while ($p = mysqli_fetch_assoc($rp)): ?>
+            <tr><td><?= einv($p['period']) ?></td><td><?= einv($p['kd_cabang']) ?></td><td><?= einv($p['status']) ?></td><td><?= einv($p['updated_by']) ?></td><td><?= einv($p['updated_at']) ?></td></tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p class="text-muted">Belum ada periode yang diset (semua dianggap open).</p>
 <?php endif; ?>
 
 <h4>Penolakan shadow terakhir</h4>

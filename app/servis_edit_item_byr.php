@@ -67,7 +67,7 @@
                                     potongan='$txtpot', 
                                     total='$subtotal' 
                                     WHERE 
-                                    id='$sid'");                                         
+                                    id='$sid' AND NOT EXISTS (SELECT 1 FROM tblservice sv WHERE sv.no_service = tblservis_barang.no_service AND sv.kd_cabang = tblservis_barang.kd_cabang AND sv.status_servis IN ('bayar','selesai'))");                                         
             $kdbrg="";
             $kdjasa="";
             echo"<script>window.location=('servis-reguler-byr.php?snoserv=$no_service&kd=$kdbrg&kdjasa=$kdjasa');</script>";        

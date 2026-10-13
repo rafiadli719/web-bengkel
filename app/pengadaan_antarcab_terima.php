@@ -80,6 +80,13 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnterima'])){
                 $qt  = (int)$it['qty_terima'];
                 $hpp = (float)$it['harga_pokok'];
                 $nb  = (int)$it['no_baris'];
+                // Integritas stok: item dan batas qty diambil dari detail kiriman, bukan dari isian POST.
+                $qdk = mysqli_query($koneksi,"SELECT no_item, qty_kirim FROM tblorder_antarcab_detail
+                    WHERE no_order='$no_order' AND no_baris='$nb' LIMIT 1");
+                $rdk = $qdk ? mysqli_fetch_assoc($qdk) : null;
+                if(!$rdk) throw new Exception("Baris $nb tidak ada pada pesanan $no_order");
+                if($qt < 0 || $qt > (int)$rdk['qty_kirim']) throw new Exception("Qty terima ($qt) melebihi qty kirim ({$rdk['qty_kirim']}) untuk item {$rdk['no_item']}");
+                $ni  = mysqli_real_escape_string($koneksi, $rdk['no_item']);
                 $sub = $qt * $hpp;
                 $total_nilai += $sub;
 
