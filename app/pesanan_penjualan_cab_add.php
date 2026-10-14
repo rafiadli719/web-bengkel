@@ -249,7 +249,7 @@ $q_cab = mysqli_query($koneksi,"SELECT kode_cabang,nama_cabang,tipe_cabang FROM 
                                                 <th style="width:170px">Kode Item</th>
                                                 <th>Nama Item</th>
                                                 <th style="width:110px" class="text-right">Harga HPP</th>
-                                                <th style="width:80px" class="text-right">Qty</th>
+                                                <th style="width:80px" class="text-right">Jumlah</th>
                                                 <th style="width:120px" class="text-right">Subtotal</th>
                                                 <th style="width:40px"></th>
                                             </tr>
@@ -276,7 +276,7 @@ $q_cab = mysqli_query($koneksi,"SELECT kode_cabang,nama_cabang,tipe_cabang FROM 
                                 <div class="widget-main">
                                     <div class="well well-sm">
                                         <div class="row">
-                                            <div class="col-xs-6">Total Qty</div>
+                                            <div class="col-xs-6">Total Jumlah</div>
                                             <div class="col-xs-6 text-right"><strong id="summQty">0</strong></div>
                                         </div>
                                         <div class="row" style="margin-top:5px;">

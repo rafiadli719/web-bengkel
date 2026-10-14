@@ -634,7 +634,7 @@ if(!empty($ref_nopolisi)) {
                     <th width="5%">#</th>
                     <th width="15%">Kode</th>
                     <th>Nama Barang</th>
-                    <th width="8%" class="text-center">Qty</th>
+                    <th width="8%" class="text-center">Jumlah</th>
                     <th width="15%" class="text-right">Harga</th>
                     <th width="15%" class="text-right">Total</th>
                 </tr>

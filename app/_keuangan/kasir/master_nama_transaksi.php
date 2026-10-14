@@ -123,7 +123,7 @@ if (isset($_GET['edit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Nama Transaksi - Admin Dashboard</title>
+    <title>Master Nama Transaksi - Keuangan Kasir</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="includes/sidebar.css" rel="stylesheet">
     <style>
@@ -435,7 +435,7 @@ if (isset($_GET['edit'])) {
         <div class="user-avatar"><?php echo strtoupper(substr($username, 0, 1)); ?></div>
         <div>
             <strong><?php echo htmlspecialchars($username); ?></strong>
-            <p style="color: var(--text-muted); font-size: 12px;"><?php echo htmlspecialchars(ucfirst($role)); ?></p>
+            <p style="color: var(--text-muted); font-size: 12px;"><?php echo htmlspecialchars(labelPeranKasir($role)); ?></p>
         </div>
     </div>
 
@@ -443,8 +443,8 @@ if (isset($_GET['edit'])) {
         <h1><i class="fas fa-file-signature"></i> Master Nama Transaksi</h1>
         <p style="color: var(--text-muted); margin-bottom: 0;">Kelola master nama transaksi untuk input pemasukan dan pengeluaran kasir</p>
         <div class="info-tags">
-            <div class="info-tag"><i class="fas fa-user"></i> User: <?php echo htmlspecialchars($username); ?></div>
-            <div class="info-tag"><i class="fas fa-shield-alt"></i> Role: <?php echo htmlspecialchars(ucfirst($role)); ?></div>
+            <div class="info-tag"><i class="fas fa-user"></i> Pengguna: <?php echo htmlspecialchars($username); ?></div>
+            <div class="info-tag"><i class="fas fa-shield-alt"></i> Peran: <?php echo htmlspecialchars(labelPeranKasir($role)); ?></div>
             <div class="info-tag"><i class="fas fa-calendar-day"></i> Tanggal: <?php echo date('d M Y'); ?></div>
         </div>
     </div>

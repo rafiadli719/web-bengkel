@@ -123,7 +123,7 @@ if(empty($_SESSION['_iduser'])){
 					<ul class="breadcrumb">
 						<li><i class="ace-icon fa fa-home home-icon"></i> <a href="index.php">Home</a></li>
 						<li><a href="master-tarif-jemput.php">Tarif Jemput Antar</a></li>
-						<li class="active">Edit</li>
+						<li class="active">Ubah</li>
 					</ul>
 				</div>
 

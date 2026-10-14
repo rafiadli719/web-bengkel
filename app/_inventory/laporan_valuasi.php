@@ -42,7 +42,7 @@ if (isset($_GET['csv'])) {
 
 $rp = function ($v) { return number_format((float) $v, 2, ',', '.'); };
 $qt = function ($v) { return rtrim(rtrim(number_format((float) $v, 3, ',', '.'), '0'), ','); };
-$pageTitle = 'Valuasi Persediaan (Moving Average)';
+$pageTitle = 'Valuasi Persediaan (Rata-rata Bergerak)';
 include __DIR__ . '/_ace_header.php';
 ?>
 <form method="get" class="form-inline" style="margin-bottom:15px">
@@ -50,7 +50,7 @@ include __DIR__ . '/_ace_header.php';
         <option value="">Semua lokasi</option>
         <?php foreach ($boleh as $kd => $nm): ?><option value="<?= einv($kd) ?>" <?= $kd === $lok ? 'selected' : '' ?>><?= einv($kd) ?></option><?php endforeach; ?>
     </select>
-    <input type="text" name="cari" value="<?= einv($cari) ?>" placeholder="Cari no item / nama" class="form-control input-sm">
+    <input type="text" name="cari" value="<?= einv($cari) ?>" placeholder="Cari no. barang / nama" class="form-control input-sm">
     <button class="btn btn-sm btn-primary" type="submit">Tampilkan</button>
     <button class="btn btn-sm btn-default" type="submit" name="csv" value="1"><i class="fa fa-download"></i> CSV</button>
 </form>
@@ -61,7 +61,7 @@ include __DIR__ . '/_ace_header.php';
 </div>
 
 <table class="table table-condensed table-bordered table-striped">
-    <thead><tr><th>Lokasi</th><th>No item</th><th>Nama</th><th class="text-right">Qty</th><th class="text-right">Average</th><th class="text-right">Nilai</th></tr></thead>
+    <thead><tr><th>Lokasi</th><th>No. barang</th><th>Nama</th><th class="text-right">Jumlah</th><th class="text-right">Rata-rata</th><th class="text-right">Nilai</th></tr></thead>
     <tbody>
     <?php foreach ($rows as $r): ?>
         <tr><td><?= einv($r['kd_cabang']) ?></td>
@@ -71,7 +71,7 @@ include __DIR__ . '/_ace_header.php';
             <td class="text-right"><?= $rp($r['average_cost']) ?></td>
             <td class="text-right"><?= $rp($r['total_value']) ?></td></tr>
     <?php endforeach; ?>
-    <?php if (!$rows): ?><tr><td colspan="6" class="text-center text-muted">Belum ada saldo di ledger Moving Average. Muat opening stock atau aktifkan shadow.</td></tr><?php endif; ?>
+    <?php if (!$rows): ?><tr><td colspan="6" class="text-center text-muted">Belum ada saldo di buku stok Rata-rata Bergerak. Muat stok awal atau aktifkan pencatatan bayangan (shadow).</td></tr><?php endif; ?>
     </tbody>
 </table>
 <?php include __DIR__ . '/_ace_footer.php'; ?>

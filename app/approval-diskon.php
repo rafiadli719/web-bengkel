@@ -139,7 +139,7 @@ if(empty($_SESSION['_iduser'])){
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <h4>Menunggu Approval</h4>
+                            <h4>Menunggu Persetujuan</h4>
                             <table class="table table-striped table-bordered">
                                 <thead>
                                     <tr>

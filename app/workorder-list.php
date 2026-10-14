@@ -196,7 +196,7 @@
 												<i class="ace-icon fa fa-search nav-search-icon"></i>
 											</span>
 											<input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                            <a href="workorder-list.php" class="btn btn-default btn-sm">Reset</a>
+                                            <a href="workorder-list.php" class="btn btn-default btn-sm">Atur Ulang</a>
 										</form>
 									</div>
                                     <div class="col-xs-6 text-right">

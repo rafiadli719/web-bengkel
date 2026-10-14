@@ -567,7 +567,7 @@ if($no_pr!=''){
                                                     <th>Tanggal</th>
                                                     <th>Requester</th>
                                                     <th class="text-right">Jumlah Item</th>
-                                                    <th class="text-right">Total Qty</th>
+                                                    <th class="text-right">Total Jumlah</th>
                                                     <th>Status</th>
                                                     <th>Aksi</th>
                                                 </tr>
@@ -691,7 +691,7 @@ if($no_pr!=''){
                                             <div class="form-group"><label>Nama</label>
                                                 <input type="text" id="pr_nama_item" class="form-control" placeholder="(otomatis)" readonly style="width:160px;background:#f5f5f5" />
                                             </div>
-                                            <div class="form-group"><label>Qty</label>
+                                            <div class="form-group"><label>Jumlah</label>
                                                 <input type="number" name="quantity" class="form-control" min="1" value="1" required style="width:70px" />
                                             </div>
                                             <div class="form-group"><label>Satuan</label>
@@ -763,7 +763,7 @@ if($no_pr!=''){
                                                     <th>No</th>
                                                     <th>Kode</th>
                                                     <th>Nama Item</th>
-                                                    <th class="text-right">Qty</th>
+                                                    <th class="text-right">Jumlah</th>
                                                     <th>Satuan</th>
                                                     <th class="text-right">Harga Est.</th>
                                                     <th class="text-right">Total Est.</th>

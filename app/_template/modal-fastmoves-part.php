@@ -82,7 +82,7 @@
                                 <th width="80">Satuan</th>
                                 <th width="120" class="text-right">Harga</th>
                                 <th width="80" class="text-center">Stok</th>
-                                <th width="100" class="text-center">Qty</th>
+                                <th width="100" class="text-center">Jumlah</th>
                                 <th width="80">Aksi</th>
                             </tr>
                         </thead>

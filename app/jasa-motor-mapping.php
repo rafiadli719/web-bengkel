@@ -216,7 +216,7 @@ if ($mode === 'edit') {
                                         <i class="ace-icon fa fa-search nav-search-icon"></i>
                                     </span>
                                     <input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                    <a href="jasa-motor-mapping.php" class="btn btn-default btn-sm">Reset</a>
+                                    <a href="jasa-motor-mapping.php" class="btn btn-default btn-sm">Atur Ulang</a>
                                 </form>
                                 <div class="space-8"></div>
                             </div>
@@ -244,7 +244,7 @@ if ($mode === 'edit') {
                                             echo '<td>'.htmlspecialchars($row['noitem']).'</td>';
                                             echo '<td>'.htmlspecialchars($row['namaitem']).'</td>';
                                             echo '<td class="center">'
-                                                .'<a class="btn btn-xs btn-primary" href="jasa-motor-mapping.php?kd='.urlencode($row['noitem']).'">Mapping</a>'
+                                                .'<a class="btn btn-xs btn-primary" href="jasa-motor-mapping.php?kd='.urlencode($row['noitem']).'">Pemetaan</a>'
                                                 .'</td>';
                                             echo '</tr>';
                                         }

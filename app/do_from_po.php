@@ -392,7 +392,7 @@ $success_do = get('success_do','');
                                                     <th>No. PO</th>
                                                     <th>Tanggal</th>
                                                     <th>Supplier</th>
-                                                    <th class="text-right">Sisa Qty</th>
+                                                    <th class="text-right">Sisa Jumlah</th>
                                                     <th class="text-right">Jml DO</th>
                                                     <th>Aksi</th>
                                                 </tr>
@@ -452,7 +452,7 @@ $success_do = get('success_do','');
                                                 <tr>
                                                     <th>No DO</th>
                                                     <th>Tanggal DO</th>
-                                                    <th class="text-right">Total Qty</th>
+                                                    <th class="text-right">Total Jumlah</th>
                                                     <th>Status</th>
                                                     <th>Aksi</th>
                                                 </tr>

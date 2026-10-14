@@ -485,7 +485,7 @@ ob_start();
                 <th width="5%">No</th>
                 <th width="12%">Kode</th>
                 <th width="35%">Nama Part</th>
-                <th width="8%">Qty</th>
+                <th width="8%">Jumlah</th>
                 <th width="15%">Harga Satuan</th>
                 <th width="15%">Total</th>
                 <th width="10%">Status</th>

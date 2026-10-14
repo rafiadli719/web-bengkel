@@ -267,7 +267,7 @@
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
 													<a href="pesanan_penjualan_add.php">
-													<button class="btn btn-success btn-block" type="button">Input Data</button>
+													<button class="btn btn-success btn-block" type="button">Tambah Data</button>
 													</a>
 							</div>
 							<div class="col-xs-12 col-sm-9">
@@ -301,7 +301,7 @@
                                             <td width="9%">Kode Pelanggan</td>
                                             <td width="10%">Nama Pelanggan</td>
                                             <td width="10%">Sales</td>
-                                            <td width="9%" align="right">Total Qty</td>
+                                            <td width="9%" align="right">Total Jumlah</td>
                                             <td width="10%" align="right">Total Jual</td>
                                             <td width="9%" align="right">Diskon</td>
                                             <td width="9%" align="right">Pajak</td>
@@ -507,7 +507,7 @@
 					  },
 					  {
 						"extend": "print",
-						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Cetak</span>",
 						"className": "btn btn-white btn-primary btn-bold",
 						autoPrint: false,
 						message: 'This print was produced using the Print button for DataTables'

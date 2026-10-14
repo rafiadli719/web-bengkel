@@ -218,7 +218,7 @@
                                 <th>Satuan</th>
                                 <th class="text-right">Harga</th>
                                 <th class="text-center">Stok</th>
-                                <th class="text-center">Qty</th>
+                                <th class="text-center">Jumlah</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

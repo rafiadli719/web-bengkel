@@ -260,7 +260,7 @@ if(empty($_SESSION['_iduser'])){
                                         <div class="widget-main">
                                             <div class="upload-area" id="uploadArea">
                                                 <i class="fa fa-cloud-upload"></i>
-                                                <h4>Drag & Drop file Excel di sini</h4>
+                                                <h4>Seret dan lepas file Excel di sini</h4>
                                                 <p class="text-muted">atau klik untuk memilih file</p>
                                                 <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
                                             </div>
@@ -394,7 +394,7 @@ if(empty($_SESSION['_iduser'])){
                                                 <div class="col-xs-3">
                                                     <div class="well text-center">
                                                         <h4 class="text-danger" id="errorCount">0</h4>
-                                                        <small>Error</small>
+                                                        <small>Kesalahan</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -406,7 +406,7 @@ if(empty($_SESSION['_iduser'])){
                                                             <th width="5%">No</th>
                                                             <th width="15%">Kode</th>
                                                             <th width="30%">Nama Barang</th>
-                                                            <th width="10%">Qty</th>
+                                                            <th width="10%">Jumlah</th>
                                                             <th width="15%">Harga</th>
                                                             <th width="15%">Subtotal</th>
                                                             <th width="10%">Status</th>

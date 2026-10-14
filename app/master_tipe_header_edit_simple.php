@@ -247,7 +247,7 @@ if ($_POST) {
                             <li>
                                 <a href="master_tipe_header.php">Tipe Header</a>
                             </li>
-                            <li class="active">Edit</li>
+                            <li class="active">Ubah</li>
                         </ul>
                     </div>
 

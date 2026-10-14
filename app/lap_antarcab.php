@@ -235,12 +235,12 @@ if($result){
                                 <thead>
                                     <tr class="active">
                                         <th>No. Transaksi</th>
-                                        <th>Tgl. Request</th>
+                                        <th>Tgl. Permintaan</th>
                                         <th>Pengirim</th>
                                         <th>Penerima</th>
                                         <th class="text-center">Jenis</th>
                                         <th class="text-center">Item</th>
-                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Jumlah</th>
                                         <th class="text-right">Nilai (Rp)</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center" style="width:70px">Aksi</th>

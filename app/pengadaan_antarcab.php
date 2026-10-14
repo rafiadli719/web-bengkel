@@ -211,11 +211,11 @@ $result = mysqli_query($koneksi, $sql);
                                 <thead>
                                     <tr class="active">
                                         <th style="width:130px">No. Permintaan</th>
-                                        <th style="width:95px">Tgl. Request</th>
+                                        <th style="width:95px">Tgl. Permintaan</th>
                                         <th>Dari Cabang</th>
                                         <th>Ke Cabang</th>
                                         <th class="text-center" style="width:55px">Item</th>
-                                        <th class="text-center" style="width:65px">Total Qty</th>
+                                        <th class="text-center" style="width:65px">Total Jumlah</th>
                                         <th style="width:110px">Status</th>
                                         <th>Oleh</th>
                                         <th class="text-center" style="width:130px">Aksi</th>

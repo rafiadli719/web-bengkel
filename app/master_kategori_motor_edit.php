@@ -200,7 +200,7 @@
 							<li>
 								<a href="master_kategori_motor.php">Kategori Motor</a>
 							</li>
-							<li class="active">Edit</li>
+							<li class="active">Ubah</li>
 						</ul>
 					</div>
 

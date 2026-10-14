@@ -325,7 +325,7 @@
 						<div class="row">
 							<div class="col-xs-12 col-sm-3">
 													<a href="penjualan_add.php">
-													<button class="btn btn-success btn-block" type="button">Input Data</button>
+													<button class="btn btn-success btn-block" type="button">Tambah Data</button>
 													</a>
 							</div>
 							<div class="col-xs-12 col-sm-9">
@@ -589,7 +589,7 @@
 					  },
 					  {
 						"extend": "print",
-						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Cetak</span>",
 						"className": "btn btn-white btn-primary btn-bold",
 						autoPrint: false,
 						message: 'This print was produced using the Print button for DataTables'

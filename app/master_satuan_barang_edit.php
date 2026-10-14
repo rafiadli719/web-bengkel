@@ -206,7 +206,7 @@
 							<li>
 								<a href="master_satuan_barang.php">Satuan Barang</a>
 							</li>
-							<li class="active">Edit</li>
+							<li class="active">Ubah</li>
 						</ul>
 					</div>
 

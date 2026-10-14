@@ -347,7 +347,7 @@
 							<div class="col-xs-12 col-sm-3">
 
 													<a href="pesanan_pembelian_add.php">
-													<button class="btn btn-success btn-block" type="button">Input Data</button>
+													<button class="btn btn-success btn-block" type="button">Tambah Data</button>
 													</a>
 
 							</div>
@@ -366,7 +366,7 @@
                                             <th class="center" width="10%">Tanggal</th>
                                             <th width="10%">Kode Supplier</th>
                                             <th width="25%">Nama Supplier</th>
-                                            <th class="center" width="10%">Total Qty</th>
+                                            <th class="center" width="10%">Total Jumlah</th>
                                             <th class="center" width="10%">Total Order</th>
                                             <th class="center" width="10%">Status</th>
                                             <th width="10%">Keterangan</th>
@@ -537,7 +537,7 @@
 					  },
 					  {
 						"extend": "print",
-						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Cetak</span>",
 						"className": "btn btn-white btn-primary btn-bold",
 						autoPrint: false,
 						message: 'This print was produced using the Print button for DataTables'

@@ -75,7 +75,7 @@
             <div class="col-xs-8 col-sm-12">    
                 <button class="btn btn-primary btn-block" type="submit" 
                 id="btnxl" name="btnxl">
-                Export
+                Ekspor
                 </button>
             </div>
         </div>

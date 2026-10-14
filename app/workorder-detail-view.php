@@ -373,7 +373,7 @@
                                                         <th width="5%">No</th>
                                                         <th width="20%">Kode</th>
                                                         <th width="45%">Nama Barang</th>
-                                                        <th width="10%">Qty</th>
+                                                        <th width="10%">Jumlah</th>
                                                         <th width="20%">Total</th>
                                                     </tr>
                                                 </thead>

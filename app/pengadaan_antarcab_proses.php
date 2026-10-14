@@ -191,7 +191,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnkirim'])){
                             <tr class="active"><th colspan="2"><i class="fa fa-file-text-o"></i> Info Permintaan</th></tr>
                             <tr><td style="width:160px"><b>No. Permintaan</b></td><td><strong><?php echo htmlspecialchars($header['no_order']); ?></strong></td></tr>
                             <tr><td><b>Dari Cabang</b></td><td><?php echo htmlspecialchars($header['nama_asal']?:$header['kd_cabang_asal']); ?></td></tr>
-                            <tr><td><b>Tgl. Request</b></td><td><?php echo date('d/m/Y',strtotime($header['tanggal_request'])); ?></td></tr>
+                            <tr><td><b>Tgl. Permintaan</b></td><td><?php echo date('d/m/Y',strtotime($header['tanggal_request'])); ?></td></tr>
                             <tr><td><b>Diminta Oleh</b></td><td><?php echo htmlspecialchars($header['user_request']); ?></td></tr>
                             <?php if($header['catatan']): ?><tr><td><b>Catatan</b></td><td><?php echo htmlspecialchars($header['catatan']); ?></td></tr><?php endif; ?>
                         </table>

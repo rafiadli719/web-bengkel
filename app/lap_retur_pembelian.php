@@ -212,7 +212,7 @@
                                                     <th width="13%">No. Pembelian</th>
                                                     <th class="center" width="9%">Tanggal</th>
                                                     <th width="23%">Supplier</th>
-                                                    <th class="center" width="6%">Qty</th>
+                                                    <th class="center" width="6%">Jumlah</th>
                                                     <th align="right" width="13%">Total Nilai</th>
                                                     <th class="center" width="7%">Status</th>
                                                     <th class="center" width="12%">Aksi</th>

@@ -275,7 +275,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnsimpan'])){
                                                         <th style="width:35px">#</th>
                                                         <th style="width:140px">Kode Barang <span class="text-danger">*</span></th>
                                                         <th>Nama Barang</th>
-                                                        <th class="text-center" style="width:80px">Qty <span class="text-danger">*</span></th>
+                                                        <th class="text-center" style="width:80px">Jumlah <span class="text-danger">*</span></th>
                                                         <th class="text-right" style="width:120px">HPP (Rp)</th>
                                                         <th class="text-right" style="width:130px">Subtotal (Rp)</th>
                                                         <th style="width:40px"></th>

@@ -450,7 +450,7 @@ if(empty($_SESSION['_iduser'])){
                 <tr>
                     <th width="5%" class="text-center">No</th>
                     <th width="50%">Nama Item</th>
-                    <th width="10%" class="text-center">Qty</th>
+                    <th width="10%" class="text-center">Jumlah</th>
                     <th width="17%" class="text-right">Harga</th>
                     <th width="18%" class="text-right">Total</th>
                 </tr>';
@@ -847,7 +847,7 @@ if(empty($_SESSION['_iduser'])){
                 $html .= '<th width="8%">Tipe</th>';
                 $html .= '<th width="10%">Kode</th>';
                 $html .= '<th width="20%">Nama Item</th>';
-                $html .= '<th width="5%">Qty</th>';
+                $html .= '<th width="5%">Jumlah</th>';
                 $html .= '<th width="12%">Harga</th>';
                 $html .= '<th width="12%">Total</th>';
                 $html .= '</tr></thead><tbody>';
@@ -894,11 +894,11 @@ if(empty($_SESSION['_iduser'])){
             $html .= '<th width="12%">No. Service</th>';
             $html .= '<th width="15%">Temuan</th>';
             $html .= '<th width="20%">Nama Part</th>';
-            $html .= '<th width="5%">Qty</th>';
+            $html .= '<th width="5%">Jumlah</th>';
             $html .= '<th width="12%">Harga</th>';
             $html .= '<th width="12%">Total</th>';
             $html .= '<th width="10%">Status</th>';
-            $html .= '<th width="11%">User</th>';
+            $html .= '<th width="11%">Pengguna</th>';
             $html .= '</tr></thead><tbody>';
 
             // Query penawaran
@@ -1130,7 +1130,7 @@ if(empty($_SESSION['_iduser'])){
                 echo '<td>Tipe</td>';
                 echo '<td>Kode Item</td>';
                 echo '<td>Nama Item</td>';
-                echo '<td>Qty</td>';
+                echo '<td>Jumlah</td>';
                 echo '<td>Harga Satuan</td>';
                 echo '<td>Total</td>';
                 echo '<td>Status</td>';
@@ -1187,7 +1187,7 @@ if(empty($_SESSION['_iduser'])){
             echo '<td>Temuan Terkait</td>';
             echo '<td>Kode Part</td>';
             echo '<td>Nama Part</td>';
-            echo '<td>Qty</td>';
+            echo '<td>Jumlah</td>';
             echo '<td>Harga Satuan</td>';
             echo '<td>Total Harga</td>';
             echo '<td>Status</td>';

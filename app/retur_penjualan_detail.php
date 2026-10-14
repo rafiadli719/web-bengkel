@@ -161,12 +161,12 @@ if(empty($_SESSION['_iduser'])){
                                                         <?php echo ($h['status_retur']=='1') ? '<span class="label label-success">Selesai</span>' : '<span class="label label-warning">Proses</span>'; ?>
                                                     </td></tr>
                                                     <tr><td><strong>Keterangan</strong></td><td><?php echo htmlspecialchars($h['note']); ?></td></tr>
-                                                    <tr><td><strong>User</strong></td><td><?php echo htmlspecialchars($h['user']); ?></td></tr>
+                                                    <tr><td><strong>Pengguna</strong></td><td><?php echo htmlspecialchars($h['user']); ?></td></tr>
                                                 </table>
                                             </div>
                                             <div class="col-xs-12 col-sm-4 col-sm-offset-2">
                                                 <table class="table table-condensed table-bordered">
-                                                    <tr><td><strong>Total Qty</strong></td><td align="right"><?php echo number_format($h['total_qty_retur'],0,',','.'); ?></td></tr>
+                                                    <tr><td><strong>Total Jumlah</strong></td><td align="right"><?php echo number_format($h['total_qty_retur'],0,',','.'); ?></td></tr>
                                                     <tr><td><strong>Total Nilai Retur (Refund)</strong></td><td align="right"><strong><?php echo number_format($h['total_akhir'],0,',','.'); ?></strong></td></tr>
                                                     <tr><td><strong>Cara Bayar Refund</strong></td><td align="right"><?php echo htmlspecialchars($h['cara_bayar_refund'] ?: '-'); ?></td></tr>
                                                     <tr><td><strong>Status Refund</strong></td><td align="right">
@@ -185,7 +185,7 @@ if(empty($_SESSION['_iduser'])){
                                                     <th class="center" width="5%">No</th>
                                                     <th width="12%">Kode Item</th>
                                                     <th width="28%">Nama Item</th>
-                                                    <th class="center" width="7%">Qty</th>
+                                                    <th class="center" width="7%">Jumlah</th>
                                                     <th align="right" width="12%">Harga Jual</th>
                                                     <th align="right" width="12%">Subtotal</th>
                                                     <th width="12%">Alasan</th>

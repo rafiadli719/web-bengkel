@@ -210,7 +210,7 @@ if (isset($_POST['run_repair'])) {
                         </div>
 
                         <button type="submit" class="btn btn-primary" name="run_repair" value="1">Jalankan</button>
-                        <a class="btn btn-default" href="tools_repair_statistik_pelanggan.php">Reset</a>
+                        <a class="btn btn-default" href="tools_repair_statistik_pelanggan.php">Atur Ulang</a>
                     </form>
                 </div>
             </div>

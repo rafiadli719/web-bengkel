@@ -200,7 +200,7 @@ if($sql_jasa) {
                         <th width="5%" class="text-center">#</th>
                         <th width="12%">Kode</th>
                         <th>Nama Jasa</th>
-                        <th width="8%" class="text-center">Qty</th>
+                        <th width="8%" class="text-center">Jumlah</th>
                         <th width="10%" class="text-center">Waktu</th>
                         <th width="12%" class="text-right">Harga</th>
                         <th width="8%" class="text-center">Disc</th>

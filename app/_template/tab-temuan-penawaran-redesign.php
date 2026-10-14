@@ -992,7 +992,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
                             <input type="number" class="form-control" id="harga_satuan_penawaran_v2" name="harga_satuan" placeholder="0" min="0" required>
                         </div>
                         <div class="form-group" style="flex: 0 0 100px;">
-                            <label>Qty</label>
+                            <label>Jumlah</label>
                             <input type="number" class="form-control" id="quantity_penawaran_v2" name="quantity" value="1" min="1" required>
                         </div>
                         <div class="form-group">
@@ -1261,7 +1261,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
                         <?php if($temuan['total_penawaran_part'] > 0): ?>
                         <div class="summary-stats" style="margin-bottom: 16px;">
                             <div class="summary-stat">
-                                <small>Pending</small>
+                                <small>Menunggu</small>
                                 <strong class="pending"><?= $temuan['pending_part_count'] ?></strong>
                             </div>
                             <div class="summary-stat">
@@ -1320,7 +1320,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
                         <?php if($temuan['total_penawaran_jasa'] > 0): ?>
                         <div class="summary-stats">
                             <div class="summary-stat">
-                                <small>Pending</small>
+                                <small>Menunggu</small>
                                 <strong class="pending"><?= $temuan['pending_jasa_count'] ?></strong>
                             </div>
                             <div class="summary-stat">
@@ -1371,7 +1371,7 @@ $active_subtab = ($count_pending_wo > 0) ? 'tab-pending' : 'tab-input';
                         <tr style="background: var(--bg-light);">
                             <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Item</th>
                             <th style="padding: 12px 16px; text-align: center; width: 100px;">Tipe</th>
-                            <th style="padding: 12px 16px; text-align: center; width: 80px;">Qty</th>
+                            <th style="padding: 12px 16px; text-align: center; width: 80px;">Jumlah</th>
                             <th style="padding: 12px 16px; text-align: right; width: 120px;">Total</th>
                             <th style="padding: 12px 16px; text-align: center; width: 100px;">Status</th>
                         </tr>
@@ -1594,7 +1594,7 @@ function loadSuggestedPartsV2(kodeTemuan) {
                 html += '<table class="table table-sm table-hover" style="margin: 0; font-size: 13px;">';
                 html += '<thead style="background: var(--bg-light);"><tr>';
                 html += '<th style="width:40px;"><input type="checkbox" onclick="toggleAllPartsV2(this)" title="Pilih semua"></th>';
-                html += '<th>Kode</th><th>Nama Part</th><th class="text-right">Harga</th><th class="text-center">Stok</th><th class="text-center">Qty</th>';
+                html += '<th>Kode</th><th>Nama Part</th><th class="text-right">Harga</th><th class="text-center">Stok</th><th class="text-center">Jumlah</th>';
                 html += '</tr></thead><tbody>';
 
                 response.data.forEach(function(part) {

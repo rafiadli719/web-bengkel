@@ -220,7 +220,7 @@ if ($mode === 'edit') {
                                         <i class="ace-icon fa fa-search nav-search-icon"></i>
                                     </span>
                                     <input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                    <a href="workorder-motor-mapping.php" class="btn btn-default btn-sm">Reset</a>
+                                    <a href="workorder-motor-mapping.php" class="btn btn-default btn-sm">Atur Ulang</a>
                                 </form>
                                 <div class="space-8"></div>
                             </div>
@@ -248,7 +248,7 @@ if ($mode === 'edit') {
                                             echo '<td>'.htmlspecialchars($row['kode_wo']).'</td>';
                                             echo '<td>'.htmlspecialchars($row['nama_wo']).'</td>';
                                             echo '<td class="center">'
-                                                .'<a class="btn btn-xs btn-primary" href="workorder-motor-mapping.php?kode='.urlencode($row['kode_wo']).'">Mapping</a>'
+                                                .'<a class="btn btn-xs btn-primary" href="workorder-motor-mapping.php?kode='.urlencode($row['kode_wo']).'">Pemetaan</a>'
                                                 .'</td>';
                                             echo '</tr>';
                                         }

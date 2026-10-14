@@ -75,7 +75,7 @@ echo '<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:c
 echo '<thead><tr>';
 echo '<th style="width:60px">No</th>';
 echo '<th style="width:90px">Status</th>';
-echo '<th style="width:320px">Error</th>';
+echo '<th style="width:320px">Kesalahan</th>';
 echo '<th>SQL</th>';
 echo '</tr></thead><tbody>';
 

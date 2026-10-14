@@ -332,7 +332,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <button type="submit" name="btn_save" class="btn btn-primary">Simpan</button>
-                                                        <a href="setting_antarcabang.php" class="btn btn-default">Reset</a>
+                                                        <a href="setting_antarcabang.php" class="btn btn-default">Atur Ulang</a>
                                                     </div>
                                                 </div>
                                             </form>

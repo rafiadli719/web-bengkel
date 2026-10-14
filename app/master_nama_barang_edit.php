@@ -222,7 +222,7 @@
 							<li>
 								<a href="master_nama_barang.php">Nama Barang</a>
 							</li>
-							<li class="active">Edit</li>
+							<li class="active">Ubah</li>
 						</ul>
 					</div>
 

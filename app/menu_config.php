@@ -18,7 +18,7 @@ return [
         'permission' => 'issue_read'
     ],
     [
-        'title' => 'Approve Merge Pelanggan',
+        'title' => 'Persetujuan Gabung Pelanggan',
         'url' => 'customer_merge_approve.php',
         'icon' => 'fa-compress',
         'permission' => 'issue_approve_supervisor'
@@ -40,7 +40,7 @@ return [
     //     'permission' => 'service_create'
     // ],
     // [
-    //     'title' => 'Approve Pindah Kepemilikan',
+    //     'title' => 'Persetujuan Pindah Kepemilikan',
     //     'url' => 'kendaraan_pindah_tangan_approve.php',
     //     'icon' => 'fa-check-square-o',
     //     'permission' => 'issue_approve_supervisor'
@@ -62,17 +62,17 @@ return [
                     ['title' => 'Rak Barang', 'url' => 'barang_rak.php', 'permission' => 'barang_rak_read'],
                     ['title' => 'Margin Harga Jual', 'url' => 'margin_jual.php', 'permission' => 'margin_jual_read'],
                     ['title' => 'Status Harga', 'url' => 'status_harga.php', 'permission' => 'status_harga_read'],
-                    ['title' => 'Work Order/Paket', 'url' => 'workorder-list.php', 'permission' => 'paket_read'],
-                    ['title' => 'Master Jasa Service', 'url' => 'jasa-list.php', 'permission' => 'barang_read'],
-                    ['title' => 'WO - Jenis Motor Mapping', 'url' => 'workorder-motor-mapping.php', 'permission' => 'workorder_motor_mapping_read'],
-                    ['title' => 'Jasa - Jenis Motor Mapping', 'url' => 'jasa-motor-mapping.php', 'permission' => 'jasa_motor_mapping_read'],
-                    ['title' => 'Item - Jenis Motor Mapping', 'url' => 'item-motor-mapping.php', 'permission' => 'item_motor_mapping_read'],
+                    ['title' => 'Paket Pekerjaan (Work Order)', 'url' => 'workorder-list.php', 'permission' => 'paket_read'],
+                    ['title' => 'Master Jasa Servis', 'url' => 'jasa-list.php', 'permission' => 'barang_read'],
+                    ['title' => 'Paket Pekerjaan per Jenis Motor', 'url' => 'workorder-motor-mapping.php', 'permission' => 'workorder_motor_mapping_read'],
+                    ['title' => 'Jasa per Jenis Motor', 'url' => 'jasa-motor-mapping.php', 'permission' => 'jasa_motor_mapping_read'],
+                    ['title' => 'Barang per Jenis Motor', 'url' => 'item-motor-mapping.php', 'permission' => 'item_motor_mapping_read'],
                     ['title' => 'Master Keluhan', 'url' => 'master-keluhan-crud.php', 'permission' => 'master_keluhan_read'],
-                    ['title' => 'Keluhan - WO Mapping', 'url' => 'master-workorder-mapping.php', 'permission' => 'wo_mapping_read'],
-                    ['title' => 'Fast Moves Mapping', 'url' => 'master-fastmoves.php', 'permission' => 'fastmoves_read'],
+                    ['title' => 'Keluhan per Paket Pekerjaan', 'url' => 'master-workorder-mapping.php', 'permission' => 'wo_mapping_read'],
+                    ['title' => 'Barang Laku Cepat (Fast Moves)', 'url' => 'master-fastmoves.php', 'permission' => 'fastmoves_read'],
                     ['title' => 'Master Temuan', 'url' => 'master-temuan.php', 'permission' => 'master_temuan_read'],
-                    ['title' => 'Temuan - Part Mapping', 'url' => 'master-temuan-mapping.php', 'permission' => 'master_temuan_mapping_read'],
-                    ['title' => 'Temuan - Jasa Mapping', 'url' => 'master-temuan-mapping-jasa.php', 'permission' => 'master_temuan_mapping_jasa_read'],
+                    ['title' => 'Temuan per Suku Cadang', 'url' => 'master-temuan-mapping.php', 'permission' => 'master_temuan_mapping_read'],
+                    ['title' => 'Temuan per Jasa', 'url' => 'master-temuan-mapping-jasa.php', 'permission' => 'master_temuan_mapping_jasa_read'],
                     ['title' => 'Master Barang Custom', 'url' => 'master-barang-custom.php', 'permission' => 'master_barang_custom_read'],
                     ['title' => 'Harga Jual Plus Jasa', 'url' => 'hjual_jasa.php', 'permission' => 'hjual_jasa_read'],
                 ]
@@ -84,7 +84,7 @@ return [
                 'submenu' => [
                     ['title' => 'Master Pelanggan', 'url' => 'pelanggan.php', 'permission' => 'pelanggan_master_read'],
                     ['title' => 'Kategori Pelanggan', 'url' => 'pelanggan_kategori.php', 'permission' => 'pelanggan_kategori_read'],
-                    ['title' => 'Loyalty Member Program', 'url' => 'member-loyalty-program.php', 'permission' => 'member_loyalty_read'],
+                    ['title' => 'Program Member (Loyalitas)', 'url' => 'member-loyalty-program.php', 'permission' => 'member_loyalty_read'],
                     ['title' => 'Statistik Pelanggan', 'url' => 'statistik_pelanggan_dashboard.php', 'permission' => 'statistik_pelanggan_read'],
                 ]
             ],
@@ -101,7 +101,7 @@ return [
                 'submenu' => [
                     ['title' => 'Master Cabang', 'url' => 'cabang.php', 'permission' => 'cabang_master_read'],
                     ['title' => 'Tipe Cabang', 'url' => 'cabang_tipe.php', 'permission' => 'cabang_tipe_read'],
-                    ['title' => 'Setting Harga Antar Cabang', 'url' => 'setting_antarcabang.php', 'permission' => 'setting_antarcabang_read'],
+                    ['title' => 'Pengaturan Harga Antar Cabang', 'url' => 'setting_antarcabang.php', 'permission' => 'setting_antarcabang_read'],
                 ]
             ],
             [
@@ -187,19 +187,19 @@ return [
                 'permission' => 'keping_read'
             ],
             [
-                'title' => 'Access Sync',
+                'title' => 'Sinkronisasi Data Access',
                 'url' => 'access-sync.php',
                 'icon' => 'fa-caret-right',
                 'permission' => 'master_read'
             ],
             [
-                'title' => 'Laporan Sync Access',
+                'title' => 'Laporan Sinkronisasi Access',
                 'url' => 'access-sync-report.php',
                 'icon' => 'fa-caret-right',
                 'permission' => 'master_read'
             ],
             [
-                'title' => 'Monitor Sync Otomatis',
+                'title' => 'Pantau Sinkronisasi Otomatis',
                 'url' => 'access-sync-monitor.php',
                 'icon' => 'fa-caret-right',
                 'permission' => 'master_read'
@@ -211,10 +211,10 @@ return [
         'icon' => 'fa-list',
         'permission' => 'pembelian_menu_read',
         'submenu' => [
-            ['title' => 'Dashboard MIN/MAX', 'url' => 'procurement_dashboard.php', 'icon' => 'fa-dashboard', 'permission' => 'procurement_dashboard_read'],
+            ['title' => 'Dashboard Stok Min/Maks', 'url' => 'procurement_dashboard.php', 'icon' => 'fa-dashboard', 'permission' => 'procurement_dashboard_read'],
             ['title' => 'Rencana Order', 'url' => 'rencana_order.php', 'icon' => 'fa-calendar-check-o', 'permission' => 'rencana_order_read'],
-            ['title' => 'Purchase Request (PR)', 'url' => 'pr_add.php', 'permission' => 'pr_read'],
-            ['title' => 'Cek Stok Minimal (Auto-Draft PR)', 'url' => 'pr_auto_draft.php', 'icon' => 'fa-magic', 'permission' => 'pr_read'],
+            ['title' => 'Permintaan Pembelian (PR)', 'url' => 'pr_add.php', 'permission' => 'pr_read'],
+            ['title' => 'Cek Stok Minimal (Draf PR Otomatis)', 'url' => 'pr_auto_draft.php', 'icon' => 'fa-magic', 'permission' => 'pr_read'],
             [
                 'title' => 'Pesanan Pembelian (PO)',
                 'icon' => 'fa-caret-right',
@@ -222,14 +222,14 @@ return [
                 'submenu' => [
                     ['title' => 'Daftar PO', 'url' => 'pesanan_pembelian_rst.php', 'permission' => 'pesanan_pembelian_read'],
                     ['title' => 'Input Manual', 'url' => 'pesanan_pembelian_add.php', 'permission' => 'pesanan_pembelian_add_read'],
-                    ['title' => 'Upload Excel', 'url' => 'pesanan_pembelian_upload.php', 'permission' => 'pesanan_pembelian_upload_read'],
+                    ['title' => 'Unggah Excel', 'url' => 'pesanan_pembelian_upload.php', 'permission' => 'pesanan_pembelian_upload_read'],
                     ['title' => 'Master Approval Bertingkat', 'url' => 'master-approval-pembelian.php', 'icon' => 'fa-sitemap', 'permission' => 'pesanan_pembelian_read'],
                 ]
             ],
-            ['title' => 'Delivery Order (DO)', 'url' => 'do_from_po.php', 'permission' => 'do_read'],
+            ['title' => 'Penerimaan Barang (DO)', 'url' => 'do_from_po.php', 'permission' => 'do_read'],
             ['title' => 'Daftar DO', 'url' => 'do_list.php', 'permission' => 'do_read'],
             [
-                'title' => 'Pembelian (Invoice)',
+                'title' => 'Pembelian (Faktur)',
                 'icon' => 'fa-caret-right',
                 'permission' => 'pembelian_read',
                 'submenu' => [
@@ -299,7 +299,7 @@ return [
                 'icon' => 'fa-caret-right',
                 'permission' => 'antar_cabang_mitra_read',
                 'submenu' => [
-                    ['title' => 'Upload Excel', 'url' => 'penjualan_antarcab_upload.php', 'permission' => 'antar_cabang_mitra_upload_read'],
+                    ['title' => 'Unggah Excel', 'url' => 'penjualan_antarcab_upload.php', 'permission' => 'antar_cabang_mitra_upload_read'],
                     ['title' => 'Input Manual', 'url' => 'penjualan_mitra_add.php', 'permission' => 'antar_cabang_mitra_add_read'],
                     ['title' => 'Penerimaan Mitra', 'url' => 'penerimaan_mitra.php', 'permission' => 'antar_cabang_mitra_terima_read'],
                 ]
@@ -312,7 +312,7 @@ return [
                 'submenu' => [
                     ['title' => 'Daftar Permintaan', 'url' => 'pengadaan_antarcab.php', 'permission' => 'antar_cabang_read'],
                     ['title' => 'Buat Permintaan', 'url' => 'pengadaan_antarcab_add.php', 'permission' => 'antar_cabang_pesan_read'],
-                    ['title' => 'Kirim Barang Tanpa Request', 'url' => 'pengadaan_antarcab_push.php', 'permission' => 'antar_cabang_read'],
+                    ['title' => 'Kirim Barang Tanpa Permintaan', 'url' => 'pengadaan_antarcab_push.php', 'permission' => 'antar_cabang_read'],
                 ]
             ],
         ]
@@ -328,7 +328,7 @@ return [
                 'permission' => 'servis_reguler_read',
                 'submenu' => [
                     ['title' => 'Input Kepala Mekanik Harian', 'url' => 'input_kepala_mekanik_harian.php', 'permission' => 'input_km_harian_read'],
-                    ['title' => 'Kelola Antrian Service', 'url' => 'kelola-antrian.php', 'permission' => 'kelola_antrian_read'],
+                    ['title' => 'Kelola Antrian Servis', 'url' => 'kelola-antrian.php', 'permission' => 'kelola_antrian_read'],
                     ['title' => 'Input Servis', 'url' => 'servis-carinopol.php', 'permission' => 'input_servis_read'],
                     ['title' => 'Lihat Data', 'url' => 'servis-reguler.php', 'permission' => 'lihat_servis_read'],
                 ]
@@ -348,11 +348,11 @@ return [
                 'permission' => 'servis_jemput_read',
                 'submenu' => [
                     ['title' => 'Jadwal Penjemputan', 'url' => 'servis-reguler-jemput.php', 'permission' => 'jadwal_jemput_read'],
-                    ['title' => 'Tracking Keluhan', 'url' => 'report-tracking-keluhan.php', 'permission' => 'tracking_keluhan_read'],
+                    ['title' => 'Pelacakan Keluhan', 'url' => 'report-tracking-keluhan.php', 'permission' => 'tracking_keluhan_read'],
                 ]
             ],
             ['title' => 'Master Promo/Diskon', 'url' => 'master-diskon-periode.php', 'icon' => 'fa-caret-right', 'permission' => 'promo_diskon_read'],
-            ['title' => 'Approval Diskon', 'url' => 'approval-diskon.php', 'icon' => 'fa-caret-right', 'permission' => 'diskon_approval_approve'],
+            ['title' => 'Persetujuan Diskon', 'url' => 'approval-diskon.php', 'icon' => 'fa-caret-right', 'permission' => 'diskon_approval_approve'],
             ['title' => 'Laporan DP Servis', 'url' => 'laporan-dp.php', 'icon' => 'fa-caret-right', 'permission' => 'servis_menu_read'],
             ['title' => 'Retur Servis', 'url' => 'retur_servis.php', 'icon' => 'fa-undo', 'permission' => 'servis_menu_read'],
         ]
@@ -396,7 +396,7 @@ return [
             ],
             ['title' => 'Pesanan Penjualan', 'url' => 'lap_pesanan_penjualan.php', 'permission' => 'lap_pesanan_penjualan_read'],
             ['title' => 'Penjualan', 'url' => 'lap_penjualan.php', 'permission' => 'lap_penjualan_read'],
-            ['title' => 'Profit Penjualan', 'url' => 'lap_profit_penjualan.php', 'permission' => 'lap_penjualan_read'],
+            ['title' => 'Laba Penjualan', 'url' => 'lap_profit_penjualan.php', 'permission' => 'lap_penjualan_read'],
             ['title' => 'Retur Penjualan', 'url' => 'lap_retur_penjualan.php', 'permission' => 'penjualan_read'],
             [
                 'title' => 'Piutang',
@@ -417,12 +417,12 @@ return [
                     ['title' => 'Penerimaan', 'url' => 'lap_antarcab_terima.php', 'permission' => 'lap_antarcab_terima_read'],
                 ]
             ],
-            ['title' => 'Service', 'url' => 'lap_servis.php', 'permission' => 'lap_servis_read'],
+            ['title' => 'Servis', 'url' => 'lap_servis.php', 'permission' => 'lap_servis_read'],
             ['title' => 'Rekap Kunjungan Pelanggan', 'url' => 'lap_rekap_kunjungan.php', 'icon' => 'fa-users', 'permission' => 'lap_servis_read'],
-            ['title' => 'Konsolidasi Access', 'url' => 'access-sync-report.php', 'permission' => 'laporan_menu_read'],
-            ['title' => 'Laporan Cancel Service', 'url' => 'laporan-cancel-servis.php', 'permission' => 'lap_cancel_servis_read'],
+            ['title' => 'Konsolidasi Data Access', 'url' => 'access-sync-report.php', 'permission' => 'laporan_menu_read'],
+            ['title' => 'Laporan Batal Servis', 'url' => 'laporan-cancel-servis.php', 'permission' => 'lap_cancel_servis_read'],
             ['title' => 'Ringkasan Antar Cabang', 'url' => 'lap_antarcab.php', 'permission' => 'lap_antarcab_read'],
-            ['title' => 'Profit & Insentif', 'url' => 'lap_profit_insentif.php', 'permission' => 'laporan_menu_read'],
+            ['title' => 'Laba & Insentif', 'url' => 'lap_profit_insentif.php', 'permission' => 'laporan_menu_read'],
             ['title' => 'Kas Masuk', 'url' => 'lap_kas_masuk.php', 'permission' => 'lap_kas_masuk_read'],
             ['title' => 'Pengeluaran Kas', 'url' => 'lap_kas_keluar.php', 'permission' => 'lap_kas_keluar_read'],
             ['title' => 'Stok Masuk (Manual)', 'url' => 'lap_stok_masuk.php', 'permission' => 'lap_stok_masuk_read'],
@@ -443,8 +443,8 @@ return [
             // jadi rusak kalau diakses langsung tanpa konteks transaksi.
             // Alurnya lewat tombol per-baris di Dashboard Kasir di bawah.
             ['title' => 'Dashboard Kasir', 'url' => '_keuangan/kasir/index_kasir.php', 'permission' => 'kasir_menu_read'],
-            ['title' => 'Approval Revisi Closing', 'url' => '_keuangan/kasir/closing_revisi_admin.php', 'permission' => 'kasir_approve'],
-            ['title' => 'Monitoring Setoran', 'url' => '_keuangan/kasir/monitoring_setoran.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Persetujuan Revisi Penutupan', 'url' => '_keuangan/kasir/closing_revisi_admin.php', 'permission' => 'kasir_approve'],
+            ['title' => 'Pemantauan Setoran', 'url' => '_keuangan/kasir/monitoring_setoran.php', 'permission' => 'kasir_approve'],
             ['title' => 'Detail Transaksi (Admin)', 'url' => '_keuangan/kasir/view_transaksi_admin.php', 'permission' => 'kasir_approve'],
             ['title' => 'Manajemen Setoran Keuangan Pusat', 'url' => '_keuangan/kasir/setoran_keuangan.php', 'permission' => 'kasir_admin'],
             ['title' => 'Keuangan Pusat', 'url' => '_keuangan/kasir/keuangan_pusat.php', 'permission' => 'kasir_admin'],
@@ -466,25 +466,25 @@ return [
         // grup tetap muncul kalau ada minimal 1 submenu yang lolos permission-nya.
         'submenu' => [
             ['title' => 'Input Komplain', 'url' => '_komplain/input.php', 'permission' => 'komplain_input'],
-            ['title' => 'Antrian Rework', 'url' => '_komplain/antrian_rework.php', 'permission' => 'komplain_review'],
-            ['title' => 'Antrian Approval', 'url' => '_komplain/antrian_approval.php', 'permission' => 'komplain_approve_rework'],
+            ['title' => 'Antrian Pengerjaan Ulang', 'url' => '_komplain/antrian_rework.php', 'permission' => 'komplain_review'],
+            ['title' => 'Antrian Persetujuan', 'url' => '_komplain/antrian_approval.php', 'permission' => 'komplain_approve_rework'],
             ['title' => 'Eskalasi Manajemen', 'url' => '_komplain/eskalasi_manajemen.php', 'permission' => 'komplain_eskalasi_keputusan'],
             ['title' => 'Dashboard Komplain', 'url' => '_komplain/dashboard_manajemen.php', 'permission' => 'komplain_dashboard'],
-            ['title' => 'Export Komplain', 'url' => '_komplain/export.php', 'permission' => 'komplain_export'],
+            ['title' => 'Ekspor Komplain', 'url' => '_komplain/export.php', 'permission' => 'komplain_export'],
             ['title' => 'Master Kategori Komplain', 'url' => '_komplain/master_kategori.php', 'permission' => 'komplain_master_kategori'],
         ],
     ],
     [
-        'title' => 'Persediaan (Moving Average)',
+        'title' => 'Persediaan (Rata-rata Bergerak)',
         'icon' => 'fa-cubes',
         // Tanpa 'permission' di level grup: grup tampil bila minimal satu submenu lolos permission-nya.
         'submenu' => [
             ['title' => 'Valuasi Persediaan', 'url' => '_inventory/laporan_valuasi.php', 'permission' => 'inv_laporan'],
             ['title' => 'Kartu Stok Bernilai', 'url' => '_inventory/laporan_kartu_stok.php', 'permission' => 'inv_laporan'],
-            ['title' => 'Transit, PPV, Klaim, HPP', 'url' => '_inventory/laporan_lain.php', 'permission' => 'inv_laporan'],
-            ['title' => 'Koreksi (Maker-Checker)', 'url' => '_inventory/koreksi.php', 'permission' => 'inv_koreksi'],
+            ['title' => 'Barang Transit, Selisih Harga (PPV), Klaim, HPP', 'url' => '_inventory/laporan_lain.php', 'permission' => 'inv_laporan'],
+            ['title' => 'Koreksi (Pengaju & Penyetuju)', 'url' => '_inventory/koreksi.php', 'permission' => 'inv_koreksi'],
             ['title' => 'Persetujuan Koreksi', 'url' => '_inventory/koreksi.php', 'permission' => 'inv_approve'],
-            ['title' => 'Opening Stock', 'url' => '_inventory/opening_stock.php', 'permission' => 'inv_opening'],
+            ['title' => 'Stok Awal', 'url' => '_inventory/opening_stock.php', 'permission' => 'inv_opening'],
             ['title' => 'Pengaturan & Rekonsiliasi', 'url' => '_inventory/admin.php', 'permission' => 'inv_admin'],
         ],
     ],

@@ -354,7 +354,7 @@ if ($mode === 'edit' && $entity === 'item') {
                     <?php if ($mode === 'list'): ?>
                         <div class="page-header">
                             <h1>
-                                Mapping
+                                Pemetaan
                                 <small>
                                     <i class="ace-icon fa fa-angle-double-right"></i>
                                     <?php echo ($entity === 'wo') ? 'Daftar Work Order' : 'Daftar Item'; ?>
@@ -452,7 +452,7 @@ if ($mode === 'edit' && $entity === 'item') {
                                                 echo '<td>'.htmlspecialchars($row['nama_wo']).'</td>';
                                                 echo '<td>'.htmlspecialchars($row['map_kategori'] ?? '-').'</td>';
                                                 echo '<td class="center">'
-                                                    .'<a class="btn btn-xs btn-primary" href="item-motor-mapping.php?type=wo&kd='.urlencode($row['kode_wo']).'">Mapping</a>'
+                                                    .'<a class="btn btn-xs btn-primary" href="item-motor-mapping.php?type=wo&kd='.urlencode($row['kode_wo']).'">Pemetaan</a>'
                                                     .'</td>';
                                                 echo '</tr>';
                                             }
@@ -497,7 +497,7 @@ if ($mode === 'edit' && $entity === 'item') {
                                                 echo '<td>'.htmlspecialchars($row['map_kategori'] ?? '-').'</td>';
                                                 echo '<td class="center">'.($tipe_cnt > 0 ? ($tipe_cnt.' tipe') : '-').'</td>';
                                                 echo '<td class="center">'
-                                                    .'<a class="btn btn-xs btn-primary" href="item-motor-mapping.php?type=item&kd='.urlencode($row['noitem']).'">Mapping</a>'
+                                                    .'<a class="btn btn-xs btn-primary" href="item-motor-mapping.php?type=item&kd='.urlencode($row['noitem']).'">Pemetaan</a>'
                                                     .'</td>';
                                                 echo '</tr>';
                                             }

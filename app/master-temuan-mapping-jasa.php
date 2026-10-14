@@ -337,7 +337,7 @@ $map_rs = mysqli_query($koneksi, $map_sql);
                                     </form>
                                     <form class="form-inline" method="post" enctype="multipart/form-data" style="margin-bottom:15px">
                                         <input type="hidden" name="mode" value="import_csv">
-                                        <label>Import CSV</label>
+                                        <label>Impor CSV</label>
                                         <input type="file" name="csv_file" accept=".csv" class="form-control">
                                         <button type="submit" class="btn btn-warning"><i class="fa fa-upload"></i> Import</button>
                                     </form>

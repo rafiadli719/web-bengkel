@@ -111,7 +111,7 @@ if($sql_barang) {
                     <input type="number" id="add_harga_barang_v2" name="harga_satuan" class="rd-input sm" placeholder="0" min="0">
                 </div>
                 <div class="rd-form-group" style="flex: 0 0 100px;">
-                    <label class="rd-label rd-required">Qty</label>
+                    <label class="rd-label rd-required">Jumlah</label>
                     <input type="number" id="add_qty_barang_v2" name="quantity" class="rd-input sm" value="1" min="1">
                 </div>
                 <div class="rd-form-group" style="flex: 0 0 80px;">
@@ -186,7 +186,7 @@ if($sql_barang) {
                     <div class="row">
                         <div class="col-xs-6">
                             <div class="form-group">
-                                <label>Qty</label>
+                                <label>Jumlah</label>
                                 <input type="number" id="edit_qty_barang" name="qty_brg" class="form-control" min="1">
                             </div>
                         </div>
@@ -222,7 +222,7 @@ if($sql_barang) {
                         <th width="5%" class="text-center">#</th>
                         <th width="12%">Kode</th>
                         <th>Nama Barang</th>
-                        <th width="8%" class="text-center">Qty</th>
+                        <th width="8%" class="text-center">Jumlah</th>
                         <th width="12%" class="text-right">Harga</th>
                         <th width="8%" class="text-center">Disc</th>
                         <th width="12%" class="text-right">Total</th>

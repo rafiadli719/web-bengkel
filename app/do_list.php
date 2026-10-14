@@ -146,7 +146,7 @@ $rows = mysqli_query($koneksi, $sql);
                                 <th>No. PO</th>
                                 <th>Tanggal DO</th>
                                 <th>Supplier</th>
-                                <th class="text-right">Total Qty</th>
+                                <th class="text-right">Total Jumlah</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>

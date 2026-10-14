@@ -299,7 +299,7 @@ $role = $legacy_session_kasir['role'] ?? 'User';
             <div class="user-avatar"><?php echo htmlspecialchars(strtoupper(substr($username, 0, 1))); ?></div>
             <div>
                 <strong><?php echo htmlspecialchars($username); ?></strong>
-                <p style="color: var(--muted); font-size: 12px;"><?php echo htmlspecialchars(ucfirst($role)); ?></p>
+                <p style="color: var(--muted); font-size: 12px;"><?php echo htmlspecialchars(labelPeranKasir($role)); ?></p>
             </div>
         </div>
 

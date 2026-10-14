@@ -45,7 +45,7 @@
                 <td width="2%" align="center"><font size="2"><b>:</b></font></td>
                 <td width="30%" bgcolor="<?php echo $baris_bgcolor; ?>"><font size="2"><?php echo $jenis; ?></font></td>
 
-                <td width="18%" align="right" bgcolor="<?php echo $baris_bgcolor1; ?>"><font size="2"><b>User </b></font></td>
+                <td width="18%" align="right" bgcolor="<?php echo $baris_bgcolor1; ?>"><font size="2"><b>Pengguna </b></font></td>
                 <td width="2%" align="center" bgcolor="<?php echo $baris_bgcolor1; ?>"><font size="2"><b>:</b></font></td>
                 <td width="30%" bgcolor="<?php echo $baris_bgcolor1; ?>"><font size="2"><?php echo $_nama; ?></font></td>
             </tr>

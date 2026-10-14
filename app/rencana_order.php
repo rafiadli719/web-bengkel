@@ -282,13 +282,13 @@ if(empty($_SESSION['_iduser'])){
                                 <div class="stat-box stat-draft">
                                     <h3 class="text-info"><?php echo isset($stats['draft']) ? $stats['draft']['jumlah'] : 0; ?></h3>
                                     <p>Draft Order</p>
-                                    <small>Menunggu Approval</small>
+                                    <small>Menunggu Persetujuan</small>
                                 </div>
                             </div>
                             <div class="col-xs-6 col-sm-3">
                                 <div class="stat-box stat-approved">
                                     <h3 class="text-success"><?php echo isset($stats['approved']) ? $stats['approved']['jumlah'] : 0; ?></h3>
-                                    <p>Approved</p>
+                                    <p>Disetujui</p>
                                     <small>Siap Diorder</small>
                                 </div>
                             </div>

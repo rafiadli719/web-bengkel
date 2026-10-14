@@ -271,7 +271,7 @@
                                         <td width="30%"><?php echo $namapelanggan; ?>&nbsp;<?php echo $no_supplier; ?></td>
                                     </tr>
                                     <tr>
-                                        <td width="20%" bgcolor="beige">User</td>
+                                        <td width="20%" bgcolor="beige">Pengguna</td>
                                         <td width="30%"><?php echo $user_order; ?></td>
                                         <td width="20%" bgcolor="beige"></td>
                                         <td width="30%"><?php echo $alamat; ?></td>

@@ -327,7 +327,7 @@ if (empty($_SESSION['_iduser'])) {
                                                 echo '<span class="label label-warning">Pending Validation</span>';
                                                 break;
                                             case 'rejected':
-                                                echo '<span class="label label-danger">Rejected</span>';
+                                                echo '<span class="label label-danger">Ditolak</span>';
                                                 break;
                                         }
                                         ?>

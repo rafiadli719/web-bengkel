@@ -274,7 +274,7 @@ ob_start();
             <tr>
                 <th width="5%">No</th>
                 <th width="45%">Nama Barang</th>
-                <th width="8%">Qty</th>
+                <th width="8%">Jumlah</th>
                 <th width="10%">Satuan</th>
                 <th width="12%">Harga</th>
                 <th width="8%">Diskon</th>

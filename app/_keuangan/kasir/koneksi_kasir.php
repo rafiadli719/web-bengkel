@@ -57,3 +57,11 @@ $legacy_session_kasir = [
     'kode_karyawan' => $kode_karyawan_aktif,
     'role' => $roleMap[$kode_posisi_aktif] ?? 'kasir',
 ];
+
+/** Label peran untuk tampilan (bukan nilai internal): super_admin/admin/kasir -> bahasa Indonesia. */
+function labelPeranKasir($role)
+{
+    $peta = ['super_admin' => 'Administrator', 'admin' => 'Keuangan', 'kasir' => 'Kasir'];
+    $r = strtolower((string) $role);
+    return $peta[$r] ?? ucfirst(str_replace('_', ' ', $r));
+}

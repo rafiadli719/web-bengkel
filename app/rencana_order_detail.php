@@ -261,7 +261,7 @@ switch ($header['status']) {
                                 <div class="col-xs-4">
                                     <div class="summary-card">
                                         <h3 class="text-info"><?php echo number_format($header['total_qty']); ?></h3>
-                                        <p>Total Qty</p>
+                                        <p>Total Jumlah</p>
                                     </div>
                                 </div>
                                 <div class="col-xs-4">
@@ -322,7 +322,7 @@ switch ($header['status']) {
                                                 <tr>
                                                     <th>Supplier</th>
                                                     <th class="center">Jml Item</th>
-                                                    <th class="center">Total Qty</th>
+                                                    <th class="center">Total Jumlah</th>
                                                     <th class="right">Total Nilai</th>
                                                 </tr>
                                             </thead>
@@ -363,7 +363,7 @@ switch ($header['status']) {
                                                 <tr>
                                                     <th>Supplier</th>
                                                     <th class="center">Jml Item</th>
-                                                    <th class="center">Total Qty</th>
+                                                    <th class="center">Total Jumlah</th>
                                                     <th class="right">Total Nilai</th>
                                                 </tr>
                                             </thead>

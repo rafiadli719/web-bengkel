@@ -137,7 +137,7 @@ while($r = mysqli_fetch_assoc($qd)){ $rows[] = $r; }
                                 <tr>
                                     <td bgcolor="beige">Supplier</td>
                                     <td><?php echo htmlspecialchars($h['no_supplier']); ?> - <?php echo htmlspecialchars($h['namasupplier']); ?></td>
-                                    <td bgcolor="beige">Total Qty</td>
+                                    <td bgcolor="beige">Total Jumlah</td>
                                     <td><?php echo (int)$h['total_qty']; ?></td>
                                 </tr>
                                 <tr>

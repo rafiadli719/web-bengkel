@@ -429,7 +429,7 @@ $itemsPerSupplier = $calculator->getItemPerSupplier();
                                             <th>Tanggal</th>
                                             <th>Requester</th>
                                             <th class="text-right">Jumlah Item</th>
-                                            <th class="text-right">Total Qty</th>
+                                            <th class="text-right">Total Jumlah</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -465,7 +465,7 @@ $itemsPerSupplier = $calculator->getItemPerSupplier();
                                             <th>No. PO</th>
                                             <th>Tanggal</th>
                                             <th>Supplier</th>
-                                            <th class="text-right">Sisa Qty</th>
+                                            <th class="text-right">Sisa Jumlah</th>
                                             <th class="text-right">Jml DO</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -499,7 +499,7 @@ $itemsPerSupplier = $calculator->getItemPerSupplier();
                                             <th>No. DO</th>
                                             <th>No. PO</th>
                                             <th>Tanggal</th>
-                                            <th class="text-right">Total Qty</th>
+                                            <th class="text-right">Total Jumlah</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>

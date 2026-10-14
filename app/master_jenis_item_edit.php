@@ -209,7 +209,7 @@
 							<li>
 								<a href="master_jenis_item.php">Jenis Item</a>
 							</li>
-							<li class="active">Edit</li>
+							<li class="active">Ubah</li>
 						</ul>
 					</div>
 

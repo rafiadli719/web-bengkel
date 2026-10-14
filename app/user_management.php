@@ -613,7 +613,7 @@ if(empty($_SESSION['_iduser'])){
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                 <button type="submit" name="btn_add_user" class="btn btn-primary">
                                     <i class="ace-icon fa fa-save"></i>
                                     Simpan
@@ -642,7 +642,7 @@ if(empty($_SESSION['_iduser'])){
                                 <!-- Content will be loaded via AJAX -->
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                 <button type="submit" name="btn_update_user" class="btn btn-primary">
                                     <i class="ace-icon fa fa-save"></i>
                                     Update
@@ -675,7 +675,7 @@ if(empty($_SESSION['_iduser'])){
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                 <button type="submit" name="btn_change_password" class="btn btn-warning">
                                     <i class="ace-icon fa fa-key"></i>
                                     Change Password

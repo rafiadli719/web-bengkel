@@ -42,7 +42,7 @@
                     <th width="5%" class="center">No</th>
                     <th width="15%">Kode</th>
                     <th width="35%">Nama Item</th>
-                    <th width="8%" class="center">Qty</th>
+                    <th width="8%" class="center">Jumlah</th>
                     <th width="12%" class="center">Harga</th>
                     <th width="10%" class="center">Diskon</th>
                     <th width="12%" class="center">Total</th>

@@ -94,7 +94,7 @@
                                     <th width="5%">No</th>
                                     <th width="15%">Kode Jasa</th>
                                     <th width="30%">Nama Jasa</th>
-                                    <th width="10%">Qty</th>
+                                    <th width="10%">Jumlah</th>
                                     <th width="15%">Harga</th>
                                     <th width="15%">Subtotal</th>
                                     <th width="10%">Aksi</th>

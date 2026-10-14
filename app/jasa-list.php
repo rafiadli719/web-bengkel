@@ -198,7 +198,7 @@
 											</span>
 											<input type="hidden" name="jenis" value="<?php echo $jenis_filter; ?>" />
 											<input class="btn btn-purple btn-sm" type="submit" value="Cari" />
-                                            <a href="jasa-list.php" class="btn btn-default btn-sm">Reset</a>
+                                            <a href="jasa-list.php" class="btn btn-default btn-sm">Atur Ulang</a>
 										</form>
 									</div>
                                     <div class="col-xs-4">

@@ -195,7 +195,7 @@ $sampaiDmy = date('d/m/Y', strtotime($sampai_ymd));
 
                 <table class="table table-bordered table-striped table-condensed">
                     <thead><tr><th>Tanggal</th><th>No. Transaksi</th><th>Jenis</th><th>Cabang</th><th>Rak</th><th>No. Item</th><th>Nama</th>
-                        <th class="text-right">Sistem</th><th class="text-right">Selisih</th><th class="text-right">Fisik</th><th>User</th></tr></thead>
+                        <th class="text-right">Sistem</th><th class="text-right">Selisih</th><th class="text-right">Fisik</th><th>Pengguna</th></tr></thead>
                     <tbody>
                     <?php foreach ($rows as $r): ?>
                         <tr>

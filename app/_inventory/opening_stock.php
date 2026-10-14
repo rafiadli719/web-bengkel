@@ -189,12 +189,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $boleh = lokasiBolehInv($koneksi, $kode_cabang_aktif);
-$pageTitle = 'Opening Stock Moving Average';
+$pageTitle = 'Stok Awal Rata-rata Bergerak';
 include __DIR__ . '/_ace_header.php';
 ?>
 <?php if ($pesan !== ''): ?><div class="alert <?= $pesanErr ? 'alert-danger' : 'alert-success' ?>"><?= einv($pesan) ?></div><?php endif; ?>
 <?php if ($dimuat): ?>
-    <div class="alert alert-success">Opening stock dimuat: <?= (int) $dimuat['baris'] ?> baris, lokasi <?= einv(implode(', ', $dimuat['lokasi'])) ?>, batch <code><?= einv($dimuat['batch']) ?></code>.</div>
+    <div class="alert alert-success">Stok awal dimuat: <?= (int) $dimuat['baris'] ?> baris, lokasi <?= einv(implode(', ', $dimuat['lokasi'])) ?>, batch <code><?= einv($dimuat['batch']) ?></code>.</div>
 <?php endif; ?>
 
 <div class="alert alert-info">
@@ -204,7 +204,7 @@ include __DIR__ . '/_ace_header.php';
     dan semuanya atau tidak sama sekali.
 </div>
 
-<h4>1. Unduh template</h4>
+<h4>1. Unduh templat</h4>
 <p>
 <?php foreach ($boleh as $kd => $nm): ?>
     <a class="btn btn-sm btn-default" href="?template=<?= urlencode($kd) ?>"><i class="fa fa-download"></i> <?= einv($kd) ?></a>
@@ -239,14 +239,14 @@ include __DIR__ . '/_ace_header.php';
             foreach ($hasil['valid'] as $v) { $totNilai += (float) $v['qty'] * (float) $v['cost']; }
             ?>
             <div class="alert alert-success">Validasi lolos. Total nilai persediaan awal: <strong>Rp <?= number_format($totNilai, 2, ',', '.') ?></strong>.</div>
-            <form method="post" onsubmit="return confirm('Muat opening stock? Ini tidak bisa diulang untuk lokasi yang sama.');">
+            <form method="post" onsubmit="return confirm('Muat stok awal? Ini tidak bisa diulang untuk lokasi yang sama.');">
                 <input type="hidden" name="csrf" value="<?= einv(csrfTokenInv()) ?>">
                 <input type="hidden" name="aksi" value="muat">
                 <input type="hidden" name="token" value="<?= einv($_SESSION['_inv_opening']['token'] ?? '') ?>">
-                <button type="submit" class="btn btn-danger">3. Muat opening stock</button>
+                <button type="submit" class="btn btn-danger">3. Muat stok awal</button>
             </form>
         <?php else: ?>
-            <div class="alert alert-warning">Tidak ada baris dengan qty &gt; 0.</div>
+            <div class="alert alert-warning">Tidak ada baris dengan jumlah &gt; 0.</div>
         <?php endif; ?>
     <?php endif; ?>
 <?php endif; ?>

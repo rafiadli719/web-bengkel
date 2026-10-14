@@ -134,7 +134,7 @@ $q_list = mysqli_query($koneksi, $sql);
                                         <th>No Pesanan</th>
                                         <th>Tanggal</th>
                                         <th>Dari Cabang</th>
-                                        <th class="text-right">Total Qty</th>
+                                        <th class="text-right">Total Jumlah</th>
                                         <th class="text-right">Total Nilai</th>
                                         <th>Catatan</th>
                                         <th>Status</th>

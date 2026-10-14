@@ -116,7 +116,7 @@
                                             <td bgcolor="gainsboro" width="9%"><b>Kode Pelanggan</b></td>
                                             <td bgcolor="gainsboro" width="10%"><b>Nama Pelanggan</b></td>
                                             <td bgcolor="gainsboro" width="10%"><b>Sales</b></td>
-                                            <td bgcolor="gainsboro" width="9%" align="right"><b>Total Qty</b></td>
+                                            <td bgcolor="gainsboro" width="9%" align="right"><b>Total Jumlah</b></td>
                                             <td bgcolor="gainsboro" width="10%" align="right"><b>Total Order</b></td>
                                             <td bgcolor="gainsboro" width="9%" align="right"><b>Diskon</b></td>
                                             <td bgcolor="gainsboro" width="9%" align="right"><b>Pajak</b></td>

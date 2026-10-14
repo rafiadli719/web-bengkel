@@ -161,7 +161,7 @@
 						<th width="5%">No</th>
 						<th width="15%">Kode</th>
 						<th width="45%">Nama Barang</th>
-						<th width="10%">Qty</th>
+						<th width="10%">Jumlah</th>
 						<th width="12%">Harga</th>
 						<th width="13%">Total</th>
 					</tr>

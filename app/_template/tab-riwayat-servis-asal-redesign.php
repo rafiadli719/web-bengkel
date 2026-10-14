@@ -155,7 +155,7 @@ $total_asal        = $total_barang_asal + $total_jasa_asal;
         <?php if (!empty($rows_temuan)): ?>
         <div class="rd-table-wrapper" style="border:none;border-radius:0;">
             <table class="rd-table">
-                <thead><tr><th>Item</th><th width="12%">Tipe</th><th width="8%" class="text-center">Qty</th><th width="15%" class="text-right">Total</th><th width="15%" class="text-center">Status</th></tr></thead>
+                <thead><tr><th>Item</th><th width="12%">Tipe</th><th width="8%" class="text-center">Jumlah</th><th width="15%" class="text-right">Total</th><th width="15%" class="text-center">Status</th></tr></thead>
                 <tbody>
                 <?php
                 $badgeMap = ['disetujui' => 'success', 'ditolak' => 'danger', 'pending' => 'warning'];
@@ -192,7 +192,7 @@ $total_asal        = $total_barang_asal + $total_jasa_asal;
         <?php if (!empty($rows_barang)): ?>
         <div class="rd-table-wrapper" style="border:none;border-radius:0;">
             <table class="rd-table">
-                <thead><tr><th>Nama Item</th><th width="8%" class="text-center">Qty</th><th width="15%" class="text-right">Harga</th><th width="15%" class="text-right">Total</th><th width="18%">Ket</th></tr></thead>
+                <thead><tr><th>Nama Item</th><th width="8%" class="text-center">Jumlah</th><th width="15%" class="text-right">Harga</th><th width="15%" class="text-right">Total</th><th width="18%">Ket</th></tr></thead>
                 <tbody>
                 <?php foreach ($rows_barang as $b): ?>
                     <tr>

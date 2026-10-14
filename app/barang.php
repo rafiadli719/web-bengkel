@@ -301,7 +301,7 @@
                                                     <input type="radio" name="filter_status" value="validated"> Validated
                                                 </label>
                                                 <label class="btn btn-sm btn-warning">
-                                                    <input type="radio" name="filter_status" value="pending"> Pending
+                                                    <input type="radio" name="filter_status" value="pending"> Menunggu
                                                 </label>
                                             </div>
                                         </div>
@@ -542,10 +542,10 @@
                                                         echo '<span class="label label-success">Validated</span>';
                                                         break;
                                                     case 'pending_validation':
-                                                        echo '<span class="label label-warning">Pending</span>';
+                                                        echo '<span class="label label-warning">Menunggu</span>';
                                                         break;
                                                     case 'rejected':
-                                                        echo '<span class="label label-danger">Rejected</span>';
+                                                        echo '<span class="label label-danger">Ditolak</span>';
                                                         break;
                                                     default:
                                                         echo '<span class="label label-default">Unknown</span>';
@@ -744,7 +744,7 @@
 					  },
 					  {
 						"extend": "print",
-						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+						"text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Cetak</span>",
 						"className": "btn btn-white btn-primary btn-bold",
 						autoPrint: false,
 						message: 'This print was produced using the Print button for DataTables'

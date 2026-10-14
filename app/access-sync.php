@@ -343,7 +343,7 @@ foreach ($gabungDatasets as $ds) {
                                                 <th>Baris</th>
                                                 <th>Data Kunci</th>
                                                 <th>Status</th>
-                                                <th>Error</th>
+                                                <th>Kesalahan</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -774,7 +774,7 @@ cscript //NoLogo _sync_gabung_direct.vbs tipemotor</pre>
                     $('#errorsContent').html('<div class="alert alert-success">Tidak ada error untuk run ini.</div>');
                     return;
                 }
-                var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr><th>Dataset</th><th>Key</th><th>Error</th><th>Waktu</th></tr></thead><tbody>';
+                var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr><th>Dataset</th><th>Key</th><th>Kesalahan</th><th>Waktu</th></tr></thead><tbody>';
                 response.errors.forEach(function(item) {
                     html += '<tr><td>' + $('<div>').text(item.dataset_name || '').html() + '</td><td>' + $('<div>').text(item.row_key || '-').html() + '</td><td>' + $('<div>').text(item.error_message || '').html() + '</td><td>' + $('<div>').text(item.created_at || '').html() + '</td></tr>';
                 });

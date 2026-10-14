@@ -245,7 +245,7 @@ if ($_POST) {
                             <li>
                                 <a href="master_merk_motor.php">Merk Motor</a>
                             </li>
-                            <li class="active">Edit</li>
+                            <li class="active">Ubah</li>
                         </ul>
                     </div>
 

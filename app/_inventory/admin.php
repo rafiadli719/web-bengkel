@@ -74,7 +74,7 @@ if ($siap && $rekonKode !== '') {
     }
 }
 
-$pageTitle = 'Persediaan Moving Average — Pengaturan';
+$pageTitle = 'Persediaan Rata-rata Bergerak — Pengaturan';
 include __DIR__ . '/_ace_header.php';
 ?>
 <?php if (!$siap): ?>
@@ -85,14 +85,14 @@ include __DIR__ . '/_ace_header.php';
 <?php endif; ?>
 
 <div class="alert alert-info">
-    <strong>Mode per cabang.</strong>
-    <code>off</code> = tidak ada pencatatan. <code>shadow</code> = setiap transaksi stok dicatat paralel ke ledger Moving Average,
-    alur lama tidak berubah dan tidak pernah terganggu. Mode <code>live</code> (penegakan stok minus, HPP resmi) baru dibuka saat cutover
-    setelah opening stock dimuat.
+    <strong>Mode pencatatan per cabang.</strong>
+    <code>off</code> = belum ada pencatatan. <code>shadow</code> (bayangan) = setiap transaksi stok dicatat paralel ke buku stok Rata-rata Bergerak,
+    alur lama tidak berubah dan tidak terganggu. Mode <code>live</code> (stok minus ditolak, HPP resmi) baru dibuka saat peralihan,
+    setelah stok awal dimuat.
 </div>
 
 <table class="table table-bordered table-striped">
-    <thead><tr><th>Cabang</th><th>Mode</th><th>Baseline tbstok</th><th>Item di ledger</th><th>Ubah mode</th><th>Rekonsiliasi</th></tr></thead>
+    <thead><tr><th>Cabang</th><th>Mode</th><th>Titik awal (id tbstok)</th><th>Barang di buku stok baru</th><th>Ubah mode</th><th>Rekonsiliasi</th></tr></thead>
     <tbody>
     <?php foreach ($cabang as $c):
         $kd = $c['kode_cabang'];
@@ -129,13 +129,13 @@ include __DIR__ . '/_ace_header.php';
 <?php if ($rekon): ?>
     <h4>Rekonsiliasi <?= einv($rekon['lokasi']) ?> <small>sejak tbstok id &gt; <?= (int) $rekon['baseline_tbstok_id'] ?></small></h4>
     <p>
-        Item bergerak di jalur lama: <strong><?= (int) $rekon['item_tbstok'] ?></strong> ·
-        di ledger baru: <strong><?= (int) $rekon['item_inv'] ?></strong> ·
-        item selisih: <strong><?= (int) $rekon['item_selisih'] ?></strong> ·
-        transaksi shadow ditolak/gagal: <strong><?= (int) $rekon['shadow_gagal'] ?></strong>
+        Barang bergerak di jalur lama: <strong><?= (int) $rekon['item_tbstok'] ?></strong> ·
+        di buku stok baru: <strong><?= (int) $rekon['item_inv'] ?></strong> ·
+        barang selisih: <strong><?= (int) $rekon['item_selisih'] ?></strong> ·
+        transaksi bayangan (shadow) ditolak/gagal: <strong><?= (int) $rekon['shadow_gagal'] ?></strong>
     </p>
-    <p class="text-muted">Selisih muncul wajar bila transaksi keluar ditolak (saldo awal ledger belum dimuat lewat Opening Stock)
-        atau transaksi lama dibatalkan setelah shadow mencatat.</p>
+    <p class="text-muted">Selisih muncul wajar bila transaksi keluar ditolak (saldo awal buku stok belum dimuat lewat Stok Awal)
+        atau transaksi lama dibatalkan setelah pencatatan bayangan berjalan.</p>
     <?php if (!$rekon['selisih']): ?>
         <div class="alert alert-success">Tidak ada selisih.</div>
     <?php else: ?>
@@ -175,10 +175,10 @@ if ($rp && mysqli_num_rows($rp) > 0): ?>
         </tbody>
     </table>
 <?php else: ?>
-    <p class="text-muted">Belum ada periode yang diset (semua dianggap open).</p>
+    <p class="text-muted">Belum ada periode yang diset (semua dianggap terbuka).</p>
 <?php endif; ?>
 
-<h4>Penolakan shadow terakhir</h4>
+<h4>Penolakan pencatatan bayangan terakhir</h4>
 <?php
 $rg = mysqli_query($koneksi, "SELECT created_at, ref, reason FROM inv_audit_log WHERE action IN ('shadow_gagal','shadow_void_gagal') ORDER BY id DESC LIMIT 20");
 if ($rg && mysqli_num_rows($rg) > 0): ?>

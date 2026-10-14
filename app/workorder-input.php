@@ -630,7 +630,7 @@
                                                             <th width="5%">No</th>
                                                             <th width="15%">Kode</th>
                                                             <th width="40%">Nama Barang</th>
-                                                            <th width="8%">Qty</th>
+                                                            <th width="8%">Jumlah</th>
                                                             <th width="20%">Total</th>
                                                             <th width="12%">Aksi</th>
                                                         </tr>

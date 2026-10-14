@@ -312,7 +312,7 @@ foreach ($cabangRows as $row) {
                                                 <th>Dataset</th>
                                                 <th>Cabang</th>
                                                 <th>Row Key</th>
-                                                <th>Error</th>
+                                                <th>Kesalahan</th>
                                             </tr>
                                         </thead>
                                         <tbody>

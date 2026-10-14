@@ -62,7 +62,7 @@ function isActive(string $page, string $current): string {
     <!-- Brand -->
     <div class="sidebar-brand">
         <i class="fas fa-user-shield"></i>
-        <span>Dashboard Admin</span>
+        <span>Keuangan Kasir</span>
     </div>
 
     <!-- Nav -->
@@ -115,7 +115,7 @@ function isActive(string $page, string $current): string {
                 </a>
                 <?php if ($is_super_admin): ?>
                 <a href="../../user_management.php" class="nav-link sub-item <?= isActive('users.php', $current_page) ?>">
-                    <i class="fas fa-user-friends"></i><span>Master User</span>
+                    <i class="fas fa-user-friends"></i><span>Master Pengguna</span>
                 </a>
                 <a href="../../master_karyawan.php" class="nav-link sub-item <?= isActive('masterkey.php', $current_page) ?>">
                     <i class="fas fa-id-card"></i><span>Master Karyawan</span>
@@ -148,7 +148,7 @@ function isActive(string $page, string $current): string {
                     <i class="fas fa-unlock-alt"></i><span>Konfirmasi Transaksi</span>
                 </a>
                 <a href="closing_revisi_admin.php" class="nav-link sub-item <?= isActive('closing_revisi_admin.php', $current_page) ?>">
-                    <i class="fas fa-code-branch"></i><span>Approval Revisi Closing</span>
+                    <i class="fas fa-code-branch"></i><span>Persetujuan Revisi Penutupan</span>
                 </a>
                 <?php endif; ?>
             </div>
@@ -175,7 +175,7 @@ function isActive(string $page, string $current): string {
                     <i class="fas fa-university"></i><span>Riwayat Setoran Bank</span>
                 </a>
                 <a href="monitoring_setoran.php" class="nav-link sub-item <?= isActive('monitoring_setoran.php', $current_page) ?>">
-                    <i class="fas fa-chart-line"></i><span>Monitoring Setoran</span>
+                    <i class="fas fa-chart-line"></i><span>Pemantauan Setoran</span>
                 </a>
             </div>
         </div>
@@ -187,7 +187,7 @@ function isActive(string $page, string $current): string {
     <div class="sidebar-footer">
         <a href="logout.php" class="nav-link">
             <i class="fas fa-sign-out-alt"></i>
-            <span>Kembali ke Dashboard</span>
+            <span>Kembali ke Menu Utama</span>
         </a>
     </div>
 

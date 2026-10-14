@@ -4009,7 +4009,7 @@ body.tab-setor_bank #setorBankTableWrapper {
         <h1><i class="fas fa-hand-holding-usd"></i> Manajemen Setoran Keuangan Pusat</h1>
         <p style="color: var(--text-muted); margin-bottom: 0;">Kelola penerimaan, validasi, dan penyetoran dana dari seluruh cabang FIT MOTOR dengan dukungan khusus untuk transaksi closing</p>
         <div class="info-tags">
-            <div class="info-tag"><i class="fas fa-user"></i> User: <?php echo htmlspecialchars($username); ?></div>
+            <div class="info-tag"><i class="fas fa-user"></i> Pengguna: <?php echo htmlspecialchars($username); ?></div>
             <div class="info-tag"><i class="fas fa-shield-alt"></i> Role: Staff Keuangan Pusat</div>
             <div class="info-tag"><i class="fas fa-calendar-day"></i> Tanggal: <?php echo date('d M Y'); ?></div>
             <div class="info-tag"><i class="fas fa-sync-alt"></i> Closing Support: Active</div>

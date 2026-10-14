@@ -138,7 +138,7 @@
             </tr>' : '').'
             '.(!empty($nama_user) ? '
             <tr>
-                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">User</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Pengguna</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_user.'</font></td>
             </tr>' : '').'

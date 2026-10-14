@@ -274,7 +274,7 @@ function getStatusBadge($status) {
         <!-- User Info -->
         <div class="alert alert-info">
             <i class="fas fa-user"></i> <strong>Admin:</strong> <?php echo htmlspecialchars($username); ?> |
-            <strong>Role:</strong> <?php echo htmlspecialchars($legacy_session_kasir['role'] ?? '-'); ?> |
+            <strong>Peran:</strong> <?php echo htmlspecialchars($legacy_session_kasir['role'] ?? '-'); ?> |
             <strong>Aksi:</strong> Mengelola konfigurasi kas awal untuk seluruh cabang
         </div>
 

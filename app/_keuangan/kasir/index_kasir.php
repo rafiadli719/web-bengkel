@@ -576,7 +576,7 @@ $total_pages = ceil($total_transactions / $limit);
             <p>Anda masuk sebagai kasir untuk cabang: <?php echo htmlspecialchars($cabang); ?></p>
             <p>Silakan mulai melakukan pekerjaan Anda.</p>
             <div class="info-tags">
-                <div class="info-tag">Role: Kasir</div>
+                <div class="info-tag">Peran: Kasir</div>
                 <div class="info-tag">Cabang: <?php echo htmlspecialchars($cabang); ?></div>
                 <div class="info-tag">Tanggal: <?php echo date('d M Y'); ?></div>
             </div>

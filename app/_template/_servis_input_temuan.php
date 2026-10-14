@@ -310,7 +310,7 @@ function renderSuggestedParts(parts) {
     html += '<th width="28%">Nama Part</th>';
     html += '<th width="8%" class="center">Stok</th>';
     html += '<th width="8%" class="center">Status</th>';
-    html += '<th width="8%" class="center">Qty</th>';
+    html += '<th width="8%" class="center">Jumlah</th>';
     html += '<th width="13%" class="right">Harga Satuan</th>';
     html += '<th width="13%" class="right">Total</th>';
     html += '<th width="5%" class="center">Aksi</th>';

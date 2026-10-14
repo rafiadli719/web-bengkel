@@ -273,7 +273,7 @@ if (!$temuan_rs) {
                                                         <th>Nama Part</th>
                                                         <th style="width:8%" class="text-center">Primary</th>
                                                         <th style="width:10%">Prioritas</th>
-                                                        <th style="width:10%">Qty</th>
+                                                        <th style="width:10%">Jumlah</th>
                                                         <th style="width:10%">Status</th>
                                                         <th>Keterangan</th>
                                                         <th style="width:8%">Aksi</th>

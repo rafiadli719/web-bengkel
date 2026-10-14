@@ -39,13 +39,13 @@ include __DIR__ . '/_ace_header.php';
 </div>
 
 <h4>HPP periode <?= einv($periode) ?></h4>
-<table class="table table-condensed table-bordered"><thead><tr><th>Lokasi</th><th>Sumber</th><th class="text-right">HPP (Moving Average)</th></tr></thead><tbody>
+<table class="table table-condensed table-bordered"><thead><tr><th>Lokasi</th><th>Sumber</th><th class="text-right">HPP (Rata-rata Bergerak)</th></tr></thead><tbody>
 <?php foreach ($hpp as $h): ?><tr><td><?= einv($h['kd_cabang']) ?></td><td><?= einv($h['ref_type']) ?></td><td class="text-right"><?= $rp($h['hpp']) ?></td></tr><?php endforeach; ?>
 <?php if (!$hpp): ?><tr><td colspan="3" class="text-center text-muted">Belum ada HPP tercatat pada periode ini.</td></tr><?php endif; ?>
 </tbody></table>
 
-<h4>Barang dalam perjalanan <small>(alert bila lebih dari <?= $aging ?> hari)</small></h4>
-<table class="table table-condensed table-bordered"><thead><tr><th>No transfer</th><th>Item</th><th>Asal</th><th>Tujuan</th><th class="text-right">Qty</th><th class="text-right">Nilai</th><th>Dikirim</th><th>Umur</th></tr></thead><tbody>
+<h4>Barang dalam perjalanan <small>(peringatan bila lebih dari <?= $aging ?> hari)</small></h4>
+<table class="table table-condensed table-bordered"><thead><tr><th>No transfer</th><th>Item</th><th>Asal</th><th>Tujuan</th><th class="text-right">Jumlah</th><th class="text-right">Nilai</th><th>Dikirim</th><th>Umur</th></tr></thead><tbody>
 <?php foreach ($transit as $t): $lewat = (int) $t['umur'] > $aging; ?>
     <tr class="<?= $lewat ? 'danger' : '' ?>"><td><?= einv($t['no_transfer']) ?></td><td><?= einv($t['no_item']) ?></td><td><?= einv($t['kd_asal']) ?></td><td><?= einv($t['kd_tujuan']) ?></td>
         <td class="text-right"><?= $qt($t['qty']) ?></td><td class="text-right"><?= $rp($t['value']) ?></td><td><?= einv($t['shipped_at']) ?></td>
@@ -55,14 +55,14 @@ include __DIR__ . '/_ace_header.php';
 </tbody></table>
 
 <h4>Selisih Harga Pembelian <?= einv($periode) ?></h4>
-<table class="table table-condensed table-bordered"><thead><tr><th>Lokasi</th><th>Item</th><th>Nama</th><th>Ref koreksi</th><th class="text-right">Qty terjual</th><th class="text-right">Selisih/unit</th><th class="text-right">Total</th></tr></thead><tbody>
+<table class="table table-condensed table-bordered"><thead><tr><th>Lokasi</th><th>Item</th><th>Nama</th><th>Ref koreksi</th><th class="text-right">Jumlah terjual</th><th class="text-right">Selisih/unit</th><th class="text-right">Total</th></tr></thead><tbody>
 <?php foreach ($ppv as $p): ?><tr><td><?= einv($p['kd_cabang']) ?></td><td><?= einv($p['no_item']) ?></td><td><?= einv($p['namaitem']) ?></td><td><?= einv($p['correction_ref']) ?></td>
     <td class="text-right"><?= $qt($p['qty_affected']) ?></td><td class="text-right"><?= $rp($p['price_difference']) ?></td><td class="text-right"><?= $rp($p['total_variance']) ?></td></tr><?php endforeach; ?>
 <?php if (!$ppv): ?><tr><td colspan="7" class="text-center text-muted">Tidak ada.</td></tr><?php endif; ?>
 </tbody></table>
 
 <h4>Piutang Klaim Supplier</h4>
-<table class="table table-condensed table-bordered"><thead><tr><th>No klaim</th><th>Lokasi</th><th>Item</th><th>Nama</th><th>Supplier</th><th class="text-right">Qty</th><th class="text-right">Nilai</th><th>Status</th></tr></thead><tbody>
+<table class="table table-condensed table-bordered"><thead><tr><th>No klaim</th><th>Lokasi</th><th>Item</th><th>Nama</th><th>Supplier</th><th class="text-right">Jumlah</th><th class="text-right">Nilai</th><th>Status</th></tr></thead><tbody>
 <?php foreach ($klaim as $c): ?><tr><td><?= einv($c['no_klaim']) ?></td><td><?= einv($c['kd_cabang']) ?></td><td><?= einv($c['no_item']) ?></td><td><?= einv($c['namaitem']) ?></td><td><?= einv($c['supplier_id']) ?></td>
     <td class="text-right"><?= $qt($c['qty']) ?></td><td class="text-right"><?= $rp($c['value']) ?></td><td><?= einv($c['status']) ?></td></tr><?php endforeach; ?>
 <?php if (!$klaim): ?><tr><td colspan="8" class="text-center text-muted">Tidak ada.</td></tr><?php endif; ?>

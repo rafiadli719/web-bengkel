@@ -207,7 +207,7 @@
                                                     <th width="13%">No. Penjualan</th>
                                                     <th class="center" width="9%">Tanggal</th>
                                                     <th width="19%">Pelanggan</th>
-                                                    <th class="center" width="5%">Qty</th>
+                                                    <th class="center" width="5%">Jumlah</th>
                                                     <th align="right" width="12%">Total Jual</th>
                                                     <th align="right" width="12%">HPP</th>
                                                     <th align="right" width="12%">Profit</th>

@@ -323,7 +323,7 @@ $query_top_alasan = mysqli_query($koneksi, "
                                                         <th>Alasan</th>
                                                         <th class="text-right">Biaya Cancel</th>
                                                         <th class="text-right">Refund</th>
-                                                        <th>User</th>
+                                                        <th>Pengguna</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

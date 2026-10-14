@@ -207,7 +207,7 @@
 								<a href="#">Data Master</a>
 							</li>                            
 							<li>
-								<a href="user.php">User</a>
+								<a href="user.php">Pengguna</a>
 							</li>                                                                                    
 							<li class="active">Tambah Data</li>
 						</ul><!-- /.breadcrumb -->

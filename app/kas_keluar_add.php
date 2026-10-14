@@ -202,7 +202,7 @@
 							<li>
 								<a href="kas_keluar.php">Pengeluaran Kas</a>
 							</li>                                                                                    
-							<li class="active">Input Data</li>
+							<li class="active">Tambah Data</li>
 						</ul><!-- /.breadcrumb -->
 					</div>
 

@@ -532,7 +532,7 @@ if (isset($_POST['action'])) {
                     </div>
                     <div class="stat-box danger">
                         <div class="number"><?php echo $error_count; ?></div>
-                        <div class="label">Error</div>
+                        <div class="label">Kesalahan</div>
                     </div>
                 </div>
 

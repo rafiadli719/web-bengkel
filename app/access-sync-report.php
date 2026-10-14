@@ -347,7 +347,7 @@ function accessSyncFormatTanggalTampil($value) {
                                         <th>Tanggal</th>
                                         <th>Cabang</th>
                                         <th>Supplier</th>
-                                        <th>Total Qty</th>
+                                        <th>Total Jumlah</th>
                                         <th>Total Akhir</th>
                                         <th>Status</th>
                                     </tr>
@@ -357,7 +357,7 @@ function accessSyncFormatTanggalTampil($value) {
                                         <th>Tanggal</th>
                                         <th>Cabang</th>
                                         <th>Pelanggan</th>
-                                        <th>Total Qty</th>
+                                        <th>Total Jumlah</th>
                                         <th>Total Akhir</th>
                                         <th>Status</th>
                                     </tr>

@@ -906,7 +906,7 @@ if ($current_tab === 'riwayat') {
         <h1><i class="fas fa-wallet"></i> Manajemen Keuangan Pusat</h1>
         <p style="color: var(--text-muted); margin-bottom: 0;">Kelola pemasukan dan pengeluaran dari berbagai cabang secara terpusat</p>
         <div class="info-tags">
-            <div class="info-tag"><i class="fas fa-user"></i> User: <?php echo htmlspecialchars($username); ?></div>
+            <div class="info-tag"><i class="fas fa-user"></i> Pengguna: <?php echo htmlspecialchars($username); ?></div>
             <div class="info-tag"><i class="fas fa-shield-alt"></i> Role: Super Admin</div>
             <div class="info-tag"><i class="fas fa-calendar-day"></i> Tanggal: <?php echo date('d M Y H:i:s'); ?></div>
         </div>

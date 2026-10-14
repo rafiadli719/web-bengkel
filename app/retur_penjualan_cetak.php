@@ -71,7 +71,7 @@ $judul_doc         = 'BUKTI RETUR PENJUALAN';
         <thead>
             <tr>
                 <th width="5%">No</th><th width="12%">Kode</th><th width="28%">Nama Item</th>
-                <th width="7%">Qty</th><th width="14%">Harga Jual</th><th width="14%">Subtotal</th>
+                <th width="7%">Jumlah</th><th width="14%">Harga Jual</th><th width="14%">Subtotal</th>
                 <th width="14%">Alasan</th><th width="16%">Penggantian</th>
             </tr>
         </thead>

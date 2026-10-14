@@ -90,7 +90,7 @@ if ($siap) {
     }
 }
 
-$pageTitle = 'Koreksi Persediaan (Maker-Checker)';
+$pageTitle = 'Koreksi Persediaan (Pengaju & Penyetuju)';
 include __DIR__ . '/_ace_header.php';
 ?>
 <?php if (!$siap): ?>
@@ -110,20 +110,20 @@ include __DIR__ . '/_ace_header.php';
     <input type="hidden" name="aksi" value="ajukan">
     <div class="form-group"><label class="col-sm-3 control-label">Jenis</label><div class="col-sm-9">
         <select name="jenis" class="form-control" id="jenis" onchange="tampilJenis()">
-            <option value="ADJUST">Stock Adjustment (+/-)</option>
+            <option value="ADJUST">Penyesuaian Stok (+/-)</option>
             <option value="CORR_HARGA">Koreksi harga pembelian</option>
-            <option value="SCRAP">Barang hilang / rusak / scrap</option>
+            <option value="SCRAP">Barang hilang / rusak / dibuang</option>
             <?php if ($bisaFinance): ?><option value="REVALUASI">Revaluasi persediaan (Finance HQ)</option><?php endif; ?>
         </select></div></div>
     <div class="form-group"><label class="col-sm-3 control-label">Lokasi</label><div class="col-sm-9">
         <select name="lokasi" class="form-control"><?php foreach ($boleh as $kd => $nm): ?><option value="<?= einv($kd) ?>"><?= einv($kd) ?></option><?php endforeach; ?></select></div></div>
-    <div class="form-group"><label class="col-sm-3 control-label">No item</label><div class="col-sm-9"><input name="item" class="form-control" required></div></div>
-    <div class="form-group j j-ADJUST j-SCRAP"><label class="col-sm-3 control-label">Qty</label><div class="col-sm-9"><input name="qty" class="form-control" placeholder="ADJUST: +/- ; SCRAP: positif"></div></div>
+    <div class="form-group"><label class="col-sm-3 control-label">No. barang</label><div class="col-sm-9"><input name="item" class="form-control" required></div></div>
+    <div class="form-group j j-ADJUST j-SCRAP"><label class="col-sm-3 control-label">Jumlah</label><div class="col-sm-9"><input name="qty" class="form-control" placeholder="ADJUST: +/- ; SCRAP: positif"></div></div>
     <div class="form-group j j-CORR_HARGA"><label class="col-sm-3 control-label">No pembelian asal</label><div class="col-sm-9"><input name="ref_no" class="form-control"></div></div>
     <div class="form-group j j-CORR_HARGA"><label class="col-sm-3 control-label">Harga satuan benar</label><div class="col-sm-9"><input name="harga_baru" class="form-control"></div></div>
-    <div class="form-group j j-REVALUASI"><label class="col-sm-3 control-label">Average baru</label><div class="col-sm-9"><input name="average_baru" class="form-control"></div></div>
-    <div class="form-group j j-SCRAP"><label class="col-sm-3 control-label">Jenis scrap</label><div class="col-sm-9">
-        <select name="jenis_scrap" class="form-control"><option>RUSAK</option><option>HILANG</option><option>SCRAP</option><option>INTERNAL</option></select></div></div>
+    <div class="form-group j j-REVALUASI"><label class="col-sm-3 control-label">Rata-rata baru</label><div class="col-sm-9"><input name="average_baru" class="form-control"></div></div>
+    <div class="form-group j j-SCRAP"><label class="col-sm-3 control-label">Jenis pembuangan</label><div class="col-sm-9">
+        <select name="jenis_scrap" class="form-control"><option>RUSAK</option><option>HILANG</option><option value="SCRAP">SCRAP (dibuang)</option><option>INTERNAL</option></select></div></div>
     <div class="form-group j j-SCRAP"><label class="col-sm-3 control-label">Berita acara</label><div class="col-sm-9"><input name="berita_acara" class="form-control"></div></div>
     <div class="form-group"><label class="col-sm-3 control-label">Referensi transaksi</label><div class="col-sm-9"><input name="ref_asal" class="form-control"></div></div>
     <div class="form-group"><label class="col-sm-3 control-label">Alasan (wajib)</label><div class="col-sm-9"><textarea name="alasan" class="form-control" rows="2" required minlength="5"></textarea></div></div>

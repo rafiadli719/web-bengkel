@@ -144,7 +144,7 @@ $bc = $badge_class[$st] ?? 'default';
                                         ? '<span class="label label-info">Push (Pusat Inisiasi)</span>'
                                         : '<span class="label label-default">Pull (Request Cabang)</span>'; ?></td></tr>
                                     <tr><td><b>Status</b></td><td><span class="label label-<?php echo $bc; ?>"><?php echo $label_map[$st]??$st; ?></span></td></tr>
-                                    <tr><td><b>Tgl. Request</b></td><td><?php echo date('d/m/Y',strtotime($hdr['tanggal_request'])); ?></td></tr>
+                                    <tr><td><b>Tgl. Permintaan</b></td><td><?php echo date('d/m/Y',strtotime($hdr['tanggal_request'])); ?></td></tr>
                                     <?php if($hdr['tanggal_kirim']): ?>
                                     <tr><td><b>Tgl. Kirim</b></td><td><?php echo date('d/m/Y',strtotime($hdr['tanggal_kirim'])); ?></td></tr>
                                     <?php endif; ?>
@@ -166,7 +166,7 @@ $bc = $badge_class[$st] ?? 'default';
                                     <tr><td><b>Diproses Oleh</b></td><td><?php echo htmlspecialchars($hdr['user_proses']); ?></td></tr>
                                     <?php endif; ?>
                                     <tr><td><b>Total Item</b></td><td><?php echo $hdr['total_item']; ?> item</td></tr>
-                                    <tr><td><b>Total Qty</b></td><td><?php echo $hdr['total_qty']; ?></td></tr>
+                                    <tr><td><b>Total Jumlah</b></td><td><?php echo $hdr['total_qty']; ?></td></tr>
                                     <tr><td><b>Total Nilai</b></td><td><b>Rp <?php echo number_format($hdr['total_nilai'],0,',','.'); ?></b></td></tr>
                                 </table>
                             </div>

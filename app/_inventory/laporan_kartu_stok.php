@@ -37,7 +37,7 @@ if ($item !== '' && isset($boleh[$lok])) {
 $rp = function ($v) { return number_format((float) $v, 2, ',', '.'); };
 $qt = function ($v) { return rtrim(rtrim(number_format((float) $v, 3, ',', '.'), '0'), ','); };
 
-$pageTitle = 'Kartu Stok Bernilai (Moving Average)';
+$pageTitle = 'Kartu Stok Bernilai (Rata-rata Bergerak)';
 include __DIR__ . '/_ace_header.php';
 ?>
 <form method="get" class="form-inline" style="margin-bottom:15px">
@@ -51,7 +51,7 @@ include __DIR__ . '/_ace_header.php';
 </form>
 
 <?php if ($item === ''): ?>
-    <p class="text-muted">Pilih lokasi dan isi nomor item.</p>
+    <p class="text-muted">Pilih lokasi dan isi nomor barang.</p>
 <?php else: ?>
     <?php if ($saldo): ?>
         <div class="alert alert-info">
@@ -61,15 +61,15 @@ include __DIR__ . '/_ace_header.php';
             nilai persediaan <strong>Rp <?= $rp($saldo['total_value']) ?></strong>
         </div>
     <?php else: ?>
-        <div class="alert alert-warning">Item ini belum punya saldo di <?= einv($lok) ?> pada ledger Moving Average.</div>
+        <div class="alert alert-warning">Item ini belum punya saldo di <?= einv($lok) ?> pada buku stok Rata-rata Bergerak.</div>
     <?php endif; ?>
 
     <table class="table table-condensed table-bordered table-striped">
         <thead><tr>
             <th>Tgl transaksi</th><th>Tgl koreksi</th><th>Jenis</th><th>Referensi</th>
             <th class="text-right">Masuk</th><th class="text-right">Keluar</th><th class="text-right">Biaya satuan</th>
-            <th class="text-right">Nilai +/-</th><th class="text-right">Average sebelum</th><th class="text-right">Average sesudah</th>
-            <th class="text-right">Qty akhir</th><th class="text-right">Nilai akhir</th>
+            <th class="text-right">Nilai +/-</th><th class="text-right">Rata-rata sebelum</th><th class="text-right">Rata-rata sesudah</th>
+            <th class="text-right">Jumlah akhir</th><th class="text-right">Nilai akhir</th>
         </tr></thead>
         <tbody>
         <?php foreach ($rows as $r): ?>
@@ -93,7 +93,7 @@ include __DIR__ . '/_ace_header.php';
     </table>
     <?php if (count($rows) >= 500): ?><p class="text-muted">Menampilkan 500 baris terbaru. Persempit rentang tanggal.</p><?php endif; ?>
 
-    <h4>Riwayat perubahan average</h4>
+    <h4>Riwayat perubahan rata-rata</h4>
     <table class="table table-condensed table-bordered">
         <thead><tr><th>Waktu</th><th>Pemicu</th><th>Referensi</th><th class="text-right">Sebelum</th><th class="text-right">Sesudah</th><th>Koreksi</th></tr></thead>
         <tbody>

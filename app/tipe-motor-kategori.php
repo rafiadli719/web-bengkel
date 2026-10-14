@@ -229,7 +229,7 @@ if (isset($_POST['btnsave'])) {
                             </div>
 
                             <button type="submit" class="btn btn-purple btn-sm">Filter</button>
-                            <a href="tipe-motor-kategori.php" class="btn btn-default btn-sm">Reset</a>
+                            <a href="tipe-motor-kategori.php" class="btn btn-default btn-sm">Atur Ulang</a>
                             <a href="item-motor-mapping.php?type=item" class="btn btn-info btn-sm">Kembali ke Mapping</a>
                         </form>
                         <div class="space-8"></div>

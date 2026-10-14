@@ -108,7 +108,7 @@ if($total_pending > 0) {
                         <th width="10%">Tipe</th>
                         <th width="15%">Kode</th>
                         <th>Nama Item</th>
-                        <th width="8%" class="text-center">Qty</th>
+                        <th width="8%" class="text-center">Jumlah</th>
                         <th width="12%" class="text-right">Harga</th>
                         <th width="12%" class="text-right">Total</th>
                         <th width="15%" class="text-center">Aksi</th>
@@ -363,7 +363,7 @@ if($total_wo_history > 0) {
                         <th width="10%">Tipe</th>
                         <th width="15%">Kode</th>
                         <th>Nama Item</th>
-                        <th width="8%" class="text-center">Qty</th>
+                        <th width="8%" class="text-center">Jumlah</th>
                         <th width="12%" class="text-right">Harga</th>
                         <th width="12%" class="text-right">Total</th>
                         <th width="10%" class="text-center">Status</th>
@@ -681,7 +681,7 @@ if($total_wo_history > 0) {
                             <div class="well well-sm" style="margin-top: 10px; margin-bottom: 0;">
                                 <div class="row">
                                     <div class="col-xs-6 text-center">
-                                        <small>Pending</small><br>
+                                        <small>Menunggu</small><br>
                                         <strong class="orange"><?php echo $temuan['pending_count']; ?></strong>
                                     </div>
                                     <div class="col-xs-6 text-center">
@@ -779,7 +779,7 @@ if($total_penawaran_umum > 0) {
                         <th width="5%">#</th>
                         <th width="15%">Kode Part</th>
                         <th>Nama Part</th>
-                        <th width="8%" class="text-center">Qty</th>
+                        <th width="8%" class="text-center">Jumlah</th>
                         <th width="12%" class="text-right">Harga</th>
                         <th width="12%" class="text-right">Total</th>
                         <th width="10%" class="text-center">Status</th>

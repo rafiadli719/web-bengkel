@@ -200,7 +200,7 @@
 							<li>
 								<a href="master_jenis_motor.php">Jenis Motor</a>
 							</li>
-							<li class="active">Edit</li>
+							<li class="active">Ubah</li>
 						</ul>
 					</div>
 

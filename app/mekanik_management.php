@@ -385,7 +385,7 @@ if(empty($_SESSION['_iduser'])){
                                                                             <i class="fa fa-user"></i> <?php echo $row['username']; ?>
                                                                         </span>
                                                                         <?php if($row['user_status'] == 'inactive'): ?>
-                                                                        <br><small class="text-danger">Inactive</small>
+                                                                        <br><small class="text-danger">Nonaktif</small>
                                                                         <?php endif; ?>
                                                                         <?php else: ?>
                                                                         <span class="text-muted">No account</span>
@@ -505,7 +505,7 @@ if(empty($_SESSION['_iduser'])){
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                 <button type="submit" name="btn_add_mekanik" class="btn btn-primary">
                                     <i class="ace-icon fa fa-save"></i>
                                     Simpan
@@ -534,7 +534,7 @@ if(empty($_SESSION['_iduser'])){
                                 <!-- Content will be loaded via AJAX -->
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                                 <button type="submit" name="btn_update_mekanik" class="btn btn-primary">
                                     <i class="ace-icon fa fa-save"></i>
                                     Update
@@ -562,7 +562,7 @@ if(empty($_SESSION['_iduser'])){
                             <!-- Content will be loaded via AJAX -->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                         </div>
                     </div>
                 </div>

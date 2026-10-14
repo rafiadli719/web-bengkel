@@ -227,7 +227,7 @@ if(empty($_SESSION['_iduser'])){
                                             <th width="10%">Tanggal</th>
                                             <th width="20%">Dari Cabang</th>
                                             <th width="10%">Tipe</th>
-                                            <th class="center" width="8%">Qty</th>
+                                            <th class="center" width="8%">Jumlah</th>
                                             <th class="right" width="15%">Total</th>
                                             <th class="center" width="10%">Status</th>
                                         </tr>

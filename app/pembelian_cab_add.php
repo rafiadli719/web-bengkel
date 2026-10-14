@@ -244,7 +244,7 @@
                                             <th class="center" width="10%">Tanggal</th>
                                             <th width="10%">Kode</th>
                                             <th width="25%">Nama Supplier (Cabang)</th>
-                                            <th class="center" width="10%">Total Qty</th>
+                                            <th class="center" width="10%">Total Jumlah</th>
                                             <th class="center" width="10%">Total Order</th>
                                             <th class="center" width="10%">Status</th>
                                             <th width="10%">Keterangan</th>

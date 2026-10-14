@@ -215,7 +215,7 @@ if(!$suppliers){
                                     <div class="col-md-8">
                                         <div class="upload-box" id="dropZone">
                                             <i class="fa fa-cloud-upload"></i>
-                                            <h4>Drag & Drop file Excel di sini</h4>
+                                            <h4>Seret dan lepas file Excel di sini</h4>
                                             <p>atau klik untuk memilih file</p>
                                             <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
                                             <p><small class="text-muted">Format yang didukung: .xlsx, .xls, .csv</small></p>
@@ -310,7 +310,7 @@ if(!$suppliers){
                                                 <th class="center" width="5%">No</th>
                                                 <th width="15%">Kode Item</th>
                                                 <th width="30%">Nama Item</th>
-                                                <th class="center" width="10%">Qty</th>
+                                                <th class="center" width="10%">Jumlah</th>
                                                 <th class="right" width="15%">Harga</th>
                                                 <th class="right" width="15%">Subtotal</th>
                                                 <th class="center" width="10%">Status</th>

@@ -148,7 +148,7 @@
                             <th class="center" width="5%">No</th>
                             <th width="15%">Kode Item</th>
                             <th width="40%">Nama Item</th>
-                            <th class="center" width="10%">Qty</th>
+                            <th class="center" width="10%">Jumlah</th>
                             <th class="right" width="12%">Harga</th>
                             <th class="right" width="13%">Total</th>
                         </tr>

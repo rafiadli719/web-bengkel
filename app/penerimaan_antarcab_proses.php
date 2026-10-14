@@ -337,7 +337,7 @@ if(isset($_POST['btn_terima'])){
                                             <div class="col-xs-6">
                                                 <div class="well text-center">
                                                     <h3><?php echo number_format($header['total_qty'], 0); ?></h3>
-                                                    <small>Total Qty</small>
+                                                    <small>Total Jumlah</small>
                                                 </div>
                                             </div>
                                             <div class="col-xs-6">
@@ -368,7 +368,7 @@ if(isset($_POST['btn_terima'])){
                                         <th width="5%">No</th>
                                         <th width="15%">Kode Barang</th>
                                         <th width="35%">Nama Barang</th>
-                                        <th class="right" width="10%">Qty</th>
+                                        <th class="right" width="10%">Jumlah</th>
                                         <th class="right" width="15%">Harga</th>
                                         <th class="right" width="15%">Subtotal</th>
                                     </tr>

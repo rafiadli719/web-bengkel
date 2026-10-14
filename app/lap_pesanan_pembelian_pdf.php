@@ -80,7 +80,7 @@
                     <td bgcolor="gainsboro" align="center" width="10%"><b>Tanggal</b></td>
                     <td bgcolor="gainsboro" width="10%"><b>Kode Supplier</b></td>
                     <td bgcolor="gainsboro" width="25%"><b>Nama Supplier</b></td>
-                    <td bgcolor="gainsboro" align="center" width="10%"><b>Total Qty</b></td>
+                    <td bgcolor="gainsboro" align="center" width="10%"><b>Total Jumlah</b></td>
                     <td bgcolor="gainsboro" align="right" width="10%"><b>Total Order</b></td>
                     <td bgcolor="gainsboro" align="center" width="10%"><b>Status</b></td>
                     <td bgcolor="gainsboro" width="10%"><b>Keterangan</b></td>

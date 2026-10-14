@@ -59,7 +59,7 @@
                                             <td class="center" width="5%">No</td>
                                             <td width="20%">Kode</td>
                                             <td width="35%">Nama Item</td>
-                                            <td align="right" width="8%">Qty</td>
+                                            <td align="right" width="8%">Jumlah</td>
                                             <td align="right" width="12%">Harga</td>
                                             <td align="right" width="15%">Total</td>
                                         </tr>
