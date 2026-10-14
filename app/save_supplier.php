@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 // Include file konfigurasi database
 include "../config/koneksi.php";
 require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'supplier_write');
-if (session_status() === PHP_SESSION_NONE) if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 if (empty($_SESSION['_iduser'])) { header("location:../index.php"); exit; }
 
 // Ambil data dari form

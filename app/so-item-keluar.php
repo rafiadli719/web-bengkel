@@ -51,8 +51,8 @@
             $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
             $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
 
-            $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
-            $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
+            $tgl_pilih_dari_eng = mysqli_real_escape_string($koneksi, ubahformatTgl($_POST['id-date-picker-1'])); 
+            $tgl_pilih_sampai_eng = mysqli_real_escape_string($koneksi, ubahformatTgl($_POST['id-date-picker-2'])); 
             $acuan = (isset($_POST['acuan']) && $_POST['acuan']==='stok') ? 'stok' : 'transaksi';
                 
         }     
@@ -61,8 +61,8 @@
             $tgl_pilih_dari= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
             $tgl_pilih_sampai= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-2']);            
 
-            $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
-            $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
+            $tgl_pilih_dari_eng = mysqli_real_escape_string($koneksi, ubahformatTgl($_POST['id-date-picker-1'])); 
+            $tgl_pilih_sampai_eng = mysqli_real_escape_string($koneksi, ubahformatTgl($_POST['id-date-picker-2'])); 
             $acuan = (isset($_POST['acuan']) && $_POST['acuan']==='stok') ? 'stok' : 'transaksi';
             
             $jumlah=count($_POST["hapus"]);

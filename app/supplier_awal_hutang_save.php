@@ -1,5 +1,6 @@
 <?php
 	include "../config/koneksi.php";
+	require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'supplier_write');
 
 	date_default_timezone_set('Asia/Jakarta');
 	$waktuaja_skr=date('h:i');

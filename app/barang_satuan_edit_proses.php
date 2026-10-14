@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 // Include file konfigurasi database
 include "../config/koneksi.php";
+require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'barang_write');
 
 // Ambil data dari form
 $id = $_POST['txtid'] ?? null;

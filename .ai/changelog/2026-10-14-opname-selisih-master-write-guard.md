@@ -21,3 +21,8 @@
 ## Catatan
 - Migrasi `2026-10-14_run_master_write_perm.php` sudah jalan di lokal, BELUM di produksi/fitmotor1. Tanpa migrasi,
   ADM non-`*` akan kena 403 di halaman master barang/supplier setelah kode ini dideploy.
+
+## Perbaikan hasil review Opus (merge gate)
+- so-item-masuk/keluar: tanggal POST di blok btnrst/btnpilih kini di-escape (SQL injection lama).
+- Guard tulis ditambah ke 14 endpoint yang terlewat: *_edit_proses, *_del, barang_validate, supplier_awal_hutang_save
+  (sebagian tadinya tanpa cek login sama sekali).
