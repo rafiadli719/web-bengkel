@@ -1,5 +1,6 @@
 <?php
 	include "../config/koneksi.php";
+	require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'supplier_write');
 
 	$txtid = mysqli_real_escape_string($koneksi, $_GET['kd']);
 	$modal=mysqli_query($koneksi,"Delete FROM tblsupplier WHERE nosupplier='$txtid'");

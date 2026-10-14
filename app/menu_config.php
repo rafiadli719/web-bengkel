@@ -427,6 +427,7 @@ return [
             ['title' => 'Pengeluaran Kas', 'url' => 'lap_kas_keluar.php', 'permission' => 'lap_kas_keluar_read'],
             ['title' => 'Stok Masuk (Manual)', 'url' => 'lap_stok_masuk.php', 'permission' => 'lap_stok_masuk_read'],
             ['title' => 'Stok Keluar (Manual)', 'url' => 'lap_stok_keluar.php', 'permission' => 'lap_stok_keluar_read'],
+            ['title' => 'Selisih Stok Opname', 'url' => 'lap_selisih_opname.php', 'permission' => 'lap_stok_masuk_read'],
         ]
     ],
     [

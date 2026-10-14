@@ -7,6 +7,7 @@ if (empty($_SESSION['_iduser'])) {
     $id_user = $_SESSION['_iduser'];
     $kd_cabang = $_SESSION['_cabang'];
     include "../config/koneksi.php";
+    require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'barang_write');
     require_once __DIR__ . "/_include_tblitem_defaults.php";
 
     // Data User

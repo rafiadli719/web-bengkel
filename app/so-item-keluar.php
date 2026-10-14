@@ -44,16 +44,7 @@
         $tgl_pilih_dari=date('d/m/Y');
         $tgl_pilih_sampai=date('d/m/Y');
 
-    // ---- SQL Detail -----
-        $sql_query="SELECT 
-                    distinct(no_item) as noitem 
-                    FROM 
-                    view_stok 
-                    WHERE 
-                    (tanggal>='$tgl_pilih_dari_eng' AND 
-                    tanggal<='$tgl_pilih_sampai_eng') AND 
-                    (tipe='3' OR tipe='4') AND 
-                    kd_cabang='$kd_cabang'";    
+        $acuan='transaksi';
 
         
 		if(isset($_POST['btnrst'])) {				
@@ -62,17 +53,8 @@
 
             $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
             $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
+            $acuan = (isset($_POST['acuan']) && $_POST['acuan']==='stok') ? 'stok' : 'transaksi';
                 
-            // ---- SQL Hasil Data ----- 
-            $sql_query="SELECT 
-                        distinct(no_item) as noitem 
-                        FROM 
-                        view_stok 
-                        WHERE 
-                        (tanggal>='$tgl_pilih_dari_eng' AND 
-                        tanggal<='$tgl_pilih_sampai_eng') AND 
-                        (tipe='3' OR tipe='4') AND 
-                        kd_cabang='$kd_cabang'";      
         }     
 
 		if(isset($_POST['btnpilih'])) {				
@@ -81,6 +63,7 @@
 
             $tgl_pilih_dari_eng = ubahformatTgl($_POST['id-date-picker-1']); 
             $tgl_pilih_sampai_eng = ubahformatTgl($_POST['id-date-picker-2']); 
+            $acuan = (isset($_POST['acuan']) && $_POST['acuan']==='stok') ? 'stok' : 'transaksi';
             
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
@@ -109,6 +92,28 @@
             }                            
             echo"<script>window.location=('so-item-keluar-rst.php');</script>";
         }        
+
+        // ---- Daftar kandidat opname: urut Rak lalu Nama Barang (G13) ----
+        $kd_q = mysqli_real_escape_string($koneksi, $kd_cabang);
+        $dari_q = mysqli_real_escape_string($koneksi, $tgl_pilih_dari_eng);
+        $sampai_q = mysqli_real_escape_string($koneksi, $tgl_pilih_sampai_eng);
+        if ($acuan === 'stok') {
+            // Semua item bersaldo > 0 per tanggal "sampai" di cabang ini.
+            $sql_kandidat = "SELECT no_item AS noitem FROM tbstok
+                             WHERE kd_cabang='$kd_q' AND tanggal<='$sampai_q'
+                             GROUP BY no_item HAVING SUM(masuk-keluar)>0";
+        } else {
+            // Item yang bertransaksi (penjualan/servis) pada rentang tanggal.
+            $sql_kandidat = "SELECT DISTINCT no_item AS noitem FROM view_stok
+                             WHERE tanggal>='$dari_q' AND tanggal<='$sampai_q' AND
+                             (tipe='3' OR tipe='4') AND kd_cabang='$kd_q'";
+        }
+        $sql_query = "SELECT x.noitem, i.namaitem, i.rakbarang,
+                      (SELECT SUM(masuk-keluar) FROM tbstok
+                       WHERE no_item=x.noitem AND kd_cabang='$kd_q' AND tanggal<='$sampai_q') AS saldo
+                      FROM ($sql_kandidat) x
+                      LEFT JOIN tblitem i ON i.noitem = x.noitem
+                      ORDER BY i.rakbarang, i.namaitem";
 ?>
 
 <!DOCTYPE html>
@@ -302,7 +307,7 @@
                         <div class="row">
 							<div class="col-xs-12 col-sm-12">
 								<div class="table-header">
-                                    Transaksi Penjualan dan Service
+                                    <?php echo $acuan==='stok' ? 'Semua Item Bersaldo Stok &gt; 0 (urut Rak, Nama)' : 'Item Bertransaksi Penjualan dan Service (urut Rak, Nama)'; ?>
 								</div>                            
                                 <table class="table table-bordered">
                                     <thead>
@@ -321,28 +326,15 @@
                                         $sql = mysqli_query($koneksi,$sql_query);
                                         while ($tampil = mysqli_fetch_array($sql)) {
                                             $noitem=$tampil['noitem'];
-
-                                            $cari_kd=mysqli_query($koneksi,"SELECT namaitem 
-                                                                                FROM tblitem 
-                                                                                WHERE noitem='$noitem'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $namaitem=$tm_cari['namaitem'];				 
-
-                                            $cari_kd=mysqli_query($koneksi,"SELECT sum(masuk-keluar) as saldo 
-                                                                                FROM tbstok 
-                                                                                WHERE 
-                                                                                tanggal<='$tgl_pilih_sampai_eng' AND
-                                                                                no_item='$noitem' AND 
-                                                                                kd_cabang='$kd_cabang'");			
-                                            $tm_cari=mysqli_fetch_array($cari_kd);
-                                            $saldo_sistem=$tm_cari['saldo'];				 
+                                            $namaitem=$tampil['namaitem'];
+                                            $saldo_sistem=$tampil['saldo'];
                                     ?>
                                         <tr>
                                             <td class="center">
                                                 <input type="checkbox" name="hapus[]" 
                                                 value="<?php echo $tampil['noitem']; ?>">
                                             </td>
-                                            <td align="center"></td>														
+                                            <td align="center"><?php echo htmlspecialchars((string)$tampil['rakbarang']); ?></td>														
                                             <td><?php echo $tampil['noitem']?></td>														
                                             <td><?php echo $namaitem; ?></td>														
                                             <td align="right"><?php echo $saldo_sistem; ?></td>														

@@ -11,6 +11,7 @@ error_reporting(E_ALL);
 
 // Include file konfigurasi database
 include "../config/koneksi.php";
+require_once __DIR__ . '/_include_guard_master.php'; guardMasterWrite($koneksi, 'barang_write');
 
 // Ambil data dari form
 $txtkd = isset($_POST['txtkd']) ? mysqli_real_escape_string($koneksi, $_POST['txtkd']) : null;

@@ -38,10 +38,11 @@
             </div>
         </div>
     </div>
-    <div class="col-xs-8 col-sm-2">
-
+    <div class="col-xs-8 col-sm-3">
+        <label>Acuan Daftar Item :</label>
+        <select class="form-control" name="acuan" id="acuan">
+            <option value="transaksi"<?php echo (isset($acuan) && $acuan==='transaksi') ? ' selected' : ''; ?>>Item bertransaksi pada rentang tanggal</option>
+            <option value="stok"<?php echo (isset($acuan) && $acuan==='stok') ? ' selected' : ''; ?>>Semua item stok &gt; 0 (per tanggal sampai)</option>
+        </select>
     </div>
-    <div class="col-xs-8 col-sm-2">
-
-    </div>    
 </div>
