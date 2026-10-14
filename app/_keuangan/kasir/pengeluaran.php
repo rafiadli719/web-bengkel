@@ -560,6 +560,7 @@ $cabang_user = $nama_cabang_aktif ?? 'Unknown Cabang';
             }
         }
     </style>
+    <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar" id="sidebar">

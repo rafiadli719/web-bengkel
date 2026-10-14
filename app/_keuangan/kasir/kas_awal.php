@@ -327,7 +327,8 @@ if (!isset($_SESSION['selected_date'])) {
                 });
             });
         </script>
-    </head>
+        <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
+</head>
     <body>
         <div class="sidebar" id="sidebar">
             <a href="index_kasir.php"><i class="fas fa-tachometer-alt"></i> Dashboard Kasir</a>

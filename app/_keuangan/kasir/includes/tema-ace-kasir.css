@@ -1,0 +1,23 @@
+/* Seragamkan sidebar halaman kasir harian dengan tema ACE aplikasi utama.
+   Dimuat paling akhir di <head> halaman yang punya CSS sidebar gelap inline. */
+body .sidebar {
+    background: #f2f2f2;
+    border-right: 1px solid #ccc;
+    border-top: 45px solid #438eb9;
+    font-family: "Open Sans", "Segoe UI", Arial, sans-serif;
+}
+body .sidebar a {
+    color: #585858;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #e8e8e8;
+}
+body .sidebar a:hover {
+    background: #f7f7f7;
+    color: #1963aa;
+}
+body .sidebar a.active {
+    background: #fff;
+    color: #2b7dbc;
+    border-left-color: #2b7dbc;
+    font-weight: 600;
+}

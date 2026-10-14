@@ -553,6 +553,7 @@ $total_pages = ceil($total_transactions / $limit);
             }
         }
     </style>
+    <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar" id="sidebar">

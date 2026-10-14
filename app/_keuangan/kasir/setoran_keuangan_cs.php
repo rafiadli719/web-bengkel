@@ -1234,6 +1234,7 @@ $total_siap_setor = array_sum(array_column($transaksi_list, 'jumlah_setoran'));
             }
         }
     </style>
+    <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
 </head>
 <body>
 <div class="sidebar" id="sidebar">

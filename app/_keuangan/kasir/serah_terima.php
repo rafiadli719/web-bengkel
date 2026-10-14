@@ -1248,6 +1248,7 @@ $total_available = array_sum(array_column($transaksi_available, 'setoran_real'))
             }
         }
     </style>
+    <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
 </head>
 <body>
 <div class="sidebar" id="sidebar">

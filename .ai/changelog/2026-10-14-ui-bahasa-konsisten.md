@@ -22,3 +22,5 @@
 - Sidebar admin/keuangan Keuangan Kasir (`includes/sidebar.css`) diseragamkan dengan tema ACE: latar terang #f2f2f2, brand
   #438eb9, item aktif biru. Tautan CSS diberi `?v=20261014` karena browser menyimpan salinan lama.
 - Tidak disentuh: halaman kasir harian (closing, kas_awal, pemasukan, index_kasir, dst) punya desain inline sendiri.
+- 19 halaman kasir harian (closing, kas_awal, kas_akhir, pemasukan, pengeluaran, index_kasir, edit_*, serah_terima, dst) memuat
+  `includes/tema-ace-kasir.css`: sidebar gelap inline ditimpa dengan palet ACE. Diverifikasi lewat pratinjau statis (halaman 403 untuk admin).

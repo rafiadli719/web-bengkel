@@ -413,6 +413,7 @@ $karyawan_info = $kode_karyawan . ' - ' . ($nama_karyawan ?? 'Tidak diketahui');
             }
         }
     </style>
+    <link href="includes/tema-ace-kasir.css?v=20261014" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar" id="sidebar">
