@@ -203,7 +203,7 @@ function initModalSearchTemuan() {
             console.log('Callback onTemuanSelected dipanggil');
         } else {
             console.error('window.onTemuanSelected tidak ditemukan!');
-            alert('Error: Callback function tidak ditemukan. Silakan reload halaman.');
+            alert('Kesalahan: Callback function tidak ditemukan. Silakan reload halaman.');
         }
         
         $('#modalSearchTemuan').modal('hide');

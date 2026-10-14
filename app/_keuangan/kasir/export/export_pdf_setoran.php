@@ -129,7 +129,7 @@ if ($type == 'bank_history') {
     $bank_id = $_GET['bank_id'] ?? '';
     
     if (!$bank_id) {
-        die('Bank ID required');
+        die('ID bank wajib diisi');
     }
     
     // Get bank detail info
@@ -142,7 +142,7 @@ if ($type == 'bank_history') {
     $bank_detail = $stmt_bank_detail->fetch(PDO::FETCH_ASSOC);
     
     if (!$bank_detail) {
-        die('Bank detail not found');
+        die('Detail bank tidak ditemukan');
     }
     
     // Get detail transactions
@@ -177,7 +177,7 @@ if ($type == 'bank_history') {
     $filename = 'Detail_Setoran_Bank_' . $bank_detail['kode_setoran'] . '_' . date('Y-m-d_H-i-s') . '.pdf';
     
 } else {
-    die('Invalid export type');
+    die('Jenis ekspor tidak valid');
 }
 
 // Custom header and footer

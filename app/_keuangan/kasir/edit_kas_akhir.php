@@ -653,11 +653,11 @@ $karyawan_info = $owner_kode_karyawan . ' - ' . ($nama_karyawan ?? 'Tidak diketa
                         </tr>
                     `;
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Kesalahan: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Kesalahan:', error);
                 alert('Terjadi kesalahan saat memperbarui data.');
             });
         });

@@ -733,7 +733,7 @@ if(empty($_SESSION['_iduser'])){
                         renderPreview(response.data, response.summary);
                         goToStep(3);
                     } else {
-                        alert('Error: ' + response.error);
+                        alert('Kesalahan: ' + response.error);
                     }
                 },
                 error: function() {
@@ -816,7 +816,7 @@ if(empty($_SESSION['_iduser'])){
                               'Total: Rp ' + parseInt(response.total_order).toLocaleString());
                         window.location.href = 'penjualan_add_rst.php?spesan=' + encodeURIComponent(response.no_order) + '&auto=1';
                     } else {
-                        alert('Error: ' + response.error);
+                        alert('Kesalahan: ' + response.error);
                         $('#btnSave').prop('disabled', false).html('<i class="fa fa-save"></i> Simpan Pesanan Penjualan');
                     }
                 },

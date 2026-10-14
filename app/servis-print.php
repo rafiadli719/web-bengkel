@@ -12,7 +12,7 @@
 
 		// Check database connection
 		if(!$koneksi) {
-			die("Database connection failed: " . mysqli_connect_error());
+			die("Koneksi database gagal: " . mysqli_connect_error());
 		}
 
 		$cari_kd=mysqli_query($koneksi,"SELECT
@@ -125,7 +125,7 @@
                                     ORDER BY sj.nobaris");
 
         if(!$cari_jasa) {
-            die("Error query jasa: " . mysqli_error($koneksi));
+            die("Kesalahan kueri jasa: " . mysqli_error($koneksi));
         }
 
         // Get service detail - barang
@@ -139,7 +139,7 @@
                                     ORDER BY sb.nobaris");
 
         if(!$cari_barang) {
-            die("Error query barang: " . mysqli_error($koneksi));
+            die("Kesalahan kueri barang: " . mysqli_error($koneksi));
         }
 ?>
 

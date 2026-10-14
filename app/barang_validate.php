@@ -14,7 +14,7 @@ if (empty($_SESSION['_iduser'])) {
 
     // Check database connection
     if (!$koneksi) {
-        die("Database connection failed: " . mysqli_connect_error());
+        die("Koneksi database gagal: " . mysqli_connect_error());
     }
 
     // Data User
@@ -44,7 +44,7 @@ if (empty($_SESSION['_iduser'])) {
     $result = mysqli_query($koneksi, $query);
     
     if (!$result) {
-        die("Query error: " . mysqli_error($koneksi));
+        die("Kueri gagal: " . mysqli_error($koneksi));
     }
 
     $item = mysqli_fetch_array($result);

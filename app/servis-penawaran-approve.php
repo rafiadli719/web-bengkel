@@ -189,7 +189,7 @@ try {
     mysqli_rollback($koneksi);
 
     echo "<script>
-            alert('Error: " . addslashes($e->getMessage()) . "');
+            alert('Kesalahan: " . addslashes($e->getMessage()) . "');
             history.back();
           </script>";
 }

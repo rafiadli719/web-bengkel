@@ -11,7 +11,7 @@ $page_icon  = $page_icon ?? 'fa-file-invoice-dollar';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title); ?> - Keuangan Kasir</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         :root { --primary-color:#2563eb; --secondary-color:#64748b; --success-color:#16a34a; --danger-color:#dc2626;
                 --warning-color:#d97706; --border-color:#e2e8f0; --text-muted:#64748b; --bg-color:#f8fafc; --card-bg:#fff; }

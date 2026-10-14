@@ -82,7 +82,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         } else {
                             echo '<option value="">Database not available</option>';
@@ -118,7 +118,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         } else {
                             echo '<option value="">Database not available</option>';
@@ -178,7 +178,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -211,7 +211,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -256,7 +256,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -289,7 +289,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -322,7 +322,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -355,7 +355,7 @@ if(isset($no_service) && isset($koneksi) && $koneksi) {
                                     mysqli_stmt_close($stmt);
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>

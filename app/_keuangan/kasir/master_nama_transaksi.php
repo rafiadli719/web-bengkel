@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     $keterangan_default = strtoupper($_POST['keterangan_default']);
 
     if (is_duplicate_nama_transaksi($pdo, $nama_transaksi)) {
-        $error_message = "Error: Nama transaksi '$nama_transaksi' sudah ada!";
+        $error_message = "Kesalahan: Nama transaksi '$nama_transaksi' sudah ada!";
     } else {
         try {
             $stmt = $pdo->prepare("INSERT INTO master_nama_transaksi_closing_kasir (nama_transaksi, kode_akun, keterangan_default)
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
             $success_message = "Data nama transaksi berhasil ditambahkan!";
             header("Refresh: 2; URL=master_nama_transaksi.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $status = $_POST['status'];
 
     if (is_duplicate_nama_transaksi($pdo, $nama_transaksi, $id)) {
-        $error_message = "Error: Nama transaksi '$nama_transaksi' sudah ada!";
+        $error_message = "Kesalahan: Nama transaksi '$nama_transaksi' sudah ada!";
     } else {
         try {
             $stmt = $pdo->prepare("UPDATE master_nama_transaksi_closing_kasir
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             $success_message = "Data nama transaksi berhasil diupdate!";
             header("Refresh: 2; URL=master_nama_transaksi.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -92,7 +92,7 @@ if (isset($_GET['delete'])) {
         $success_message = "Data nama transaksi berhasil dihapus!";
         header("Refresh: 2; URL=master_nama_transaksi.php");
     } catch (Throwable $e) {
-        $error_message = "Error: " . $e->getMessage();
+        $error_message = "Kesalahan: " . $e->getMessage();
     }
 }
 
@@ -125,7 +125,7 @@ if (isset($_GET['edit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Nama Transaksi - Keuangan Kasir</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

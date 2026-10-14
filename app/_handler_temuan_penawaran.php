@@ -60,7 +60,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'get_parts_by_kategori') {
         $result = mysqli_query($koneksi, $query);
         
         if(!$result) {
-            throw new Exception("Query error: " . mysqli_error($koneksi));
+            throw new Exception("Kueri gagal: " . mysqli_error($koneksi));
         }
         
         $parts = [];
@@ -457,7 +457,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'get_parts_by_temuan_kode') {
         $result = mysqli_query($koneksi, $query);
 
         if(!$result) {
-            throw new Exception("Query error: " . mysqli_error($koneksi));
+            throw new Exception("Kueri gagal: " . mysqli_error($koneksi));
         }
 
         $parts = [];
@@ -525,7 +525,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'check_temuan_duplicate') {
         $result = mysqli_query($koneksi, $query_exact);
 
         if(!$result) {
-            throw new Exception("Query error: " . mysqli_error($koneksi));
+            throw new Exception("Kueri gagal: " . mysqli_error($koneksi));
         }
 
         if(mysqli_num_rows($result) > 0) {

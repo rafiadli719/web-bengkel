@@ -451,7 +451,7 @@
                     </script>";
                 }
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
     }
@@ -1164,7 +1164,7 @@
         $update_query .= " WHERE no_service='$no_service'";
 
         if(!mysqli_query($koneksi, $update_query)) {
-            die("Error Update Service: " . mysqli_error($koneksi));
+            die("Gagal memperbarui servis: " . mysqli_error($koneksi));
         }
 
         // 🆕 AUTO-UPDATE STATISTIK PELANGGAN, MEMBER TIER & HISTORY SERVICE

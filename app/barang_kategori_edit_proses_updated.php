@@ -17,13 +17,13 @@ $margin_kategori = $_POST['txtmargin'] ?? null;
 
 // Validasi input
 if (empty($kategori) || empty($nama) || empty($keterangan) || empty($margin_sesuai_jenis)) {
-    echo "<script>window.alert('Error: Semua field wajib harus diisi!');window.location=('barang_kategori_edit.php?kd=$id');</script>";
+    echo "<script>window.alert('Kesalahan: Semua field wajib harus diisi!');window.location=('barang_kategori_edit.php?kd=$id');</script>";
     exit;
 }
 
 // Validasi margin jika diperlukan
 if ($margin_sesuai_jenis === 'TIDAK' && (empty($margin_kategori) || $margin_kategori < 0)) {
-    echo "<script>window.alert('Error: Margin Kategori harus diisi dengan nilai yang valid jika pilih TIDAK!');window.location=('barang_kategori_edit.php?kd=$id');</script>";
+    echo "<script>window.alert('Kesalahan: Margin Kategori harus diisi dengan nilai yang valid jika pilih TIDAK!');window.location=('barang_kategori_edit.php?kd=$id');</script>";
     exit;
 }
 
@@ -44,6 +44,6 @@ if (mysqli_query($koneksi, $update_query)) {
     echo "<script>window.alert('✅ Data kategori berhasil diperbarui!\\n\\nKategori: $kategori\\nNama: $nama\\nKeterangan: $keterangan\\nMargin Sesuai Jenis: $margin_sesuai_jenis\\nMargin Kategori: " . ($margin_khusus ? $margin_khusus . '%' : '-') . "');window.location=('barang_kategori.php');</script>";
 } else {
     $error = mysqli_error($koneksi);
-    echo "<script>window.alert('Error: Gagal memperbarui data - $error');window.location=('barang_kategori_edit.php?kd=$id');</script>";
+    echo "<script>window.alert('Kesalahan: Gagal memperbarui data - $error');window.location=('barang_kategori_edit.php?kd=$id');</script>";
 }
 ?>

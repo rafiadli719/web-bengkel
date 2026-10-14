@@ -193,7 +193,7 @@ if(isset($_POST['btnsimpan']) || isset($_POST['btnupdatemekanik'])) {
         }
         
     } catch(Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); history.back();</script>";
+        echo "<script>alert('Kesalahan: " . $e->getMessage() . "'); history.back();</script>";
         exit;
     }
 }
@@ -235,7 +235,7 @@ if(isset($_POST['btnupdatestatus'])) {
         }
         
     } catch(Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); history.back();</script>";
+        echo "<script>alert('Kesalahan: " . $e->getMessage() . "'); history.back();</script>";
         exit;
     }
 }

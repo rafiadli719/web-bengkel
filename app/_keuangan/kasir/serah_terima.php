@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<script>alert('$message'); window.location.href = 'serah_terima.php';</script>";
             } catch (Exception $e) {
                 $pdo->rollBack();
-                echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
+                echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
             }
         }
     }
@@ -306,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<script>alert('Serah terima berhasil ditolak!\\n\\nKode: $kode_serah_terima\\nDari: $nama_pemberi\\n\\nTransaksi dikembalikan ke kasir pemberi.'); window.location.href = 'serah_terima.php';</script>";
             } catch (Exception $e) {
                 $pdo->rollBack();
-                echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
+                echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
             }
         }
     }
@@ -461,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<script>alert('$message'); window.location.href = 'serah_terima.php';</script>";
             } catch (Exception $e) {
                 $pdo->rollBack();
-                echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
+                echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "'); window.location.href = 'serah_terima.php';</script>";
             }
         }
     }

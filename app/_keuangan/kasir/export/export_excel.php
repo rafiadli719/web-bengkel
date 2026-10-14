@@ -758,12 +758,12 @@ try {
     // Error handling
     ob_end_clean();
     header('Content-Type: text/html; charset=utf-8');
-    echo "Error generating Excel file: " . htmlspecialchars($e->getMessage());
+    echo "Gagal membuat file Excel: " . htmlspecialchars($e->getMessage());
     error_log("Excel Export Error (Pengeluaran): " . $e->getMessage());
 } catch (PDOException $e) {
     ob_end_clean();
     header('Content-Type: text/html; charset=utf-8');
-    echo "Database Error: " . htmlspecialchars($e->getMessage());
+    echo "Kesalahan database: " . htmlspecialchars($e->getMessage());
     error_log("Database Error in Excel Export (Pengeluaran): " . $e->getMessage());
 }
 

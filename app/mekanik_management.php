@@ -86,7 +86,7 @@ if(empty($_SESSION['_iduser'])){
                     }
                 }
             } else {
-                $message = "Error: " . mysqli_error($koneksi);
+                $message = "Kesalahan: " . mysqli_error($koneksi);
                 $message_type = "danger";
             }
         }
@@ -124,7 +124,7 @@ if(empty($_SESSION['_iduser'])){
             $message = "Data mekanik berhasil diupdate!";
             $message_type = "success";
         } else {
-            $message = "Error: " . mysqli_error($koneksi);
+            $message = "Kesalahan: " . mysqli_error($koneksi);
             $message_type = "danger";
         }
     }
@@ -142,7 +142,7 @@ if(empty($_SESSION['_iduser'])){
             $message = "Mekanik berhasil dihapus!";
             $message_type = "success";
         } else {
-            $message = "Error: " . mysqli_error($koneksi);
+            $message = "Kesalahan: " . mysqli_error($koneksi);
             $message_type = "danger";
         }
     }
@@ -401,7 +401,7 @@ if(empty($_SESSION['_iduser'])){
                                                                             </button>
                                                                             <a href="?delete_code=<?php echo $row['nomekanik']; ?>"
                                                                                class="btn btn-xs btn-danger"
-                                                                               onclick="return confirm('Are you sure you want to delete this mechanic?')"
+                                                                               onclick="return confirm('Yakin ingin menghapus mekanik ini?')"
                                                                                title="Delete Mekanik">
                                                                                 <i class="ace-icon fa fa-trash"></i>
                                                                             </a>
@@ -630,7 +630,7 @@ if(empty($_SESSION['_iduser'])){
                         $('#editMekanikModal').modal('show');
                     },
                     error: function() {
-                        alert('Error loading mechanic data');
+                        alert('Gagal memuat data mekanik');
                     }
                 });
             }
@@ -646,7 +646,7 @@ if(empty($_SESSION['_iduser'])){
                         $('#viewDetailModal').modal('show');
                     },
                     error: function() {
-                        alert('Error loading mechanic detail');
+                        alert('Gagal memuat detail mekanik');
                     }
                 });
             }

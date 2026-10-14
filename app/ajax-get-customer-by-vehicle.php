@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nopol'])) {
     } catch (Exception $e) {
         echo json_encode([
             'success' => false,
-            'message' => 'Error: ' . $e->getMessage(),
+            'message' => 'Kesalahan: ' . $e->getMessage(),
             'data' => null
         ]);
     }

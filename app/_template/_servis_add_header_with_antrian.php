@@ -210,7 +210,7 @@ $(document).ready(function() {
                     $('#txtno_antrian').val(response.no_antrian);
                     alert('Nomor antrian berhasil di-generate: ' + response.no_antrian);
                 } else {
-                    alert('Error: ' + response.message);
+                    alert('Kesalahan: ' + response.message);
                 }
             },
             error: function() {
@@ -247,7 +247,7 @@ $(document).ready(function() {
                 if(response.success) {
                     alert('Antrian berhasil disimpan');
                 } else {
-                    alert('Error: ' + response.message);
+                    alert('Kesalahan: ' + response.message);
                 }
             },
             error: function() {
@@ -275,7 +275,7 @@ $(document).ready(function() {
                         // Update status servis juga
                         $('#cbostatus').val(status_baru);
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function() {

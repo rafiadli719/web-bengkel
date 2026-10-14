@@ -482,7 +482,7 @@ if (isset($_POST['run_migration'])) {
                         </h5>
                         <p>
                             <strong>Berhasil:</strong> <?php echo $success_count; ?> |
-                            <strong>Error:</strong> <?php echo $error_count; ?>
+                            <strong>Kesalahan:</strong> <?php echo $error_count; ?>
                         </p>
                     </div>
 

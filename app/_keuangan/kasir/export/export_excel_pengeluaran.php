@@ -21,7 +21,7 @@ try {
     $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 
 // Get filter parameters

@@ -444,7 +444,7 @@
                         </script>";
                     }
                 } else {
-                    echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                    echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                 }
             } else {
                 // Update existing service
@@ -529,7 +529,7 @@
                     </script>";
                     exit;
                 } else {
-                    echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                    echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                     exit;
                 }
             }
@@ -751,7 +751,7 @@
             $update_query .= " WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'";
 
             if(!mysqli_query($koneksi, $update_query)) {
-                die("Error Update Service: " . mysqli_error($koneksi));
+                die("Gagal memperbarui servis: " . mysqli_error($koneksi));
             }
 
             snapshot_komisi_servis($koneksi, $no_service, $kd_cabang);

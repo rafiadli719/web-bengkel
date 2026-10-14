@@ -14,7 +14,7 @@ ini_set('display_errors', 0);
 if(!isset($koneksi) || !$koneksi){
     header('Content-Type: text/plain; charset=utf-8');
     http_response_code(500);
-    die('DB connection failed: '.mysqli_connect_error());
+    die('Koneksi database gagal: '.mysqli_connect_error());
 }
 @mysqli_set_charset($koneksi, 'utf8mb4');
 

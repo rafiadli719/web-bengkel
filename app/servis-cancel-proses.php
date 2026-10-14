@@ -275,7 +275,7 @@ try {
         header('Content-Type: application/json');
         echo json_encode([
             'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
+            'message' => 'Kesalahan: ' . $e->getMessage()
         ]);
     } else {
         header("Location: " . $_SERVER['HTTP_REFERER'] . "?error=database_error&msg=" . urlencode($e->getMessage()));

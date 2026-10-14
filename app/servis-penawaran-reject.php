@@ -93,5 +93,5 @@ try {
     echo "<script>alert('Penawaran DITOLAK dan dicatat.'); window.location='$redirect_url';</script>";
 } catch (Exception $e) {
     mysqli_rollback($koneksi);
-    echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); history.back();</script>";
+    echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "'); history.back();</script>";
 }

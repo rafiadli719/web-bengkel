@@ -48,7 +48,7 @@ $log_file = 'accurate_item_edit_log.txt';
 // Validasi field wajib
 if (empty($txtkd) || empty($txtnama) || empty($cbojenis) || empty($cbosatuan) || empty($cbopabrik) || empty($cbostatus) || empty($cbotipe)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Error: Field wajib kosong\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Semua field wajib harus diisi.');window.location='barang_edit.php?kd=$txtkd';</script>";
+    echo "<script>alert('Kesalahan: Semua field wajib harus diisi.');window.location='barang_edit.php?kd=$txtkd';</script>";
     exit;
 }
 
@@ -83,7 +83,7 @@ $result = mysqli_query($koneksi, "UPDATE tblitem SET
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal update database lokal - tblitem: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Gagal update database lokal. $error');window.location='barang_edit.php?kd=$txtkd';</script>";
+    echo "<script>alert('Kesalahan: Gagal update database lokal. $error');window.location='barang_edit.php?kd=$txtkd';</script>";
     exit;
 }
 

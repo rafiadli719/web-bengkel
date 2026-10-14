@@ -817,14 +817,14 @@ if ($edit_mode) {
                                 }, 500);
                             });
                         } else {
-                            alert('Error: ' + response.message);
+                            alert('Kesalahan: ' + response.message);
                             // Reset button
                             $btn.prop('disabled', false);
                             $('#btnSimpanText').text(originalText);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.log('AJAX Error:', xhr.responseText);
+                        console.log('Kesalahan AJAX:', xhr.responseText);
                         alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
                         // Reset button
                         $btn.prop('disabled', false);

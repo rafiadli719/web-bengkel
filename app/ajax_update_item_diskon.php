@@ -33,7 +33,7 @@ if(isset($_POST['ajax_update_item'])) {
     } else {
         $response = [
             'success' => false, 
-            'message' => 'Database error: ' . mysqli_error($koneksi)
+            'message' => 'Kesalahan database: ' . mysqli_error($koneksi)
         ];
     }
     

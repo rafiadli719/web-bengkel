@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_setoran'])) {
             echo "<script>alert('$message'); window.location.href = 'setoran_keuangan_cs.php';</script>";
         } catch (Exception $e) {
             $pdo->rollBack();
-            echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); window.location.href = 'setoran_keuangan_cs.php';</script>";
+            echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "'); window.location.href = 'setoran_keuangan_cs.php';</script>";
         }
     }
 }

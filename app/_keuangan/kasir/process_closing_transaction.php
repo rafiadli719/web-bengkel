@@ -83,7 +83,7 @@ function processClosingTransaction($pdo, $data) {
         error_log("Error in processClosingTransaction: " . $e->getMessage());
         return [
             'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
+            'message' => 'Kesalahan: ' . $e->getMessage()
         ];
     }
 }

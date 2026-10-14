@@ -331,7 +331,7 @@
             var qty = row.find('.qty-input').val() || 1;
             
             if (!temuanId) {
-                alert('Error: ID temuan tidak ditemukan');
+                alert('Kesalahan: ID temuan tidak ditemukan');
                 return;
             }
             
@@ -360,12 +360,12 @@
                             location.reload();
                         }, 500);
                     } else {
-                        alert('Error: ' + (response.message || 'Gagal menambahkan part'));
+                        alert('Kesalahan: ' + (response.message || 'Gagal menambahkan part'));
                         btn.prop('disabled', false).html('<i class="fa fa-plus"></i>');
                     }
                 },
                 error: function() {
-                    alert('Error: Gagal menghubungi server');
+                    alert('Kesalahan: Gagal menghubungi server');
                     btn.prop('disabled', false).html('<i class="fa fa-plus"></i>');
                 }
             });

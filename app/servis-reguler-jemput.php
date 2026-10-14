@@ -1167,7 +1167,7 @@ if (isset($_POST['btnjadwalkan'])) {
                 infoBox.style.display = 'block';
 
             } catch (error) {
-                console.error('Error calculating distance:', error);
+                console.error('Gagal menghitung jarak:', error);
                 
                 // Show error in preview area
                 loadingBox.style.display = 'none';

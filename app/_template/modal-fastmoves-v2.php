@@ -307,7 +307,7 @@ function initFastMovesV2($) {
                 }
             },
             error: function() {
-                $('#fmPartListBody').html('<tr><td colspan="7" class="center text-danger">Error loading data</td></tr>');
+                $('#fmPartListBody').html('<tr><td colspan="7" class="center text-danger">Gagal memuat data</td></tr>');
             }
         });
     }
@@ -362,7 +362,7 @@ function initFastMovesV2($) {
                 }
             },
             error: function() {
-                $('#fmPartListBody').html('<tr><td colspan="7" class="center text-danger">Error loading data</td></tr>');
+                $('#fmPartListBody').html('<tr><td colspan="7" class="center text-danger">Gagal memuat data</td></tr>');
             }
         });
     }

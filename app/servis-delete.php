@@ -17,7 +17,7 @@ $no_service = $_GET['snoserv'] ?? '';
 
 if (empty($no_service)) {
     echo "<script>
-        alert('Error: No service number provided!');
+        alert('Kesalahan: Nomor servis tidak diberikan!');
         window.location='servis-reguler.php';
     </script>";
     exit;
@@ -33,7 +33,7 @@ mysqli_stmt_close($stmt);
 
 if ($check_data['count'] == 0) {
     echo "<script>
-        alert('Error: Service tidak ditemukan di cabang Anda!');
+        alert('Kesalahan: Service tidak ditemukan di cabang Anda!');
         window.location='servis-reguler.php';
     </script>";
     exit;
@@ -95,7 +95,7 @@ try {
     mysqli_rollback($koneksi);
     
     echo "<script>
-        alert('Error: Gagal menghapus data servis!\\n" . addslashes($e->getMessage()) . "');
+        alert('Kesalahan: Gagal menghapus data servis!\\n" . addslashes($e->getMessage()) . "');
         window.location='servis-reguler.php';
     </script>";
 }

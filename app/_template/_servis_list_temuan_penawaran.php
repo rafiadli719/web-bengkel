@@ -938,7 +938,7 @@ function editTemuan(temuanId) {
                 
                 $('#modalEditTemuan').modal('show');
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function() {

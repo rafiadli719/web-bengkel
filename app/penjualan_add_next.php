@@ -531,7 +531,7 @@ $no_sales=$tm_cari['no_sales'];
 				$('.input-mask-date').mask('99/99/9999');
 				$('.input-mask-phone').mask('(999) 999-9999');
 				$('.input-mask-eyescript').mask('~9.99 ~9.99 999');
-				$(".input-mask-product").mask("a*-999-a999",{placeholder:" ",completed:function(){alert("You typed the following: "+this.val());}});
+				$(".input-mask-product").mask("a*-999-a999",{placeholder:" ",completed:function(){alert("Anda mengetik: "+this.val());}});
 			
 			
 			

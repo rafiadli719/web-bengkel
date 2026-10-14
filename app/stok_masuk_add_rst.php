@@ -327,7 +327,7 @@ if (empty($_SESSION['_iduser'])) {
 
         $cari_kd = mysqli_query($koneksi, "SELECT sum(total) as tot FROM tbitem_masuk_detail WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
         if (!$cari_kd) {
-            die("Query failed: " . mysqli_error($koneksi));
+            die("Kueri gagal: " . mysqli_error($koneksi));
         }
         $tm_cari = mysqli_fetch_array($cari_kd);
         if ($tm_cari) {

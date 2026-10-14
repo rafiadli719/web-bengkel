@@ -247,7 +247,7 @@ function hapusKeluhan(id) {
                 alert('Keluhan berhasil dihapus!');
                 location.reload();
             } else {
-                alert('Error: ' + result.message);
+                alert('Kesalahan: ' + result.message);
             }
         });
     }

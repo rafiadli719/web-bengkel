@@ -115,7 +115,7 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'success' => false, 
-        'message' => 'Database error: ' . $e->getMessage()
+        'message' => 'Kesalahan database: ' . $e->getMessage()
     ]);
 }
 ?>

@@ -523,7 +523,7 @@ if(!$suppliers){
 
             } catch (err) {
                 $('#loadingOverlay').hide();
-                alert('Error membaca file: ' + err.message);
+                alert('Gagal membaca file: ' + err.message);
             }
         };
         reader.readAsArrayBuffer(file);
@@ -564,12 +564,12 @@ if(!$suppliers){
                     $('#btnProcess').hide();
                     $('#btnSave').show();
                 } else {
-                    alert('Error: ' + response.error);
+                    alert('Kesalahan: ' + response.error);
                 }
             },
             error: function(xhr, status, error) {
                 $('#loadingOverlay').hide();
-                alert('Error koneksi: ' + error);
+                alert('Kesalahan koneksi: ' + error);
             }
         });
     }
@@ -651,12 +651,12 @@ if(!$suppliers){
                     alert('Pesanan Pembelian berhasil dibuat!\nNo. Order: ' + response.no_order);
                     window.location.href = 'pesanan_pembelian_detail.php?nopesanan=' + response.no_order;
                 } else {
-                    alert('Error: ' + response.error);
+                    alert('Kesalahan: ' + response.error);
                 }
             },
             error: function(xhr, status, error) {
                 $('#loadingOverlay').hide();
-                alert('Error koneksi: ' + error);
+                alert('Kesalahan koneksi: ' + error);
             }
         });
     }

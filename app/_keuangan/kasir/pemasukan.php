@@ -10,7 +10,7 @@ requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
 // Query di bawah masih pakai PDO/mysqli persis source asli (logic full preserved) —
 // koneksi terpisah ke DB yang sama, $conn (mysqli) dan $pdo (PDO) sama kayak config.php lama.
 $conn = mysqli_connect(getenv('DB_HOST') ?: 'localhost', getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12', getenv('DB_NAME') ?: 'fitmotor_dbbengkel');
-if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
+if (!$conn) { die("Koneksi gagal: " . mysqli_connect_error()); }
 $pdo = new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel'), getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -300,7 +300,7 @@ $sqlKasMasuk = "
 $resultKasMasuk = mysqli_query($conn, $sqlKasMasuk);
 
 if (!$resultKasMasuk) {
-    die("Query failed: " . mysqli_error($conn));
+    die("Kueri gagal: " . mysqli_error($conn));
 }
 
 // Ambil kode_karyawan dan nama_cabang dari kasir_transactions_closing_kasir
@@ -2074,7 +2074,7 @@ $closing_detect_nama_cabang = $user_nama_cabang ?: $cabang_user;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Kesalahan:', error);
             });
         }
 

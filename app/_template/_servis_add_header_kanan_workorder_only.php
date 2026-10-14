@@ -559,11 +559,11 @@ function initWorkorderFunctions() {
                         // Update text di halaman tanpa reload
                         $('.keluhan-text-' + id).text(response.keluhan_baru);
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    alert('AJAX Error: ' + error);
+                    alert('Kesalahan AJAX: ' + error);
                 }
             });
         };
@@ -586,11 +586,11 @@ function initWorkorderFunctions() {
                         alert('Keluhan berhasil dihapus!');
                         refreshTabelKeluhan();
                     } else {
-                        alert('Error: ' + (response.message || 'Gagal menghapus keluhan'));
+                        alert('Kesalahan: ' + (response.message || 'Gagal menghapus keluhan'));
                     }
                 },
                 error: function(xhr, status, error) {
-                    alert('Error: Gagal menghapus keluhan. ' + error);
+                    alert('Kesalahan: Gagal menghapus keluhan. ' + error);
                 }
             });
         };
@@ -637,11 +637,11 @@ function initWorkorderFunctions() {
                         alert('Work order berhasil dihapus dari SPK!');
                         window.refreshSPK(); // Refresh untuk update tampilan
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    alert('AJAX Error: ' + error);
+                    alert('Kesalahan AJAX: ' + error);
                 }
             });
         };

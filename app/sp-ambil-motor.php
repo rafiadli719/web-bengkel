@@ -7,7 +7,7 @@ $no_service = $_GET['snosrv'] ?? '';
 
 // Validasi parameter
 if (empty($no_service)) {
-    die('Error: No service number provided');
+    die('Kesalahan: No service number provided');
 }
 
 // Data Perusahaan ===========
@@ -31,7 +31,7 @@ $cari_kd = mysqli_query($koneksi, "SELECT
 $tm_cari = mysqli_fetch_array($cari_kd);
 
 if (!$tm_cari) {
-    die('Error: Service data not found for service number: ' . htmlspecialchars($no_service));
+    die('Kesalahan: Service data not found for service number: ' . htmlspecialchars($no_service));
 }
 
 $tanggal = $tm_cari['tanggal_serv'] ?? '';
@@ -339,6 +339,6 @@ try {
     // Melakukan output file Pdf
     $dompdf->stream('surat-pengambilan-motor-' . $no_service . '.pdf', array("Attachment" => 0));
 } catch (Exception $e) {
-    die('Error generating PDF: ' . $e->getMessage());
+    die('Gagal membuat PDF: ' . $e->getMessage());
 }
 ?>

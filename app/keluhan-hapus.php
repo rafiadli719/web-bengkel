@@ -29,7 +29,7 @@ if(isset($_POST['id'])) {
             echo json_encode(['success' => false, 'message' => 'Gagal menghapus keluhan: ' . mysqli_error($koneksi)]);
         }
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
     }
     exit;
 }

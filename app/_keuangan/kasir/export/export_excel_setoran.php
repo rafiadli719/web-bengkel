@@ -586,7 +586,7 @@ if ($type == 'receipt') {
     $bank_id = $_GET['bank_id'] ?? '';
     
     if (!$bank_id) {
-        die('Bank ID required');
+        die('ID bank wajib diisi');
     }
     
     // Get bank detail info
@@ -599,7 +599,7 @@ if ($type == 'receipt') {
     $bank_detail = $stmt_bank_detail->fetch(PDO::FETCH_ASSOC);
     
     if (!$bank_detail) {
-        die('Bank detail not found');
+        die('Detail bank tidak ditemukan');
     }
     
     // Query yang sama dengan web interface - menampilkan detail individual transaksi
@@ -961,7 +961,7 @@ if ($type == 'receipt') {
     $filename = 'Monitoring_Closing_Transactions_' . date('Y-m-d_H-i-s') . '.xlsx';
 
 } else {
-    die('Invalid export type');
+    die('Jenis ekspor tidak valid');
 }
 
 // Auto-size columns

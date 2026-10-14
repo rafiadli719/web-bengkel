@@ -68,7 +68,7 @@ if(empty($_SESSION['_iduser'])){
             if($toggle_type == 'nominal') $setting_nominal_enabled = $toggle_value;
             if($toggle_type == 'kunjungan') $setting_kunjungan_enabled = $toggle_value;
         } else {
-            $message = 'Error: ' . mysqli_error($koneksi);
+            $message = 'Kesalahan: ' . mysqli_error($koneksi);
             $message_type = 'danger';
         }
     }
@@ -109,7 +109,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = 'Data berhasil ditambahkan!';
                 $message_type = 'success';
             } else {
-                $message = 'Error: ' . mysqli_error($koneksi);
+                $message = 'Kesalahan: ' . mysqli_error($koneksi);
                 $message_type = 'danger';
             }
         } else {
@@ -143,7 +143,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = 'Data berhasil diupdate!';
                 $message_type = 'success';
             } else {
-                $message = 'Error: ' . mysqli_error($koneksi);
+                $message = 'Kesalahan: ' . mysqli_error($koneksi);
                 $message_type = 'danger';
             }
         }
@@ -166,7 +166,7 @@ if(empty($_SESSION['_iduser'])){
             $message = 'Data berhasil dihapus!';
             $message_type = 'success';
         } else {
-            $message = 'Error: ' . mysqli_error($koneksi);
+            $message = 'Kesalahan: ' . mysqli_error($koneksi);
             $message_type = 'danger';
         }
     }

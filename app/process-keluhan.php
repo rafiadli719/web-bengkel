@@ -135,7 +135,7 @@ if(isset($_POST['btnaddkeluhan'])) {
         }
         
     } catch(Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); history.back();</script>";
+        echo "<script>alert('Kesalahan: " . $e->getMessage() . "'); history.back();</script>";
         exit;
     }
 }
@@ -179,7 +179,7 @@ if(isset($_POST['btnupdatestatuskeluhan'])) {
         }
         
     } catch(Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); history.back();</script>";
+        echo "<script>alert('Kesalahan: " . $e->getMessage() . "'); history.back();</script>";
         exit;
     }
 }
@@ -213,7 +213,7 @@ if(isset($_POST['btnbatchupdate'])) {
         exit;
         
     } catch(Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); history.back();</script>";
+        echo "<script>alert('Kesalahan: " . $e->getMessage() . "'); history.back();</script>";
         exit;
     }
 }

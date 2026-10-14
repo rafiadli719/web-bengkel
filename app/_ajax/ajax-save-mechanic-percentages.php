@@ -102,7 +102,7 @@ try {
     }
 
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Kesalahan database: ' . $e->getMessage()]);
 } finally {
     if (isset($stmt_check)) mysqli_stmt_close($stmt_check);
     if (isset($stmt_update)) mysqli_stmt_close($stmt_update);

@@ -19,7 +19,7 @@ try {
     $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 
 require_once __DIR__ . '/closing_revision_helpers.php';
@@ -66,7 +66,7 @@ if (!$kode_user) {
 
 // Ensure kode_user exists
 if (!$kode_user) {
-    die("Error: User code (kode_user) not found for karyawan: $kode_karyawan");
+    die("Kesalahan: User code (kode_user) not found for karyawan: $kode_karyawan");
 }
 
 // ** Part 1: Verify Starting Cash and Block Dates with Existing Transactions **
@@ -528,7 +528,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['kas_awal'])) {
             exit;
         } catch (Exception $e) {
             $pdo->rollback();
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
             
             // Log error
             error_log("Transaction creation failed for karyawan $kode_karyawan: " . $e->getMessage());

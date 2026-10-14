@@ -773,7 +773,7 @@
                 if (response.status === 'success') {
                     showNotification('success', 'Data mekanik dan persentase berhasil disimpan!');
                 } else {
-                    showNotification('error', 'Error: ' + response.message);
+                    showNotification('error', 'Kesalahan: ' + response.message);
                 }
             },
             error: function(xhr, status, error) {

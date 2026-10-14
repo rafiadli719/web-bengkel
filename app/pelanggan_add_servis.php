@@ -770,7 +770,7 @@ $tgl_pilih = date('d/m/Y');
                                 }, 500);
                                 
                             } else {
-                                alert('Error: ' + (response.message || 'Gagal menyimpan data'));
+                                alert('Kesalahan: ' + (response.message || 'Gagal menyimpan data'));
                                 
                                 // Reset button
                                 $btn.prop('disabled', false);
@@ -778,7 +778,7 @@ $tgl_pilih = date('d/m/Y');
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.log('AJAX Error:', xhr.responseText);
+                            console.log('Kesalahan AJAX:', xhr.responseText);
                             alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
                             
                             // Reset button

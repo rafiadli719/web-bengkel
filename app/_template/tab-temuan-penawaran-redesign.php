@@ -1973,7 +1973,7 @@ function editTemuan(temuanId) {
                         jQuery('#edit_temuan_urgensi').val(data.tingkat_urgensi);
                         jQuery('#modalEditTemuan').modal('show');
                     } else {
-                        alert('Error: ' + (response.message || 'Gagal memuat data temuan'));
+                        alert('Kesalahan: ' + (response.message || 'Gagal memuat data temuan'));
                     }
                 },
                 error: function() {

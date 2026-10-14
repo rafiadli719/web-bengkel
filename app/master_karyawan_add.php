@@ -460,7 +460,7 @@ if(empty($_SESSION['_iduser'])){
                                 window.location.href = 'master_karyawan.php';
                             }, 2000);
                         } else {
-                            showAlert('danger', 'Error: ' + response.message);
+                            showAlert('danger', 'Kesalahan: ' + response.message);
                         }
                     },
                     error: function() {

@@ -40,7 +40,7 @@ if ($result) {
     
     echo "<p><strong>Has 'kode_posisi' column:</strong> " . ($has_kode_posisi ? "✅ YES" : "❌ NO") . "</p>";
 } else {
-    echo "<p style='color:red'>Error: " . mysqli_error($koneksi) . "</p>";
+    echo "<p style='color:red'>Kesalahan: " . mysqli_error($koneksi) . "</p>";
 }
 
 echo "<hr>";
@@ -65,7 +65,7 @@ if ($result2) {
     }
     echo "</table>";
 } else {
-    echo "<p style='color:red'>Error: " . mysqli_error($koneksi) . "</p>";
+    echo "<p style='color:red'>Kesalahan: " . mysqli_error($koneksi) . "</p>";
 }
 
 echo "<hr>";

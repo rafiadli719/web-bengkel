@@ -550,7 +550,7 @@ if (isset($_POST['action'])) {
                     <?php foreach ($errors as $err): ?>
                         <div class="error-detail">
                             <h4><?php echo htmlspecialchars($err['description']); ?></h4>
-                            <p><strong>Error:</strong> <?php echo htmlspecialchars($err['error']); ?></p>
+                            <p><strong>Kesalahan:</strong> <?php echo htmlspecialchars($err['error']); ?></p>
                             <pre><?php echo htmlspecialchars($err['sql']); ?></pre>
                         </div>
                     <?php endforeach; ?>

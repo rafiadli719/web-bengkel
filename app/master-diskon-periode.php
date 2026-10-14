@@ -139,7 +139,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = 'Promo berhasil ditambahkan!';
                 $message_type = 'success';
             } else {
-                $message = 'Error: ' . mysqli_error($koneksi);
+                $message = 'Kesalahan: ' . mysqli_error($koneksi);
                 $message_type = 'danger';
             }
         }
@@ -183,7 +183,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = 'Promo berhasil diupdate!';
                 $message_type = 'success';
             } else {
-                $message = 'Error: ' . mysqli_error($koneksi);
+                $message = 'Kesalahan: ' . mysqli_error($koneksi);
                 $message_type = 'danger';
             }
         }
@@ -208,7 +208,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = 'Promo berhasil dihapus!';
                 $message_type = 'success';
             } else {
-                $message = 'Error: ' . mysqli_error($koneksi);
+                $message = 'Kesalahan: ' . mysqli_error($koneksi);
                 $message_type = 'danger';
             }
         }

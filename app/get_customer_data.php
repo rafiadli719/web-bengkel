@@ -66,7 +66,7 @@ try {
     
 } catch (Exception $e) {
     $response = [
-        'error' => 'Database error: ' . $e->getMessage()
+        'error' => 'Kesalahan database: ' . $e->getMessage()
     ];
 }
 

@@ -44,7 +44,7 @@ try {
     $sql = "DELETE FROM tbservis_workorder WHERE id = $id AND no_service = '$no_service'";
     $result = mysqli_query($koneksi, $sql);
     if(!$result) {
-        throw new Exception('Database error: ' . mysqli_error($koneksi));
+        throw new Exception('Kesalahan database: ' . mysqli_error($koneksi));
     }
 
     // Check if any rows were affected

@@ -123,7 +123,7 @@ while ($row = mysqli_fetch_assoc($result_pelanggan)) {
     
     if (!$result_stats) {
         $gagal++;
-        echo "<tr class='error'><td>{$counter}</td><td>{$no_pelanggan}</td><td>{$nama_pelanggan}</td><td colspan='3'>Error: " . mysqli_error($koneksi) . "</td></tr>";
+        echo "<tr class='error'><td>{$counter}</td><td>{$no_pelanggan}</td><td>{$nama_pelanggan}</td><td colspan='3'>Kesalahan: " . mysqli_error($koneksi) . "</td></tr>";
         continue;
     }
     

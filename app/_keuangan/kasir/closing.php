@@ -900,7 +900,7 @@ $cabang = $nama_cabang ?? 'Unknown Cabang';
                 setTimeout(() => { window.location.href = 'index_kasir.php'; }, 1000);
 
             } catch (e) {
-                alert('Error koneksi: ' + e.message);
+                alert('Kesalahan koneksi: ' + e.message);
                 isClosingInProgress = false;
                 btn.disabled   = false;
                 icon.className = 'fas fa-check';

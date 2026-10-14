@@ -30,7 +30,7 @@ try {
     $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 
 // Handle form submissions
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $success = "Rekening berhasil ditambahkan!";
             }
         } catch (PDOException $e) {
-            $error = "Error: " . $e->getMessage();
+            $error = "Kesalahan: " . $e->getMessage();
         }
     }
 
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $success = "Rekening berhasil diupdate!";
             }
         } catch (PDOException $e) {
-            $error = "Error: " . $e->getMessage();
+            $error = "Kesalahan: " . $e->getMessage();
         }
     }
 
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$_POST['id']]);
             $success = "Rekening berhasil dihapus!";
         } catch (PDOException $e) {
-            $error = "Error: " . $e->getMessage();
+            $error = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -124,7 +124,7 @@ if (isset($_GET['edit_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Rekening Cabang</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

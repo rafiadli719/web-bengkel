@@ -21,7 +21,7 @@ $txtid = $_GET['kd'] ?? null;
 
 if (empty($txtid)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ ID satuan kosong\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: ID satuan tidak ditemukan.');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: ID satuan tidak ditemukan.');window.location=('barang_satuan.php');</script>";
     exit;
 }
 
@@ -39,7 +39,7 @@ if ($has_accurate_id) {
 
 if (!$cari_kd || mysqli_num_rows($cari_kd) == 0) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Satuan dengan ID $txtid tidak ditemukan di database lokal\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Satuan tidak ditemukan di database lokal.');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: Satuan tidak ditemukan di database lokal.');window.location=('barang_satuan.php');</script>";
     exit;
 }
 
@@ -365,7 +365,7 @@ $modal = mysqli_query($koneksi, "DELETE FROM tblitemsatuan WHERE id='$txtid'");
 if (!$modal) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal menghapus dari database lokal: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Gagal menghapus satuan dari database lokal. $error');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: Gagal menghapus satuan dari database lokal. $error');window.location=('barang_satuan.php');</script>";
     exit;
 }
 
@@ -414,7 +414,7 @@ if (!$found_unit_id) {
         warningMsg += '⚠️ SATUAN TIDAK DITEMUKAN DI ACCURATE\\n\\n';
         warningMsg += 'Kemungkinan satuan sudah tidak ada di Accurate.\\n\\n';
         warningMsg += 'Data Satuan: $nama_satuan\\n';
-        warningMsg += 'Error: {$delete_result['error']}';
+        warningMsg += 'Kesalahan: {$delete_result['error']}';
         window.alert(warningMsg);
         window.location=('barang_satuan.php');
         </script>";
@@ -448,7 +448,7 @@ if ($delete_result['success']) {
     echo "<script>
     var errorMsg = '✅ SATUAN BERHASIL DIHAPUS DARI DATABASE LOKAL\\n';
     errorMsg += '❌ GAGAL SINKRONISASI KE ACCURATE\\n\\n';
-    errorMsg += 'Error: $error_detail\\n\\n';
+    errorMsg += 'Kesalahan: $error_detail\\n\\n';
     errorMsg += 'Data Satuan:\\n';
     errorMsg += 'Nama: $nama_satuan\\n';
     errorMsg += 'Target ID: $found_unit_id\\n\\n';

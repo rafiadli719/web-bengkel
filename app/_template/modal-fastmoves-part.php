@@ -16,7 +16,7 @@
                 if (!isset($koneksi)) {
                     echo '<div class="alert alert-danger">';
                     echo '<i class="fa fa-exclamation-triangle"></i> ';
-                    echo '<strong>Error:</strong> Koneksi database tidak tersedia. ';
+                    echo '<strong>Kesalahan:</strong> Koneksi database tidak tersedia. ';
                     echo 'Pastikan file ini di-include setelah koneksi database dibuat.';
                     echo '</div>';
                     echo '</div></div></div></div>'; // Close modal

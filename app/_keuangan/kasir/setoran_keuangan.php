@@ -755,7 +755,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['terima_setoran'])) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            $error = "Error: " . $e->getMessage();
+            $error = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -1450,7 +1450,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['setor_bank'])) {
                             error_log("SETOR BANK: No active transaction to rollback");
                         }
 
-                        $error = "Error: " . $e->getMessage();
+                        $error = "Kesalahan: " . $e->getMessage();
                         error_log("SETOR BANK ERROR: " . $e->getMessage());
 
                         // Always recreate trigger even on error (outside transaction)
@@ -2452,7 +2452,7 @@ function formatRupiah($angka) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Setoran Keuangan Pusat</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
 * {
     margin: 0;

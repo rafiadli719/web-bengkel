@@ -366,7 +366,7 @@ if(empty($_SESSION['_iduser'])){
                 error: function(e) {
                     $('body').css('cursor', 'default');
                     $row.removeClass('disabled').css('opacity', '1');
-                    alert('Koneksi Error');
+                    alert('Kesalahan Koneksi');
                     // Revert toggle
                     toggleEl.prop('checked', !toggleEl.is(':checked'));
                 }
@@ -436,7 +436,7 @@ if(empty($_SESSION['_iduser'])){
                         alert('Berhasil disimpan!');
                         searchItems(); // Refresh table visual
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {

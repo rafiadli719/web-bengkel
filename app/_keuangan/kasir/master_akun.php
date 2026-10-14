@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
 
     // Cek apakah kode_akun sudah ada
     if (is_duplicate_kode_akun($pdo, $kode_akun)) {
-        $error_message = "Error: Kode akun '$kode_akun' sudah ada!";
+        $error_message = "Kesalahan: Kode akun '$kode_akun' sudah ada!";
     } else {
         // Jika tidak ada duplikat, masukkan ke database
         try {
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
             $success_message = "Data akun berhasil ditambahkan!";
             header("Refresh: 2; URL=master_akun.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 
     // Cek apakah kode_akun sudah ada, kecuali untuk record yang sedang diupdate
     if (is_duplicate_kode_akun($pdo, $kode_akun, $id)) {
-        $error_message = "Error: Kode akun '$kode_akun' sudah ada!";
+        $error_message = "Kesalahan: Kode akun '$kode_akun' sudah ada!";
     } else {
         try {
             $stmt = $pdo->prepare("UPDATE master_akun_closing_kasir
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             $success_message = "Data akun berhasil diupdate!";
             header("Refresh: 2; URL=master_akun.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -113,7 +113,7 @@ if (isset($_GET['delete'])) {
         $success_message = "Data akun berhasil dihapus!";
         header("Refresh: 2; URL=master_akun.php");
     } catch (Throwable $e) {
-        $error_message = "Error: " . $e->getMessage();
+        $error_message = "Kesalahan: " . $e->getMessage();
     }
 }
 
@@ -139,7 +139,7 @@ if (isset($_GET['edit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Akun - Keuangan Kasir</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

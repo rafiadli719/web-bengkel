@@ -38,7 +38,7 @@ try {
     $result = mysqli_query($koneksi, $sql);
     
     if(!$result) {
-        throw new Exception('Database error: ' . mysqli_error($koneksi));
+        throw new Exception('Kesalahan database: ' . mysqli_error($koneksi));
     }
     
     echo json_encode([

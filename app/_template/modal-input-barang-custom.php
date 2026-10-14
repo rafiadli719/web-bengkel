@@ -223,11 +223,11 @@ function initCustomItemModal() {
                         $('#modalInputCustom').modal('hide');
                         form[0].reset();
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function(xhr) {
-                    alert('Error: Gagal menyimpan barang custom.\n' + xhr.responseText);
+                    alert('Kesalahan: Gagal menyimpan barang custom.\n' + xhr.responseText);
                 },
                 complete: function() {
                     btn.prop('disabled', false).html(btnText);

@@ -39,7 +39,7 @@ try {
     $result = mysqli_query($koneksi, $sql);
     
     if(!$result) {
-        throw new Exception('Database error: ' . mysqli_error($koneksi));
+        throw new Exception('Kesalahan database: ' . mysqli_error($koneksi));
     }
     
     // Check if any rows were affected

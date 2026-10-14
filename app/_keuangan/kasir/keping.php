@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
             $success_message = "Nominal Rp " . number_format($nominal, 0, ',', '.') . " berhasil ditambahkan!";
             header("Refresh: 2; URL=keping.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             $success_message = "Nominal berhasil diupdate!";
             header("Refresh: 2; URL=keping.php");
         } catch (Throwable $e) {
-            $error_message = "Error: " . $e->getMessage();
+            $error_message = "Kesalahan: " . $e->getMessage();
         }
     }
 }
@@ -83,7 +83,7 @@ if (isset($_GET['delete'])) {
         $success_message = "Nominal Rp " . number_format($nominal_data['nominal'] ?? 0, 0, ',', '.') . " berhasil dihapus!";
         header("Refresh: 2; URL=keping.php");
     } catch (Throwable $e) {
-        $error_message = "Error: " . $e->getMessage();
+        $error_message = "Kesalahan: " . $e->getMessage();
     }
 }
 
@@ -109,7 +109,7 @@ if (isset($_GET['edit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Nominal - Keuangan Kasir</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

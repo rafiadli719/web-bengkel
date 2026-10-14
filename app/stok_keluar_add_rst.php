@@ -755,7 +755,7 @@ if(empty($_SESSION['_iduser'])){
                         } else {
                             $sync_message = '⚠️ PARSIAL: Data tersimpan di database lokal, namun gagal sinkronisasi ke Accurate';
                             $sync_status = 'warning';
-                            $sync_details = 'Error: ' . $sync_result['message'];
+                            $sync_details = 'Kesalahan: ' . $sync_result['message'];
                             
                             // Update status sync gagal
                             mysqli_query($koneksi,"UPDATE tbitem_keluar_header 

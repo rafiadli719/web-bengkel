@@ -135,7 +135,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Kesalahan database: ' . $e->getMessage()]);
 } finally {
     if (isset($stmt_header)) mysqli_stmt_close($stmt_header);
     if (isset($stmt_details)) mysqli_stmt_close($stmt_details);

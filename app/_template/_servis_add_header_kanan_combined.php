@@ -354,7 +354,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             }
                         ?>
@@ -393,7 +393,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             }
                         ?>
@@ -448,7 +448,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -481,7 +481,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -535,7 +535,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -568,7 +568,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -601,7 +601,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -634,7 +634,7 @@ if(isset($no_service) && isset($koneksi)) {
                                     }
                                 }
                             } catch (Exception $e) {
-                                echo '<option value="">Error loading data</option>';
+                                echo '<option value="">Gagal memuat data</option>';
                             }
                         }
                         ?>
@@ -1087,11 +1087,11 @@ function editKeluhan(id, keluhanLama) {
                 // Update text di halaman tanpa reload
                 $('.keluhan-text-' + id).text(response.keluhan_baru);
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function(xhr, status, error) {
-            alert('AJAX Error: ' + error);
+            alert('Kesalahan AJAX: ' + error);
         }
     });
 }
@@ -1116,11 +1116,11 @@ function hapusKeluhan(id) {
                 alert('Keluhan berhasil dihapus dari SPK!');
                 refreshSPK(); // Refresh untuk update tampilan
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function(xhr, status, error) {
-            alert('AJAX Error: ' + error);
+            alert('Kesalahan AJAX: ' + error);
         }
     });
 }
@@ -1145,11 +1145,11 @@ function hapusWorkOrder(id) {
                 alert('Work order berhasil dihapus dari SPK!');
                 refreshSPK(); // Refresh untuk update tampilan
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function(xhr, status, error) {
-            alert('AJAX Error: ' + error);
+            alert('Kesalahan AJAX: ' + error);
         }
     });
 }

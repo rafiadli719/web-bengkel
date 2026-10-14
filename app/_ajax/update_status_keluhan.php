@@ -43,6 +43,6 @@ $query = "UPDATE tbservis_keluhan_status
 if(mysqli_query($koneksi, $query)) {
     echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . mysqli_error($koneksi)]);
+    echo json_encode(['success' => false, 'message' => 'Kesalahan database: ' . mysqli_error($koneksi)]);
 }
 ?>

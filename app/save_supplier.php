@@ -58,7 +58,7 @@ foreach ($required_fields as $field => $label) {
 if (!empty($missing_fields)) {
     $missing_list = implode(', ', $missing_fields);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Field wajib kosong: $missing_list\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Field wajib harus diisi: $missing_list');window.location=('supplier_add.php');</script>";
+    echo "<script>window.alert('Kesalahan: Field wajib harus diisi: $missing_list');window.location=('supplier_add.php');</script>";
     exit;
 }
 
@@ -78,14 +78,14 @@ if (!empty($optional_empty)) {
 $valid_types = ['perorangan', 'pemerintahan', 'perusahaan'];
 if (!in_array($cbotipe, $valid_types)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Tipe pemasok tidak valid: $cbotipe\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Tipe pemasok tidak valid!');window.location=('supplier_add.php');</script>";
+    echo "<script>window.alert('Kesalahan: Tipe pemasok tidak valid!');window.location=('supplier_add.php');</script>";
     exit;
 }
 
 // Validasi format email
 if (!filter_var($txtemail, FILTER_VALIDATE_EMAIL)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Format email tidak valid: $txtemail\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Format email tidak valid!');window.location=('supplier_add.php');</script>";
+    echo "<script>window.alert('Kesalahan: Format email tidak valid!');window.location=('supplier_add.php');</script>";
     exit;
 }
 
@@ -94,7 +94,7 @@ $check_duplicate = mysqli_query($koneksi, "SELECT COUNT(*) as count FROM tblsupp
 $duplicate_result = mysqli_fetch_array($check_duplicate);
 if ($duplicate_result['count'] > 0) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Duplikasi kode supplier: $txtkd\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Kode Supplier sudah ada dalam database!');window.location=('supplier_add.php');</script>";
+    echo "<script>window.alert('Kesalahan: Kode Supplier sudah ada dalam database!');window.location=('supplier_add.php');</script>";
     exit;
 }
 
@@ -137,7 +137,7 @@ $result = mysqli_query($koneksi, $insert_query);
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal insert database lokal: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Gagal menyimpan ke database lokal. $error');window.location=('supplier_add.php');</script>";
+    echo "<script>window.alert('Kesalahan: Gagal menyimpan ke database lokal. $error');window.location=('supplier_add.php');</script>";
     exit;
 }
 

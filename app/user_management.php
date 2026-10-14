@@ -157,7 +157,7 @@ if(empty($_SESSION['_iduser'])){
                         }
                     }
                 } else {
-                    $message = "Error: " . mysqli_error($koneksi);
+                    $message = "Kesalahan: " . mysqli_error($koneksi);
                     $message_type = "danger";
                 }
                 }
@@ -212,7 +212,7 @@ if(empty($_SESSION['_iduser'])){
                 $message = "User berhasil diupdate!";
                 $message_type = "success";
             } else {
-                $message = "Error: " . mysqli_error($koneksi);
+                $message = "Kesalahan: " . mysqli_error($koneksi);
                 $message_type = "danger";
             }
         }
@@ -229,7 +229,7 @@ if(empty($_SESSION['_iduser'])){
             $message = "Password berhasil diubah!";
             $message_type = "success";
         } else {
-            $message = "Error: " . mysqli_error($koneksi);
+            $message = "Kesalahan: " . mysqli_error($koneksi);
             $message_type = "danger";
         }
     }
@@ -247,7 +247,7 @@ if(empty($_SESSION['_iduser'])){
             $message = "User berhasil dihapus!";
             $message_type = "success";
         } else {
-            $message = "Error: " . mysqli_error($koneksi);
+            $message = "Kesalahan: " . mysqli_error($koneksi);
             $message_type = "danger";
         }
     }

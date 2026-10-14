@@ -100,7 +100,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             } else {
                                 echo '<option value="">Database not available</option>';
@@ -142,7 +142,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             } else {
                                 echo '<option value="">Database not available</option>';
@@ -641,11 +641,11 @@ function tambahKeluhanKeServiceAJAX() {
                 document.getElementById('txtkeluhan').value = '';
                 refreshTabelKeluhan();
             } else {
-                alert('Error: ' + (response.message || 'Gagal menambahkan keluhan'));
+                alert('Kesalahan: ' + (response.message || 'Gagal menambahkan keluhan'));
             }
         },
         error: function(xhr, status, error) {
-            alert('Error: Gagal menambahkan keluhan. ' + error);
+            alert('Kesalahan: Gagal menambahkan keluhan. ' + error);
         }
     });
 }
@@ -668,11 +668,11 @@ function hapusKeluhan(id) {
                 alert('Keluhan berhasil dihapus!');
                 refreshTabelKeluhan();
             } else {
-                alert('Error: ' + (response.message || 'Gagal menghapus keluhan'));
+                alert('Kesalahan: ' + (response.message || 'Gagal menghapus keluhan'));
             }
         },
         error: function(xhr, status, error) {
-            alert('Error: Gagal menghapus keluhan. ' + error);
+            alert('Kesalahan: Gagal menghapus keluhan. ' + error);
         }
     });
 }
@@ -733,11 +733,11 @@ function editProgressKeluhan(keluhanId) {
                 // Refresh halaman untuk menampilkan perubahan
                 window.location.reload();
             } else {
-                alert('Error: ' + (response.message || 'Gagal mengupdate progress'));
+                alert('Kesalahan: ' + (response.message || 'Gagal mengupdate progress'));
             }
         },
         error: function(xhr, status, error) {
-            alert('Error: Gagal mengupdate progress. ' + error);
+            alert('Kesalahan: Gagal mengupdate progress. ' + error);
         }
     });
 }

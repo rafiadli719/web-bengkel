@@ -587,7 +587,7 @@ $(document).ready(function() {
                     alert('Kalkulasi MIN/MAX berhasil! Halaman akan di-refresh.');
                     location.reload();
                 } else {
-                    alert('Error: ' + res.error);
+                    alert('Kesalahan: ' + res.error);
                     btn.prop('disabled', false).html('<i class="fa fa-refresh"></i> Hitung Ulang MIN/MAX');
                 }
             },
@@ -695,7 +695,7 @@ $(document).ready(function() {
                     tr.find('.mm-max').text(max).data('val', max);
                     alert('MIN/MAX berhasil diupdate (manual)');
                 } else {
-                    alert('Error: ' + (res.error||'Gagal simpan'));
+                    alert('Kesalahan: ' + (res.error||'Gagal simpan'));
                 }
             }
         });
@@ -716,7 +716,7 @@ $(document).ready(function() {
                     $('#modalEditMM').modal('hide');
                     alert('Reset ke kalkulasi otomatis. Klik "Hitung Ulang MIN/MAX" untuk update nilai.');
                 } else {
-                    alert('Error: ' + (res.error||'Gagal reset'));
+                    alert('Kesalahan: ' + (res.error||'Gagal reset'));
                 }
             }
         });

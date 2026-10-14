@@ -337,7 +337,7 @@
                            $persen_mekanik1 + $persen_mekanik2 + $persen_mekanik3 + $persen_mekanik4;
 
             if($total_persen > 100) {
-                echo "<script>alert('Error: Total persentase tidak boleh lebih dari 100%! Total saat ini: $total_persen%'); window.history.back();</script>";
+                echo "<script>alert('Kesalahan: Total persentase tidak boleh lebih dari 100%! Total saat ini: $total_persen%'); window.history.back();</script>";
                 exit;
             }
 
@@ -395,12 +395,12 @@
 
         // Validate required fields
         if(empty($no_service)) {
-            echo"<script>alert('Error: No service tidak valid!'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: No service tidak valid!'); window.history.back();</script>";
             exit;
         }
 
         if(empty($txtkeluhan) || trim($txtkeluhan) == '') {
-            echo"<script>alert('Error: Keluhan tidak boleh kosong!'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: Keluhan tidak boleh kosong!'); window.history.back();</script>";
             exit;
         }
 
@@ -420,7 +420,7 @@
                 window.location='servis-input-reguler-jemput.php?snoserv=$no_service&tab=workorder';
             </script>";
         } else {
-            echo"<script>alert('Error: Gagal menambahkan keluhan! " . mysqli_error($koneksi) . "'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: Gagal menambahkan keluhan! " . mysqli_error($koneksi) . "'); window.history.back();</script>";
         }
     }
 
@@ -437,7 +437,7 @@
         // Validate allowed status values
         $allowed_status = ['datang', 'diproses', 'selesai', 'tidak_selesai'];
         if(!in_array($status_keluhan, $allowed_status)) {
-            echo "<script>alert('Error: Status tidak valid!'); window.history.back();</script>";
+            echo "<script>alert('Kesalahan: Status tidak valid!'); window.history.back();</script>";
             exit;
         }
 
@@ -983,7 +983,7 @@
                     </script>";
                 }
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
     }
@@ -1000,12 +1000,12 @@
 
         // Validate required fields
         if(empty($no_service)) {
-            echo"<script>alert('Error: No service tidak valid!'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: No service tidak valid!'); window.history.back();</script>";
             exit;
         }
 
         if(empty($kode_wo) || trim($kode_wo) == '') {
-            echo"<script>alert('Error: Kode Work Order tidak boleh kosong!'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: Kode Work Order tidak boleh kosong!'); window.history.back();</script>";
             exit;
         }
 
@@ -1016,7 +1016,7 @@
         // Verify work order exists in master
         $check_wo_master = mysqli_query($koneksi,"SELECT nama_wo FROM tbworkorderheader WHERE kode_wo='$kode_wo'");
         if(mysqli_num_rows($check_wo_master) == 0) {
-            echo"<script>alert('Error: Work Order dengan kode \"$kode_wo\" tidak ditemukan di master!'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: Work Order dengan kode \"$kode_wo\" tidak ditemukan di master!'); window.history.back();</script>";
             exit;
         }
 
@@ -1037,7 +1037,7 @@
                                   ('$no_service','$kode_wo','diproses')");
 
         if(!$result) {
-            echo"<script>alert('Error: Gagal menambahkan Work Order! " . mysqli_error($koneksi) . "'); window.history.back();</script>";
+            echo"<script>alert('Kesalahan: Gagal menambahkan Work Order! " . mysqli_error($koneksi) . "'); window.history.back();</script>";
             exit;
         }
 
@@ -2577,7 +2577,7 @@
                                 no_service='$no_service' AND kd_cabang='$kd_cabang'";
 
         if(!mysqli_query($koneksi, $update_query)) {
-            die("Error Update Service: " . mysqli_error($koneksi));
+            die("Gagal memperbarui servis: " . mysqli_error($koneksi));
         }
 
         snapshot_komisi_servis($koneksi, $no_service, $kd_cabang);

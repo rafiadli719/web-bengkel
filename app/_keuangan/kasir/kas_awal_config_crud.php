@@ -24,7 +24,7 @@ try {
     $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 
 $kode_karyawan = $kode_karyawan_aktif;
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 if ($e->getCode() == 23000) {
                     echo json_encode(['success' => false, 'message' => 'Kode cabang sudah ada']);
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+                    echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
                 }
             }
             exit;
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                     echo json_encode(['success' => false, 'message' => 'Gagal memperbarui konfigurasi']);
                 }
             } catch (PDOException $e) {
-                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+                echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
             }
             exit;
 
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                     echo json_encode(['success' => false, 'message' => 'Gagal menghapus konfigurasi']);
                 }
             } catch (PDOException $e) {
-                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+                echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
             }
             exit;
 
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                     echo json_encode(['success' => false, 'message' => 'Data tidak ditemukan']);
                 }
             } catch (PDOException $e) {
-                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+                echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
             }
             exit;
     }
@@ -241,7 +241,7 @@ function getStatusBadge($status) {
         .stats-card .card-body { padding: 1.5rem; }
         .breadcrumb-item a { text-decoration: none; }
     </style>
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
 </head>
 <body>
 <?php include __DIR__ . '/includes/sidebar.php'; ?>
@@ -585,7 +585,7 @@ function getStatusBadge($status) {
             })
             .catch(error => {
                 hideLoading();
-                console.error('Error:', error);
+                console.error('Kesalahan:', error);
                 showAlert('error', 'Terjadi kesalahan saat memuat data');
             });
         }
@@ -624,7 +624,7 @@ function getStatusBadge($status) {
                 })
                 .catch(error => {
                     hideLoading();
-                    console.error('Error:', error);
+                    console.error('Kesalahan:', error);
                     showAlert('error', 'Terjadi kesalahan saat menghapus data');
                 });
 
@@ -660,7 +660,7 @@ function getStatusBadge($status) {
             })
             .catch(error => {
                 hideLoading();
-                console.error('Error:', error);
+                console.error('Kesalahan:', error);
                 showAlert('error', 'Terjadi kesalahan saat menyimpan data');
             });
         });

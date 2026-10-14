@@ -64,7 +64,7 @@ if (empty($_SESSION['_iduser'])) {
             $result = @mysqli_query($koneksi, $basic_query);
 
             if (!$result) {
-                echo "<div class='alert alert-danger'>Error: Item not found or database connection issue.</div>";
+                echo "<div class='alert alert-danger'>Kesalahan: Item not found or database connection issue.</div>";
                 echo "<p><a href='barang.php' class='btn btn-primary'>Back to Item List</a></p>";
                 exit;
             }

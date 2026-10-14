@@ -81,7 +81,7 @@ try {
     }
     
 } catch (Exception $e) {
-    $response['message'] = 'Error: ' . $e->getMessage();
+    $response['message'] = 'Kesalahan: ' . $e->getMessage();
 }
 
 header('Content-Type: application/json');

@@ -22,7 +22,7 @@ $action = $_GET['action'] ?? 'delete'; // 'delete' or 'deactivate'
 
 if (empty($txtid)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ ID kategori kosong\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: ID kategori tidak ditemukan.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: ID kategori tidak ditemukan.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
@@ -30,7 +30,7 @@ if (empty($txtid)) {
 $cari_kd = mysqli_query($koneksi, "SELECT jenis, namajenis, accurate_id, status FROM tblitemjenis WHERE id='$txtid'");
 if (!$cari_kd || mysqli_num_rows($cari_kd) == 0) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Kategori dengan ID $txtid tidak ditemukan di database lokal\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Kategori tidak ditemukan di database lokal.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: Kategori tidak ditemukan di database lokal.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
@@ -159,7 +159,7 @@ if ($action === 'delete') {
     if (!$modal) {
         $error = mysqli_error($koneksi);
         file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal menghapus dari database lokal: $error\n", FILE_APPEND | LOCK_EX);
-        echo "<script>window.alert('Error: Gagal menghapus kategori dari database lokal. $error');window.location=('barang_kategori.php');</script>";
+        echo "<script>window.alert('Kesalahan: Gagal menghapus kategori dari database lokal. $error');window.location=('barang_kategori.php');</script>";
         exit;
     }
     
@@ -184,7 +184,7 @@ if ($action === 'delete') {
     if (!$modal) {
         $error = mysqli_error($koneksi);
         file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal mengubah status kategori: $error\n", FILE_APPEND | LOCK_EX);
-        echo "<script>window.alert('Error: Gagal mengubah status kategori. $error');window.location=('barang_kategori.php');</script>";
+        echo "<script>window.alert('Kesalahan: Gagal mengubah status kategori. $error');window.location=('barang_kategori.php');</script>";
         exit;
     }
     

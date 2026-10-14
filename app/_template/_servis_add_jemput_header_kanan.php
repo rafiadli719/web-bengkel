@@ -124,7 +124,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             } else {
                                 echo '<option value="">Database not available</option>';
@@ -166,7 +166,7 @@ if(isset($no_service) && isset($koneksi)) {
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    echo '<option value="">Error loading data</option>';
+                                    echo '<option value="">Gagal memuat data</option>';
                                 }
                             } else {
                                 echo '<option value="">Database not available</option>';
@@ -502,11 +502,11 @@ function hapusKeluhan(id) {
                 alert('Keluhan berhasil dihapus!');
                 refreshTabelKeluhan();
             } else {
-                alert('Error: ' + (response.message || 'Gagal menghapus keluhan'));
+                alert('Kesalahan: ' + (response.message || 'Gagal menghapus keluhan'));
             }
         },
         error: function(xhr, status, error) {
-            alert('Error: Gagal menghapus keluhan. ' + error);
+            alert('Kesalahan: Gagal menghapus keluhan. ' + error);
         }
     });
 }

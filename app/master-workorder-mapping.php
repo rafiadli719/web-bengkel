@@ -61,7 +61,7 @@ if(empty($_SESSION['_iduser'])){
                 if(mysqli_query($koneksi, $query)) {
                     echo "<script>alert('Mapping berhasil ditambahkan!'); window.location='master-workorder-mapping.php';</script>";
                 } else {
-                    echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                    echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                 }
             }
         }
@@ -82,7 +82,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Mapping berhasil diupdate!'); window.location='master-workorder-mapping.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -95,7 +95,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Mapping berhasil dihapus!'); window.location='master-workorder-mapping.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -107,7 +107,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Mapping berhasil diaktifkan!'); window.location='master-workorder-mapping.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
 
@@ -1229,11 +1229,11 @@ if(empty($_SESSION['_iduser'])){
                         $('#prioritas').val(data.prioritas);
                         $('#modal-mapping').modal('show');
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function() {
-                    alert('Error loading data');
+                    alert('Gagal memuat data');
                 }
             });
         }

@@ -59,6 +59,6 @@ try {
     }
     
 } catch (Exception $e) {
-    echo json_encode(array('success' => false, 'message' => 'Error: ' . $e->getMessage()));
+    echo json_encode(array('success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()));
 }
 ?>

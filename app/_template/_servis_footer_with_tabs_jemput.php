@@ -233,7 +233,7 @@ function hapusKeluhan(id) {
             alert('Keluhan jemput berhasil dihapus!');
             location.reload();
         } else {
-            alert('Error: ' + result.message);
+            alert('Kesalahan: ' + result.message);
         }
     });
 }
@@ -249,7 +249,7 @@ function hapusWorkOrder(id) {
             alert('Work order jemput berhasil dihapus!');
             location.reload();
         } else {
-            alert('Error: ' + result.message);
+            alert('Kesalahan: ' + result.message);
         }
     });
 }

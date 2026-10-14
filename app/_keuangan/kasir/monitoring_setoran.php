@@ -193,7 +193,7 @@ function formatRupiah($angka) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Setoran</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

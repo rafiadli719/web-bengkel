@@ -71,7 +71,7 @@ if(empty($_SESSION['_iduser'])){
             $message = empty($id_kategori) ? 'Data berhasil ditambahkan!' : 'Data berhasil diupdate!';
             $message_type = 'success';
         } else {
-            $message = 'Error: ' . mysqli_error($koneksi);
+            $message = 'Kesalahan: ' . mysqli_error($koneksi);
             $message_type = 'danger';
         }
     }
@@ -84,7 +84,7 @@ if(empty($_SESSION['_iduser'])){
             $message = 'Data berhasil dihapus!';
             $message_type = 'success';
         } else {
-            $message = 'Error: ' . mysqli_error($koneksi);
+            $message = 'Kesalahan: ' . mysqli_error($koneksi);
             $message_type = 'danger';
         }
     }

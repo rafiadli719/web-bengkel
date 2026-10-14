@@ -197,7 +197,7 @@
                     </script>";
                 }
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
     }

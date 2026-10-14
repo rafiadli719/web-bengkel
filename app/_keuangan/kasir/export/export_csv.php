@@ -284,7 +284,7 @@ if ($type == 'receipt') {
     }
 
 } else {
-    die('Invalid export type');
+    die('Jenis ekspor tidak valid');
 }
 
 // Generate CSV

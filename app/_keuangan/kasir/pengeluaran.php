@@ -9,7 +9,7 @@ requirePermission($koneksi, $id_user_aktif, 'kasir_operate');
 
 // Query di bawah masih pakai PDO/mysqli persis source asli — koneksi terpisah ke DB yang sama.
 $conn = mysqli_connect(getenv('DB_HOST') ?: 'localhost', getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12', getenv('DB_NAME') ?: 'fitmotor_dbbengkel');
-if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
+if (!$conn) { die("Koneksi gagal: " . mysqli_connect_error()); }
 $pdo = new PDO('mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';dbname=' . (getenv('DB_NAME') ?: 'fitmotor_dbbengkel'), getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_pengeluaran']))
         header("Location: pengeluaran.php?kode_transaksi=$kode_transaksi&success=1");
         exit;
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "Kesalahan: " . mysqli_error($conn);
     }
 }
 

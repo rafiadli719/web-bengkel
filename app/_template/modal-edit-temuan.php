@@ -267,12 +267,12 @@
                             $('#edit_temuan_note').hide();
                         }
                     } else {
-                        alert('Error: ' + (response.message || 'Gagal memuat data temuan'));
+                        alert('Kesalahan: ' + (response.message || 'Gagal memuat data temuan'));
                         $('#modalEditTemuan').modal('hide');
                     }
                 },
                 error: function() {
-                    alert('Error: Gagal menghubungi server');
+                    alert('Kesalahan: Gagal menghubungi server');
                     $('#modalEditTemuan').modal('hide');
                 }
             });

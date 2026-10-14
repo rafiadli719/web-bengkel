@@ -96,7 +96,7 @@ function hitungTarifJemput($koneksi, $jenis_motor, $jarak) {
         mysqli_stmt_close($stmt);
         
     } catch (Exception $e) {
-        $result['error'] = 'Error: ' . $e->getMessage();
+        $result['error'] = 'Kesalahan: ' . $e->getMessage();
     }
     
     return $result;

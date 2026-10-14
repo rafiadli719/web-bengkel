@@ -45,7 +45,7 @@ if(empty($_SESSION['_iduser'])){
     if($format == 'estimasi') {
         if(empty($no_service)) {
             ob_end_clean();
-            die("Error: Parameter no_service wajib diisi untuk format estimasi");
+            die("Kesalahan: Parameter no_service wajib diisi untuk format estimasi");
         }
 
         try {
@@ -996,7 +996,7 @@ if(empty($_SESSION['_iduser'])){
             exit;
         } catch (Exception $e) {
             ob_end_clean();
-            die("Error generating PDF: " . $e->getMessage() . "<br><br>Stack trace:<br>" . nl2br($e->getTraceAsString()));
+            die("Gagal membuat PDF: " . $e->getMessage() . "<br><br>Stack trace:<br>" . nl2br($e->getTraceAsString()));
         }
     }
 

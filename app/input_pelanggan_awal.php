@@ -711,7 +711,7 @@ if(empty($_SESSION['_iduser'])){
                         resetButton($('#btnCekWhatsApp'), '<i class="ace-icon fa fa-search"></i> Cek WA');
 
                         if (response.error) {
-                            alert('Error: ' + response.error);
+                            alert('Kesalahan: ' + response.error);
                             return;
                         }
 
@@ -730,13 +730,13 @@ if(empty($_SESSION['_iduser'])){
                     error: function(xhr, status, error) {
                         resetButton($('#btnCekWhatsApp'), '<i class="ace-icon fa fa-search"></i> Cek WA');
                         console.log('AJAX Error Status:', status);
-                        console.log('AJAX Error:', error);
+                        console.log('Kesalahan AJAX:', error);
                         console.log('Response Text:', xhr.responseText);
 
                         // Try to parse error response
                         try {
                             var errorResponse = JSON.parse(xhr.responseText);
-                            alert('Error: ' + (errorResponse.error || error));
+                            alert('Kesalahan: ' + (errorResponse.error || error));
                         } catch(e) {
                             alert('Terjadi kesalahan saat memeriksa data WA. Silakan coba lagi.');
                         }
@@ -793,7 +793,7 @@ if(empty($_SESSION['_iduser'])){
                         resetButton($('#btnCekNopolSearch'), '<i class="ace-icon fa fa-search"></i> Cek Nopol');
 
                         if (response.error) {
-                            alert('Error: ' + response.error);
+                            alert('Kesalahan: ' + response.error);
                             return;
                         }
 
@@ -809,13 +809,13 @@ if(empty($_SESSION['_iduser'])){
                     error: function(xhr, status, error) {
                         resetButton($('#btnCekNopolSearch'), '<i class="ace-icon fa fa-search"></i> Cek Nopol');
                         console.log('AJAX Error Status:', status);
-                        console.log('AJAX Error:', error);
+                        console.log('Kesalahan AJAX:', error);
                         console.log('Response Text:', xhr.responseText);
 
                         // Try to parse error response
                         try {
                             var errorResponse = JSON.parse(xhr.responseText);
-                            alert('Error: ' + (errorResponse.error || error));
+                            alert('Kesalahan: ' + (errorResponse.error || error));
                         } catch(e) {
                             alert('Terjadi kesalahan saat memeriksa data Nopol. Silakan coba lagi.');
                         }
@@ -909,7 +909,7 @@ if(empty($_SESSION['_iduser'])){
                     displayResults();
                 }).fail(function(xhr, status, error) {
                     resetButton($('#btnCekSemua'), '<i class="ace-icon fa fa-search-plus"></i> Cek Semua Data');
-                    console.log('AJAX Error:', xhr.responseText || error);
+                    console.log('Kesalahan AJAX:', xhr.responseText || error);
                     alert('Terjadi kesalahan saat memeriksa data: ' + (error || 'Unknown error'));
                 });
             });

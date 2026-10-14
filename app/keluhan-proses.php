@@ -55,7 +55,7 @@ if(isset($_POST['action']) && $_POST['action'] == 'add') {
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan keluhan: ' . mysqli_error($koneksi)]);
         }
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
     }
     exit;
 }
@@ -113,7 +113,7 @@ if(isset($_POST['action']) && $_POST['action'] == 'update_progress') {
             
             echo json_encode(['success' => true, 'message' => 'Progress berhasil diupdate']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Error: ' . mysqli_error($koneksi)]);
+            echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . mysqli_error($koneksi)]);
         }
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'message' => 'Error updating progress: ' . $e->getMessage()]);
@@ -163,7 +163,7 @@ if(isset($_POST['btnupdatestatus'])) {
                     window.location.href = window.location.href;
                 </script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         } catch (Exception $e) {
             echo "<script>alert('Error updating status: " . $e->getMessage() . "');</script>";

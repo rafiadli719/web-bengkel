@@ -216,7 +216,7 @@ $(document).ready(function() {
                     alert('Progress mekanik berhasil disimpan');
                     location.reload(); // Reload halaman untuk update data
                 } else {
-                    alert('Error: ' + response.message);
+                    alert('Kesalahan: ' + response.message);
                 }
             },
             error: function() {

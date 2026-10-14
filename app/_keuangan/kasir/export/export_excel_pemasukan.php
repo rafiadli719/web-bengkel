@@ -518,13 +518,13 @@ try {
 } catch (Exception $e) {
     ob_end_clean();
     header('Content-Type: text/html; charset=utf-8');
-    echo "Error generating Excel file: " . htmlspecialchars($e->getMessage());
+    echo "Gagal membuat file Excel: " . htmlspecialchars($e->getMessage());
     error_log("Excel Export Error (Pemasukan): " . $e->getMessage() . " - " . (isset($query) ? $query : 'No query'));
     exit;
 } catch (PDOException $e) {
     ob_end_clean();
     header('Content-Type: text/html; charset=utf-8');
-    echo "Database Error: " . htmlspecialchars($e->getMessage()) . "<br>Query: " . htmlspecialchars($query);
+    echo "Kesalahan database: " . htmlspecialchars($e->getMessage()) . "<br>Query: " . htmlspecialchars($query);
     error_log("Database Error in Excel Export (Pemasukan): " . $e->getMessage() . " - Query: " . $query);
     exit;
 }

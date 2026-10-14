@@ -60,7 +60,7 @@ if(isset($_POST['btnaddcustom'])) {
     if(mysqli_query($koneksi, $query)) {
         echo "<script>alert('Barang custom berhasil ditambahkan!\\nKode: $kode_barang'); window.location.href='master-barang-custom.php';</script>";
     } else {
-        echo "<script>alert('Error: " . mysqli_error($koneksi) . "'); window.history.back();</script>";
+        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "'); window.history.back();</script>";
     }
     exit;
 }
@@ -94,7 +94,7 @@ if(isset($_POST['btneditcustom'])) {
     if(mysqli_query($koneksi, $query)) {
         echo "<script>alert('Barang custom berhasil diupdate!'); window.location.href='master-barang-custom.php';</script>";
     } else {
-        echo "<script>alert('Error: " . mysqli_error($koneksi) . "'); window.history.back();</script>";
+        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "'); window.history.back();</script>";
     }
     exit;
 }
@@ -122,7 +122,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) 
     if(mysqli_query($koneksi, "DELETE FROM tbmaster_barang_custom WHERE id='$id'")) {
         echo "<script>alert('Barang custom berhasil dihapus!'); window.location.href='master-barang-custom.php';</script>";
     } else {
-        echo "<script>alert('Error: " . mysqli_error($koneksi) . "'); window.location.href='master-barang-custom.php';</script>";
+        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "'); window.location.href='master-barang-custom.php';</script>";
     }
     exit;
 }
@@ -143,7 +143,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'toggle' && isset($_GET['id'])) 
         $msg = ($new_status == '1') ? 'diaktifkan' : 'dinonaktifkan';
         echo "<script>alert('Barang custom berhasil $msg!'); window.location.href='master-barang-custom.php';</script>";
     } else {
-        echo "<script>alert('Error: " . mysqli_error($koneksi) . "'); window.location.href='master-barang-custom.php';</script>";
+        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "'); window.location.href='master-barang-custom.php';</script>";
     }
     exit;
 }

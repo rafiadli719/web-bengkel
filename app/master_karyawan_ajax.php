@@ -52,7 +52,7 @@ try {
     }
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
 }
 
 function getKaryawanList() {
@@ -93,7 +93,7 @@ function getKaryawanList() {
 
         if (!$result) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Query error: ' . mysqli_error($koneksi)]);
+            echo json_encode(['success' => false, 'message' => 'Kueri gagal: ' . mysqli_error($koneksi)]);
             return;
         }
 
@@ -171,7 +171,7 @@ function getKaryawanDetail() {
 
         if (!$result) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Query error: ' . mysqli_error($koneksi)]);
+            echo json_encode(['success' => false, 'message' => 'Kueri gagal: ' . mysqli_error($koneksi)]);
             return;
         }
 

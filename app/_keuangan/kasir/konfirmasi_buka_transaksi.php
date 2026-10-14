@@ -23,7 +23,7 @@ try {
     $pdo = new PDO($dsn, getenv('DB_USER') ?: 'fitmotor_LOGIN', getenv('DB_PASS') ?: 'Sayalupa12');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 
 $kode_karyawan_admin = $kode_karyawan_aktif;
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } catch (Exception $e) {
             $pdo->rollBack();
-            echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
+            echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "');</script>";
         }
     } elseif (isset($_POST['reject_request'])) {
         $request_id = $_POST['request_id'];
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             echo "<script>alert('Permintaan berhasil ditolak.'); window.location.href = 'konfirmasi_buka_transaksi.php';</script>";
         } catch (Exception $e) {
-            echo "<script>alert('Error: " . addslashes($e->getMessage()) . "');</script>";
+            echo "<script>alert('Kesalahan: " . addslashes($e->getMessage()) . "');</script>";
         }
     }
 }
@@ -174,7 +174,7 @@ function getStatusBadge($status) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konfirmasi Buka Transaksi - Admin</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="includes/sidebar.css" rel="stylesheet">
+    <link href="includes/sidebar.css?v=20261014" rel="stylesheet">
     <style>
         * {
             margin: 0;

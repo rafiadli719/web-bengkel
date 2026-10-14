@@ -46,7 +46,7 @@ $sql = "SELECT i.noitem, i.namaitem, i.jenis, i.hargajual, i.jenis_jasa,
 $result = mysqli_query($koneksi, $sql);
 
 if(!$result) {
-    echo '<div class="alert alert-danger">Error: ' . mysqli_error($koneksi) . '</div>';
+    echo '<div class="alert alert-danger">Kesalahan: ' . mysqli_error($koneksi) . '</div>';
     exit;
 }
 

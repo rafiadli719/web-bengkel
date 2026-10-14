@@ -601,7 +601,7 @@ function saveMechanicDataV2() {
         },
         success:function(r){
             btn.prop('disabled',false).html('<i class="fa fa-user-cog"></i> Simpan Mekanik');
-            alert(r.status==='success'?'Data mekanik berhasil disimpan!':'Error: '+r.message);
+            alert(r.status==='success'?'Data mekanik berhasil disimpan!':'Kesalahan: '+r.message);
         },
         error:function(x,s,err){
             btn.prop('disabled',false).html('<i class="fa fa-user-cog"></i> Simpan Mekanik');

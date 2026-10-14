@@ -532,18 +532,18 @@ if(empty($_SESSION['_iduser'])){
                     if(response.success) {
                         displayTable(response.data);
                     } else {
-                        showAlert('danger', 'Error: ' + response.message);
+                        showAlert('danger', 'Kesalahan: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log('AJAX Error:', {
+                    console.log('Kesalahan AJAX:', {
                         status: xhr.status,
                         statusText: xhr.statusText,
                         responseText: xhr.responseText,
                         error: error
                     });
                     
-                    var errorMsg = 'Error loading data';
+                    var errorMsg = 'Gagal memuat data';
                     if(xhr.status === 500) {
                         errorMsg = 'Server error (500). Check console for details.';
                     } else if(xhr.status === 401) {
@@ -635,7 +635,7 @@ if(empty($_SESSION['_iduser'])){
                             showAlert('success', response.message);
                             loadKaryawanData();
                         } else {
-                            showAlert('danger', 'Error: ' + response.message);
+                            showAlert('danger', 'Kesalahan: ' + response.message);
                         }
                     },
                     error: function(xhr, status, error) {

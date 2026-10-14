@@ -631,7 +631,7 @@ function saveMechanicDataV2() {
             if (response.status === 'success') {
                 alert('Data mekanik dan persentase berhasil disimpan!');
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function(xhr, status, error) {

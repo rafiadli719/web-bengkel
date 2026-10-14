@@ -73,7 +73,7 @@ try {
     mysqli_query($koneksi, $log_query);
     
 } catch (Exception $e) {
-    $response['message'] = 'Error: ' . $e->getMessage();
+    $response['message'] = 'Kesalahan: ' . $e->getMessage();
 }
 
 header('Content-Type: application/json');

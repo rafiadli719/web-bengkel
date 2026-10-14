@@ -239,7 +239,7 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Kesalahan:', error);
                 alert('❌ Terjadi error saat update harga: ' + error);
                 btnSave.innerHTML = originalHtml;
                 btnSave.disabled = false;

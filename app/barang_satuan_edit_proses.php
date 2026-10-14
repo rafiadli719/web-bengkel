@@ -18,7 +18,7 @@ $log_file = 'accurate_unit_edit_log.txt';
 // Validasi field wajib
 if (empty($id) || empty($txtkd) || empty($txtnama)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Field wajib kosong: id, txtkd, atau txtnama\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: ID, Kode, dan Nama Satuan harus diisi.');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: ID, Kode, dan Nama Satuan harus diisi.');window.location=('barang_satuan.php');</script>";
     exit;
 }
 
@@ -26,7 +26,7 @@ if (empty($id) || empty($txtkd) || empty($txtnama)) {
 $old_data_query = mysqli_query($koneksi, "SELECT satuan, namasatuan, accurate_id FROM tblitemsatuan WHERE id='$id'");
 if (!$old_data_query || mysqli_num_rows($old_data_query) == 0) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Satuan dengan ID $id tidak ditemukan di database lokal\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Satuan tidak ditemukan di database lokal.');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: Satuan tidak ditemukan di database lokal.');window.location=('barang_satuan.php');</script>";
     exit;
 }
 $old_data = mysqli_fetch_array($old_data_query);
@@ -43,7 +43,7 @@ $result = mysqli_query($koneksi, "UPDATE tblitemsatuan SET satuan='$txtkd', nama
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal update database lokal: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Gagal update database lokal. $error');window.location=('barang_satuan.php');</script>";
+    echo "<script>window.alert('Kesalahan: Gagal update database lokal. $error');window.location=('barang_satuan.php');</script>";
     exit;
 }
 
@@ -403,7 +403,7 @@ if ($update_result['success']) {
     echo "<script>
     var errorMsg = '✅ DATA BERHASIL DIUPDATE DI DATABASE LOKAL\\n';
     errorMsg += '❌ GAGAL SINKRONISASI KE ACCURATE\\n\\n';
-    errorMsg += 'Error: $error_detail\\n\\n';
+    errorMsg += 'Kesalahan: $error_detail\\n\\n';
     errorMsg += 'Data Satuan:\\n';
     errorMsg += 'Kode: $txtkd\\n';
     errorMsg += 'Nama: $txtnama\\n\\n';

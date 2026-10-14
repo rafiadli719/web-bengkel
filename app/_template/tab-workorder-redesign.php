@@ -380,11 +380,11 @@ function hapusKeluhanV2(id) {
             if(response.success) {
                 location.reload();
             } else {
-                alert('Error: ' + (response.message || 'Gagal menghapus'));
+                alert('Kesalahan: ' + (response.message || 'Gagal menghapus'));
             }
         },
         error: function() {
-            alert('Error: Gagal menghapus keluhan');
+            alert('Kesalahan: Gagal menghapus keluhan');
         }
     });
 }
@@ -403,11 +403,11 @@ function hapusWorkOrderV2(id) {
             if(response.status === 'success') {
                 location.reload();
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function() {
-            alert('Error: Gagal menghapus work order');
+            alert('Kesalahan: Gagal menghapus work order');
         }
     });
 }

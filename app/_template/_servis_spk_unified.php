@@ -230,7 +230,7 @@
                                                                 }
                                                             }
                                                         } catch (Exception $e) {
-                                                            echo '<option value="">Error loading data</option>';
+                                                            echo '<option value="">Gagal memuat data</option>';
                                                         }
                                                     }
                                                 ?>

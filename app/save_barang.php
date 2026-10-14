@@ -50,20 +50,20 @@ $log_file = 'accurate_item_save_log.txt';
 // Validasi field wajib
 if (empty($txtkd) || empty($txtnama) || empty($cbojenis) || empty($cbosatuan) || empty($cbopabrik) || empty($cbostatus) || empty($cbotipe)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Error: Field wajib kosong\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Semua field wajib harus diisi.');window.location='barang_add.php';</script>";
+    echo "<script>alert('Kesalahan: Semua field wajib harus diisi.');window.location='barang_add.php';</script>";
     exit;
 }
 
 // Validasi satuan tambahan
 if (!empty($cbosatuan2) && $cbosatuan2 === $cbosatuan) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Error: Satuan tambahan sama dengan satuan utama\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Satuan tambahan tidak boleh sama dengan satuan utama.');window.location='barang_add.php';</script>";
+    echo "<script>alert('Kesalahan: Satuan tambahan tidak boleh sama dengan satuan utama.');window.location='barang_add.php';</script>";
     exit;
 }
 
 if (!empty($cbosatuan2) && (empty($txtratio2) || $txtratio2 <= 1)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Error: Rasio satuan tambahan tidak valid\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Rasio satuan tambahan harus diisi dan lebih besar dari 1.');window.location='barang_add.php';</script>";
+    echo "<script>alert('Kesalahan: Rasio satuan tambahan harus diisi dan lebih besar dari 1.');window.location='barang_add.php';</script>";
     exit;
 }
 
@@ -96,7 +96,7 @@ $result = mysqli_query($koneksi, "INSERT INTO tblitem
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal menyimpan ke database lokal: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>alert('Error: Gagal menyimpan ke database lokal. $error');window.location='barang_add.php';</script>";
+    echo "<script>alert('Kesalahan: Gagal menyimpan ke database lokal. $error');window.location='barang_add.php';</script>";
     exit;
 }
 

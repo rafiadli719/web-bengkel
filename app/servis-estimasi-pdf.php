@@ -50,7 +50,7 @@ $query = "SELECT
 $result = mysqli_query($koneksi, $query);
 
 if(!$result) {
-    die('Database error: ' . mysqli_error($koneksi));
+    die('Kesalahan database: ' . mysqli_error($koneksi));
 }
 
 if(mysqli_num_rows($result) == 0) {
@@ -67,7 +67,7 @@ $query_keluhan = "SELECT keluhan, status_pengerjaan
 $result_keluhan = mysqli_query($koneksi, $query_keluhan);
 
 if(!$result_keluhan) {
-    die('Error query keluhan: ' . mysqli_error($koneksi));
+    die('Kesalahan kueri keluhan: ' . mysqli_error($koneksi));
 }
 
 // Get work order
@@ -79,7 +79,7 @@ $query_wo = "SELECT wo.kode_wo, wh.nama_wo, wo.status_pengerjaan
 $result_wo = mysqli_query($koneksi, $query_wo);
 
 if(!$result_wo) {
-    die('Error query work order: ' . mysqli_error($koneksi));
+    die('Kesalahan kueri work order: ' . mysqli_error($koneksi));
 }
 
 // Get temuan
@@ -99,7 +99,7 @@ $query_temuan = "SELECT
 $result_temuan = mysqli_query($koneksi, $query_temuan);
 
 if(!$result_temuan) {
-    die('Error query temuan: ' . mysqli_error($koneksi));
+    die('Kesalahan kueri temuan: ' . mysqli_error($koneksi));
 }
 
 // Get penawaran part + pending work order items
@@ -121,7 +121,7 @@ $query_penawaran = "SELECT kode_barang, nama_barang, quantity, harga_satuan, tot
 $result_penawaran = mysqli_query($koneksi, $query_penawaran);
 
 if(!$result_penawaran) {
-    die('Error query penawaran: ' . mysqli_error($koneksi));
+    die('Kesalahan kueri penawaran: ' . mysqli_error($koneksi));
 }
 
 // Generate HTML untuk PDF
@@ -607,7 +607,7 @@ if($download_pdf) {
             if(isset($old_error_level)) error_reporting($old_error_level);
             
             // If dompdf fails, show error
-            die('Error generating PDF: ' . $e->getMessage() . '<br><br><a href="?no_service=' . $no_service . '">Back to HTML version</a>');
+            die('Gagal membuat PDF: ' . $e->getMessage() . '<br><br><a href="?no_service=' . $no_service . '">Back to HTML version</a>');
         }
     } else {
         // Dompdf not found - use simple HTML to PDF instruction

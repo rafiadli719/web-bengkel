@@ -615,11 +615,11 @@
 							updateDashboardData(response.data);
 							showNotification('Data berhasil di-refresh', 'success');
 						} else {
-							showNotification('Error: ' + response.message, 'error');
+							showNotification('Kesalahan: ' + response.message, 'error');
 						}
 					},
 					error: function() {
-						showNotification('Error: Gagal refresh data', 'error');
+						showNotification('Kesalahan: Gagal refresh data', 'error');
 					},
 					complete: function() {
 						setTimeout(function() {

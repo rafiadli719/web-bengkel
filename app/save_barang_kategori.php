@@ -41,14 +41,14 @@ file_put_contents(
 // Validasi field wajib
 if (empty($txtkd) || empty($txtnama) || empty($txtketerangan) || empty($margin_sesuai_jenis)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Field wajib kosong\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Semua field wajib harus diisi.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: Semua field wajib harus diisi.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
 // Validasi margin jika diperlukan
 if ($margin_sesuai_jenis === 'TIDAK' && (empty($txtmargin) || $txtmargin < 0)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Margin kategori harus diisi\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Margin Kategori harus diisi dengan nilai yang valid.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: Margin Kategori harus diisi dengan nilai yang valid.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
@@ -64,7 +64,7 @@ $result = mysqli_query($koneksi, $sql);
 if (!$result) {
     $error = mysqli_error($koneksi);
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Gagal menyimpan ke database lokal: $error\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Gagal menyimpan ke database lokal. $error');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: Gagal menyimpan ke database lokal. $error');window.location=('barang_kategori.php');</script>";
     exit;
 }
 
@@ -75,7 +75,7 @@ file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] 💾 DATABASE LO
 $config_path = '../config/accurate_config.php';
 if (!file_exists($config_path)) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ File konfigurasi tidak ditemukan di: $config_path\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: File konfigurasi accurate_config.php tidak ditemukan.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: File konfigurasi accurate_config.php tidak ditemukan.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 include_once $config_path;
@@ -83,7 +83,7 @@ include_once $config_path;
 // Periksa konstanta API
 if (!defined('ACCURATE_API_TOKEN') || !defined('ACCURATE_SIGNATURE_SECRET') || !defined('ACCURATE_API_BASE_URL')) {
     file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . " WIB] ❌ Konfigurasi API tidak lengkap\n", FILE_APPEND | LOCK_EX);
-    echo "<script>window.alert('Error: Konfigurasi API tidak lengkap.');window.location=('barang_kategori.php');</script>";
+    echo "<script>window.alert('Kesalahan: Konfigurasi API tidak lengkap.');window.location=('barang_kategori.php');</script>";
     exit;
 }
 

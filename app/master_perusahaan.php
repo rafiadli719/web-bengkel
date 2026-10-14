@@ -71,7 +71,7 @@ if(empty($_SESSION['_iduser'])){
                     if (mysqli_query($koneksi, $sql)) {
                         echo "<script>alert('Perusahaan berhasil ditambahkan!'); window.location.href='master_perusahaan.php';</script>";
                     } else {
-                        echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                     }
                     break;
 
@@ -127,7 +127,7 @@ if(empty($_SESSION['_iduser'])){
                     if (mysqli_query($koneksi, $sql)) {
                         echo "<script>alert('Perusahaan berhasil diupdate!'); window.location.href='master_perusahaan.php';</script>";
                     } else {
-                        echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                     }
                     break;
 
@@ -141,7 +141,7 @@ if(empty($_SESSION['_iduser'])){
                         $status_text = ($status == 1) ? 'diaktifkan' : 'dinonaktifkan';
                         echo "<script>alert('Status perusahaan berhasil $status_text!'); window.location.href='master_perusahaan.php';</script>";
                     } else {
-                        echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                        echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
                     }
                     break;
             }

@@ -184,7 +184,7 @@ if(isset($_POST['btnreceive'])){
 
             } catch (Exception $e) {
                 mysqli_rollback($koneksi);
-                $msg = 'Error: '.$e->getMessage();
+                $msg = 'Kesalahan: '.$e->getMessage();
             }
         }
     }

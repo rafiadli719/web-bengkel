@@ -1304,7 +1304,7 @@
 						}
 					},
 					error: function(xhr, status, error) {
-						console.error('AJAX Error:', error);
+						console.error('Kesalahan AJAX:', error);
 						$('#discountPreviewContent').html(`
 							<div class="alert alert-warning">
 								<i class="ace-icon fa fa-exclamation-triangle"></i>

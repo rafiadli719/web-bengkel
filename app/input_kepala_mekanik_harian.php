@@ -177,7 +177,7 @@ if(empty($_SESSION['_iduser'])){
 			$data_hari_ini = mysqli_fetch_array($check_today);
 			$sudah_input = mysqli_num_rows($check_today) > 0;
 		} else {
-			$pesan = "Error: " . mysqli_error($koneksi);
+			$pesan = "Kesalahan: " . mysqli_error($koneksi);
 			$tipe_pesan = "danger";
 			// Log failure
 			logActivity('FAILED', 'workorder', "Error set Kepala Mekanik $tanggal_kerja: " . mysqli_error($koneksi));

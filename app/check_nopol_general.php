@@ -21,7 +21,7 @@ include "_include_customer_vehicle_sync.php";
 // Check database connection
 if (mysqli_connect_errno()){
     ob_clean();
-    echo json_encode(['error' => 'Database connection failed: ' . mysqli_connect_error()]);
+    echo json_encode(['error' => 'Koneksi database gagal: ' . mysqli_connect_error()]);
     exit;
 }
 

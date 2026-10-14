@@ -56,7 +56,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Keluhan baru berhasil diajukan!\\nMenunggu approval dari pusat.'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -78,7 +78,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Data keluhan berhasil diupdate!'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -91,7 +91,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Data keluhan berhasil dihapus!'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -103,7 +103,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Data keluhan berhasil diaktifkan!'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -120,7 +120,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Keluhan berhasil diapprove!'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
         
@@ -143,7 +143,7 @@ if(empty($_SESSION['_iduser'])){
             if(mysqli_query($koneksi, $query)) {
                 echo "<script>alert('Keluhan ditolak!'); window.location='master-keluhan-crud.php';</script>";
             } else {
-                echo "<script>alert('Error: " . mysqli_error($koneksi) . "');</script>";
+                echo "<script>alert('Kesalahan: " . mysqli_error($koneksi) . "');</script>";
             }
         }
     }
@@ -814,11 +814,11 @@ if(empty($_SESSION['_iduser'])){
                         $('#kategori').val(data.kategori);
                         $('#modal-keluhan').modal('show');
                     } else {
-                        alert('Error: ' + response.message);
+                        alert('Kesalahan: ' + response.message);
                     }
                 },
                 error: function() {
-                    alert('Error loading data');
+                    alert('Gagal memuat data');
                 }
             });
         }

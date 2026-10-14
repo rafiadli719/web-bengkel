@@ -198,3 +198,50 @@ body.admin-sidebar-open .admin-sidebar-backdrop {
         padding: 16px;
     }
 }
+
+/* ── Seragam dengan tema ACE aplikasi utama (sidebar terang, brand biru #438eb9) ── */
+.sidebar {
+    background: #f2f2f2;
+    color: #585858;
+    border-right: 1px solid #ccc;
+    font-family: "Open Sans", "Segoe UI", Arial, sans-serif;
+}
+.sidebar-brand {
+    background: #438eb9;
+    color: #fff;
+    border-bottom: 0;
+    padding: 14px 18px;
+    font-size: 17px;
+    font-weight: 400;
+}
+.sidebar-brand i { color: #fff; }
+.sidebar-nav { padding: 6px 0; }
+.sidebar .nav-link {
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 10px 16px;
+    color: #585858;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #e8e8e8;
+}
+.sidebar .nav-link:hover { background: #f7f7f7; color: #1963aa; }
+.sidebar .nav-link.active {
+    background: #fff;
+    color: #2b7dbc;
+    border-left-color: #2b7dbc;
+    font-weight: 600;
+}
+.nav-cat-header {
+    border-radius: 0;
+    padding: 10px 16px;
+    color: #585858;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    border-bottom: 1px solid #e8e8e8;
+}
+.nav-cat-header:hover { background: #f7f7f7; color: #1963aa; }
+.nav-category.has-active .nav-cat-header { color: #2b7dbc; }
+.sidebar-footer { border-top: 1px solid #ddd; }
+.sidebar-footer .nav-link { border-bottom: 0; }

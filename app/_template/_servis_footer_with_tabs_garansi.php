@@ -315,7 +315,7 @@ function hapusKeluhan(id) {
             alert('Keluhan garansi berhasil dihapus!');
             location.reload();
         } else {
-            alert('Error: ' + result.message);
+            alert('Kesalahan: ' + result.message);
         }
     });
 }
@@ -331,7 +331,7 @@ function hapusWorkOrder(id) {
             alert('Work order garansi berhasil dihapus!');
             location.reload();
         } else {
-            alert('Error: ' + result.message);
+            alert('Kesalahan: ' + result.message);
         }
     });
 }
@@ -403,7 +403,7 @@ window.saveMechanicData = function() {
             if (response.status === 'success') {
                 alert('Data mekanik dan persentase berhasil disimpan!');
             } else {
-                alert('Error: ' + response.message);
+                alert('Kesalahan: ' + response.message);
             }
         },
         error: function(xhr, status, error) {
