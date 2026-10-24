@@ -139,6 +139,8 @@ cek('Klaim tidak bisa diselesaikan dua kali', kode(function () use ($kor) { $kor
 
 echo "== Scrap, revaluasi\n";
 $svc->postIn('PST', 'ZZTEST-CB', 10, '1000', 'TES', 'CB');
+cek('Ajuan ADJUST qty 0 ditolak saat diajukan (F-11)', kode(function () use ($kor) { $kor->submit('ADJUST', 'PST', ['item' => 'ZZTEST-CB', 'qty' => '0'], 'alasan tes', 'tes-m'); }) === 'qty_invalid');
+cek('Ajuan SCRAP qty negatif ditolak (F-11)', kode(function () use ($kor) { $kor->submit('SCRAP', 'PST', ['item' => 'ZZTEST-CB', 'qty' => '-1'], 'alasan tes', 'tes-m'); }) === 'qty_invalid');
 cek('Berita acara wajib', kode(function () use ($kor) { $kor->scrap('PST', 'ZZTEST-CB', 1, 'RUSAK', '', 'tes-s'); }) === 'alasan_wajib');
 $r = $kor->scrap('PST', 'ZZTEST-CB', 2, 'RUSAK', 'BA-001 barang rusak gudang', 'tes-s');
 cek('Scrap: keluar pada average, beban 2000', $r['hpp_total'] === '2000.00' && $svc->saldo('PST', 'ZZTEST-CB')['qty_on_hand'] === '8.000');

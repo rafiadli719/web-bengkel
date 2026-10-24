@@ -1,6 +1,7 @@
 <?php  
 			$txtkdbarang= $_POST['txtcaribrg'];
 			$txtqty= $_POST['txtqty'];
+            if (!is_numeric($txtqty) || (float)$txtqty <= 0) { echo "<script>window.alert('Qty harus lebih dari 0.');window.history.back();</script>"; exit; }
             $txtpot= $_POST['txtpot'];
             
             $tgl_pilih= $_POST['id-date-picker-1'];

@@ -158,6 +158,12 @@ class InventoryCorrection
         if (!in_array($type, ['ADJUST', 'CORR_HARGA', 'REVALUASI', 'SCRAP'], true)) {
             throw new InventoryException("Jenis koreksi tidak dikenal: $type", 'jenis_invalid');
         }
+        if ($type === 'ADJUST' || $type === 'SCRAP') {
+            $qtyMilli = InventoryService::toMilli($payload['qty'] ?? '');
+            if ($qtyMilli === 0 || ($type === 'SCRAP' && $qtyMilli < 0)) {
+                throw new InventoryException($type === 'SCRAP' ? 'Qty scrap harus lebih dari 0' : 'Qty koreksi tidak boleh 0', 'qty_invalid');
+            }
+        }
         $kd = $this->svc->resolveLocation($lokasi);
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $st = mysqli_prepare($this->db,

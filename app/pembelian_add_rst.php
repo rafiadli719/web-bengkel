@@ -188,6 +188,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
         if(isset($_POST['btnadd'])) {	
 			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
 			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+            if (!is_numeric($txtqty) || (float)$txtqty <= 0) { echo "<script>window.alert('Qty harus lebih dari 0.');window.history.back();</script>"; exit; }
             $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
             $tgl_pilih= mysqli_real_escape_string($koneksi, $_POST['id-date-picker-1']);
             $cbo_supplier= mysqli_real_escape_string($koneksi, $_POST['cbosupplier']);
