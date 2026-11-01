@@ -578,7 +578,8 @@ $success_do = get('success_do','');
 $(function(){
     $('#form-do').on('submit', function(){
         var btn = $(this).find('button[name="btnreceive_do"]');
-        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+        // Tunda disable: tombol disabled di event submit tidak ikut terkirim (btnreceive_do hilang dari POST).
+        setTimeout(function(){ btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...'); }, 0);
         setTimeout(function(){ btn.prop('disabled',false).html('<i class="fa fa-check"></i> Simpan & Terima'); }, 15000);
     });
 });
