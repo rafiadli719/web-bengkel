@@ -324,7 +324,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['btnsimpan'])){
                             <a href="pengadaan_antarcab.php" class="btn btn-default"><i class="fa fa-arrow-left"></i> Batal</a>
                             &nbsp;
                             <button type="submit" name="btnsimpan" id="btn-simpan-push" class="btn btn-primary btn-lg"
-                                onclick="if(!confirm('Yakin kirim barang? Stok pusat akan langsung berkurang.')) return false; this.disabled=true; this.innerHTML='<i class=\'fa fa-spinner fa-spin\'></i> Menyimpan...'; return true;">
+                                onclick="if(!confirm('Yakin kirim barang? Stok pusat akan langsung berkurang.')) return false; var b=this; setTimeout(function(){ b.disabled=true; b.innerHTML='<i class=\'fa fa-spinner fa-spin\'></i> Menyimpan...'; }, 0); return true;">
                                 <i class="fa fa-truck"></i> Simpan &amp; Kirim ke Cabang
                             </button>
                         </div>
