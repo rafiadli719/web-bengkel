@@ -2482,8 +2482,9 @@
                                         WHERE
                                         no_service='$no_service'");
         $tm_cari=mysqli_fetch_array($cari_kd);
-        $total_service_pay=$tm_cari['tot'];
-        $total_waktu_pay=$tm_cari['tot_waktu'];
+        // SUM() tanpa baris = NULL; tanpa default, UPDATE tblservice memuat '' dan ditolak MySQL strict
+        $total_service_pay=$tm_cari['tot'] ?? 0;
+        $total_waktu_pay=$tm_cari['tot_waktu'] ?? 0;
 
     // == Total dari Item Barang ==============
     $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot
@@ -2491,7 +2492,7 @@
                                         WHERE
                                         no_service='$no_service'");
     $tm_cari=mysqli_fetch_array($cari_kd);
-    $total_barang_pay=$tm_cari['tot'];
+    $total_barang_pay=$tm_cari['tot'] ?? 0;
 
         $tot_pay=$total_service_pay+$total_barang_pay;
 

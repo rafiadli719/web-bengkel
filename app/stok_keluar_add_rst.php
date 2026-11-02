@@ -1406,9 +1406,13 @@ if(empty($_SESSION['_iduser'])){
                     var $btn = $('#btnsimpan');
                     var originalText = $btn.html();
                     
-                    $btn.prop('disabled', true)
-                        .html('<i class="fa fa-spinner fa-spin"></i> Menyimpan & Sinkronisasi...');
-                    
+                    // Disable ditunda: tombol yang di-disable sebelum form diserialisasi hilang dari POST
+                    // (btnsimpan tidak terkirim, handler PHP skip diam-diam di Chrome).
+                    setTimeout(function() {
+                        $btn.prop('disabled', true)
+                            .html('<i class="fa fa-spinner fa-spin"></i> Menyimpan & Sinkronisasi...');
+                    }, 0);
+
                     // Restore button if process takes too long (timeout prevention)
                     setTimeout(function() {
                         if ($btn.prop('disabled')) {
