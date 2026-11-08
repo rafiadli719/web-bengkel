@@ -218,7 +218,7 @@ if (!empty($no_service)) {
 <div>
     <input type="hidden" name="kode_keluhan" id="kode_keluhan_v2" />
     <div class="ks-keluhan-input-row">
-        <input type="text" name="txtkeluhan" id="txtkeluhan_v2" class="ks-keluhan-input"
+        <input type="text" name="txtkeluhan" id="txtkeluhan_v2" class="ks-keluhan-input" maxlength="255"
                placeholder="Ketik atau pilih keluhan...">
         <button type="button" class="ks-btn-srch-keluhan"
                 onclick="$('#modal-search-keluhan').modal('show')" title="Cari dari master">

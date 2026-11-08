@@ -383,7 +383,7 @@
     // Handler untuk tambah keluhan
     if(isset($_POST['btnaddkeluhan'])) {
         $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
-        $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan']);
+        $txtkeluhan = mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['txtkeluhan']), 0, 255)); // kolom varchar(255)
         $kode_keluhan = $_POST['kode_keluhan'] ?? '';
 
         $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);

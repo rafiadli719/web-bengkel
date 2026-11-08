@@ -55,6 +55,7 @@
         if(isset($_POST['btnsimpan'])) {
             $txtharga= mysqli_real_escape_string($koneksi, $_POST['txtharga']);
             $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
+            $txtpot = min(100, max(0, (float)$txtpot)); $txtharga = max(0, (float)$txtharga); // validasi: potongan 0-100, harga>=0
             $subtotal=$txtharga-($txtharga*($txtpot/100));            
 
             mysqli_query($koneksi,"UPDATE 

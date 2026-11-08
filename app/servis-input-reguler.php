@@ -418,8 +418,8 @@
                 $jam_input = $_POST['jam_service'] ?? date('H:i');
                 $kode_pelanggan = $_POST['kode_pelanggan'] ?? '';
                 $no_polisi = $_POST['no_polisi'] ?? '';
-                $keluhan = $_POST['keluhan'] ?? '';
-                
+                $keluhan = mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['keluhan'] ?? ''), 0, 100)); // varchar(100), anti-injection
+
                 $query_insert_service = "INSERT INTO tblservice (
                     no_service, tanggal, jam, no_pelanggan, no_polisi, keterangan, 
                     status_servis, id_user, kd_cabang, created_at
@@ -453,7 +453,11 @@
                 $jam_input = $_POST['jam_service'] ?? date('H:i');
                 $kode_pelanggan = $_POST['kode_pelanggan'] ?? '';
                 $no_polisi = $_POST['no_polisi'] ?? '';
-                $keluhan = $_POST['keluhan'] ?? '';
+                // Form reguler tidak mengirim 'keluhan': jangan menimpa keterangan dengan kosong.
+                // Kolom keterangan varchar(100), jadi di-escape dan dipotong.
+                $keluhan_sql = isset($_POST['keluhan'])
+                    ? "keterangan = '" . mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['keluhan']), 0, 100)) . "',"
+                    : '';
                 $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
                 $km_berikut = normalizePostedInt($_POST['txtkm_next'] ?? 0);
 
@@ -507,7 +511,7 @@
                     jam = '$jam_input',
                     no_pelanggan = '$kode_pelanggan',
                     no_polisi = '$no_polisi',
-                    keterangan = '$keluhan',
+                    $keluhan_sql
                     km_skr = '$km_skr',
                     km_berikut = '$km_berikut'
                     $extra_update,
@@ -1467,7 +1471,8 @@
             // Tambah keluhan ke SPK (Handler untuk tombol Tambah Keluhan)
             if (isset($_POST['btnaddkeluhan'])) {
                 $no_service_post = mysqli_real_escape_string($koneksi, $_POST['txtnosrv'] ?? '');
-                $txtkeluhan = mysqli_real_escape_string($koneksi, $_POST['txtkeluhan'] ?? '');
+                // Kolom keluhan varchar(255): potong supaya tidak ditolak MySQL strict (hilang diam-diam)
+                $txtkeluhan = mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['txtkeluhan'] ?? ''), 0, 255));
                 $kode_keluhan = mysqli_real_escape_string($koneksi, $_POST['kode_keluhan'] ?? '');
 
                 $km_skr = normalizePostedInt($_POST['txtkm_skr'] ?? 0);
@@ -2379,9 +2384,11 @@
                         $tipe_text = $pending_data['tipe'] == 'barang' ? 'Part' : 'Jasa';
 
                         // Get current keterangan/catatan
-                        $q_service = mysqli_query($koneksi, "SELECT keterangan FROM tblservice WHERE no_service='$no_service_post'");
+                        // Catatan panjang disimpan di kolom catatan (TEXT); keterangan hanya varchar(100)
+                        $q_service = mysqli_query($koneksi, "SELECT catatan FROM tblservice WHERE no_service='$no_service_post'");
                         $service_data = mysqli_fetch_array($q_service);
-                        $catatan_lama = $service_data['keterangan'] ?? '';
+                        $catatan_lama = $service_data['catatan'] ?? '';
+                        $keterangan_reject_mentah = mb_substr(trim($_POST['keterangan_reject'] ?? ''), 0, 500); // hindari escape ganda
 
                         // Build new note
                         $catatan_baru = $catatan_lama;
@@ -2391,15 +2398,15 @@
 
                         $catatan_baru .= "[ITEM DITOLAK] $tipe_text: {$pending_data['nama_item']} ({$pending_data['kode_item']})";
                         $catatan_baru .= "\nAlasan: $alasan_text";
-                        if (!empty($keterangan_reject)) {
-                            $catatan_baru .= "\nKeterangan: $keterangan_reject";
+                        if ($keterangan_reject_mentah !== '') {
+                            $catatan_baru .= "\nKeterangan: $keterangan_reject_mentah";
                         }
                         $catatan_baru .= "\nTanggal: " . date('d/m/Y H:i');
 
                         // Update catatan
                         $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
                         mysqli_query($koneksi, "UPDATE tblservice
-                                               SET keterangan='$catatan_escaped'
+                                               SET catatan='$catatan_escaped'
                                                WHERE no_service='$no_service_post'");
 
                         echo "<script>

@@ -80,7 +80,8 @@ function _buildRejectServisItemNote($item, $alasan_tolak, $keterangan_tolak = ''
 if(isset($_POST['btnupdatestatuskeluhan'])) {
     $keluhan_id = mysqli_real_escape_string($koneksi, $_POST['keluhan_id_status']);
     $status_pengerjaan = mysqli_real_escape_string($koneksi, $_POST['status_keluhan_update']);
-    $keterangan = isset($_POST['keterangan_keluhan']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_keluhan']) : '';
+    // keterangan_tidak_selesai varchar(255): potong agar tidak ditolak strict mode
+    $keterangan = isset($_POST['keterangan_keluhan']) ? mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['keterangan_keluhan']), 0, 255)) : '';
     $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
     
     // Validate: keterangan wajib jika status tidak_selesai
@@ -113,7 +114,9 @@ if(isset($_POST['btnupdatestatuskeluhan'])) {
             if(!empty($catatan_lama)) {
                 $catatan_baru .= "\n\n";
             }
-            $catatan_baru .= "[KELUHAN TIDAK SELESAI] $keluhan_text: $keterangan";
+            // pakai teks mentah: $keterangan sudah di-escape, escape ganda menyisakan "\'" di catatan
+            $keterangan_mentah = mb_substr(trim($_POST['keterangan_keluhan'] ?? ''), 0, 255);
+            $catatan_baru .= "[KELUHAN TIDAK SELESAI] $keluhan_text: $keterangan_mentah";
             
             // Update catatan
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
@@ -198,7 +201,7 @@ if(isset($_POST['btnreject_wo_bulk'])) {
 if(isset($_POST['btnupdatestatuswo'])) {
     $wo_id = mysqli_real_escape_string($koneksi, $_POST['wo_id_status']);
     $status_pengerjaan = mysqli_real_escape_string($koneksi, $_POST['status_wo_update']);
-    $keterangan = isset($_POST['keterangan_wo']) ? mysqli_real_escape_string($koneksi, $_POST['keterangan_wo']) : '';
+    $keterangan = isset($_POST['keterangan_wo']) ? mysqli_real_escape_string($koneksi, mb_substr(trim($_POST['keterangan_wo']), 0, 255)) : '';
     $no_service = mysqli_real_escape_string($koneksi, $_POST['txtnosrv']);
     
     // Validate: keterangan wajib jika status tidak_selesai
@@ -236,7 +239,8 @@ if(isset($_POST['btnupdatestatuswo'])) {
             if(!empty($catatan_lama)) {
                 $catatan_baru .= "\n\n";
             }
-            $catatan_baru .= "[WORK ORDER TIDAK SELESAI] $nama_wo: $keterangan";
+            $keterangan_mentah = mb_substr(trim($_POST['keterangan_wo'] ?? ''), 0, 255); // hindari escape ganda
+            $catatan_baru .= "[WORK ORDER TIDAK SELESAI] $nama_wo: $keterangan_mentah";
             
             // Update catatan
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);
@@ -335,8 +339,9 @@ if(isset($_POST['btntolakitem'])) {
             }
             
             $catatan_baru .= "[ITEM WO DITOLAK] $tipe_readable: {$item['nama_item']} - Alasan: $alasan_readable";
-            if(!empty($keterangan_tolak)) {
-                $catatan_baru .= " - $keterangan_tolak";
+            $keterangan_tolak_mentah = trim($_POST['keterangan_tolak'] ?? ''); // mentah: hindari escape ganda
+            if($keterangan_tolak_mentah !== '') {
+                $catatan_baru .= " - $keterangan_tolak_mentah";
             }
             
             $catatan_escaped = mysqli_real_escape_string($koneksi, $catatan_baru);

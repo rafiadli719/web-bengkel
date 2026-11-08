@@ -37,7 +37,8 @@ try {
                 p.nopelanggan
               FROM tblservice s
               LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
-              WHERE s.no_service = '$no_service'";
+              WHERE s.no_service = '$no_service'
+                AND s.kd_cabang = '" . mysqli_real_escape_string($koneksi, $kd_cabang) . "'"; // no_service tidak unik lintas cabang: cegah kirim invoice ke pelanggan cabang lain
     
     $result = mysqli_query($koneksi, $query);
     

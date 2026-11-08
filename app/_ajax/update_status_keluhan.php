@@ -30,7 +30,8 @@ if(!in_array($status, $valid_statuses)) {
 // Sanitize inputs
 $id = mysqli_real_escape_string($koneksi, $id);
 $status = mysqli_real_escape_string($koneksi, $status);
-$keterangan = mysqli_real_escape_string($koneksi, $keterangan);
+// keterangan_tidak_selesai varchar(255): potong agar UPDATE tidak ditolak strict mode
+$keterangan = mysqli_real_escape_string($koneksi, mb_substr(trim($keterangan), 0, 255));
 $user_login = $_SESSION['_nama'] ?? 'System';
 
 // Update query
