@@ -515,3 +515,13 @@ DOM/screenshot browser):
   uploader CSV massal (`_komplain/import_massal.php`, validasi dulu, all-or-nothing).
 - Masih menunggu keputusan Rafi: K2 (Keuangan Kasir vs ACE), K4 (glosarium), K5 (mobile), K7 (menu KACAB),
   Rencana Order (butuh data tempo supplier), history service pelanggan.
+
+**Update 2026-11-02 (commit `a6a2eb5`, lokal, BELUM push/deploy):** E2E klik penuh sisa halaman stok (masuk/keluar rst
+dan non-rst, SO masuk/keluar rst) dan servis bayar (reguler, jemput, garansi) di CIKDITIRO mode live: semua lulus.
+2 bug fixed: `stok_keluar_add_rst.php` tombol Simpan di-disable sinkron (btnsimpan hilang dari POST), dan
+`servis-input-reguler-jemput.php` SUM jasa NULL ("Data truncated subtotal_jasa") bikin servis jemput tanpa jasa gagal bayar.
+`servis-input-reguler-rst.php` read-only (handler bayar tak terjangkau UI), `...jemput-rst.php` kode mati.
+Dropdown Admin form bayar servis ambil dari `tbuser_karyawan` per cabang: CIKDITIRO kosong, butuh data admin dari Rafi.
+Detail: `.ai/changelog/2026-11-02-e2e-servis-stok.md`.
+
+**Update 2026-11-09 (lokal, BELUM push/deploy):** commit `8f4d0ee` (audit input servis: catatan/keluhan, keterangan tidak ditimpa, invoice WA per cabang) berisi migrasi `2026-11-07_run_tblservice_catatan.php` yang WAJIB jalan di produksi sebelum/bersamaan deploy. Bug "total edit-item salah": rumus handler benar, akarnya qty pecahan vs kolom `quantity` int; qty kini dibulatkan di 4 file (hanya lint). 5 baris lama CDT total-nya meleset (lihat `.ai/changelog/2026-11-09-qty-bulat-edit-item.md`), belum dikoreksi.
