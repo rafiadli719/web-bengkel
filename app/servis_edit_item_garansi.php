@@ -55,7 +55,7 @@
             $txtharga= mysqli_real_escape_string($koneksi, $_POST['txtharga']);
             $txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
             $txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
-            $txtqty = max(1, (float)$txtqty); $txtpot = min(100, max(0, (float)$txtpot)); $txtharga = max(0, (float)$txtharga); // validasi: qty>=1, potongan 0-100
+            $txtqty = max(1, (int)round((float)$txtqty)); $txtpot = min(100, max(0, (float)$txtpot)); $txtharga = max(0, (float)$txtharga); // validasi: qty bulat>=1 (kolom quantity = int), potongan 0-100
 
             $subtotal=($txtharga*$txtqty)-(($txtharga*$txtqty)*($txtpot/100));            
 

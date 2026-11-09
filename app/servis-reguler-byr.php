@@ -478,7 +478,7 @@
             $km_berikut=mysqli_real_escape_string($koneksi, $_POST['txtkm_next']);           
             
 			$txtkdbarang= mysqli_real_escape_string($koneksi, $_POST['txtcaribrg']);
-			$txtqty= mysqli_real_escape_string($koneksi, $_POST['txtqty']);
+			$txtqty= max(1, (int)round((float)$_POST['txtqty'])); // quantity = kolom int, total harus dihitung dari qty bulat
 			$txtpot= mysqli_real_escape_string($koneksi, $_POST['txtpot']);
 
 			$txtcarisrv= mysqli_real_escape_string($koneksi, $_POST['txtcarisrv']);
