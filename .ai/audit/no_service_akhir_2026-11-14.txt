@@ -1,0 +1,85 @@
+== AUDIT no_service (fitmotor_dbbengkel) 2026-11-14T10:00:03+00:00 ==
+  induk.total                                103551
+  induk.no_service_ganda_lintas_cabang       30889
+  induk.duplikat_kunci_gabungan              0
+  induk.kd_cabang_kosong                     0
+
+-- Tabel anak --
+  tabel                              kdcab     total   kosong    yatim   ambigu
+  konsolidasi_service                ya            6        0        6        -
+  master_kedatangan_pelanggan        ya            4        3        0        -
+  promo_usage_log                    ya            0        0        0        -
+  servis_komisi                      ya            9        0        6        -
+  stg_access_gabung_service          ya           20        0       20        -
+  stg_access_gabung_service_advisor  ya           11        0       11        -
+  stg_access_gabung_service_barang   ya           16        0       16        -
+  stg_access_gabung_service_jasa     ya           16        0       16        -
+  tb_antrian_servis                  ya           18       18        0        -
+  tb_approval_diskon                 ya            1        0        0        -
+  tb_dp_servis                       ya            1        0        1        -
+  tb_log_antrian                     ya            0        0        0        -
+  tb_log_cancel_servis               ya            1        0        0        -
+  tb_mekanik_progress                ya            0        0        0        -
+  tb_progress_mekanik                ya            0        0        0        -
+  tblretur_servis_detail             ya            2        0        2        -
+  tblretur_servis_header             ya            2        0        2        -
+  tblservice_advisor                 ya        67223        1        0        -
+  tblservice_backup                  ya            0        0        0        -
+  tblservice_jemputantar             ya            0        0        0        -
+  tblservis_barang                   ya       361891        0        5        -
+  tblservis_jasa                     ya        91911        0        7        -
+  tbservis_keluhan                   ya            5        5        0        -
+  tbservis_keluhan_status            ya           62       56        0        -
+  tbservis_keluhan_tracking          ya            0        0        0        -
+  tbservis_penawaran_jasa            ya            0        0        0        -
+  tbservis_penawaran_log             ya            0        0        0        -
+  tbservis_penawaran_part            ya            8        4        0        -
+  tbservis_pending_items             ya           68       33        0        -
+  tbservis_pengerjaan                ya            4        4        0        -
+  tbservis_temuan                    ya           15       11        0        -
+  tbservis_temuan_activity_log       ya            0        0        0        -
+  tbservis_workorder                 ya           57       51        0        -
+
+-- View --
+  view_laporan_cancel_servis : ok_ada_kd_cabang
+  view_penawaran_part_lengkap : ok_ada_kd_cabang
+  view_ringkasan_kedatangan_pelanggan : ok_ada_kd_cabang
+  view_riwayat_kedatangan_detail : ok_ada_kd_cabang
+  view_service : ok_ada_kd_cabang
+  view_servis_keluhan_lengkap : ok_ada_kd_cabang
+  view_servis_status_summary : ok_ada_kd_cabang
+  view_servis_temuan_lengkap : ok_ada_kd_cabang
+  view_servis_workorder_lengkap : ok_ada_kd_cabang
+  view_temuan_penawaran_summary : ok_ada_kd_cabang
+  view_transaksi_gabungan : ok_ada_kd_cabang
+
+-- Trigger --
+  trg_ns_kdcab_promo_usage_log (promo_usage_log)
+  trg_ns_kdcab_tb_log_antrian (tb_log_antrian)
+  trg_ns_kdcab_tb_log_cancel_servis (tb_log_cancel_servis)
+  trg_ns_kdcab_tbservis_penawaran_log (tbservis_penawaran_log)
+  trg_ns_kdcab_tbservis_temuan_activity_log (tbservis_temuan_activity_log)
+  trg_after_service_bayar (tblservice)
+  trg_ns_kdcab_master_kedatangan_pelanggan (master_kedatangan_pelanggan)
+  trg_ns_kdcab_tb_antrian_servis (tb_antrian_servis)
+  trg_ns_kdcab_tb_mekanik_progress (tb_mekanik_progress)
+  trg_ns_kdcab_tb_progress_mekanik (tb_progress_mekanik)
+  trg_ns_kdcab_tbservis_keluhan (tbservis_keluhan)
+  trg_ns_kdcab_tbservis_keluhan_status (tbservis_keluhan_status)
+  trg_ns_kdcab_tbservis_keluhan_tracking (tbservis_keluhan_tracking)
+  trg_ns_kdcab_tbservis_penawaran_jasa (tbservis_penawaran_jasa)
+  trg_ns_kdcab_tbservis_penawaran_part (tbservis_penawaran_part)
+  trg_ns_kdcab_tbservis_pending_items (tbservis_pending_items)
+  trg_ns_kdcab_tbservis_pengerjaan (tbservis_pengerjaan)
+  trg_ns_kdcab_tbservis_temuan (tbservis_temuan)
+  trg_ns_kdcab_tbservis_workorder (tbservis_workorder)
+
+Karantina open: 137
+
+-- Kode berisiko (0) --
+
+-- Monitor --
+  baris anak ber-kd_cabang kosong TAK terlacak karantina: 0
+  view tanpa kd_cabang: 0
+  duplikat kunci gabungan induk: 0
+STATUS: OK

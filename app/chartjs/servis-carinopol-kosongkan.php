@@ -17,29 +17,19 @@
         die("Service tidak ditemukan di cabang Anda.");
     }
 
-    // Guard tambahan: no_service legacy Access tidak dijamin unik lintas cabang
-    // (data produksi terbukti ada no_service yang sama dipakai >1 cabang).
-    // tbservis_keluhan & tbservis_pengerjaan tidak punya kd_cabang untuk membedakan
-    // baris mana milik cabang mana, jadi DELETE by no_service saja bisa ikut menghapus
-    // data cabang lain kalau no_service ini kebetulan bentrok. Tolak dulu sampai
-    // ditangani manual, daripada diam-diam menghapus data cabang lain.
-    $dupChk = mysqli_query($koneksi, "SELECT COUNT(DISTINCT kd_cabang) AS c FROM tblservice WHERE no_service='$no_service'");
-    $dupRow = $dupChk ? mysqli_fetch_assoc($dupChk) : null;
-    if ($dupRow && (int)$dupRow['c'] > 1) {
-        die("No_service ini terdeteksi dipakai lebih dari 1 cabang (data legacy bermasalah). Kosongkan tidak bisa diproses otomatis, hubungi admin untuk penanganan manual.");
-    }
+    // Tabel anak kini membawa kd_cabang (identitas servis = no_service + kd_cabang), jadi DELETE dibatasi per cabang.
 
     // Hapus Tabel Keluhan
     $modal=mysqli_query($koneksi,"Delete
                                     FROM tbservis_keluhan
                                     WHERE
-                                    no_service='$no_service'");
+                                    no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
     // Hapus Tabel Item Pengerjaan
     $modal=mysqli_query($koneksi,"Delete
                                     FROM tbservis_pengerjaan
                                     WHERE
-                                    no_service='$no_service'");
+                                    no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
     // Hapus Tabel Item Barang
     $modal=mysqli_query($koneksi,"Delete

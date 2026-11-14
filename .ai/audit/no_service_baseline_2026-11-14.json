@@ -1,0 +1,242 @@
+{
+    "db": "fitmotor_dbbengkel",
+    "waktu": "2026-11-14T08:48:37+00:00",
+    "tabel": {
+        "konsolidasi_service": {
+            "punya_kd_cabang": true,
+            "total": 6,
+            "kosong": 0,
+            "yatim": 6,
+            "no_service_tanpa_induk": 1
+        },
+        "master_kedatangan_pelanggan": {
+            "punya_kd_cabang": false,
+            "total": 4,
+            "ambigu": 2,
+            "no_service_tanpa_induk": 1
+        },
+        "promo_usage_log": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "servis_komisi": {
+            "punya_kd_cabang": true,
+            "total": 9,
+            "kosong": 0,
+            "yatim": 6,
+            "no_service_tanpa_induk": 6
+        },
+        "stg_access_gabung_service": {
+            "punya_kd_cabang": true,
+            "total": 20,
+            "kosong": 0,
+            "yatim": 20,
+            "no_service_tanpa_induk": 5
+        },
+        "stg_access_gabung_service_advisor": {
+            "punya_kd_cabang": true,
+            "total": 11,
+            "kosong": 0,
+            "yatim": 11,
+            "no_service_tanpa_induk": 0
+        },
+        "stg_access_gabung_service_barang": {
+            "punya_kd_cabang": true,
+            "total": 16,
+            "kosong": 0,
+            "yatim": 16,
+            "no_service_tanpa_induk": 0
+        },
+        "stg_access_gabung_service_jasa": {
+            "punya_kd_cabang": true,
+            "total": 16,
+            "kosong": 0,
+            "yatim": 16,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_antrian_servis": {
+            "punya_kd_cabang": false,
+            "total": 18,
+            "ambigu": 11,
+            "no_service_tanpa_induk": 7
+        },
+        "tb_approval_diskon": {
+            "punya_kd_cabang": true,
+            "total": 1,
+            "kosong": 0,
+            "yatim": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_dp_servis": {
+            "punya_kd_cabang": true,
+            "total": 1,
+            "kosong": 0,
+            "yatim": 1,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_log_antrian": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_log_cancel_servis": {
+            "punya_kd_cabang": false,
+            "total": 1,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_mekanik_progress": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tb_progress_mekanik": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tblretur_servis_detail": {
+            "punya_kd_cabang": true,
+            "total": 2,
+            "kosong": 0,
+            "yatim": 2,
+            "no_service_tanpa_induk": 0
+        },
+        "tblretur_servis_header": {
+            "punya_kd_cabang": true,
+            "total": 2,
+            "kosong": 0,
+            "yatim": 2,
+            "no_service_tanpa_induk": 0
+        },
+        "tblservice_advisor": {
+            "punya_kd_cabang": true,
+            "total": 67223,
+            "kosong": 1,
+            "yatim": 0,
+            "no_service_tanpa_induk": 1
+        },
+        "tblservice_backup": {
+            "punya_kd_cabang": true,
+            "total": 0,
+            "kosong": 0,
+            "yatim": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tblservice_jemputantar": {
+            "punya_kd_cabang": true,
+            "total": 0,
+            "kosong": 0,
+            "yatim": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tblservis_barang": {
+            "punya_kd_cabang": true,
+            "total": 361891,
+            "kosong": 7,
+            "yatim": 5,
+            "no_service_tanpa_induk": 0
+        },
+        "tblservis_jasa": {
+            "punya_kd_cabang": true,
+            "total": 91911,
+            "kosong": 4,
+            "yatim": 7,
+            "no_service_tanpa_induk": 5
+        },
+        "tbservis_keluhan": {
+            "punya_kd_cabang": false,
+            "total": 5,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 5
+        },
+        "tbservis_keluhan_status": {
+            "punya_kd_cabang": false,
+            "total": 62,
+            "ambigu": 28,
+            "no_service_tanpa_induk": 28
+        },
+        "tbservis_keluhan_tracking": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_penawaran_jasa": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_penawaran_log": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_penawaran_part": {
+            "punya_kd_cabang": false,
+            "total": 8,
+            "ambigu": 4,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_pending_items": {
+            "punya_kd_cabang": false,
+            "total": 68,
+            "ambigu": 33,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_pengerjaan": {
+            "punya_kd_cabang": false,
+            "total": 4,
+            "ambigu": 1,
+            "no_service_tanpa_induk": 3
+        },
+        "tbservis_temuan": {
+            "punya_kd_cabang": false,
+            "total": 15,
+            "ambigu": 10,
+            "no_service_tanpa_induk": 1
+        },
+        "tbservis_temuan_activity_log": {
+            "punya_kd_cabang": false,
+            "total": 0,
+            "ambigu": 0,
+            "no_service_tanpa_induk": 0
+        },
+        "tbservis_workorder": {
+            "punya_kd_cabang": false,
+            "total": 57,
+            "ambigu": 36,
+            "no_service_tanpa_induk": 15
+        }
+    },
+    "view": {
+        "view_laporan_cancel_servis": "ok_ada_kd_cabang",
+        "view_penawaran_part_lengkap": "TANPA_kd_cabang",
+        "view_ringkasan_kedatangan_pelanggan": "TANPA_kd_cabang",
+        "view_riwayat_kedatangan_detail": "TANPA_kd_cabang",
+        "view_service": "ok_ada_kd_cabang",
+        "view_servis_keluhan_lengkap": "TANPA_kd_cabang",
+        "view_servis_status_summary": "TANPA_kd_cabang",
+        "view_servis_temuan_lengkap": "TANPA_kd_cabang",
+        "view_servis_workorder_lengkap": "TANPA_kd_cabang",
+        "view_temuan_penawaran_summary": "TANPA_kd_cabang",
+        "view_transaksi_gabungan": "ok_ada_kd_cabang"
+    },
+    "trigger": {
+        "trg_after_service_bayar": "tblservice"
+    },
+    "induk": {
+        "total": 103551,
+        "no_service_ganda_lintas_cabang": 30889,
+        "duplikat_kunci_gabungan": 0,
+        "kd_cabang_kosong": 0
+    },
+    "kode": []
+}

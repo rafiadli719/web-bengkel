@@ -25,7 +25,7 @@ $mode = $_GET['run'] ?? '';
 $q_sisa = mysqli_query($koneksi, "
     SELECT COUNT(DISTINCT sb.no_service) AS sisa
     FROM tblservis_barang sb
-    JOIN tblservice s ON sb.no_service = s.no_service
+    JOIN tblservice s ON sb.no_service = s.no_service AND sb.kd_cabang = s.kd_cabang
     WHERE s.status_servis = 'bayar'
     AND NOT EXISTS (SELECT 1 FROM tbstok st WHERE st.no_transaksi = sb.no_service AND st.tipe = '4')
 ");
@@ -43,7 +43,7 @@ if ($mode === 'batch') {
                MIN(s.tanggal) AS tanggal,
                MIN(s.kd_cabang) AS kd_cabang
         FROM tblservis_barang sb
-        JOIN tblservice s ON sb.no_service = s.no_service
+        JOIN tblservice s ON sb.no_service = s.no_service AND sb.kd_cabang = s.kd_cabang
         WHERE s.status_servis = 'bayar'
         AND NOT EXISTS (SELECT 1 FROM tbstok st WHERE st.no_transaksi = sb.no_service AND st.tipe = '4')
         GROUP BY sb.no_service

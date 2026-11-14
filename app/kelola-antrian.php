@@ -151,7 +151,7 @@ if(empty($_SESSION['_iduser'])){
                 k.tipe as tipe_motor,
                 k.warna
               FROM tb_antrian_servis a
-              LEFT JOIN tblservice s ON a.no_service = s.no_service$svc_cabang_cond_antrian
+              LEFT JOIN tblservice s ON a.no_service = s.no_service AND a.kd_cabang = s.kd_cabang$svc_cabang_cond_antrian
               LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
               LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
               $where_sql

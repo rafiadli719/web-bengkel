@@ -315,7 +315,7 @@ function updateCancelStatistikPelanggan($koneksi, $no_pelanggan) {
                         SUM(CASE WHEN lc.kategori_alasan = 'customer_no_show' THEN 1 ELSE 0 END) as cancel_noshow,
                         SUM(CASE WHEN lc.kategori_alasan = 'lainnya' THEN 1 ELSE 0 END) as cancel_lainnya
                     FROM tb_log_cancel_servis lc
-                    JOIN tblservice s ON lc.no_service = s.no_service
+                    JOIN tblservice s ON lc.no_service = s.no_service AND lc.kd_cabang = s.kd_cabang
                     WHERE s.no_pelanggan = '$no_pelanggan'";
                     
     $result_cancel = mysqli_query($koneksi, $query_cancel);

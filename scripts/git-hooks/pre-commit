@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Pre-commit: cegah kode baru mengulang pola join/UPDATE/DELETE servis hanya dengan no_service.
+# Identitas servis = (no_service, kd_cabang). Aturan K1/K2 ada di scripts/audit_no_service.php.
+# Hanya memindai file PHP yang di-stage di app/ (cepat). Lewati sekali dengan: git commit --no-verify
+# Env opsional: PHP_BIN=/path/ke/php  (default: php, lalu Laragon via WSL)
+set -u
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 0
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^app/.*\.php$' || true)
+[ -z "$FILES" ] && exit 0
+
+PHP="${PHP_BIN:-}"
+if [ -z "$PHP" ]; then
+  if command -v php >/dev/null 2>&1; then PHP=php
+  else PHP=$(ls /mnt/c/laragon/bin/php/php-*/php.exe 2>/dev/null | tail -1); fi
+fi
+if [ -z "$PHP" ]; then echo "pre-commit: php tidak ditemukan, pemeriksaan no_service dilewati." >&2; exit 0; fi
+
+ARGS=(-d display_errors=1)
+case "$PHP" in
+  *.exe) DIR="$(dirname "$PHP")"; WDIR=$(wslpath -w "$DIR" 2>/dev/null); ARGS+=(-d "extension_dir=${WDIR}\\ext" -d extension=php_mysqli.dll); SCRIPT=$(wslpath -w "$ROOT/scripts/audit_no_service.php");;
+  *) SCRIPT="$ROOT/scripts/audit_no_service.php";; # php native WSL: pemeriksaan kode tidak butuh DB
+esac
+
+# shellcheck disable=SC2086
+OUT=$("$PHP" "${ARGS[@]}" -f "$SCRIPT" -- --kode $FILES 2>&1)
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+  echo "$OUT" | sed -n '/Kode berisiko/,$p' >&2
+  echo "" >&2
+  echo "pre-commit DITOLAK: query servis memakai no_service saja. Tambahkan kd_cabang (identitas servis = no_service + kd_cabang)." >&2
+  echo "Penjelasan: docs/planning/PLAN_NO_SERVICE_COMPOSITE_KEY_2026-11-09.md" >&2
+  exit 1
+fi
+exit 0

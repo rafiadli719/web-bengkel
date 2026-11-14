@@ -61,8 +61,8 @@ try {
     mysqli_autocommit($koneksi, false);
 
     // Delete related records first
-    $stmt = mysqli_prepare($koneksi, "DELETE FROM tbservis_keluhan WHERE no_service = ?");
-    mysqli_stmt_bind_param($stmt, "s", $no_service);
+    $stmt = mysqli_prepare($koneksi, "DELETE FROM tbservis_keluhan WHERE no_service = ? AND kd_cabang = ?");
+    mysqli_stmt_bind_param($stmt, "ss", $no_service, $kd_cabang);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 

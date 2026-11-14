@@ -63,11 +63,11 @@
 	
 	// Preload barang & jasa totals: 2 query, bukan N×2
     $_preload_brg = [];
-    $q_pb = mysqli_query($koneksi, "SELECT sb.no_service, ts.kd_cabang, SUM(sb.total) as tot FROM tblservis_barang sb INNER JOIN tblservice ts ON sb.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sb.no_service, ts.kd_cabang");
+    $q_pb = mysqli_query($koneksi, "SELECT sb.no_service, ts.kd_cabang, SUM(sb.total) as tot FROM tblservis_barang sb INNER JOIN tblservice ts ON sb.no_service=ts.no_service AND sb.kd_cabang=ts.kd_cabang WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sb.no_service, ts.kd_cabang");
     while ($r = mysqli_fetch_assoc($q_pb)) $_preload_brg[$r['no_service'].'|'.$r['kd_cabang']] = (float)$r['tot'];
 
     $_preload_jsa = [];
-    $q_pj = mysqli_query($koneksi, "SELECT sj.no_service, ts.kd_cabang, SUM(sj.total) as tot FROM tblservis_jasa sj INNER JOIN tblservice ts ON sj.no_service=ts.no_service WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sj.no_service, ts.kd_cabang");
+    $q_pj = mysqli_query($koneksi, "SELECT sj.no_service, ts.kd_cabang, SUM(sj.total) as tot FROM tblservis_jasa sj INNER JOIN tblservice ts ON sj.no_service=ts.no_service AND sj.kd_cabang=ts.kd_cabang WHERE ts.tanggal BETWEEN '$tglmulai' AND '$tglselesai' GROUP BY sj.no_service, ts.kd_cabang");
     while ($r = mysqli_fetch_assoc($q_pj)) $_preload_jsa[$r['no_service'].'|'.$r['kd_cabang']] = (float)$r['tot'];
 
 	$html = '<table style="margin: 0 0pt; width: 100%; border-collapse:collapse;" border="0">

@@ -1,0 +1,57 @@
+== AUDIT no_service (fitmotor_dbbengkel) 2026-11-14T08:47:47+00:00 ==
+  induk.total                                103551
+  induk.no_service_ganda_lintas_cabang       30889
+  induk.duplikat_kunci_gabungan              0
+  induk.kd_cabang_kosong                     0
+
+-- Tabel anak --
+  tabel                              kdcab     total   kosong    yatim   ambigu
+  konsolidasi_service                ya            6        0        6        -
+  master_kedatangan_pelanggan        TIDAK         4        -        1        2
+  promo_usage_log                    TIDAK         0        -        0        0
+  servis_komisi                      ya            9        0        6        -
+  stg_access_gabung_service          ya           20        0       20        -
+  stg_access_gabung_service_advisor  ya           11        0       11        -
+  stg_access_gabung_service_barang   ya           16        0       16        -
+  stg_access_gabung_service_jasa     ya           16        0       16        -
+  tb_antrian_servis                  TIDAK        18        -        7       11
+  tb_approval_diskon                 ya            1        0        0        -
+  tb_dp_servis                       ya            1        0        1        -
+  tb_log_antrian                     TIDAK         0        -        0        0
+  tb_log_cancel_servis               TIDAK         1        -        0        0
+  tb_mekanik_progress                TIDAK         0        -        0        0
+  tb_progress_mekanik                TIDAK         0        -        0        0
+  tblretur_servis_detail             ya            2        0        2        -
+  tblretur_servis_header             ya            2        0        2        -
+  tblservice_advisor                 ya        67223        1        0        -
+  tblservice_backup                  ya            0        0        0        -
+  tblservice_jemputantar             ya            0        0        0        -
+  tblservis_barang                   ya       361891        7        5        -
+  tblservis_jasa                     ya        91911        4        7        -
+  tbservis_keluhan                   TIDAK         5        -        5        0
+  tbservis_keluhan_status            TIDAK        62        -       28       28
+  tbservis_keluhan_tracking          TIDAK         0        -        0        0
+  tbservis_penawaran_jasa            TIDAK         0        -        0        0
+  tbservis_penawaran_log             TIDAK         0        -        0        0
+  tbservis_penawaran_part            TIDAK         8        -        0        4
+  tbservis_pending_items             TIDAK        68        -        0       33
+  tbservis_pengerjaan                TIDAK         4        -        3        1
+  tbservis_temuan                    TIDAK        15        -        1       10
+  tbservis_temuan_activity_log       TIDAK         0        -        0        0
+  tbservis_workorder                 TIDAK        57        -       15       36
+
+-- View --
+  view_laporan_cancel_servis : ok_ada_kd_cabang
+  view_penawaran_part_lengkap : TANPA_kd_cabang
+  view_ringkasan_kedatangan_pelanggan : TANPA_kd_cabang
+  view_riwayat_kedatangan_detail : TANPA_kd_cabang
+  view_service : ok_ada_kd_cabang
+  view_servis_keluhan_lengkap : TANPA_kd_cabang
+  view_servis_status_summary : TANPA_kd_cabang
+  view_servis_temuan_lengkap : TANPA_kd_cabang
+  view_servis_workorder_lengkap : TANPA_kd_cabang
+  view_temuan_penawaran_summary : TANPA_kd_cabang
+  view_transaksi_gabungan : ok_ada_kd_cabang
+
+-- Trigger --
+  trg_after_service_bayar (tblservice)

@@ -21,6 +21,7 @@ include "../config/koneksi.php";
 // Get user info
 $id_user = $_SESSION['_iduser'];
 $user_cancel = $_SESSION['username'] ?? $_SESSION['_nama'] ?? 'Unknown';
+$kd_cabang_ns = mysqli_real_escape_string($koneksi, $_SESSION['_cabang'] ?? ''); // identitas servis = (no_service, kd_cabang)
 
 // Get data from POST - SIMPLIFIED (hanya kategori dan keterangan)
 $no_service = mysqli_real_escape_string($koneksi, $_POST['no_service'] ?? '');
@@ -71,7 +72,7 @@ if(empty($alasan_cancel) || strlen(trim($alasan_cancel)) < 10) {
 }
 
 // Cek apakah service exists
-$check_service = mysqli_query($koneksi, "SELECT * FROM tblservice WHERE no_service='$no_service'");
+$check_service = mysqli_query($koneksi, "SELECT * FROM tblservice WHERE no_service='$no_service' AND kd_cabang='$kd_cabang_ns'");
 if(mysqli_num_rows($check_service) == 0) {
     if($is_ajax) {
         header('Content-Type: application/json');
@@ -126,14 +127,14 @@ try {
         alasan_cancel = '$alasan_cancel',
         user_cancel = '$user_cancel',
         updated_at = NOW()
-        WHERE no_service = '$no_service'";
+        WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'";
 
     if(!mysqli_query($koneksi, $query_update_service)) {
         throw new Exception('Gagal update tblservice: ' . mysqli_error($koneksi));
     }
 
     // 2. UPDATE tb_antrian_servis (jika ada)
-    $check_antrian = mysqli_query($koneksi, "SELECT * FROM tb_antrian_servis WHERE no_service='$no_service'");
+    $check_antrian = mysqli_query($koneksi, "SELECT * FROM tb_antrian_servis WHERE no_service='$no_service' AND kd_cabang='$kd_cabang_ns'");
     if(mysqli_num_rows($check_antrian) > 0) {
         $query_update_antrian = "UPDATE tb_antrian_servis SET
             status_antrian = 'batal',
@@ -143,7 +144,7 @@ try {
             user_batal = '$user_cancel',
             waktu_batal = NOW(),
             updated_at = NOW()
-            WHERE no_service = '$no_service'";
+            WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'";
 
         if(!mysqli_query($koneksi, $query_update_antrian)) {
             throw new Exception('Gagal update tb_antrian_servis: ' . mysqli_error($koneksi));
@@ -186,14 +187,14 @@ try {
     $log_id = mysqli_insert_id($koneksi);
 
     // 4. UPDATE tb_progress_mekanik (jika ada)
-    $check_progress = mysqli_query($koneksi, "SELECT * FROM tb_progress_mekanik WHERE no_service='$no_service'");
+    $check_progress = mysqli_query($koneksi, "SELECT * FROM tb_progress_mekanik WHERE no_service='$no_service' AND kd_cabang='$kd_cabang_ns'");
     if(mysqli_num_rows($check_progress) > 0) {
         $query_update_mekanik = "UPDATE tb_progress_mekanik SET
             status_kerja = 'selesai',
             jam_selesai = NOW(),
             catatan_kerja = CONCAT(IFNULL(catatan_kerja, ''), ' | Service dibatalkan: $alasan_cancel'),
             updated_at = NOW()
-            WHERE no_service = '$no_service'";
+            WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'";
 
         if(!mysqli_query($koneksi, $query_update_mekanik)) {
             throw new Exception('Gagal update progress mekanik: ' . mysqli_error($koneksi));

@@ -690,7 +690,7 @@ function evaluateSyaratPromo($koneksi, $id_promo, $mode_syarat, $no_pelanggan) {
         } else if($s['jenis_syarat'] == 'paket_workorder') {
             $placeholders = implode(',', array_fill(0, count($nilai_list), '?'));
             $stmt2 = mysqli_prepare($koneksi, "SELECT COUNT(*) c FROM tbservis_workorder w
-                                                INNER JOIN tblservice sv ON sv.no_service=w.no_service
+                                                INNER JOIN tblservice sv ON sv.no_service=w.no_service AND sv.kd_cabang=w.kd_cabang
                                                 WHERE sv.no_pelanggan=? AND w.kode_wo IN ($placeholders)");
             $types = "s" . str_repeat("s", count($nilai_list));
             $bind_names = [$stmt2, $types, $no_pelanggan];

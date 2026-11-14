@@ -1185,7 +1185,7 @@
                     status_antrian = 'selesai',
                     jam_selesai = NOW(),
                     updated_at = NOW()
-                    WHERE no_service = '$no_service'");
+                    WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'");
 
                 echo "<script>
                     alert('Pembayaran service garansi berhasil!\\nNo. Service: $no_service\\nTotal: Rp " . number_format($total_akhir, 0, ',', '.') . "');

@@ -54,9 +54,10 @@ if (!function_exists('generateNoDP')) {
 
 // Total DP masih pending (belum di-offset/batal) untuk sebuah no_service.
 if (!function_exists('getDpPendingTotal')) {
-    function getDpPendingTotal($koneksi, $no_service) {
+    function getDpPendingTotal($koneksi, $no_service, $kd_cabang = null) {
         $ns = mysqli_real_escape_string($koneksi, $no_service);
-        $q = mysqli_query($koneksi, "SELECT COALESCE(SUM(jumlah_dp),0) AS total FROM tb_dp_servis WHERE no_service='$ns' AND status='pending'");
+        $kc = mysqli_real_escape_string($koneksi, $kd_cabang ?? ($_SESSION['_cabang'] ?? '')); // identitas servis = (no_service, kd_cabang)
+        $q = mysqli_query($koneksi, "SELECT COALESCE(SUM(jumlah_dp),0) AS total FROM tb_dp_servis WHERE no_service='$ns' AND kd_cabang='$kc' AND status='pending'");
         $row = $q ? mysqli_fetch_assoc($q) : null;
         return $row ? (float)$row['total'] : 0.0;
     }
@@ -64,9 +65,10 @@ if (!function_exists('getDpPendingTotal')) {
 
 // Tandai semua DP pending milik no_service sebagai offset (dipakai saat pelunasan).
 if (!function_exists('offsetDpPending')) {
-    function offsetDpPending($koneksi, $no_service) {
+    function offsetDpPending($koneksi, $no_service, $kd_cabang = null) {
         $ns = mysqli_real_escape_string($koneksi, $no_service);
-        mysqli_query($koneksi, "UPDATE tb_dp_servis SET status='offset', tanggal_offset=NOW() WHERE no_service='$ns' AND status='pending'");
+        $kc = mysqli_real_escape_string($koneksi, $kd_cabang ?? ($_SESSION['_cabang'] ?? ''));
+        mysqli_query($koneksi, "UPDATE tb_dp_servis SET status='offset', tanggal_offset=NOW() WHERE no_service='$ns' AND kd_cabang='$kc' AND status='pending'");
     }
 }
 
@@ -132,7 +134,7 @@ function getTopKeluhan($koneksi, $limit = 10, $tgl_dari = null, $tgl_sampai = nu
                                  AVG(mk.estimasi_waktu) as avg_estimasi
                                  FROM tbmaster_keluhan mk
                                  JOIN tbservis_keluhan_status k ON k.keluhan LIKE CONCAT('%', mk.nama_keluhan, '%')
-                                 JOIN tblservice s ON k.no_service = s.no_service
+                                 JOIN tblservice s ON k.no_service = s.no_service AND k.kd_cabang = s.kd_cabang
                                  WHERE DATE(s.tanggal) BETWEEN '$tgl_dari' AND '$tgl_sampai'
                                  AND mk.status_aktif = '1'
                                  GROUP BY mk.id, mk.kode_keluhan, mk.nama_keluhan, mk.kategori, mk.tingkat_prioritas
@@ -377,7 +379,7 @@ function cleanOldTrackingData($koneksi, $days_to_keep = 90) {
     // ada sibling service (no_service sama, cabang lain) yang statusnya belum '4' (masih aktif).
     $sql = "DELETE kt FROM tbservis_keluhan_tracking kt
             JOIN tbservis_keluhan_status k ON kt.keluhan_id = k.id
-            JOIN tblservice s ON k.no_service = s.no_service
+            JOIN tblservice s ON k.no_service = s.no_service AND k.kd_cabang = s.kd_cabang
             WHERE DATE(s.tanggal) < '$cutoff_date'
             AND s.status = '4'
             AND k.status_pengerjaan = 'selesai'

@@ -999,7 +999,7 @@
             )");
 
             // Update jam_selesai karena langsung bayar
-            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET jam_selesai=NOW() WHERE no_service='$no_service'");
+            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET jam_selesai=NOW() WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
             inv_live_tx_commit(); // Moving Average live: komit sebelum panggilan WhatsApp/HTTP
             // ========== KIRIM WHATSAPP OTOMATIS ==========
@@ -1044,7 +1044,7 @@
             window.location=('servis-print.php?snoserv=$no_service');</script>";
         } else {
             // Sudah ada antrian, update status menjadi selesai
-            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET status_antrian='selesai', jam_selesai=NOW() WHERE no_service='$no_service'");
+            mysqli_query($koneksi, "UPDATE tb_antrian_servis SET status_antrian='selesai', jam_selesai=NOW() WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
             $existing_rst = mysqli_fetch_array($check_antrian_rst);
             $no_antrian_rst_exist = $existing_rst['no_antrian'];

@@ -56,7 +56,7 @@ if(empty($_SESSION['_iduser'])){
     // Ambil data antrian terbaru
     $query_antrian_terbaru = "SELECT a.*, s.no_polisi, s.no_pelanggan, p.namapelanggan 
                                FROM tb_antrian_servis a 
-                               LEFT JOIN tblservice s ON a.no_service = s.no_service $svc_cabang_cond_dash
+                               LEFT JOIN tblservice s ON a.no_service = s.no_service AND a.kd_cabang = s.kd_cabang $svc_cabang_cond_dash
                                LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan 
                                WHERE a.tanggal = '$tanggal_hari_ini' $exists_cabang_dash
                                ORDER BY a.created_at DESC 
@@ -67,7 +67,7 @@ if(empty($_SESSION['_iduser'])){
     $query_mekanik_bekerja = "SELECT pm.*, a.no_antrian, s.no_polisi, p.namapelanggan, pm.nama_mekanik
                               FROM tb_progress_mekanik pm 
                               LEFT JOIN tb_antrian_servis a ON pm.no_service = a.no_service 
-                              LEFT JOIN tblservice s ON pm.no_service = s.no_service $svc_cabang_cond_dash
+                              LEFT JOIN tblservice s ON pm.no_service = s.no_service AND pm.kd_cabang = s.kd_cabang $svc_cabang_cond_dash
                               LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan 
                               WHERE pm.status_kerja = 'bekerja' 
                               AND a.tanggal = '$tanggal_hari_ini' $exists_cabang_dash

@@ -29,7 +29,7 @@ if(empty($_SESSION['_iduser'])){
     $where_cabang_dp = $is_admin_dp ? '' : " AND EXISTS (SELECT 1 FROM tblservice sx WHERE sx.no_service = dp.no_service AND sx.kd_cabang = '$kd_cabang')";
     $q = mysqli_query($koneksi, "SELECT dp.*, s.no_pelanggan, p.namapelanggan
         FROM tb_dp_servis dp
-        LEFT JOIN tblservice s ON dp.no_service = s.no_service$svc_cabang_cond_dp
+        LEFT JOIN tblservice s ON dp.no_service = s.no_service AND dp.kd_cabang = s.kd_cabang$svc_cabang_cond_dp
         LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
         WHERE dp.tanggal_dp BETWEEN '$td' AND '$ts'$where_cabang_dp
         ORDER BY dp.tanggal_dp DESC, dp.id DESC");

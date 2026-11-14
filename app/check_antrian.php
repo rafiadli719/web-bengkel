@@ -63,7 +63,7 @@ echo "<h3>2. Data Antrian Servis Hari Ini ($tgl_hari_ini)</h3>";
 $query_antrian = mysqli_query($koneksi, "
     SELECT a.*, s.status_servis
     FROM tb_antrian_servis a
-    LEFT JOIN tblservice s ON a.no_service = s.no_service$exists_cabang_s
+    LEFT JOIN tblservice s ON a.no_service = s.no_service AND a.kd_cabang = s.kd_cabang$exists_cabang_s
     WHERE a.tanggal = '$tgl_hari_ini'$exists_cabang_a
     ORDER BY a.created_at DESC
 ");

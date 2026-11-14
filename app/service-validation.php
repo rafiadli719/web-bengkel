@@ -219,7 +219,7 @@ if(isset($_POST['btnupdatestatus'])) {
             if($status_servis == 'selesai' || $status_servis == 'bayar') {
                 mysqli_query($koneksi,"UPDATE tbservis_keluhan_status
                                       SET status_pengerjaan = 'selesai', updated_at = NOW()
-                                      WHERE no_service = '$no_service'
+                                      WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'
                                       AND status_pengerjaan IN ('datang', 'diproses')");
             }
             

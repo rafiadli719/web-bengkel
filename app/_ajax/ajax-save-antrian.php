@@ -11,6 +11,7 @@ $response = array('success' => false, 'message' => '', 'antrian_id' => '');
 try {
     $no_antrian = $_POST['no_antrian'] ?? '';
     $no_service = $_POST['no_service'] ?? '';
+    $kd_cabang_ns = mysqli_real_escape_string($koneksi, $_SESSION['_cabang'] ?? ''); // identitas servis = (no_service, kd_cabang)
     $prioritas = $_POST['prioritas'] ?? 'normal';
     $estimasi_waktu = $_POST['estimasi_waktu'] ?? 0;
     $catatan = $_POST['catatan'] ?? '';
@@ -23,7 +24,7 @@ try {
     $jam_ambil = date('H:i:s');
     
     // Cek apakah sudah ada antrian untuk service ini
-    $check_query = "SELECT id FROM tb_antrian_servis WHERE no_service = '$no_service'";
+    $check_query = "SELECT id FROM tb_antrian_servis WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'";
     $check_result = mysqli_query($koneksi, $check_query);
     
     if(mysqli_num_rows($check_result) > 0) {
@@ -34,14 +35,14 @@ try {
                         estimasi_waktu = '$estimasi_waktu',
                         catatan = '$catatan',
                         updated_at = CURRENT_TIMESTAMP
-                        WHERE no_service = '$no_service'";
+                        WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'";
         
         if(mysqli_query($koneksi, $update_query)) {
             $response['success'] = true;
             $response['message'] = 'Antrian berhasil diupdate';
             
             // Ambil ID antrian
-            $get_id = mysqli_query($koneksi, "SELECT id FROM tb_antrian_servis WHERE no_service = '$no_service'");
+            $get_id = mysqli_query($koneksi, "SELECT id FROM tb_antrian_servis WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang_ns'");
             $antrian_data = mysqli_fetch_array($get_id);
             $response['antrian_id'] = $antrian_data['id'];
         } else {

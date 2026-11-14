@@ -344,6 +344,7 @@ if(!empty($response['service_history'])) {
 }
 
 // 6. Get Keluhan History (complaints from previous services)
+// ns-audit-ignore: tblservis_keluhan = tabel legacy yang tidak ada di skema; jalur aktif (tbservis_keluhan_status) sudah join (no_service, kd_cabang).
 $keluhanTable = firstExistingTable($koneksi, ['tblservis_keluhan', 'tbservis_keluhan_status']);
 if ($keluhanTable === 'tblservis_keluhan') {
     $sql_keluhan = "SELECT
@@ -376,7 +377,7 @@ if ($keluhanTable === 'tblservis_keluhan') {
         sk.created_at,
         s.tanggal as tanggal_service
     FROM tbservis_keluhan_status sk
-    JOIN tblservice s ON sk.no_service = s.no_service
+    JOIN tblservice s ON sk.no_service = s.no_service AND sk.kd_cabang = s.kd_cabang
     WHERE s.no_polisi = '$nopol'
     ORDER BY sk.created_at DESC
     LIMIT 10";

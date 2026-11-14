@@ -2593,7 +2593,7 @@
                                 SET status_antrian='selesai', 
                                     jam_selesai=NOW(), 
                                     updated_at=NOW() 
-                                WHERE no_service='$no_service'");
+                                WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
 
         // 🆕 AUTO-UPDATE STATISTIK PELANGGAN, MEMBER TIER & HISTORY SERVICE
         $get_customer = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");

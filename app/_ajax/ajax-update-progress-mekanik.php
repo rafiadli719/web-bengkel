@@ -52,7 +52,8 @@ try {
         $types .= 'ss';
         $vals[] = $no_service;
         $vals[] = $mekanik_id;
-        $stmt = mysqli_prepare($koneksi, "UPDATE tb_progress_mekanik SET $set, updated_at = CURRENT_TIMESTAMP WHERE no_service = ? AND mekanik_id = ?");
+        $stmt = mysqli_prepare($koneksi, "UPDATE tb_progress_mekanik SET $set, updated_at = CURRENT_TIMESTAMP WHERE no_service = ? AND mekanik_id = ? AND kd_cabang = ?");
+        $types .= 's'; $vals[] = ($_SESSION['_cabang'] ?? '');
         mysqli_stmt_bind_param($stmt, $types, ...$vals);
         if(!mysqli_stmt_execute($stmt)) {
             throw new Exception('Gagal update progress mekanik: ' . mysqli_stmt_error($stmt));

@@ -61,7 +61,7 @@ try {
         if($count_data['count'] == 0) {
             // Hapus workorder detail items terlebih dahulu
             $delete_jasa = "DELETE FROM tblservis_jasa 
-                           WHERE no_service = '$no_service' 
+                           WHERE no_service = '$no_service' AND kd_cabang = '" . mysqli_real_escape_string($koneksi, $_SESSION['_cabang'] ?? '') . "' 
                              AND no_item IN (
                                  SELECT kode_barang FROM tbworkorderdetail 
                                  WHERE kode_wo = '$auto_workorder' AND tipe = '1'
@@ -69,7 +69,7 @@ try {
             mysqli_query($koneksi, $delete_jasa);
             
             $delete_barang = "DELETE FROM tblservis_barang 
-                             WHERE no_service = '$no_service' 
+                             WHERE no_service = '$no_service' AND kd_cabang = '" . mysqli_real_escape_string($koneksi, $_SESSION['_cabang'] ?? '') . "' 
                                AND no_item IN (
                                    SELECT kode_barang FROM tbworkorderdetail 
                                    WHERE kode_wo = '$auto_workorder' AND tipe = '2'
@@ -78,7 +78,7 @@ try {
             
             // Hapus workorder
             $delete_workorder = "DELETE FROM tbservis_workorder 
-                               WHERE no_service = '$no_service' 
+                               WHERE no_service = '$no_service' AND kd_cabang = '" . mysqli_real_escape_string($koneksi, $_SESSION['_cabang'] ?? '') . "' 
                                  AND kode_wo = '$auto_workorder'";
             if(!mysqli_query($koneksi, $delete_workorder)) {
                 mysqli_rollback($koneksi);

@@ -524,7 +524,7 @@
                         tanggal = '$tanggal_service',
                         jam_ambil = '$jam_input',
                         updated_at = NOW()
-                        WHERE no_service = '$no_service'";
+                        WHERE no_service = '$no_service' AND kd_cabang = '$kd_cabang'";
                     mysqli_query($koneksi, $query_update_antrian);
                     
                     echo "<script>
@@ -771,7 +771,7 @@
                     jam_selesai=NOW(),
                     prioritas='normal', -- Ensure priority is set
                     updated_at=NOW() 
-                WHERE no_service='$no_service'");
+                WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
             
             // 🆕 AUTO-UPDATE STATISTIK PELANGGAN, MEMBER TIER & HISTORY SERVICE
             $get_customer = mysqli_query($koneksi, "SELECT no_pelanggan FROM tblservice WHERE no_service='$no_service'");

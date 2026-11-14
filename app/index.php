@@ -336,7 +336,7 @@
 																$query_antrian_terbaru = mysqli_query($koneksi, "
 						SELECT a.*, p.namapelanggan, s.no_polisi, s.tipe_service, s.status_servis, s.jam AS jam_service
 						FROM tb_antrian_servis a
-						LEFT JOIN tblservice s ON a.no_service = s.no_service$svc_cabang_cond
+						LEFT JOIN tblservice s ON a.no_service = s.no_service AND a.kd_cabang = s.kd_cabang$svc_cabang_cond
 						LEFT JOIN tblpelanggan p ON s.no_pelanggan = p.nopelanggan
 						WHERE a.tanggal = '$tgl_hari_ini'$where_cabang_antrian
 						ORDER BY a.created_at DESC
