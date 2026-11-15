@@ -1,0 +1,397 @@
+nama,tipe,baris,kategori,file_kode_runtime,file_penulis,dipakai_view,punya_pk,jumlah_index,collation,rekomendasi,contoh_file
+bulan_transaksi,BASE TABLE,12,AKTIF,4,0,0,ya,1,latin1_swedish_ci,pertahankan,_managemen/_template/_dashboard_header.php | _managemen/index-novri.php
+closing_revision_requests_closing_kasir,BASE TABLE,8,AKTIF,6,3,0,ya,5,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/closing_revisi.php | app/_keuangan/kasir/closing_revisi_admin.php
+customer_alias,BASE TABLE,1,AKTIF,1,1,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/customer_merge_approve.php
+customer_merge_log,BASE TABLE,2,AKTIF,2,2,0,ya,4,utf8mb4_unicode_ci,pertahankan,app/admin_deteksi_pelanggan_dobel.php | app/customer_merge_approve.php
+data_penjualan_closing_kasir,BASE TABLE,2300,AKTIF,10,2,0,ya,3,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+data_servis_closing_kasir,BASE TABLE,2300,AKTIF,10,2,0,ya,3,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+detail_kas_akhir,BASE TABLE,20897,AKTIF,6,2,0,ya,2,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/closing_revision_helpers.php | app/_keuangan/kasir/edit_kas_akhir.php
+detail_kas_awal,BASE TABLE,12799,AKTIF,6,2,0,ya,2,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/closing_revision_helpers.php | app/_keuangan/kasir/edit_kas_awal.php
+inv_audit_log,BASE TABLE,6,AKTIF,3,1,0,ya,2,utf8mb4_0900_ai_ci,pertahankan,app/_include_inv_shadow.php | app/_inventory/admin.php
+inv_claim_receivable,BASE TABLE,1,AKTIF,2,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan,app/_inventory/laporan_lain.php | app/lib/InventoryCorrection.php
+inv_config,BASE TABLE,10,AKTIF,6,2,0,ya,1,utf8mb4_0900_ai_ci,pertahankan,app/_include_inv_shadow.php | app/_inventory/admin.php
+inv_location,BASE TABLE,9,AKTIF,2,0,0,ya,2,utf8mb4_0900_ai_ci,pertahankan,app/_include_inv_shadow.php | app/lib/InventoryService.php
+kas_akhir,BASE TABLE,2339,AKTIF,15,2,3,ya,3,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+kas_awal,BASE TABLE,2351,AKTIF,13,2,3,ya,3,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+kas_awal_config_closing_kasir,BASE TABLE,4,AKTIF,1,1,0,ya,3,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/kas_awal_config_crud.php
+kasir_transactions_closing_kasir,BASE TABLE,2349,AKTIF,37,13,7,ya,10,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+kendaraan_plat_history,BASE TABLE,37354,AKTIF,2,2,0,ya,4,utf8mb4_general_ci,pertahankan,app/kendaraan_nopol_lama.php | app/save_kendaraan.php
+keping_closing_kasir,BASE TABLE,10,AKTIF,7,1,0,ya,1,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/edit_kas_akhir.php | app/_keuangan/kasir/edit_kas_awal.php
+konfirmasi_buka_transaksi_closing_kasir,BASE TABLE,31,AKTIF,3,2,0,ya,6,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/includes/super_admin_task_reminder.php | app/_keuangan/kasir/konfirmasi_buka_transaksi.php
+konsolidasi_pembelian_detail,BASE TABLE,6,AKTIF,1,1,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/_include_access_sync.php
+konsolidasi_pembelian_header,BASE TABLE,2,AKTIF,1,1,0,ya,3,utf8mb4_unicode_ci,pertahankan,app/_include_access_sync.php
+konsolidasi_penjualan_detail,BASE TABLE,6,AKTIF,1,1,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/_include_access_sync.php
+konsolidasi_penjualan_header,BASE TABLE,2,AKTIF,1,1,0,ya,3,utf8mb4_unicode_ci,pertahankan,app/_include_access_sync.php
+konsolidasi_service,BASE TABLE,6,AKTIF,1,1,0,ya,4,utf8mb4_unicode_ci,pertahankan,app/_include_access_sync.php
+master_akun_closing_kasir,BASE TABLE,34,AKTIF,16,1,5,ya,4,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/detail_pemasukan.php | app/_keuangan/kasir/detail_pengeluaran.php
+master_jenis_masalah,BASE TABLE,6,AKTIF,1,0,0,ya,1,utf8mb4_0900_ai_ci,pertahankan,app/issue_add.php
+master_kategori_member,BASE TABLE,8,AKTIF,10,5,1,ya,4,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-discount-preview.php | app/_include_kategori_member.php
+master_kedatangan_pelanggan,BASE TABLE,5,AKTIF,1,0,2,ya,7,latin1_swedish_ci,pertahankan,app/detail_pelanggan.php
+master_nama_transaksi_closing_kasir,BASE TABLE,159,AKTIF,8,1,0,ya,2,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/edit_pemasukan.php | app/_keuangan/kasir/edit_pemasukan1.php
+master_perusahaan,BASE TABLE,1,AKTIF,5,1,0,ya,4,utf8mb4_general_ci,pertahankan,app/master_perusahaan.php | app/menu_config.php
+master_rekening_cabang_closing_kasir,BASE TABLE,5,AKTIF,7,1,0,ya,4,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_csv.php | app/_keuangan/kasir/export/export_excel_setoran.php
+master_tarif_jemput_range,BASE TABLE,8,AKTIF,2,1,1,ya,2,utf8mb4_general_ci,pertahankan,app/functions/tarif_jemput_helper.php | app/master-tarif-jemput.php
+pemasukan_kasir_closing_kasir,BASE TABLE,1830,AKTIF,23,5,6,ya,7,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+pemasukan_pusat_closing_kasir,BASE TABLE,21,AKTIF,6,1,1,ya,6,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_excel.php | app/_keuangan/kasir/export/export_excel_pemasukan.php
+pengambilan_setoran_closing_kasir,BASE TABLE,8,AKTIF,9,3,0,ya,11,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/edit_pemasukan1.php | app/_keuangan/kasir/histori_gudang.php
+pengambilan_setoran_pembayaran_closing_kasir,BASE TABLE,8,AKTIF,1,1,0,ya,4,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/process_pengadaan_verification.php
+pengeluaran_kasir_closing_kasir,BASE TABLE,23182,AKTIF,13,4,1,ya,6,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/cek_data.php | app/_keuangan/kasir/closing.php
+pengeluaran_pusat_closing_kasir,BASE TABLE,934,AKTIF,5,1,1,ya,6,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_excel.php | app/_keuangan/kasir/export/export_excel_pengeluaran.php
+serah_terima_kasir_closing_kasir,BASE TABLE,2,AKTIF,3,1,0,ya,6,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/index_kasir.php | app/_keuangan/kasir/serah_terima.php
+servis_komisi,BASE TABLE,12,AKTIF,2,2,0,ya,4,utf8mb4_0900_ai_ci,pertahankan,app/_include_komisi_snapshot.php | app/issue_add.php
+setoran_ke_bank_closing_kasir,BASE TABLE,364,AKTIF,9,3,0,ya,5,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_csv.php | app/_keuangan/kasir/export/export_excel_rekap_bank.php
+setoran_ke_bank_detail_closing_kasir,BASE TABLE,600,AKTIF,8,1,0,ya,4,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_csv.php | app/_keuangan/kasir/export/export_excel_rekap_bank.php
+setoran_keuangan_closing_kasir,BASE TABLE,1394,AKTIF,11,3,3,ya,8,latin1_swedish_ci,pertahankan,app/_keuangan/kasir/export/export_csv.php | app/_keuangan/kasir/export/export_excel_rekap_bank.php
+setting_highlight_member,BASE TABLE,5,AKTIF,4,2,0,ya,2,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-discount-preview.php | app/pelanggan_kategori.php
+statistik_pelanggan,BASE TABLE,37111,AKTIF,35,7,4,ya,6,latin1_swedish_ci,pertahankan,app/_ajax/ajax-cari-pelanggan.php | app/_ajax/ajax-get-discount-preview.php
+tb_antrian_servis,BASE TABLE,18,AKTIF,21,12,0,ya,6,utf8mb4_general_ci,pertahankan,app/_ajax/ajax-generate-antrian.php | app/_ajax/ajax-refresh-antrian-dashboard.php
+tb_approval_diskon,BASE TABLE,1,AKTIF,2,2,0,ya,3,latin1_swedish_ci,pertahankan,app/approval-diskon.php | app/helper-functions.php
+tb_dp_servis,BASE TABLE,1,AKTIF,7,3,0,ya,4,latin1_swedish_ci,pertahankan,app/_ajax/ajax-batal-dp.php | app/_ajax/ajax-catat-dp.php
+tb_kepala_mekanik_schedule,BASE TABLE,5,AKTIF,2,1,0,ya,2,utf8mb4_general_ci,pertahankan,app/_template/panel-kiri-kasir.php | app/input_kepala_mekanik_harian.php
+tb_log_cancel_servis,BASE TABLE,1,AKTIF,3,1,1,ya,6,utf8mb4_general_ci,pertahankan,app/_include_statistik_pelanggan.php | app/laporan-cancel-servis.php
+tb_master_approval_pembelian,BASE TABLE,2,AKTIF,4,1,0,ya,1,utf8mb4_0900_ai_ci,pertahankan,app/do_from_po.php | app/master-approval-pembelian.php
+tb_master_garansi,BASE TABLE,1,AKTIF,1,1,0,ya,1,latin1_swedish_ci,pertahankan,app/sql/migration_fase1_2026.sql
+tb_master_level,BASE TABLE,15,AKTIF,1,0,0,ya,3,utf8mb4_general_ci,pertahankan,app/master-posisi.php
+tb_master_posisi,BASE TABLE,11,AKTIF,13,1,0,ya,3,utf8mb4_general_ci,pertahankan,app/_include_menu_rbac.php | app/_komplain/koneksi_komplain.php
+tb_master_threshold_harga,BASE TABLE,2,AKTIF,1,1,0,ya,2,utf8mb4_0900_ai_ci,pertahankan,app/setting-threshold-harga.php
+tb_permissions,BASE TABLE,19,AKTIF,1,1,0,ya,2,utf8mb4_general_ci,pertahankan,app/database_update_user_management.sql
+tb_user_activity_log,BASE TABLE,23,AKTIF,4,2,0,ya,4,utf8mb4_general_ci,pertahankan,app/database_update_user_management.sql | config/permission_check.php
+tb_user_roles,BASE TABLE,9,AKTIF,7,4,1,ya,3,utf8mb4_general_ci,pertahankan,app/database_update_user_management.sql | role_management/ajax/get_role.php
+tbabsensi,BASE TABLE,620,AKTIF,0,0,1,ya,1,latin1_swedish_ci,pertahankan,
+tbakun,BASE TABLE,27,AKTIF,25,6,0,TIDAK,0,utf8mb3_general_ci,pertahankan,_managemen/lap_kas_keluar.php | _managemen/lap_kas_masuk.php
+tbakun_pos,BASE TABLE,2,AKTIF,2,0,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/akun_biaya_edit.php | app/sub_akun_add.php
+tbbagi_hasil,BASE TABLE,4,AKTIF,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan,_sync_gabung_direct.vbs | app/access-sync.php
+tbcabang,BASE TABLE,5,AKTIF,445,5,1,ya,3,utf8mb4_general_ci,pertahankan,_managemen/_template/_dashboard_penjualan.php | _managemen/_template/_dashboard_piutang.php
+tbcabang_tipe,BASE TABLE,2,AKTIF,12,3,0,ya,1,latin1_swedish_ci,pertahankan,_managemen/_template/_dashboard_penjualan.php | _managemen/index-novri.php
+tbcari,BASE TABLE,55,AKTIF,33,0,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_cari-item-service.php | app/_template/_cari-jasa-service.php
+tbhargajual,BASE TABLE,10,AKTIF,13,5,0,ya,1,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-discount-preview.php | app/_include_kategori_member.php
+tbhjual_jasa,BASE TABLE,5,AKTIF,7,3,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_edit.php
+tbitem_keluar_detail,BASE TABLE,4,AKTIF,18,10,0,ya,1,latin1_swedish_ci,pertahankan,app/_include_inv_shadow.php | app/_template/_stok_keluar_detail.php
+tbitem_keluar_header,BASE TABLE,3,AKTIF,15,3,0,TIDAK,0,latin1_swedish_ci,pertahankan,_managemen/lap_stok_keluar.php | app/function_stok_keluar.php
+tbitem_masuk_detail,BASE TABLE,78,AKTIF,20,11,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_stok_masuk_detail.php | app/_template/_stok_masuk_detail_cetak.php
+tbitem_masuk_header,BASE TABLE,84,AKTIF,16,3,0,TIDAK,0,latin1_swedish_ci,pertahankan,_managemen/lap_stok_masuk.php | app/function_stok_masuk.php
+tbjenis_motor,BASE TABLE,10,AKTIF,19,3,0,ya,1,latin1_swedish_ci,pertahankan,app/item-motor-mapping.php | app/kendaraan_add.php
+tbjenis_penggantian_retur,BASE TABLE,4,AKTIF,6,0,0,ya,1,latin1_swedish_ci,pertahankan,app/ajax_get_items_retur_pembelian.php | app/ajax_get_items_retur_penjualan.php
+tbkategori_motor,BASE TABLE,6,AKTIF,23,7,0,ya,1,latin1_swedish_ci,pertahankan,app/get_kategori_motor.php | app/item-motor-mapping.php
+tbkategori_rak,BASE TABLE,10,AKTIF,6,2,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_edit_improved.php | app/barang_list_improved.php
+tbkeluhan_proses,BASE TABLE,8,AKTIF,6,1,0,ya,2,latin1_swedish_ci,pertahankan,app/ajax-get-detail-proses.php | app/ajax-preview-proses.php
+tbkeping,BASE TABLE,11,AKTIF,5,3,0,ya,1,latin1_swedish_ci,pertahankan,app/keping.php | app/keping_del.php
+tbkomisijl_sales1,BASE TABLE,2,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/sales_add.php | app/sales_edit.php
+tbkomisijl_sales2,BASE TABLE,2,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/sales_add.php | app/sales_edit.php
+tbl_adm,BASE TABLE,1140,AKTIF,26,12,0,ya,1,utf8mb3_general_ci,pertahankan,app/cari_kab.php | app/cari_kec.php
+tbl_issue,BASE TABLE,4,AKTIF,2,2,0,ya,5,utf8mb4_unicode_ci,pertahankan,app/customer_merge_approve.php | app/issue_add.php
+tbl_issue_progress_log,BASE TABLE,6,AKTIF,2,2,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/customer_merge_approve.php | app/issue_add.php
+tbl_kepala_mekanik_harian,BASE TABLE,21,AKTIF,7,1,0,ya,4,utf8mb4_general_ci,pertahankan,app/get_kepala_mekanik_harian.php | app/input_kepala_mekanik_harian.php
+tbl_service_seq_counter,BASE TABLE,4,AKTIF,1,1,0,ya,1,utf8mb4_unicode_ci,pertahankan,app/function_servis.php
+tblakunkas,BASE TABLE,3,AKTIF,19,3,0,ya,1,latin1_swedish_ci,pertahankan,_managemen/lap_kas_keluar.php | _managemen/lap_kas_masuk.php
+tbldelivery_order_detail,BASE TABLE,54,AKTIF,5,2,1,ya,3,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/do_detail.php
+tbldelivery_order_header,BASE TABLE,4,AKTIF,7,3,2,ya,4,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/do_detail.php
+tbldo_tracking,BASE TABLE,4,AKTIF,4,3,1,ya,2,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/do_from_po.php
+tblevel,BASE TABLE,9,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/user.php | app/user_edit.php
+tblitem,BASE TABLE,5919,AKTIF,182,12,8,TIDAK,5,latin1_swedish_ci,pertahankan,app/_ajax/ajax-cari-barang.php | app/_ajax/ajax-get-workorder-details.php
+tblitem_harga_cabang,BASE TABLE,1,AKTIF,1,1,0,ya,3,latin1_swedish_ci,pertahankan,app/_include_access_sync.php
+tblitem_jasa,BASE TABLE,144,AKTIF,8,0,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/_ajax/ajax-search-jasa.php | app/_template/_servis_header2_servis.php
+tblitem_minmax,BASE TABLE,559,AKTIF,6,2,0,ya,5,utf8mb4_general_ci,pertahankan,app/_ajax/ajax-minmax-calculation.php | app/database_migrations/01_rencana_order_tables.sql
+tblitem_spart,BASE TABLE,37,AKTIF,11,4,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_item_add_tabel1_edit.php | app/_template/_item_add_tabel2_edit.php
+tblitem_stok,BASE TABLE,15,AKTIF,9,5,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/barang.php | app/barang_del.php
+tblitemjenis,BASE TABLE,19,AKTIF,12,4,0,ya,2,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_add_improved.php
+tblitemsatuan,BASE TABLE,17,AKTIF,12,6,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_add_improved.php
+tbljenis,BASE TABLE,5,AKTIF,3,1,1,ya,1,utf8mb4_general_ci,pertahankan,app/barang_edit_improved.php | app/barang_validate.php
+tblkas_keluar_masuk,BASE TABLE,1,AKTIF,19,6,0,TIDAK,0,latin1_swedish_ci,pertahankan,_managemen/lap_kas_keluar.php | _managemen/lap_kas_masuk.php
+tblkendaraan,BASE TABLE,37355,AKTIF,34,9,5,TIDAK,2,latin1_swedish_ci,pertahankan,app/_ajax/ajax-cari-kendaraan.php | app/_include_access_sync.php
+tblkomplain,BASE TABLE,5,AKTIF,15,6,0,ya,6,latin1_swedish_ci,pertahankan,app/_komplain/ajax_cari_service_nopol.php | app/_komplain/ajax_cek_riwayat_nopol.php
+tblkomplain_export_log,BASE TABLE,21,AKTIF,1,1,0,ya,1,latin1_swedish_ci,pertahankan,app/_komplain/export.php
+tblkomplain_kategori,BASE TABLE,6,AKTIF,6,1,0,ya,2,latin1_swedish_ci,pertahankan,app/_komplain/ajax_submit_komplain.php | app/_komplain/antrian_approval.php
+tblkomplain_log,BASE TABLE,5,AKTIF,2,1,0,ya,2,latin1_swedish_ci,pertahankan,app/_komplain/detail.php | app/_komplain/koneksi_komplain.php
+tblkomplain_setting,BASE TABLE,1,AKTIF,3,1,0,ya,1,latin1_swedish_ci,pertahankan,app/_komplain/ajax_keputusan_rework.php | app/_komplain/koneksi_komplain.php
+tblnamabarang,BASE TABLE,8,AKTIF,4,3,0,ya,2,utf8mb3_general_ci,pertahankan,app/master_nama_barang.php | app/master_nama_barang_add.php
+tblorder_antarcab_detail,BASE TABLE,3,AKTIF,7,4,0,ya,3,latin1_swedish_ci,pertahankan,app/database_migrations/create_tblorder_antarcab.sql | app/pengadaan_antarcab_add.php
+tblorder_antarcab_header,BASE TABLE,3,AKTIF,11,4,0,ya,4,latin1_swedish_ci,pertahankan,app/database_migrations/create_tblorder_antarcab.sql | app/lap_antarcab.php
+tblorder_detail,BASE TABLE,87,AKTIF,27,14,2,ya,1,latin1_swedish_ci,pertahankan,app/_ajax/ajax-validate-po-upload.php | app/_include_inv_shadow.php
+tblorder_header,BASE TABLE,7,AKTIF,24,11,3,ya,3,utf8mb4_unicode_ci,pertahankan,app/_ajax/ajax-validate-po-upload.php | app/_template/nomor/_no_pesanan_pembelian.php
+tblorderjual_detail,BASE TABLE,5,AKTIF,37,18,0,ya,1,latin1_swedish_ci,pertahankan,app/_ajax/ajax-validate-antarcab-upload.php | app/_template/_pesanan_penjualan_cab_detail.php
+tblorderjual_header,BASE TABLE,5,AKTIF,30,13,1,TIDAK,0,latin1_swedish_ci,pertahankan,app/_ajax/ajax-validate-antarcab-upload.php | app/antarcab_list.php
+tblpelanggan,BASE TABLE,37674,AKTIF,92,12,18,TIDAK,5,latin1_swedish_ci,pertahankan,app/_ajax/ajax-cari-pelanggan.php | app/_ajax/ajax-refresh-antrian-dashboard.php
+tblpelanggangrup,BASE TABLE,6,AKTIF,12,3,1,TIDAK,0,latin1_swedish_ci,pertahankan,app/_ajax/ajax-cari-pelanggan.php | app/_include_access_sync.php
+tblpembelian_detail,BASE TABLE,31,AKTIF,21,9,1,ya,1,latin1_swedish_ci,pertahankan,app/_inventory/opening_stock.php | app/_template/_pembelian_cetak.php
+tblpembelian_header,BASE TABLE,4,AKTIF,30,7,1,TIDAK,2,utf8mb4_unicode_ci,pertahankan,_managemen/index-novri.php | _managemen/index.php
+tblpenjualan_detail,BASE TABLE,2,AKTIF,25,11,1,ya,1,latin1_swedish_ci,pertahankan,app/_include_inv_shadow.php | app/_template/_hitung_penjualan.php
+tblpenjualan_harian,BASE TABLE,2151,AKTIF,4,2,0,ya,2,utf8mb4_general_ci,pertahankan,app/database_migrations/01_rencana_order_tables.sql | app/database_migrations/03_update_struktur_dinamis.sql
+tblpenjualan_header,BASE TABLE,2,AKTIF,32,9,2,TIDAK,0,latin1_swedish_ci,pertahankan,_managemen/_template/_dashboard_penjualan.php | _managemen/_template/_dashboard_piutang.php
+tblpenjualan_mingguan,BASE TABLE,1181,AKTIF,4,2,0,ya,2,utf8mb4_general_ci,pertahankan,app/database_migrations/01_rencana_order_tables.sql | app/database_migrations/03_update_struktur_dinamis.sql
+tblpo_approval_log,BASE TABLE,1,AKTIF,2,1,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/po_approval_action.php
+tblpurchase_request_detail,BASE TABLE,56,AKTIF,6,3,2,ya,3,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/do_from_po.php
+tblpurchase_request_header,BASE TABLE,19,AKTIF,6,3,3,ya,4,utf8mb4_unicode_ci,pertahankan,app/db_update_procurement.php | app/do_from_po.php
+tblretur_servis_detail,BASE TABLE,2,AKTIF,4,2,0,ya,1,latin1_swedish_ci,pertahankan,app/retur_servis_approve.php | app/retur_servis_batal.php
+tblretur_servis_header,BASE TABLE,2,AKTIF,6,3,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/function_retur.php | app/retur_servis.php
+tblsales,BASE TABLE,2,AKTIF,21,3,1,TIDAK,0,latin1_swedish_ci,pertahankan,_managemen/lap_penjualan.php | app/_template/_penjualan_header.php
+tblsatuan,BASE TABLE,5,AKTIF,3,1,0,ya,1,utf8mb4_general_ci,pertahankan,app/barang_edit_improved.php | app/barang_validate.php
+tblservice,BASE TABLE,103552,AKTIF,126,33,9,TIDAK,11,latin1_swedish_ci,pertahankan,_managemen/_template/_dashboard_penjualan.php | _managemen/index-novri.php
+tblservice_advisor,BASE TABLE,67223,AKTIF,1,1,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/_include_access_sync.php
+tblservice_no_counter,BASE TABLE,1,AKTIF,1,1,0,ya,1,utf8mb4_unicode_ci,pertahankan,app/function_servis.php
+tblservis_barang,BASE TABLE,361892,AKTIF,63,26,0,ya,2,latin1_swedish_ci,pertahankan,_managemen/chartjs/servis-carinopol-kosongkan.php | _managemen/lap_servis.php
+tblservis_jasa,BASE TABLE,91912,AKTIF,57,25,0,ya,2,latin1_swedish_ci,pertahankan,_managemen/chartjs/servis-carinopol-kosongkan.php | _managemen/lap_servis.php
+tblsupplier,BASE TABLE,152,AKTIF,53,6,3,TIDAK,0,latin1_swedish_ci,pertahankan,app/_include_access_sync.php | app/_template/_lap_pesanan_pembelian_header.php
+tblsupplier_spart,BASE TABLE,6,AKTIF,5,4,0,ya,1,latin1_swedish_ci,pertahankan,app/save_supplier.php | app/supplier_del.php
+tbmaster_barang_custom,BASE TABLE,7,AKTIF,3,2,0,ya,3,utf8mb4_general_ci,pertahankan,app/_handler_barang_custom.php | app/database_migration_custom_items.php
+tbmaster_barang_fastmoves,BASE TABLE,69,AKTIF,3,1,0,ya,4,utf8mb4_unicode_ci,pertahankan,app/_handler_temuan_penawaran.php | app/_template/modal-fastmoves-part.php
+tbmaster_jenis_item,BASE TABLE,4,AKTIF,4,3,0,ya,4,latin1_swedish_ci,pertahankan,app/master_jenis_item.php | app/master_jenis_item_add.php
+tbmaster_kategori_fastmoves,BASE TABLE,49,AKTIF,3,1,0,ya,2,utf8mb4_unicode_ci,pertahankan,app/_handler_temuan_penawaran.php | app/_template/modal-fastmoves-part.php
+tbmaster_kategori_item,BASE TABLE,6,AKTIF,7,6,0,ya,4,latin1_swedish_ci,pertahankan,app/master_kategori_item.php | app/master_kategori_item_add.php
+tbmaster_kategori_member,BASE TABLE,4,AKTIF,4,0,0,ya,1,utf8mb4_0900_ai_ci,pertahankan,app/_include_kategori_member.php | app/class_whatsapp_automation.php
+tbmaster_keluhan,BASE TABLE,116,AKTIF,23,5,2,ya,4,latin1_swedish_ci,pertahankan,app/_template/modal-search-keluhan-combined.php | app/_template/modal-search-keluhan.php
+tbmaster_keluhan_workorder,BASE TABLE,14,AKTIF,4,2,0,ya,4,utf8mb4_unicode_ci,pertahankan,app/ajax-check-mapping-exists.php | app/ajax-get-mapping-detail.php
+tbmaster_nama_barang,BASE TABLE,6,AKTIF,1,0,0,ya,4,latin1_swedish_ci,pertahankan,app/ajax-search-barang.php
+tbmaster_temuan,BASE TABLE,10,AKTIF,20,5,4,ya,4,utf8mb4_unicode_ci,pertahankan,app/_handler_temuan_penawaran.php | app/_include_statistik_pelanggan.php
+tbmaster_temuan_barang_mapping,BASE TABLE,12,AKTIF,8,5,1,ya,5,utf8mb4_general_ci,pertahankan,app/_handler_temuan_penawaran.php | app/ajax-get-suggested-parts.php
+tbmaster_tipe_detail,BASE TABLE,3,AKTIF,6,4,0,ya,9,latin1_swedish_ci,pertahankan,app/master_tipe_detail.php | app/master_tipe_detail_add_simple.php
+tbmaster_tipe_header,BASE TABLE,4,AKTIF,13,6,0,ya,3,latin1_swedish_ci,pertahankan,app/master_merk_motor_del.php | app/master_tipe_detail.php
+tbmekanik_level,BASE TABLE,4,AKTIF,5,3,0,ya,1,latin1_swedish_ci,pertahankan,app/mekanik_level.php | app/mekanik_level_del.php
+tbpabrik_barang,BASE TABLE,5,AKTIF,10,3,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_edit.php
+tbpabrik_motor,BASE TABLE,9,AKTIF,41,6,1,ya,1,latin1_swedish_ci,pertahankan,app/_include_access_sync.php | app/_include_customer_vehicle_sync.php
+tbpersen_insentif,BASE TABLE,4,AKTIF,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan,_sync_gabung_direct.vbs | app/access-sync.php
+tbrakbarang,BASE TABLE,18,AKTIF,11,4,0,ya,1,latin1_swedish_ci,pertahankan,app/barang.php | app/barang_add_improved.php
+tbservis_keluhan,BASE TABLE,5,AKTIF,10,7,0,ya,2,latin1_swedish_ci,pertahankan,_managemen/chartjs/servis-carinopol-kosongkan.php | app/_template/_servis_byr_cetak_header_kanan.php
+tbservis_keluhan_status,BASE TABLE,63,AKTIF,48,15,4,ya,5,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-discount-preview.php | app/_ajax/edit_spk_keluhan.php
+tbservis_penawaran_part,BASE TABLE,8,AKTIF,16,7,3,ya,8,utf8mb4_unicode_ci,pertahankan,app/_handler_barang_custom.php | app/_handler_temuan_penawaran.php
+tbservis_pending_items,BASE TABLE,70,AKTIF,10,4,0,ya,5,utf8mb4_unicode_ci,pertahankan,app/_ajax/hapus_spk_workorder.php | app/_handler_status_keluhan_wo.php
+tbservis_pengerjaan,BASE TABLE,4,AKTIF,10,6,0,ya,2,latin1_swedish_ci,pertahankan,_managemen/chartjs/servis-carinopol-kosongkan.php | app/_template/_servis_byr_cetak_header_kanan.php
+tbservis_temuan,BASE TABLE,15,AKTIF,22,5,5,ya,9,utf8mb4_unicode_ci,pertahankan,app/_handler_temuan_penawaran.php | app/_include_statistik_pelanggan.php
+tbservis_workorder,BASE TABLE,58,AKTIF,33,12,2,ya,4,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-workorder-details.php | app/_ajax/ajax-save-workorder-to-service.php
+tbsetting,BASE TABLE,1,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_nota_pdf_parts.php | config/kop_cabang.php
+tbstatus_harga,BASE TABLE,9,AKTIF,5,3,0,ya,1,latin1_swedish_ci,pertahankan,app/save_status_harga.php | app/status_harga.php
+tbstatus_produk,BASE TABLE,2,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_edit.php
+tbstok,BASE TABLE,320322,AKTIF,53,35,2,ya,2,latin1_swedish_ci,pertahankan,app/_ajax/ajax-search-barang.php | app/_ajax/ajax-validate-antarcab-upload.php
+tbtipe_item,BASE TABLE,2,AKTIF,2,0,0,ya,1,latin1_swedish_ci,pertahankan,app/barang_add.php | app/barang_edit.php
+tbtipe_motor,BASE TABLE,104,AKTIF,33,5,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_item_add_tabel1.php | app/_template/_item_add_tabel1_edit.php
+tbtipe_potongan,BASE TABLE,3,AKTIF,2,0,0,TIDAK,0,latin1_swedish_ci,pertahankan,app/pelanggan_add.php | app/pelanggan_edit.php
+tbtipemotor,BASE TABLE,104,AKTIF,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan,_sync_gabung_direct.vbs | app/access-sync.php
+tburut,BASE TABLE,58,AKTIF,33,0,0,ya,1,latin1_swedish_ci,pertahankan,app/_template/_cari-item-service.php | app/_template/_cari-jasa-service.php
+tbuser,BASE TABLE,57,AKTIF,521,10,6,ya,3,utf8mb4_general_ci,pertahankan,_managemen/change_pwd.php | _managemen/change_pwd_proses.php
+tbuser_karyawan,BASE TABLE,98,AKTIF,16,3,2,ya,8,utf8mb4_general_ci,pertahankan,app/_include_access_sync.php | app/_template/_servis_actions_tab.php
+tbwarna,BASE TABLE,157,AKTIF,14,3,0,ya,1,latin1_swedish_ci,pertahankan,app/kendaraan_add.php | app/kendaraan_edit.php
+tbwilayah,BASE TABLE,250,AKTIF,3,0,0,ya,4,latin1_swedish_ci,pertahankan,app/get_cities.php | app/get_districts.php
+tbworkorder_jenis_motor,BASE TABLE,5,AKTIF,5,2,0,ya,3,utf8mb4_0900_ai_ci,pertahankan,app/item-motor-mapping.php | app/servis-add-jasa-cari.php
+tbworkorderdetail,BASE TABLE,18,AKTIF,36,15,3,ya,1,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-workorder-details.php | app/_template/_wo_brg_detail.php
+tbworkorderheader,BASE TABLE,9,AKTIF,64,6,4,TIDAK,0,latin1_swedish_ci,pertahankan,app/_ajax/ajax-get-workorder-details.php | app/_ajax/ajax-load-existing-items.php
+alarm_harga_beli,BASE TABLE,0,AKTIF-KOSONG,1,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/alarm-harga-beli.php
+inv_avg_history,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,2,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_inventory/laporan_kartu_stok.php | app/lib/InventoryService.php
+inv_balance,BASE TABLE,0,AKTIF-KOSONG,7,1,0,ya,1,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_inv_shadow.php | app/_inventory/admin.php
+inv_correction_request,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,2,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_inventory/koreksi.php | app/lib/InventoryCorrection.php
+inv_journal,BASE TABLE,0,AKTIF-KOSONG,1,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/lib/InventoryJournal.php
+inv_journal_line,BASE TABLE,0,AKTIF-KOSONG,1,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/lib/InventoryJournal.php
+inv_ledger,BASE TABLE,0,AKTIF-KOSONG,7,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_inv_shadow.php | app/_inventory/laporan_kartu_stok.php
+inv_period,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,1,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_inventory/admin.php | app/lib/InventoryService.php
+inv_ppv_log,BASE TABLE,0,AKTIF-KOSONG,3,1,0,ya,2,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_inventory/laporan_lain.php | app/lib/InventoryCorrection.php
+inv_transit,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_inventory/laporan_lain.php | app/lib/InventoryCorrection.php
+kepemilikan_kendaraan,BASE TABLE,0,AKTIF-KOSONG,3,1,0,ya,5,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/detail_pelanggan.php | app/kendaraan_pindah_tangan.php
+master_diskon_periode,BASE TABLE,0,AKTIF-KOSONG,7,2,1,ya,1,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-get-discount-preview.php | app/_include_kategori_member.php
+master_diskon_periode_cabang,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,3,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_kategori_member.php | app/master-diskon-periode.php
+master_diskon_periode_syarat,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,2,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_kategori_member.php | app/master-diskon-periode.php
+master_diskon_periode_target,BASE TABLE,0,AKTIF-KOSONG,5,1,1,ya,3,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_kategori_member.php | app/master-diskon-periode.php
+master_jabatan,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/master_karyawan_add.php | app/master_karyawan_edit.php
+pengambilan_setoran_edit_log_closing_kasir,BASE TABLE,0,AKTIF-KOSONG,1,1,0,ya,3,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_keuangan/kasir/process_pengadaan_verification.php
+permintaan_pindah_kepemilikan_kendaraan,BASE TABLE,0,AKTIF-KOSONG,2,2,0,ya,4,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/kendaraan_pindah_tangan.php | app/kendaraan_pindah_tangan_approve.php
+promo_usage_log,BASE TABLE,0,AKTIF-KOSONG,2,1,0,ya,4,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_kategori_member.php | app/master-diskon-periode.php
+setting_kategori_member,BASE TABLE,0,AKTIF-KOSONG,5,2,0,ya,1,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-get-discount-preview.php | app/_include_kategori_member.php
+statistik_kendaraan,BASE TABLE,0,AKTIF-KOSONG,1,1,0,ya,2,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/kendaraan_pindah_tangan_approve.php
+tb_log_antrian,BASE TABLE,0,AKTIF-KOSONG,4,4,0,ya,4,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-save-antrian.php | app/_ajax/ajax-update-progress-mekanik.php
+tb_progress_mekanik,BASE TABLE,0,AKTIF-KOSONG,7,3,0,ya,5,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-refresh-antrian-dashboard.php | app/_ajax/ajax-save-service.php
+tb_user_mekanik_mapping,BASE TABLE,0,AKTIF-KOSONG,5,3,1,ya,3,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/database_update_user_management.sql | app/mekanik_management.php
+tbbeli_peritem_history,BASE TABLE,0,AKTIF-KOSONG,4,1,0,ya,5,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_access_sync.php | app/access-sync.php
+tbharga_jual_rules,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,2,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/access-sync.php | app/sql/create_tables_urgensi_tinggi.sql
+tbinsentif_jual_servis,BASE TABLE,0,AKTIF-KOSONG,4,1,0,ya,7,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_include_access_sync.php | app/access-sync.php
+tbitem_jenis_motor,BASE TABLE,0,AKTIF-KOSONG,7,2,0,ya,3,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-search-barang.php | app/_ajax/ajax-search-jasa.php
+tbitem_validation_log,BASE TABLE,0,AKTIF-KOSONG,4,3,0,ya,1,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/barang_edit_improved.php | app/database_checker.php
+tbl_setting_antarcabang,BASE TABLE,0,AKTIF-KOSONG,7,2,0,ya,2,utf8mb4_0900_ai_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_ajax/ajax-validate-antarcab-upload.php | app/database_migrations/migration_antarcab_upload.sql
+tblhutang_detail,BASE TABLE,0,AKTIF-KOSONG,12,4,0,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_template/_pmby_hutang_list_cetak.php | app/_template/_pmby_hutang_list_next.php
+tblhutang_header,BASE TABLE,0,AKTIF-KOSONG,10,1,1,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_managemen/index-novri.php | _managemen/index.php
+tblitem_koreksi_detail,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tblitem_koreksi_header,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tblitem_mutasi_detail,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tblitem_mutasi_header,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tblpiutang_detail,BASE TABLE,0,AKTIF-KOSONG,11,6,0,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_template/_pmby_piutang_list_cetak.php | app/_template/_pmby_piutang_list_next.php
+tblpiutang_header,BASE TABLE,0,AKTIF-KOSONG,9,3,1,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_managemen/_template/_dashboard_piutang.php | _managemen/index-novri.php
+tblpr_approval_log,BASE TABLE,0,AKTIF-KOSONG,1,0,0,ya,2,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/db_update_procurement.php
+tblretur_pembelian_detail,BASE TABLE,0,AKTIF-KOSONG,4,2,0,ya,1,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/retur_pembelian_batal.php | app/retur_pembelian_cetak.php
+tblretur_pembelian_header,BASE TABLE,0,AKTIF-KOSONG,8,3,1,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/function_retur.php | app/lap_retur_pembelian.php
+tblretur_penjualan_detail,BASE TABLE,0,AKTIF-KOSONG,4,2,0,ya,1,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/retur_penjualan_batal.php | app/retur_penjualan_cetak.php
+tblretur_penjualan_header,BASE TABLE,0,AKTIF-KOSONG,8,3,1,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/function_retur.php | app/lap_retur_penjualan.php
+tblservice_jemputantar,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tbsaldo_hutang,BASE TABLE,0,AKTIF-KOSONG,1,1,0,TIDAK,0,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/supplier_awal_hutang_save.php
+tbservis_keluhan_tracking,BASE TABLE,0,AKTIF-KOSONG,7,2,0,ya,5,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/ajax-get-detail-proses.php | app/ajax-save-proses-tracking.php
+tbservis_penawaran_jasa,BASE TABLE,0,AKTIF-KOSONG,6,4,0,ya,7,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/_handler_temuan_penawaran.php | app/_template/tab-temuan-penawaran-redesign.php
+tbservis_penawaran_log,BASE TABLE,0,AKTIF-KOSONG,2,2,0,ya,4,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/servis-penawaran-approve.php | app/servis-penawaran-reject.php
+tbservis_penawaran_rejection_summary,BASE TABLE,0,AKTIF-KOSONG,2,2,0,ya,3,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/servis-penawaran-approve.php | app/servis-penawaran-reject.php
+tbservis_temuan_activity_log,BASE TABLE,0,AKTIF-KOSONG,2,2,0,ya,7,utf8mb4_general_ci,pertahankan (fitur web belum dipakai / tunggu cutover),app/servis-penawaran-approve.php | app/servis-penawaran-reject.php
+tbsiklus,BASE TABLE,0,AKTIF-KOSONG,2,0,0,ya,1,utf8mb4_unicode_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_sync_gabung_direct.vbs | app/access-sync.php
+tokens,BASE TABLE,0,AKTIF-KOSONG,13,0,0,ya,1,latin1_swedish_ci,pertahankan (fitur web belum dipakai / tunggu cutover),_managemen/chartjs/Chart.bundle.js | _managemen/jquery-ui-1.11.4/external/jquery/jquery.js
+_backup_tbl_kepala_mekanik_harian_20251115,BASE TABLE,7,BACKUP,0,0,0,ya,4,utf8mb4_general_ci,dump ke file lalu drop,
+_backup_tbl_master_kepala_mekanik_20251115,BASE TABLE,2,BACKUP,0,0,0,ya,3,utf8mb4_general_ci,dump ke file lalu drop,
+_backup_tblmekanik_20251115,BASE TABLE,8,BACKUP,0,0,0,ya,3,utf8mb4_general_ci,dump ke file lalu drop,
+bak_20261004_tbkategori_motor,BASE TABLE,10,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004_tbworkorder_jenis_motor,BASE TABLE,5,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004_tbworkorderdetail,BASE TABLE,21,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004_tbworkorderheader,BASE TABLE,12,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tblitem,BASE TABLE,0,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tblkendaraan,BASE TABLE,1,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tblpelanggan,BASE TABLE,0,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tblsupplier_spart,BASE TABLE,0,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tbmaster_tipe_header,BASE TABLE,1,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tbpabrik_motor,BASE TABLE,13,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261004b_tbtipe_motor,BASE TABLE,0,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261008_tb_master_posisi,BASE TABLE,11,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261013_tb_master_posisi,BASE TABLE,11,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+bak_20261014_tb_master_posisi,BASE TABLE,11,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+master_tarif_jemput_backup,BASE TABLE,42,BACKUP,0,0,0,TIDAK,0,utf8mb4_general_ci,dump ke file lalu drop,
+ns_ddl_backup,BASE TABLE,9,BACKUP,0,0,0,ya,1,latin1_swedish_ci,dump ke file lalu drop,
+tblitem_backup_categories,BASE TABLE,3080,BACKUP,0,0,0,TIDAK,0,utf8mb4_general_ci,dump ke file lalu drop,
+tblkendaraan_backup_20260622,BASE TABLE,167179,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+tblkendaraan_backup_20260720,BASE TABLE,37354,BACKUP,0,0,0,TIDAK,0,utf8mb4_unicode_ci,dump ke file lalu drop,
+tblservice_backup,BASE TABLE,0,BACKUP,0,0,0,TIDAK,0,latin1_swedish_ci,dump ke file lalu drop,
+audit_log_closing_kasir,BASE TABLE,83,MATI,0,0,0,ya,5,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+closing_transaction_details_closing_kasir,BASE TABLE,0,MATI,0,0,0,ya,4,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+closing_transaction_groups_closing_kasir,BASE TABLE,0,MATI,0,0,0,ya,6,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+laravel_migrations,BASE TABLE,1,MATI,0,0,0,ya,1,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+log_perubahan_tarif,BASE TABLE,0,MATI,0,0,0,ya,3,utf8mb4_general_ci,arsip lalu drop (setelah konfirmasi),
+tb_booking,BASE TABLE,9,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tb_mekanik_progress,BASE TABLE,0,MATI,0,0,0,ya,6,utf8mb4_general_ci,arsip lalu drop (setelah konfirmasi),
+tbabsensi_temp,BASE TABLE,997,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbabsensi_temp_rst,BASE TABLE,503,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbabsensi_upload,BASE TABLE,4,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbagama,BASE TABLE,5,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbbrg_keluar_detail,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbbrg_keluar_header,BASE TABLE,0,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbbrg_masuk_detail,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbbrg_masuk_header,BASE TABLE,0,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbcara_bayar,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbdarah,BASE TABLE,4,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbdivisi,BASE TABLE,8,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbemp_education,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbemp_family,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbemp_training,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbemp_tunjangan,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbhari_kerja,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbhistory_divisi,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbjabatan,BASE TABLE,8,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbjenis_bayar,BASE TABLE,4,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbjk,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbkoreksi_stok_detail,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbkoreksi_stok_header,BASE TABLE,0,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tblist_bpjs,BASE TABLE,4,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tblkeluhan,BASE TABLE,8,MATI,0,0,0,ya,2,utf8mb4_general_ci,arsip lalu drop (setelah konfirmasi),
+tblpr_tracking,BASE TABLE,0,MATI,0,0,0,ya,2,utf8mb4_general_ci,arsip lalu drop (setelah konfirmasi),
+tblrfq_detail,BASE TABLE,0,MATI,0,0,0,ya,2,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+tblrfq_header,BASE TABLE,0,MATI,0,0,0,ya,2,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+tblrfq_supplier_response,BASE TABLE,0,MATI,0,0,0,ya,3,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+tbmaster_barang_nonitem,BASE TABLE,0,MATI,0,0,0,ya,4,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+tbmaster_keluhan_temuan,BASE TABLE,3,MATI,0,0,0,ya,3,utf8mb4_unicode_ci,arsip lalu drop (setelah konfirmasi),
+tbpanggilan,BASE TABLE,4,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbpegawai,BASE TABLE,27,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbpegawai_salary,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbpendidikan,BASE TABLE,11,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbperusahaan,BASE TABLE,2,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbsaldo_piutang,BASE TABLE,0,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbso_detail,BASE TABLE,0,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbso_header,BASE TABLE,0,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbstatus_emp,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbstatus_kehadiran,BASE TABLE,5,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbstatus_nikah,BASE TABLE,5,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbtarif_ptkp,BASE TABLE,12,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbtarif_ptkph,BASE TABLE,1,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbtipe_pajak,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbwork_loc,BASE TABLE,2,MATI,0,0,0,TIDAK,0,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbwork_schedule,BASE TABLE,2,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+tbwork_schedule_dtl,BASE TABLE,11,MATI,0,0,0,ya,1,latin1_swedish_ci,arsip lalu drop (setelah konfirmasi),
+ns_fk_log,BASE TABLE,7,MIGRASI-NS,0,0,0,ya,1,latin1_swedish_ci,pertahankan sampai karantina no_service tuntas,
+ns_karantina,BASE TABLE,137,MIGRASI-NS,0,0,0,ya,3,latin1_swedish_ci,pertahankan sampai karantina no_service tuntas,
+ns_koreksi_log,BASE TABLE,36,MIGRASI-NS,0,0,0,ya,1,latin1_swedish_ci,pertahankan sampai karantina no_service tuntas,
+gabung_hpp_acuan,BASE TABLE,27517,MIRROR-GABUNG,3,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/_inventory/opening_stock.php
+gabung_nopolisi_domisili,BASE TABLE,37590,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_pernah_jemputantar,BASE TABLE,1915,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_rekap_kedatangan,BASE TABLE,37590,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_rekap_konsumen,BASE TABLE,37590,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_rekap_konsumen_wa,BASE TABLE,24681,MIRROR-GABUNG,2,0,0,TIDAK,0,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_rekap_peritem_terakhir,BASE TABLE,9527,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_rekonsil_antarcabang,BASE TABLE,62278,MIRROR-GABUNG,2,0,0,ya,2,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+gabung_statistik_item_minggu,BASE TABLE,2144,MIRROR-GABUNG,2,0,0,ya,1,utf8mb4_unicode_ci,ganti dengan view/mart dari data inti,_sync_gabung_direct.vbs | app/access-sync.php
+stg_access_beli_peritem,BASE TABLE,0,STAGING-SYNC,2,0,0,ya,3,utf8mb4_0900_ai_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php | app/sql/create_tables_urgensi_tinggi.sql
+stg_access_gabung_insentif,BASE TABLE,0,STAGING-SYNC,2,0,0,ya,3,utf8mb4_0900_ai_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php | app/sql/create_tables_urgensi_tinggi.sql
+stg_access_gabung_item,BASE TABLE,11,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_kendaraan_pelanggan,BASE TABLE,1187,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_mekanik,BASE TABLE,10,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_member_pelanggan,BASE TABLE,10,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_pelanggan,BASE TABLE,38336,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_pembelian,BASE TABLE,10,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_penjualan,BASE TABLE,10,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_service,BASE TABLE,20,STAGING-SYNC,1,0,0,ya,5,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_service_advisor,BASE TABLE,11,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_service_barang,BASE TABLE,16,STAGING-SYNC,1,0,0,ya,5,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_service_jasa,BASE TABLE,16,STAGING-SYNC,1,0,0,ya,5,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_gabung_supplier,BASE TABLE,10,STAGING-SYNC,1,0,0,ya,4,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php
+stg_access_nomor_wa,BASE TABLE,0,STAGING-SYNC,2,0,0,ya,3,utf8mb4_0900_ai_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php | app/sql/create_tables_urgensi_tinggi.sql
+sync_access_row_errors,BASE TABLE,24,STAGING-SYNC,2,1,0,ya,2,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_ajax/ajax-access-sync.php | app/_include_access_sync.php
+sync_access_runs,BASE TABLE,870,STAGING-SYNC,2,1,0,ya,5,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",app/_include_access_sync.php | app/access-sync.php
+sync_gabung_log,BASE TABLE,31,STAGING-SYNC,2,1,0,ya,3,utf8mb4_unicode_ci,"pertahankan sebagai lapisan staging, truncate berkala",_sync_gabung_direct.vbs | app/access-sync.php
+master_tarif_jemput,VIEW,,VIEW-AKTIF,2,2,1,-,0,,pertahankan,app/master-tarif-jemput-del.php | app/master-tarif-jemput-edit.php
+tbl_master_kepala_mekanik,VIEW,,VIEW-AKTIF,2,0,0,-,0,,pertahankan,app/get_kepala_mekanik_harian.php | app/input_kepala_mekanik_harian.php
+tblmekanik,VIEW,,VIEW-AKTIF,31,2,1,-,0,,pertahankan,app/_ajax/ajax-get-discount-preview.php | app/_template/_mechanic_history.php
+v_promo_target_legacy,VIEW,,VIEW-AKTIF,4,0,0,-,0,,pertahankan,app/ajax-get-item-discount.php | app/ajax-get-promo-detail.php
+view_cari_item,VIEW,,VIEW-AKTIF,86,0,0,-,0,,pertahankan,app/_ajax/ajax-search-barang.php | app/_template/_servis_add_detail_barang.php
+view_cari_kendaraan,VIEW,,VIEW-AKTIF,8,0,1,-,0,,pertahankan,app/_print/print-pickup-schedule.php | app/_template/tab-previous-service-readonly.php
+view_cari_pelanggan,VIEW,,VIEW-AKTIF,9,0,0,-,0,,pertahankan,app/cari_pelanggan_jl.php | app/cari_pelanggan_jl_pesan_rst.php
+view_do_tracking_latest,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/db_update_procurement.php
+view_item_classified,VIEW,,VIEW-AKTIF,2,0,0,-,0,,pertahankan,app/barang_list_improved.php | app/database_migrations/add_ori_nonori_columns.sql
+view_laporan_cancel_servis,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/laporan-cancel-servis.php
+view_master_keluhan,VIEW,,VIEW-AKTIF,3,0,0,-,0,,pertahankan,app/_template/_servis_add_header_kanan.php | app/ajax-get-keluhan-workorder-list.php
+view_mekanik_users,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/database_update_user_management.sql
+view_pelanggan_follow_up,VIEW,,VIEW-AKTIF,3,0,0,-,0,,pertahankan,app/_template/_statistik_followup_pelanggan.php | app/class_whatsapp_automation.php
+view_pelanggan_kendaraan,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/_ajax/ajax-cari-kendaraan-list.php
+view_pemasukan_kasir_closing_kasir,VIEW,,VIEW-AKTIF,0,0,1,-,0,,pertahankan,
+view_pemasukan_pusat_closing_kasir,VIEW,,VIEW-AKTIF,0,0,1,-,0,,pertahankan,
+view_pembayaran_hutang,VIEW,,VIEW-AKTIF,6,0,0,-,0,,pertahankan,_managemen/lap_pmby_hutang.php | app/lap_pmby_hutang.php
+view_pembayaran_piutang,VIEW,,VIEW-AKTIF,6,0,0,-,0,,pertahankan,_managemen/lap_pmby_piutang.php | app/lap_pmby_piutang.php
+view_pembelian_header,VIEW,,VIEW-AKTIF,6,0,1,-,0,,pertahankan,_managemen/lap_pembelian.php | app/lap_pembelian.php
+view_penjualan_header,VIEW,,VIEW-AKTIF,6,0,1,-,0,,pertahankan,_managemen/lap_penjualan.php | app/lap_penjualan.php
+view_pesanan_pembelian_header,VIEW,,VIEW-AKTIF,6,0,0,-,0,,pertahankan,_managemen/lap_pesanan_pembelian.php | app/lap_pesanan_pembelian.php
+view_pesanan_penjualan_h,VIEW,,VIEW-AKTIF,5,0,0,-,0,,pertahankan,_managemen/lap_pesanan_penjualan.php | app/lap_pesanan_penjualan.php
+view_po_with_pr,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/db_update_procurement.php
+view_pr_complete,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/db_update_procurement.php
+view_retur_pembelian,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/retur_pembelian_rst.php
+view_retur_penjualan,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/retur_penjualan_rst.php
+view_service,VIEW,,VIEW-AKTIF,11,0,0,-,0,,pertahankan,_managemen/lap_servis.php | app/_template/_servis_add_header_kanan.php
+view_servis_keluhan_lengkap,VIEW,,VIEW-AKTIF,2,0,0,-,0,,pertahankan,app/_template/_servis_add_header_kanan_workorder_only.php | app/ajax-get-keluhan-service.php
+view_servis_workorder_lengkap,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/_template/_servis_add_header_kanan_workorder_only.php
+view_statistik_pelanggan,VIEW,,VIEW-AKTIF,2,0,0,-,0,,pertahankan,app/_template/_statistik_semua_pelanggan.php | app/lap_rekap_kunjungan.php
+view_stok,VIEW,,VIEW-AKTIF,8,0,0,-,0,,pertahankan,_managemen/_template/_dashboard_header.php | _managemen/index-novri.php
+view_stok_master,VIEW,,VIEW-AKTIF,21,0,0,-,0,,pertahankan,app/_ajax/ajax-search-barang.php | app/_handler_temuan_penawaran.php
+view_suggested_parts,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/ajax-get-suggested-parts.php
+view_top_pelanggan,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/_template/_statistik_top_pelanggan.php
+view_user_details,VIEW,,VIEW-AKTIF,1,0,0,-,0,,pertahankan,app/database_update_user_management.sql
+v_do_status,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+v_po_status,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+v_pr_status,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_absensi,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_keluhan_workorder,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_master_kategori_member,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pemasukan_combined_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pemasukan_with_closing_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pembelian_detail,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_penawaran_part_lengkap,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pengeluaran_kasir_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pengeluaran_pusat_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_penjualan_detail,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_pesanan_pembelian_detail,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_ringkasan_kedatangan_pelanggan,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_riwayat_kedatangan_detail,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_servis_status_summary,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_servis_temuan_lengkap,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_setoran_with_closing_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_tarif_jemput,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_temuan_penawaran_summary,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_transaksi_ada_selisih_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_transaksi_dikembalikan_cs_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_transaksi_gabungan,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_transaksi_perlu_validasi_closing_kasir,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_wo_harga,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),
+view_workorder_complete,VIEW,,VIEW-MATI,0,0,0,-,0,,drop view (setelah konfirmasi),

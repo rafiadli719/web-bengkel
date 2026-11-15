@@ -82,8 +82,17 @@
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$kodebarcode=$tm_cari['kodebarcode'];
 		$nama=$tm_cari['namaitem'];        
-		$saldo_awal=$tm_cari['inv_jmlawal'];        
-        
+		// Saldo awal bulan = mutasi sebelum tanggal 1 bulan terpilih (dulu inv_jmlawal = stok awal Access, hampir selalu 0,
+		// sehingga saldo berjalan selalu mulai dari 0 tiap bulan).
+		$awal_bulan = sprintf('%04d-%02d-01', (int)$cbotahun, (int)$cbobulan);
+		$cari_kd=mysqli_query($koneksi,"SELECT COALESCE(SUM(masuk-keluar),0) AS saldo
+		                                FROM view_stok
+		                                WHERE no_item='$kdbrg' AND tanggal < '$awal_bulan'"
+		                                . ($cbocabang=='' ? "" : " AND kd_cabang='$cbocabang'"));
+		$tm_cari=mysqli_fetch_array($cari_kd);
+		$saldo_awal=(int)$tm_cari['saldo'];
+		$sql_select .= " ORDER BY tanggal";
+
 
 ?>
 
@@ -362,7 +371,7 @@
                                     </thead>
                                     <tbody>
                                         <?php 
-                                            $saldo=0;
+                                            $saldo=$saldo_awal;
                                             $sql = mysqli_query($koneksi,$sql_select);
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $kd_cabang=$tampil['kd_cabang'];
