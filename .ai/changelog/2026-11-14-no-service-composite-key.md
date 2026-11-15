@@ -31,7 +31,13 @@ PRODUKSI BELUM disentuh, semua runner dijalankan Rafi.
 - Tiap runner: dry, up, up ulang (idempotent), down, up. Trigger kd_cabang 4/4 skenario, FK 5/5 skenario (rollback),
   cascade work order terbukti, trigger bayar menulis kd_cabang, pre-commit tolak/lolos benar.
 - 10 halaman terubah dimuat di browser (sesi admin): HTTP 200, tanpa tanda error, tanpa error baru di log PHP.
-- BELUM: E2E klik penuh booking -> WO -> bayar -> batal -> garansi setelah FK aktif (lihat runbook).
+- E2E klik penuh setelah FK aktif LULUS (CIKDITIRO): booking, keluhan, WO (+barang/jasa), mekanik, bayar Rp 62.000
+  (trigger bayar menulis master_kedatangan_pelanggan ber-kd_cabang), antrian, batal, batal lintas cabang ditolak
+  ("Service tidak ditemukan", tidak ada perubahan), garansi (GAR-20261114-0001 + antrian). Bayar, antrian, batal, dan simpan
+  garansi dikirim via fetch dengan isian form yang sama (alert() legacy membekukan tab); handler asli. Tidak ada bug baru.
+- Temuan E2E: dropdown admin CIKDITIRO kosong (bayar gagal "Admin wajib diisi"); keluhan harus selesai sebelum bayar.
+  Admin uji sementara sudah dihapus. Data uji dihapus kecuali `SV26000103580` (sudah dibayar, jejak di tbstok,
+  inv_ledger, servis_komisi x3, master_kedatangan_pelanggan, statistik pelanggan): menunggu keputusan Rafi, biarkan atau retur servis resmi.
 
 ## Runbook produksi (urutan, tiap langkah: backup DB dulu, `dry` dulu)
 1. `php scripts/audit_no_service.php --json > baseline.json` (hitung ulang angka produksi).
