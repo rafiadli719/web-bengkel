@@ -24,3 +24,6 @@
 - `view_suggested_parts` rusak (tidak bisa di-dump), dipakai `app/ajax-get-suggested-parts.php`.
 - Sebelum sesi PACUL wajib Fase K (kunci gabungan nomor transaksi non-servis).
 - `lap_servis.php` tidak memfilter cabang (semua cabang tampil), tinjau di Fase K.
+
+## Hasil uji pasca-reload (2026-11-15)
+- Smoke 434 halaman OK; laporan cocok DB. Temuan: laporan tanpa filter cabang, 1.799 servis `total_akhir=0` (sama dengan sumber), 15 detail yatim PCL, 15 item tanpa master, halaman lambat. Lihat `docs/planning/HASIL_UJI_E2E_SETELAH_RELOAD_ADIWERNA_2026-11-15.md`.
