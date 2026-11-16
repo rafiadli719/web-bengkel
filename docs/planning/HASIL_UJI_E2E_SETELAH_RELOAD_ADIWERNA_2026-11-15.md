@@ -18,7 +18,24 @@ Lingkup: lokal, login akun test `e2e_test_cikditiro`. Hanya Adiwerna yang sudah 
 4. **1.799 servis bayar Adiwerna `total_akhir = 0`** (1.727 punya barang/jasa; 2023–2026 ±180–210/tahun). Sama dengan sumber center (`TotalAkhir=0`), bukan salah muat. Efek: nominal laporan dan tier member rendah. Butuh keputusan Rafi: biarkan, atau hitung dari SubTotal.
 5. **Halaman lambat dengan data baru**: `servis-carinopol` 11,6 dtk, `barang_kartu_stok` 8,4 dtk, `barang*` 6–9 dtk, `servis-garansi` 11 dtk. Perlu profil query/index.
 
+## Uji alur tulis (browser, 2026-11-16)
+Login akun test, cabang PESALAKAN (cabang dipilih saat login).
+| Langkah | Hasil |
+|---|---|
+| Cari nopol `G 4593 BN` → modal WA → preview diskon | Histori center tampil (60 kunjungan, Rp 6,56 jt, Gold, diskon 15%/11%) |
+| Input servis baru `SV26000103583` (G 6736 AFF) | Header terbentuk, nomor urut lanjut dari data lama |
+| Tambah barang 2×19.000 + jasa SVS001 40.000 | Baris tersimpan dengan `kd_cabang=PESALAKAN` |
+| PROSES BAYAR tanpa kepala mekanik / persen 100% / admin | Ditolak dengan pesan benar |
+| PROSES BAYAR lengkap (tunai 78.000) | `status_servis=bayar`, total 78.000, stok `08232-2MB-K8JN1` 65→63 (tipe 4), komisi 3 baris, statistik pelanggan naik, muncul di `lap_servis` |
+| Suite CLI inventory/shadow/koreksi/jurnal | 165/165 lulus |
+
+Temuan tambahan:
+6. **Servis terbuka dibuka lintas cabang**: sesi PESALAKAN pencarian `G 4593 BN` langsung membuka `SV26000103582` milik CIKDITIRO (halaman input memuat servis hanya by `no_service`/nopol). Perlu filter `kd_cabang`.
+7. **Dua jalur bayar beda kode status**: `servis-input-reguler.php` menulis `status='2'`, `servis-reguler-byr.php` menulis `status='4'`; hasil reload memakai `'4'`. Laporan memakai `status_servis`, dampak kecil (hanya `helper-functions.php` cek `'4'`). Samakan.
+8. **HPP barang servis `harga_pokok=0.00`** setelah bayar (inv_mode off). Perilaku lama, perlu cutover Moving Average.
+9. **CIKDITIRO tidak punya admin** (dropdown Admin kosong) → bayar servis di CIKDITIRO mustahil (sudah dicatat sebelumnya). `SV26000103582` (CIKDITIRO) tetap berstatus datang sebagai data uji.
+
 ## Belum diuji
-- Alur tulis penuh di browser setelah reload (servis baru → bayar, pembelian, penjualan, retur, PO/DO, kas). E2E sebelum reload lulus (2026-11-01/02/14), belum diulang di data baru.
+- Alur tulis browser untuk pembelian, penjualan, retur, PO/DO, kas, antar cabang (hanya servis yang diulang; suite CLI stok lulus). E2E sebelumnya lulus (2026-11-01/02/14).
 - Cabang selain Adiwerna (belum dimuat).
 - Konflik master (menunggu keputusan Rafi) dan Fase K.
