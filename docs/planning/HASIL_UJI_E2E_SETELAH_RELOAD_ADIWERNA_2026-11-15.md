@@ -48,6 +48,22 @@ Temuan tambahan:
 
 Belum diuji tulis: retur servis, approval PO/DO/terima, antar cabang, kas keluar (klik), edit/hapus, cabang selain Adiwerna.
 
+## Perbaikan dan uji lanjutan (2026-11-16, sesi lanjutan)
+Perbaikan (semua diuji ulang):
+| Temuan | Perbaikan | Commit |
+|---|---|---|
+| Laporan tanpa filter cabang | Filter `kd_cabang` sesi di 33 file lap_* (servis, penjualan, pembelian, pesanan, hutang, piutang, kas, stok + pdf/xls). `lap_servis` 114→113 | 8c4f748 |
+| Servis terbuka lintas cabang | `save-no-servis-reguler.php` cek servis aktif per (nopol, kd_cabang). Servis baru `SV26000103584` terbuat, tidak lagi membuka milik CIKDITIRO | (commit fix servis aktif) |
+| Dua kode status bayar | Bayar inline reguler menulis `status='4'`, 3 baris uji dinormalkan | 0ab90d1 |
+| `status_lunas` 0 pada tunai | Wizard penjualan/pembelian mengisi `status_lunas`/`tanggal_lunas` (`BL26000013454` = 1). Berdampak ke laporan/pembayaran hutang-piutang | 8b621e6 |
+| Kas masuk/keluar gagal diam-diam | INSERT lengkap + cek hasil | 4d0462b |
+
+Uji tulis lulus: kas keluar (`KK26000000999`), retur servis `RS26000000003` + approve (stok tipe 9, status_refund 1), PO `PS26000000804` submit+approve (160.000), DO dari PO (stok +10, `qty_terima` 10), batal retur penjualan (stok kembali), cancel servis. Saldo stok `08232-2MB-K8JN1` konsisten di tiap langkah (akhir 76).
+
+Catatan: query `SELECT ... WHERE no_service=` untuk membuka halaman servis masih tanpa `kd_cabang` (di luar aturan K1/K2 `audit_no_service`); `po_approval_action`/`do_from_po` memakai `no_order` saja (PK global, tunggu Fase K).
+
+Masih belum diuji: antar cabang (butuh 2 cabang), edit/hapus item pada transaksi yang sudah tersimpan, cabang selain Adiwerna.
+
 ## Belum diuji
 - Alur tulis browser untuk pembelian, penjualan, retur, PO/DO, kas, antar cabang (hanya servis yang diulang; suite CLI stok lulus). E2E sebelumnya lulus (2026-11-01/02/14).
 - Cabang selain Adiwerna (belum dimuat).
