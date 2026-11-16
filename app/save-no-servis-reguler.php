@@ -36,9 +36,9 @@ mysqli_stmt_close($stmtVehicle);
 
 $stmtDuplicate = mysqli_prepare(
     $koneksi,
-    "SELECT no_service FROM tblservice WHERE no_polisi = ? AND COALESCE(status_servis, '') NOT IN ('selesai', 'bayar', 'cancel') ORDER BY tanggal DESC, jam DESC LIMIT 1"
+    "SELECT no_service FROM tblservice WHERE no_polisi = ? AND kd_cabang = ? AND COALESCE(status_servis, '') NOT IN ('selesai', 'bayar', 'cancel') ORDER BY tanggal DESC, jam DESC LIMIT 1"
 );
-mysqli_stmt_bind_param($stmtDuplicate, "s", $nopol);
+mysqli_stmt_bind_param($stmtDuplicate, "ss", $nopol, $kd_cabang); // identitas servis per cabang
 mysqli_stmt_execute($stmtDuplicate);
 $duplicateResult = mysqli_stmt_get_result($stmtDuplicate);
 if ($duplicateResult && ($duplicateRow = mysqli_fetch_assoc($duplicateResult))) {
