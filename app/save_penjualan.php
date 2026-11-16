@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
 
 	$no_order= $_POST['no_order'];
@@ -16,7 +17,7 @@
 
     $cari_kd=mysqli_query($koneksi,"SELECT sum(quantity) as tot
                                     FROM tblpenjualan_detail
-                                    WHERE no_transaksi='$no_order'");
+                                    WHERE no_transaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
     $tm_cari=mysqli_fetch_array($cari_kd);
     $totqty=$tm_cari['tot'];
 
@@ -36,7 +37,7 @@
 
     // Baca semua item penjualan dulu
     $items_jual = [];
-    $sql = mysqli_query($koneksi,"SELECT no_item, quantity FROM tblpenjualan_detail WHERE no_transaksi='$no_order'");
+    $sql = mysqli_query($koneksi,"SELECT no_item, quantity FROM tblpenjualan_detail WHERE no_transaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
     while($row = mysqli_fetch_array($sql)){ $items_jual[] = $row; }
 
     // Cek stok tersedia per item sebelum menyimpan
@@ -78,7 +79,7 @@
                             jumlah_bayar='$txtkekurangan',
                             status_lunas='$status_lunas_jl'
                             WHERE
-                            notransaksi='$no_order'");
+                            notransaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
 
     foreach($items_jual as $item){
         $no_item = mysqli_real_escape_string($koneksi, $item['no_item']);
@@ -114,7 +115,7 @@
         $no_ord_esc = mysqli_real_escape_string($koneksi, $no_order);
         $kd_cab_esc = mysqli_real_escape_string($koneksi, $kd_cabang);
 
-        $q_chk = mysqli_query($koneksi,"SELECT no_transaksi FROM tblpiutang_header WHERE no_transaksi='$no_pi'");
+        $q_chk = mysqli_query($koneksi,"SELECT no_transaksi FROM tblpiutang_header WHERE no_transaksi='$no_pi' AND kd_cabang='{$_SESSION['_cabang']}'");
         if(!$q_chk || mysqli_num_rows($q_chk) == 0){
             mysqli_query($koneksi,"INSERT INTO tblpiutang_header
                             (no_transaksi, tanggal, no_pelanggan, note, total_bayar, user, id_tabel, kd_cabang)

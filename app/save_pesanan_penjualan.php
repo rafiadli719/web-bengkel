@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
     
 	$no_order= mysqli_real_escape_string($koneksi, $_POST['no_order']);
@@ -14,7 +15,7 @@
     $cari_kd=mysqli_query($koneksi,"SELECT 
                                     sum(quantity) as tot 
                                     FROM tblorderjual_detail 
-                                    WHERE no_order='$no_order'");
+                                    WHERE no_order='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
     $tm_cari=mysqli_fetch_array($cari_kd);	
     $totqty=$tm_cari['tot'];
         
@@ -29,7 +30,7 @@
                             total_akhir='$txtnet', 
                             pembayaran='$txtdp' 
                             WHERE 
-                            no_order='$no_order'");
+                            no_order='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
 
    echo"<script>window.alert('Data Pesanan Penjualan berhasil disimpan!');
    window.location=('pesanan_penjualan_add_print.php?nopesanan=$no_order');</script>";        

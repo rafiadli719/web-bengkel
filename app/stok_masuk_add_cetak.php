@@ -34,7 +34,7 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tbitem_masuk_header 
                                         WHERE 
-                                        no_transaksi='$notrx'");			
+                                        no_transaksi='$notrx' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tgl_pilih=$tm_cari['tanggal_trx'];                 
         $ket=$tm_cari['note'];     
@@ -42,7 +42,7 @@
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tbitem_masuk_detail 
                                                 WHERE 
-                                                no_transaksi='$notrx'");			
+                                                no_transaksi='$notrx' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];                 
 ?>

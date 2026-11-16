@@ -35,7 +35,7 @@
                                         DATE_FORMAT(tanggal_order,'%d/%m/%Y') AS tanggal_order, 
                                         DATE_FORMAT(tanggal_jt,'%d/%m/%Y') AS tanggal_tempo 
                                         FROM tblpenjualan_header 
-                                        WHERE notransaksi='$nojl'");
+                                        WHERE notransaksi='$nojl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tgl_pilih=$tm_cari['tanggal_trx'];
         $nopesanan=$tm_cari['no_order'];
@@ -68,7 +68,7 @@ if($carabayar<>'Kredit') {
                                                 sum(qty_retur) as tot_qty_retur 
                                                 FROM tblpenjualan_detail 
                                                 WHERE 
-                                                no_transaksi='$nojl'");			
+                                                no_transaksi='$nojl' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_qty_order=$tm_cari['tot_qty_order'];                 
         $total_qty_jual=$tm_cari['tot_qty_jual'];                                 

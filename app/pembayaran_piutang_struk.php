@@ -22,7 +22,7 @@
 									DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, no_pelanggan, 
                                     note, total_bayar, user, id_tabel 
                                     FROM tblpiutang_header 
-									WHERE no_transaksi='$no_bukti'");
+									WHERE no_transaksi='$no_bukti' AND kd_cabang='{$_SESSION['_cabang']}'");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$tgltrx_eng=$tm_cari['tanggal_trx'];
     $no_supplier=$tm_cari['no_pelanggan'];	
@@ -41,7 +41,7 @@
 	$cari_kd=mysqli_query($koneksi,"SELECT 
 									sum(jumlah_bayar) as tot 
                                     FROM tblpiutang_detail 
-                                    WHERE no_transaksi='$no_bukti'");
+                                    WHERE no_transaksi='$no_bukti' AND kd_cabang='{$_SESSION['_cabang']}'");
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$tot=$tm_cari['tot'];
     
@@ -49,7 +49,7 @@
                                     no_penjualan, keterangan, jumlah_piutang, jumlah_bayar, status 
                                     FROM 
                                     tblpiutang_detail 
-                                    WHERE no_transaksi='$no_bukti'");
+                                    WHERE no_transaksi='$no_bukti' AND kd_cabang='{$_SESSION['_cabang']}'");
 														
 	require_once("dompdf/autoload.inc.php");
 	use Dompdf\Dompdf;

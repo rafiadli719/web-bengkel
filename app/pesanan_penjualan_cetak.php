@@ -33,7 +33,7 @@
 		$cari_kd=mysqli_query($koneksi,"SELECT *,  
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tblorderjual_header 
-                                        WHERE no_order='$nojl'");
+                                        WHERE no_order='$nojl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tgl_pilih=$tm_cari['tanggal_trx'];
         $nopelanggan=$tm_cari['no_pelanggan'];
@@ -56,7 +56,7 @@
                                                 sum(quantity) as tot_qty_order 
                                                 FROM tblorderjual_detail 
                                                 WHERE 
-                                                no_order='$nojl'");			
+                                                no_order='$nojl' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_qty_order=$tm_cari['tot_qty_order'];                 
 

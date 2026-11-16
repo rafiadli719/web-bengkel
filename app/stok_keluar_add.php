@@ -169,7 +169,7 @@
                 $data = mysqli_query($koneksi,"SELECT no_transaksi 
                                                 FROM tbitem_keluar_header 
                                                 WHERE 
-                                                no_transaksi='$LastID'");
+                                                no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                 $cek = mysqli_num_rows($data);
                 if($cek > 0){
                     
@@ -193,7 +193,7 @@
                     $sql = mysqli_query($koneksi,"SELECT 
                                                     * FROM tbitem_keluar_detail 
                                                     WHERE 
-                                                    no_transaksi='$LastID'");
+                                                    no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                     while ($tampil = mysqli_fetch_array($sql)) {
                         $no_item=$tampil['no_item'];
                         $qty=$tampil['quantity'];

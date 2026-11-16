@@ -86,7 +86,7 @@
                 // Kolom NOT NULL tanpa default wajib diisi (dulu cuma no_transaksi+
                 // no_penjualan -> INSERT selalu gagal, tblpiutang_detail kosong).
                 // Konvensi sama pmby_hutang_add.php: jumlah_bayar = tagihan penuh.
-                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpenjualan_header WHERE notransaksi='$nip'");
+                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpenjualan_header WHERE notransaksi='$nip' AND kd_cabang='{$_SESSION['_cabang']}'");
                 $rtag = $qtag ? mysqli_fetch_array($qtag) : null;
                 $tag = $rtag ? (float)$rtag['jumlah_bayar'] : 0;
                 $nobaris = $i + 1;

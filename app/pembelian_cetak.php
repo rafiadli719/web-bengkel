@@ -35,7 +35,7 @@
                                         DATE_FORMAT(tanggal_order,'%d/%m/%Y') AS tanggal_order, 
                                         DATE_FORMAT(tanggal_jt,'%d/%m/%Y') AS tanggal_tempo 
                                         FROM tblpembelian_header 
-                                        WHERE notransaksi='$nobl'");
+                                        WHERE notransaksi='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tgl_pilih=$tm_cari['tanggal_trx'];
 		$cbo_supplier=$tm_cari['no_supplier'];
@@ -66,7 +66,7 @@
                                                 sum(quantity) as tot_qty_beli 
                                                 FROM tblpembelian_detail 
                                                 WHERE 
-                                                no_transaksi='$nobl'");			
+                                                no_transaksi='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 //$tot=$tm_cari['tot'];                 
                 $total_qty_order=$tm_cari['tot_qty_order'];                 

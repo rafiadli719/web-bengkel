@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
     
 	date_default_timezone_set('Asia/Jakarta');
@@ -23,7 +24,7 @@
     mysqli_query($koneksi,"UPDATE tblkas_keluar_masuk 
                         SET tanggal='$txttgl', uraian='$txtnote', keluar='$txtjml', 
                         kode_akun='$cboakun', kode_akun_biaya='$cboakunbiaya'  
-                        WHERE kode_km='$txtnobyr'");
+                        WHERE kode_km='$txtnobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
                                                   
     echo"<script>window.alert('Pengeluaran Kas Berhasil disimpan!');window.location=('kas_keluar.php');</script>";        
 ?>

@@ -64,7 +64,7 @@
 
             // ------ Stok ----------
             $sql = mysqli_query($koneksi,"SELECT * FROM tbitem_masuk_detail 
-                                        WHERE no_transaksi='$LastID'");
+                                        WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
             while ($tampil = mysqli_fetch_array($sql)) {
                 $no_item=$tampil['no_item'];
                 $qty=$tampil['quantity'];

@@ -23,7 +23,7 @@ if($row['status_retur'] != '0') {
 }
 $nopembelian = mysqli_real_escape_string($koneksi, $row['nopembelian']);
 
-$det = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblretur_pembelian_detail WHERE no_retur='$noretur'");
+$det = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblretur_pembelian_detail WHERE no_retur='$noretur' AND kd_cabang='{$_SESSION['_cabang']}'");
 $items = [];
 while($d = mysqli_fetch_assoc($det)) { $items[] = $d; }
 
@@ -34,7 +34,7 @@ try {
         $qty     = (int)$it['quantity'];
         $sql_upd = "UPDATE tblpembelian_detail
                     SET qty_retur = GREATEST(0, qty_retur - $qty)
-                    WHERE no_transaksi='$nopembelian' AND no_item='$no_item'";
+                    WHERE no_transaksi='$nopembelian' AND kd_cabang='{$_SESSION['_cabang']}' AND no_item='$no_item'";
         if(!mysqli_query($koneksi, $sql_upd)) throw new Exception("Gagal rollback qty_retur: ".mysqli_error($koneksi));
     }
 
@@ -42,10 +42,10 @@ try {
         throw new Exception("Gagal hapus stok: ".mysqli_error($koneksi));
         require_once __DIR__ . '/_include_inv_shadow.php'; inv_shadow_reverse($koneksi, 'RETUR_BELI', $noretur, 'Batal retur pembelian', ''); // Moving Average shadow
 
-    if(!mysqli_query($koneksi, "DELETE FROM tblretur_pembelian_detail WHERE no_retur='$noretur'"))
+    if(!mysqli_query($koneksi, "DELETE FROM tblretur_pembelian_detail WHERE no_retur='$noretur' AND kd_cabang='{$_SESSION['_cabang']}'"))
         throw new Exception("Gagal hapus detail: ".mysqli_error($koneksi));
 
-    if(!mysqli_query($koneksi, "DELETE FROM tblretur_pembelian_header WHERE noretur='$noretur'"))
+    if(!mysqli_query($koneksi, "DELETE FROM tblretur_pembelian_header WHERE noretur='$noretur' AND kd_cabang='{$_SESSION['_cabang']}'"))
         throw new Exception("Gagal hapus header: ".mysqli_error($koneksi));
 
     $res_tot = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_qty_retur),0) AS tot
@@ -53,7 +53,7 @@ try {
                                        WHERE nopembelian='$nopembelian'");
     $row_tot     = mysqli_fetch_assoc($res_tot);
     $new_tot_ret = (int)$row_tot['tot'];
-    if(!mysqli_query($koneksi, "UPDATE tblpembelian_header SET total_retur=$new_tot_ret WHERE notransaksi='$nopembelian'"))
+    if(!mysqli_query($koneksi, "UPDATE tblpembelian_header SET total_retur=$new_tot_ret WHERE notransaksi='$nopembelian' AND kd_cabang='{$_SESSION['_cabang']}'"))
         throw new Exception("Gagal update header pembelian: ".mysqli_error($koneksi));
 
     mysqli_commit($koneksi);

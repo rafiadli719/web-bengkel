@@ -348,7 +348,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                                         status_trx='0'");
 
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblpembelian_detail
-                                                WHERE no_transaksi='$LastID'");
+                                                WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_item=$tampil['no_item'];
                     $qty=$tampil['quantity'];

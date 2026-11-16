@@ -26,7 +26,7 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         FROM 
                                         tblorderjual_header 
                                         WHERE 
-                                        no_order='$nobl'");
+                                        no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal_trx'];
 		$no_pelanggan=$tm_cari['no_pelanggan'];
@@ -63,14 +63,14 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         FROM 
                                         tblorderjual_detail 
                                         WHERE 
-                                        no_order='$nobl'");			
+                                        no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
         $tot_beli=$tm_cari['tot_beli'];        
     
 	$query = mysqli_query($koneksi,"SELECT id, no_item, quantity, 
                                                                         harga_jual, total, potongan 
                                                                         FROM tblorderjual_detail 
-                                                                        WHERE no_order='$nobl'");
+                                                                        WHERE no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 														
 	require_once("dompdf/autoload.inc.php");
 	use Dompdf\Dompdf;

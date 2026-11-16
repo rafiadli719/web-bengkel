@@ -38,7 +38,7 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
                                         no_supplier, user 
                                         FROM tblhutang_header 
-                                        WHERE no_transaksi='$nobyr'");
+                                        WHERE no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal_trx'];
 		$no_supplier=$tm_cari['no_supplier'];
@@ -56,7 +56,7 @@
                                         sum(jumlah_bayar) as tot 
                                         FROM tblhutang_detail 
                                         WHERE 
-                                        no_transaksi='$nobyr'");
+                                        no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tot_bayar=$tm_cari['tot'];
 ?>
@@ -283,7 +283,7 @@
 												<?php 
 													$sql = mysqli_query($koneksi,"SELECT * FROM tblhutang_detail 
                                                                                 WHERE 
-                                                                                no_transaksi='$nobyr'");
+                                                                                no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 													while ($tampil = mysqli_fetch_array($sql)) {
                                                         $no_pembelian=$tampil['no_pembelian'];
                                                         $sudah_bayar=$tampil['jumlah_bayar'];
@@ -291,7 +291,7 @@
                                                         $cari_kd=mysqli_query($koneksi,"SELECT 
                                                                                         tanggal, total_akhir, pembayaran 
                                                                                         FROM tblpembelian_header 
-                                                                                        WHERE notransaksi='$no_pembelian'");			
+                                                                                        WHERE notransaksi='$no_pembelian' AND kd_cabang='{$_SESSION['_cabang']}'");			
                                                         $tm_cari=mysqli_fetch_array($cari_kd);
                                                         $tanggal=$tm_cari['tanggal'];
                                                         $total_akhir=$tm_cari['total_akhir'];

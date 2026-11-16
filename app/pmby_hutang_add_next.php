@@ -37,7 +37,7 @@
                                         sum(jumlah_bayar) as tot 
                                         FROM tblhutang_detail 
                                         WHERE 
-                                        no_transaksi='$nobyr'");
+                                        no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tot_bayar=$tm_cari['tot']; 
 
@@ -46,7 +46,7 @@
                                         sum(jumlah_bayar) as tot 
                                         FROM tblhutang_detail 
                                         WHERE 
-                                        no_transaksi='$nobyr'");
+                                        no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 			$tm_cari=mysqli_fetch_array($cari_kd);	
 			$txttot = $tm_cari ? $tm_cari['tot'] : 0;
             if($txttot=='0') {
@@ -88,7 +88,7 @@
                 $sql = mysqli_query($koneksi,"SELECT 
                                                 no_pembelian, jumlah_bayar 
                                                 FROM tblhutang_detail 
-                                                WHERE no_transaksi='$nobyr'");
+                                                WHERE no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_pembelian=$tampil['no_pembelian'];
                     $jumlah_bayar=$tampil['jumlah_bayar'];
@@ -96,7 +96,7 @@
                     $cari_kd=mysqli_query($koneksi,"SELECT 
                                                     jumlah_bayar, pembayaran 
                                                     FROM tblpembelian_header 
-                                                    WHERE notransaksi='$no_pembelian'");
+                                                    WHERE notransaksi='$no_pembelian' AND kd_cabang='{$_SESSION['_cabang']}'");
                     $tm_cari=mysqli_fetch_array($cari_kd);	
                     $tagihan = $tm_cari ? (float)$tm_cari['jumlah_bayar'] : 0;
                     $pembayaran_awal = $tm_cari ? (float)$tm_cari['pembayaran'] : 0;
@@ -125,7 +125,7 @@
                                             status_lunas='$status_lunas',
                                             tanggal_lunas='$tanggal_lunas_val'
                                             WHERE 
-                                            notransaksi='$no_pembelian'");
+                                            notransaksi='$no_pembelian' AND kd_cabang='{$_SESSION['_cabang']}'");
                 }
                 
                 echo"<script>window.location=('pmby_hutang_add_cetak.php?nobyr=$nobyr');</script>";        

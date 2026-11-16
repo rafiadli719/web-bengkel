@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
     
 	date_default_timezone_set('Asia/Jakarta');
@@ -24,7 +25,7 @@
                         SET tanggal='$txttgl', uraian='$txtnote', masuk='$txtjml', 
                         kode_akun='$cboakun', 
                         kode_akun_biaya='$cboakunbiaya' 
-                        WHERE kode_km='$txtnobyr'");
+                        WHERE kode_km='$txtnobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
                                                   
     echo"<script>window.alert('Kas Masuk Berhasil disimpan!');window.location=('kas_masuk.php');</script>";        
 ?>

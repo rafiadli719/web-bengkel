@@ -24,7 +24,7 @@ $sql = mysqli_query($koneksi, "SELECT d.no_item, d.quantity, d.qty_retur, d.harg
                                        COALESCE(i.namaitem, d.no_item) AS namaitem
                                 FROM tblpembelian_detail d
                                 LEFT JOIN tblitem i ON i.noitem = d.no_item
-                                WHERE d.no_transaksi='$nopembelian'
+                                WHERE d.no_transaksi='$nopembelian' AND d.kd_cabang='{$_SESSION['_cabang']}'
                                 AND d.status_trx != '0'
                                 AND d.quantity > 0
                                 ORDER BY d.nobaris");

@@ -64,7 +64,7 @@
                                                 FROM 
                                                 tblorderjual_header 
                                                 WHERE 
-                                                no_order='$nopesanan' and 
+                                                no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}' and 
                                                 status='0'");
                 $cek = mysqli_num_rows($data);                
                 if($cek > 0){
@@ -75,7 +75,7 @@
                                                     FROM 
                                                     tblorderjual_header 
                                                     WHERE 
-                                                    no_order='$nopesanan'");			
+                                                    no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");			
                     $tm_cari=mysqli_fetch_array($cari_kd);
                     $nopelanggan=$tm_cari['no_pelanggan'];	
                     $cbosales=$tm_cari['no_sales'];	
@@ -91,7 +91,7 @@
                 
                 // Pindahkan Data Pesanan ke pebelian
                     $sql = mysqli_query($koneksi,"SELECT * FROM tblorderjual_detail 
-                                                WHERE no_order='$nopesanan'");
+                                                WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
                     while ($tampil = mysqli_fetch_array($sql)) {
                         $no_item=$tampil['no_item'];
                         $txthargabarang=$tampil['harga_jual'];
@@ -341,7 +341,7 @@ VALUES
                                         status_trx='0'");
 
                 $sql = mysqli_query($koneksi,"SELECT * FROM tblpenjualan_detail
-                                                WHERE no_transaksi='$LastID'");
+                                                WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_item=$tampil['no_item'];
                     $qty=$tampil['quantity'];
@@ -361,7 +361,7 @@ VALUES
                                                 SET
                                                 qty_terima='$qty'
                                                 WHERE
-                                                no_order='$nopesanan' and
+                                                no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}' and
                                                 no_item='$no_item'");
                     }
                 }
@@ -371,7 +371,7 @@ VALUES
                                                 SET
                                                 status='1'
                                                 WHERE
-                                                no_order='$nopesanan'");
+                                                no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
                 }
                 echo"<script>window.location=('penjualan_cetak.php?nopesanan=$LastID');</script>";
                 }

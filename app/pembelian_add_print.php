@@ -43,7 +43,7 @@
                                         FROM 
                                         tblpembelian_header 
                                         WHERE 
-                                        notransaksi='$nobl'");
+                                        notransaksi='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_supplier'];
@@ -72,7 +72,7 @@
                                         FROM 
                                         tblpembelian_detail 
                                         WHERE 
-                                        no_transaksi='$nobl'");			
+                                        no_transaksi='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		$tot_order=$tm_cari['tot_order'];				        
         $tot_beli=$tm_cari['tot_beli'];        
@@ -303,7 +303,7 @@
                                                                         id, no_item, qty_order, quantity, 
                                                                         harga_pokok, total, potongan 
                                                                         FROM tblpembelian_detail 
-                                                                        WHERE no_transaksi='$nobl'");
+                                                                        WHERE no_transaksi='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];

@@ -45,7 +45,7 @@
                                         sum(jumlah_bayar) as tot 
                                         FROM tblpiutang_detail 
                                         WHERE 
-                                        no_transaksi='$nobyr'");
+                                        no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tot_bayar=$tm_cari['tot'];    
 
@@ -86,7 +86,7 @@
                 $sql = mysqli_query($koneksi,"SELECT 
                                                 no_penjualan, jumlah_bayar 
                                                 FROM tblpiutang_detail 
-                                                WHERE no_transaksi='$nobyr'");
+                                                WHERE no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_pembelian=$tampil['no_penjualan'];
                     $jumlah_bayar=$tampil['jumlah_bayar'];
@@ -94,7 +94,7 @@
                     $cari_kd=mysqli_query($koneksi,"SELECT 
                                                     jumlah_bayar 
                                                     FROM tblpenjualan_header 
-                                                    WHERE notransaksi='$no_pembelian'");
+                                                    WHERE notransaksi='$no_pembelian' AND kd_cabang='{$_SESSION['_cabang']}'");
                     $tm_cari=mysqli_fetch_array($cari_kd);	
                     $tagihan=$tm_cari['jumlah_bayar']; 
                     
@@ -104,7 +104,7 @@
                                                 status_lunas='1', 
                                                 tanggal_lunas='$txttglpesan' 
                                                 WHERE 
-                                                notransaksi='$no_pembelian'");                                                
+                                                notransaksi='$no_pembelian' AND kd_cabang='{$_SESSION['_cabang']}'");                                                
                     }
                 }
                 

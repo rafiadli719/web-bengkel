@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
     include "_template/_nota_pdf_parts.php";
 	$notrx = mysqli_real_escape_string($koneksi, $_GET['snopesanan']);
@@ -17,7 +18,7 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                                         FROM tbitem_masuk_header 
                                         WHERE 
-                                        no_transaksi='$notrx'");
+                                        no_transaksi='$notrx' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
         $tgl_pilih=$tm_cari['tanggal_trx'];                 
         $ket=$tm_cari['note'];     
@@ -27,7 +28,7 @@
                                         sum(quantity) as tot_order
                                         FROM tbitem_masuk_detail 
                                         WHERE 
-                                        no_transaksi='$notrx'");			
+                                        no_transaksi='$notrx' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];
         $tot_order=$tm_cari['tot_order'];
@@ -35,7 +36,7 @@
 	$query = mysqli_query($koneksi,"SELECT 
                                                                         id, no_item, quantity, harga, total 
                                                                         FROM tbitem_masuk_detail 
-                                                                        WHERE no_transaksi='$notrx'");
+                                                                        WHERE no_transaksi='$notrx' AND kd_cabang='{$_SESSION['_cabang']}'");
 														
 	require_once("dompdf/autoload.inc.php");
 	use Dompdf\Dompdf;

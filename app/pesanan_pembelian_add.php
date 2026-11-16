@@ -251,7 +251,7 @@
                              
                 $data = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header 
                                                 WHERE 
-                                                no_order='$LastID'");
+                                                no_order='$LastID' AND kd_cabang='$kd_cabang'");
                 $cek = mysqli_num_rows($data);
                 if($cek > 0){
                     // regenerate once if duplicated

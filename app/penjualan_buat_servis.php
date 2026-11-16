@@ -25,7 +25,7 @@
 		$notransaksi_esc = mysqli_real_escape_string($koneksi, $notransaksi);
 
 		// Validasi nota ada & belum pernah dikonversi
-		$cek_nota = mysqli_query($koneksi, "SELECT notransaksi FROM tblpenjualan_header WHERE notransaksi='$notransaksi_esc' LIMIT 1");
+		$cek_nota = mysqli_query($koneksi, "SELECT notransaksi FROM tblpenjualan_header WHERE notransaksi='$notransaksi_esc' AND kd_cabang='{$_SESSION['_cabang']}' LIMIT 1");
 		if (!$cek_nota || mysqli_num_rows($cek_nota) === 0) {
 			echo "<script>window.alert('Nota Penjualan tidak ditemukan.');window.location=('penjualan.php');</script>";
 			exit;

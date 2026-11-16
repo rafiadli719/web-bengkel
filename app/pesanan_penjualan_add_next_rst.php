@@ -29,7 +29,7 @@
 $cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_pelanggan, user, no_sales 
                                         FROM tblorderjual_header 
-                                        WHERE no_order='$nobl'");
+                                        WHERE no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_pelanggan'];
@@ -73,7 +73,7 @@ $cari_kd=mysqli_query($koneksi,"SELECT
                 $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
                                                 FROM tblorderjual_detail 
                                                 WHERE 
-                                                no_order='$nobl'");			
+                                                no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot']; 
         
@@ -419,7 +419,7 @@ $cari_kd=mysqli_query($koneksi,"SELECT
                                                                         id, no_item, quantity, 
                                                                         harga_jual, total, 
                                                                         potongan FROM tblorderjual_detail 
-                                                                        WHERE no_order='$nobl'");
+                                                                        WHERE no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];

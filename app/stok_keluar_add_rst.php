@@ -629,7 +629,7 @@ if(empty($_SESSION['_iduser'])){
             $data = mysqli_query($koneksi,"SELECT no_transaksi 
                                             FROM tbitem_keluar_header 
                                             WHERE 
-                                            no_transaksi='$LastID'");
+                                            no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
             $cek = mysqli_num_rows($data);
             
             if($cek > 0){
@@ -666,7 +666,7 @@ if(empty($_SESSION['_iduser'])){
 
                     // Update stok terlebih dahulu (sebelum sinkronisasi)
                     $sql = mysqli_query($koneksi,"SELECT * FROM tbitem_keluar_detail 
-                                                    WHERE no_transaksi='$LastID'");
+                                                    WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                     while ($tampil = mysqli_fetch_array($sql)) {
                         $no_item=$tampil['no_item'];
                         $qty=$tampil['quantity'];
@@ -699,7 +699,7 @@ if(empty($_SESSION['_iduser'])){
                                                             FROM tbitem_keluar_detail d
                                                             LEFT JOIN tblitem i ON d.no_item = i.noitem 
                                                             WHERE 
-                                                            d.no_transaksi='$LastID'");
+                                                            d.no_transaksi='$LastID' AND d.kd_cabang='{$_SESSION['_cabang']}'");
                     
                     $valid_details = 0;
                     while ($detail = mysqli_fetch_array($sql_details)) {
@@ -746,7 +746,7 @@ if(empty($_SESSION['_iduser'])){
                                                         accurate_number='{$sync_result['accurate_number']}',
                                                         accurate_sync='1',
                                                         accurate_sync_at=NOW() 
-                                                    WHERE no_transaksi='$LastID'");
+                                                    WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                             }
                             
                             // Log sukses
@@ -762,7 +762,7 @@ if(empty($_SESSION['_iduser'])){
                                                 SET accurate_sync='0',
                                                     accurate_error='{$sync_result['message']}',
                                                     accurate_sync_at=NOW() 
-                                                WHERE no_transaksi='$LastID'");
+                                                WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                             
                             // Log error dengan detail
                             error_log("FAILED: Stok Keluar $LastID gagal sinkronisasi - " . $sync_result['message']);

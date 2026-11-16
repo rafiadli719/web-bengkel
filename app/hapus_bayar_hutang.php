@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
 	include "../config/koneksi.php";
 
 	$nobyr = mysqli_real_escape_string($koneksi, $_GET['nobyr']);
@@ -7,7 +8,7 @@
 	$ssup = mysqli_real_escape_string($koneksi, $_GET['ssup']);
     
 	$modal=mysqli_query($koneksi,"Delete FROM tblhutang_detail 
-    WHERE no_transaksi='$nobyr' and no_pembelian='$nobl' AND NOT EXISTS (SELECT 1 FROM tblhutang_header h WHERE h.no_transaksi = tblhutang_detail.no_transaksi)");
+    WHERE no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}' and no_pembelian='$nobl' AND NOT EXISTS (SELECT 1 FROM tblhutang_header h WHERE h.no_transaksi = tblhutang_detail.no_transaksi)");
 
     echo"<script>window.location=('pmby_hutang_add_next.php?nobyr=$nobyr&stgl=$stgl&ssup=$ssup');</script>";                    								
 ?>

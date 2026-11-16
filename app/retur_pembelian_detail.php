@@ -38,7 +38,7 @@ if(empty($_SESSION['_iduser'])){
                                    FROM tblretur_pembelian_detail d
                                    LEFT JOIN tblitem i ON i.noitem=d.no_item
                                    LEFT JOIN tbjenis_penggantian_retur j ON j.id=d.jenis_penggantian
-                                   WHERE d.no_retur='$noretur'
+                                   WHERE d.no_retur='$noretur' AND d.kd_cabang='{$_SESSION['_cabang']}'
                                    ORDER BY d.id");
 ?>
 <!DOCTYPE html>

@@ -1,4 +1,5 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); } // kd_cabang dari sesi (Fase K)
     include "../config/koneksi.php";
     
 	$no_order= mysqli_real_escape_string($koneksi, $_POST['no_order']);
@@ -18,14 +19,14 @@
     $cari_kd=mysqli_query($koneksi,"SELECT 
                                     sum(quantity) as tot 
                                     FROM tblpembelian_detail 
-                                    WHERE no_transaksi='$no_order'");
+                                    WHERE no_transaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
     $tm_cari=mysqli_fetch_array($cari_kd);	
     $totqty=$tm_cari['tot'];
 
     $cari_kd=mysqli_query($koneksi,"SELECT 
                                     tanggal 
                                     FROM tblpembelian_header 
-                                    WHERE notransaksi='$no_order'");
+                                    WHERE notransaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
     $tm_cari=mysqli_fetch_array($cari_kd);	
     $tanggal_bl=$tm_cari['tanggal'];
     
@@ -53,13 +54,13 @@
                             status_lunas='$status_lunas',
                             tanggal_lunas='$tanggal_lunas_val'
                             WHERE
-                            notransaksi='$no_order'");
+                            notransaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
 
     if($linked_do=='') {
         $sql = mysqli_query($koneksi,"SELECT
                                         no_item, quantity
                                         FROM tblpembelian_detail
-                                        WHERE no_transaksi='$no_order'");
+                                        WHERE no_transaksi='$no_order' AND kd_cabang='{$_SESSION['_cabang']}'");
         while ($tampil = mysqli_fetch_array($sql)) {
             $no_item=$tampil['no_item'];
             $quantity=$tampil['quantity'];

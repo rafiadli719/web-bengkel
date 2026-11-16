@@ -33,4 +33,18 @@ if [ $STATUS -ne 0 ]; then
   echo "Penjelasan: docs/planning/PLAN_NO_SERVICE_COMPOSITE_KEY_2026-11-09.md" >&2
   exit 1
 fi
+
+# Fase K: nomor transaksi non-servis wajib bersama kd_cabang (scripts/audit_nomor_transaksi.php)
+case "$PHP" in
+  *.exe) SCRIPT2=$(wslpath -w "$ROOT/scripts/audit_nomor_transaksi.php");;
+  *) SCRIPT2="$ROOT/scripts/audit_nomor_transaksi.php";;
+esac
+# shellcheck disable=SC2086
+OUT2=$("$PHP" "${ARGS[@]}" -f "$SCRIPT2" -- --kode $FILES 2>&1)
+if [ $? -ne 0 ]; then
+  echo "$OUT2" >&2
+  echo "" >&2
+  echo "pre-commit DITOLAK: query nomor transaksi tanpa kd_cabang (nomor Access bentrok lintas cabang). Tambahkan kd_cabang, atau tandai /* fasek-ok */ bila memang disengaja." >&2
+  exit 1
+fi
 exit 0

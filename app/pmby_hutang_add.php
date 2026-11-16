@@ -77,7 +77,7 @@
             $jumlah=count($_POST["hapus"]);
             for($i=0; $i<$jumlah; $i++){
                 $nip=mysqli_real_escape_string($koneksi, $_POST["hapus"][$i]);
-                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpembelian_header WHERE notransaksi='$nip'");
+                $qtag = mysqli_query($koneksi,"SELECT jumlah_bayar FROM tblpembelian_header WHERE notransaksi='$nip' AND kd_cabang='{$_SESSION['_cabang']}'");
                 $tag = 0;
                 if ($qtag) {
                     $rtag = mysqli_fetch_array($qtag);

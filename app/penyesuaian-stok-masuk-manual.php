@@ -46,7 +46,7 @@
                     *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                     FROM tbitem_masuk_header 
                     WHERE 
-                    no_transaksi='0'";      
+                    no_transaksi='0' AND kd_cabang='{$_SESSION['_cabang']}'";      
         // == End Default ==========    
 
 		if(isset($_POST['btnasc'])) {				

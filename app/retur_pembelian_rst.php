@@ -148,7 +148,7 @@ if(empty($_SESSION['_iduser'])){
                                 $sql = mysqli_query($koneksi, $sql_query);
                                 while ($tampil = mysqli_fetch_array($sql)) {
                                     // Ambil total_akhir dari header
-                                    $hdr = mysqli_query($koneksi, "SELECT total_akhir, total_qty_retur FROM tblretur_pembelian_header WHERE noretur='".mysqli_real_escape_string($koneksi,$tampil['noretur'])."'");
+                                    $hdr = mysqli_query($koneksi, "SELECT total_akhir, total_qty_retur FROM tblretur_pembelian_header WHERE noretur='".mysqli_real_escape_string($koneksi,$tampil['noretur'])."' AND kd_cabang='{$_SESSION['_cabang']}'");
                                     $row_hdr = mysqli_fetch_array($hdr);
                                     $total_akhir = $row_hdr ? (float)$row_hdr['total_akhir'] : 0;
                                     $status_retur = $tampil['status_retur'];

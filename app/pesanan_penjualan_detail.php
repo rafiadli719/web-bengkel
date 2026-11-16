@@ -44,7 +44,7 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         FROM 
                                         tblorderjual_header 
                                         WHERE 
-                                        no_order='$nobl'");
+                                        no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal_trx'];
 		$no_supplier=$tm_cari['no_pelanggan'];
@@ -83,7 +83,7 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                         FROM 
                                         tblorderjual_detail 
                                         WHERE 
-                                        no_order='$nobl'");			
+                                        no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");			
 		$tm_cari=mysqli_fetch_array($cari_kd);
 		//$tot_order=$tm_cari['tot_order'];				        
         $tot_beli=$tm_cari['tot_beli'];        
@@ -316,7 +316,7 @@ DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, note
                                                                         id, no_item, quantity, 
                                                                         harga_jual, total, potongan 
                                                                         FROM tblorderjual_detail 
-                                                                        WHERE no_order='$nobl'");
+                                                                        WHERE no_order='$nobl' AND kd_cabang='{$_SESSION['_cabang']}'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];

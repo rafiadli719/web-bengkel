@@ -71,7 +71,7 @@ try {
         if($qty <= 0 || $no_item == '') continue;
 
         $cek_d = mysqli_query($koneksi, "SELECT quantity, qty_retur FROM tblpenjualan_detail
-                                         WHERE no_transaksi='$nopenjualan' AND no_item='$no_item'");
+                                         WHERE no_transaksi='$nopenjualan' AND kd_cabang='{$_SESSION['_cabang']}' AND no_item='$no_item'");
         if(mysqli_num_rows($cek_d) == 0) continue;
         $row_d = mysqli_fetch_assoc($cek_d);
         $sisa  = (int)$row_d['quantity'] - (int)$row_d['qty_retur'];
@@ -87,7 +87,7 @@ try {
 
         $sql_upd = "UPDATE tblpenjualan_detail
                     SET qty_retur = qty_retur + $qty
-                    WHERE no_transaksi='$nopenjualan' AND no_item='$no_item'";
+                    WHERE no_transaksi='$nopenjualan' AND kd_cabang='{$_SESSION['_cabang']}' AND no_item='$no_item'";
         if(!mysqli_query($koneksi, $sql_upd)) throw new Exception("Gagal update qty_retur: ".mysqli_error($koneksi));
 
         $ket_stok = mysqli_real_escape_string($koneksi, "Retur Penjualan $no_retur");
@@ -101,7 +101,7 @@ try {
                                        FROM tblretur_penjualan_header WHERE nopembelian='$nopenjualan'");
     $row_tot     = mysqli_fetch_assoc($res_tot);
     $new_tot_ret = (int)$row_tot['tot'];
-    if(!mysqli_query($koneksi, "UPDATE tblpenjualan_header SET total_retur=$new_tot_ret WHERE notransaksi='$nopenjualan'"))
+    if(!mysqli_query($koneksi, "UPDATE tblpenjualan_header SET total_retur=$new_tot_ret WHERE notransaksi='$nopenjualan' AND kd_cabang='{$_SESSION['_cabang']}'"))
         throw new Exception("Gagal update header penjualan: ".mysqli_error($koneksi));
 
     mysqli_commit($koneksi);

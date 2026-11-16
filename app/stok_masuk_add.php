@@ -452,7 +452,7 @@ if (empty($_SESSION['_iduser'])) {
             $tm_cari = mysqli_fetch_array($cari_kd);
             $tot_qty = $tm_cari['tot'];
 
-            $data = mysqli_query($koneksi, "SELECT no_transaksi FROM tbitem_masuk_header WHERE no_transaksi='$LastID'");
+            $data = mysqli_query($koneksi, "SELECT no_transaksi FROM tbitem_masuk_header WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
             $cek = mysqli_num_rows($data);
             if ($cek > 0) {
                 // Do nothing if already exists
@@ -461,7 +461,7 @@ if (empty($_SESSION['_iduser'])) {
                 mysqli_query($koneksi, "INSERT INTO tbitem_masuk_header (no_transaksi, tanggal, user, kd_cabang, note) VALUES ('$LastID','$txttglpesan', '$_nama','$kd_cabang','$txtket')");
                 mysqli_query($koneksi, "UPDATE tbitem_masuk_detail SET no_transaksi='$LastID', status_trx='1' WHERE user='$_nama' and kd_cabang='$kd_cabang' and status_trx='0'");
 
-                $sql = mysqli_query($koneksi, "SELECT * FROM tbitem_masuk_detail WHERE no_transaksi='$LastID'");
+                $sql = mysqli_query($koneksi, "SELECT * FROM tbitem_masuk_detail WHERE no_transaksi='$LastID' AND kd_cabang='{$_SESSION['_cabang']}'");
                 $sql_count = mysqli_num_rows($sql);
                 
                 $log_file = 'accurate_stock_update_log.txt';

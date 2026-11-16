@@ -34,7 +34,7 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, 
                                         no_pelanggan, user 
                                         FROM tblpiutang_header 
-                                        WHERE no_transaksi='$nobyr'");
+                                        WHERE no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tgl_pilih=$tm_cari['tanggal_trx'];
 		$nopelanggan=$tm_cari['no_pelanggan'];        
@@ -51,7 +51,7 @@
                                         sum(jumlah_bayar) as tot 
                                         FROM tblpiutang_detail 
                                         WHERE 
-                                        no_transaksi='$nobyr'");
+                                        no_transaksi='$nobyr' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tot_bayar=$tm_cari['tot'];    
 ?>
