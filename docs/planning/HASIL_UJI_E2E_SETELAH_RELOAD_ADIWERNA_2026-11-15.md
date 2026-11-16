@@ -41,9 +41,10 @@ Temuan tambahan:
 | Penjualan manual `JL26000011244` (3×19.000, tunai) | Tersimpan, `kd_cabang=PESALAKAN`, stok tipe 3 keluar 3 (63→60). `status_lunas` ditulis `0` padahal lunas (data import `1`); tidak dipakai halaman penjualan, dampak kecil |
 | Pembelian `BL26000013453` (5×16.000, tunai) | Tersimpan, nomor lanjut dari data center, stok tipe 2 masuk 5 (60→65). `status_lunas` `0`; 1 alarm harga beli sah |
 | Kas masuk `KM26000000053` | **BUG**: INSERT gagal diam-diam (`no_bukti`, `keluar`, `tipe` NOT NULL tanpa default) tapi tampil "Berhasil disimpan". Diperbaiki di `kas_masuk_proses.php` & `kas_keluar_proses.php` (commit `4d0462b`), kas masuk terverifikasi tersimpan 50.000. Kas keluar baru lint, belum klik |
+| Retur pembelian `RP26000000013` (2 dari BL26000013453) | Tersimpan, total 32.000, stok tipe 7 keluar 2 (65→63). Nomor baru seri `RP`, data lama seri `RB` (beda seri, tidak bentrok) |
 | `paket_add_*_cari` (500) | Modul paket mati: tabel `tbpaket*` tidak ada dan `view_cari_item` tanpa kolom `jenis`. Bukan akibat reload. Kandidat arsip |
 
-Belum diuji tulis: retur (beli/jual/servis), PO/DO, antar cabang, kas keluar (klik), edit/hapus, cabang selain Adiwerna.
+Belum diuji tulis: retur penjualan/servis, PO/DO, antar cabang, kas keluar (klik), edit/hapus, cabang selain Adiwerna.
 
 ## Belum diuji
 - Alur tulis browser untuk pembelian, penjualan, retur, PO/DO, kas, antar cabang (hanya servis yang diulang; suite CLI stok lulus). E2E sebelumnya lulus (2026-11-01/02/14).
