@@ -247,3 +247,16 @@ Penuntasan sesi 1 (2026-11-15):
 - Cek lintas: 0 PO dobel per cabang, 0 baris kode lama (PSL/PCL/CDT/TRM). Smoke 13/15 halaman per cabang (302 redirect dan 404 sama seperti Adiwerna). Penjualan baru lulus di CDT & TRM.
 - Catatan: 5 saldo negatif di `view_stok_master`; stok `kd_cabang` ''/'001' (112 baris) bawaan lama, tidak disentuh. Data uji antar cabang TRAYEMAN dihapus oleh muat ulang. Admin CIKDITIRO masih kosong.
 - Semua 5 cabang sudah dimuat. Sisa: uji tulis lengkap per cabang (servis bayar, retur, kas, antar cabang), 3 pelanggan gagal statistik, produksi.
+
+### Uji tulis PACUL, CIKDITIRO, TRAYEMAN, 2026-11-16 (curl + cek DB, akun e2e)
+Lulus di ketiga cabang (kd_cabang benar di setiap baris, stok bergerak sesuai):
+- Kas masuk/keluar; PO -> submit -> approve -> DO diterima (`PW26...`, log approval & DO ber-`kd_cabang`, stok tipe 2 +4).
+- Pembelian tunai (lunas, stok +3); retur pembelian (stok tipe 7 -1, status 0); penjualan (lunas, stok -1); retur penjualan.
+- Servis: buat dari nopol, tambah barang+jasa, bayar -> status '4'/bayar, stok tipe 4 -2, komisi 3 baris.
+- Antar cabang PST -> PACUL/CIKDITIRO/TRAYEMAN (minta, kirim, terima): selesai, PST -3 dan cabang +3 masing-masing.
+Temuan:
+- Kirim/terima antar cabang hanya jalan bila cabang pengirim `tipe_cabang='1'` (guard `is_pusat`); sesuai keputusan Rafi hanya PST yang '1',
+  jadi alur resmi = cabang minta ke PST. Antar cabang non-PST (mis. PACUL <-> CIKDITIRO) kini TIDAK bisa dikirim (status berhenti 'terkirim'). Perlu keputusan bila itu dibutuhkan.
+- Admin cabang hanya ada di PESALAKAN dan PST; bayar servis di cabang lain berhasil hanya karena kode admin PESALAKAN (`084`) dipakai di uji. Staf asli per cabang tetap dibutuhkan.
+- Servis yang no_polisi-nya tidak ada di `tblkendaraan`: CDT 26, PCL 1, PSL 43, TRM 6 nopol (data center), servis baru dari nopol itu ditolak "Data kendaraan tidak ditemukan".
+- Belum diuji: retur servis dan approve retur di 3 cabang ini.
