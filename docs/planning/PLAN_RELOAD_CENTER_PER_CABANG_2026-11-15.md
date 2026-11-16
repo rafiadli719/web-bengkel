@@ -239,3 +239,11 @@ Penuntasan sesi 1 (2026-11-15):
   tabel `bak_cr1116_PACUL_*`. Verify semua COCOK (servis 41.228, beli 9.824, jual 6.225, PO 2.788, stok 655 item). Statistik 16.387 pelanggan.
 - Nomor sama di PACUL & PESALAKAN (mis. `PS21000000001`) tampil terpisah, tidak bercampur. Smoke 250 halaman: 247 OK (3 fragmen tanpa koneksi).
 - Sisa: Cikditiro, Trayeman, Pusat; refresh dari VPS bila perlu.
+
+### Sesi 3-5: CIKDITIRO, TRAYEMAN, PST, 2026-11-16 — SELESAI (lokal)
+- Dimuat dari salinan lokal `fitmotor_center` (s/d 2026-11-12), tag `1116`, tabel backup `bak_cr1116_<CAB>_*`, dump `backups/pre-center-reload-20261116-cikditiro.sql`.
+- Verify COCOK semua cek (CDT servis 16.410, beli 4.389, PO 2.158, hutang 639; TRM servis 2.896, beli 1.134, PO 746; PST beli 1.212, jual 1.518, PO 41, hutang 512, SO 1.716).
+- Statistik pelanggan: CDT 6.828, TRM 1.762 dihitung (3 gagal tiap cabang, belum ditelusuri). PST tanpa servis.
+- Cek lintas: 0 PO dobel per cabang, 0 baris kode lama (PSL/PCL/CDT/TRM). Smoke 13/15 halaman per cabang (302 redirect dan 404 sama seperti Adiwerna). Penjualan baru lulus di CDT & TRM.
+- Catatan: 5 saldo negatif di `view_stok_master`; stok `kd_cabang` ''/'001' (112 baris) bawaan lama, tidak disentuh. Data uji antar cabang TRAYEMAN dihapus oleh muat ulang. Admin CIKDITIRO masih kosong.
+- Semua 5 cabang sudah dimuat. Sisa: uji tulis lengkap per cabang (servis bayar, retur, kas, antar cabang), 3 pelanggan gagal statistik, produksi.
