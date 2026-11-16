@@ -260,3 +260,22 @@ Temuan:
 - Admin cabang hanya ada di PESALAKAN dan PST; bayar servis di cabang lain berhasil hanya karena kode admin PESALAKAN (`084`) dipakai di uji. Staf asli per cabang tetap dibutuhkan.
 - Servis yang no_polisi-nya tidak ada di `tblkendaraan`: CDT 26, PCL 1, PSL 43, TRM 6 nopol (data center), servis baru dari nopol itu ditolak "Data kendaraan tidak ditemukan".
 - Belum diuji: retur servis dan approve retur di 3 cabang ini.
+
+## Sesi 2026-11-16 sore: temuan kecil dan laporan review master
+
+Dikerjakan: indeks performa, UNIQUE retur penjualan, investigasi temuan kecil, laporan review (poin 2 dan 3).
+
+**Perubahan DB lokal (dua migrasi, keduanya ada `down`):**
+- `2026-11-16_run_fase_k_unique_header.php` ditambah `tblretur_penjualan_header` UNIQUE `uk_fk_rj_h (noretur, kd_cabang)`.
+- `2026-11-16_run_index_performa_servis_stok.php` (baru): `idx_nosvc_cab (no_service, kd_cabang)` di `tblservis_barang` dan `tblservis_jasa`, `idx_tanggal` di `tbstok`.
+
+**Temuan, tidak diperbaiki (sumber data center, butuh keputusan):**
+- Saldo negatif: 5 baris `kd_cabang='001'` (legacy, sengaja tidak dinormalisasi) dan 2 baris kode item rusak (`5171 YN ...`, `4913 FN ...`) dari servis uji kita sendiri (SV26000103585/586, nopol terbaca sebagai bagian kode item karena spasi pada skrip uji). Bukan cacat aplikasi.
+- Statistik: 9 servis di 3 cabang berisi `no_pelanggan` = nopol (salah ketik di Access), tidak ada di `tblpelanggan`. Tidak bisa dipetakan tanpa menebak; 2 di antaranya nopol salah satu digit dari kendaraan yang ada (G 5281 QJ vs G 5287 QJ, G 2561 EN vs G 5261 EN).
+- Detail servis yatim (header tidak ada di center): jasa PST 7, PESALAKAN 5, TRAYEMAN 2; barang PST 5, PESALAKAN 10, TRAYEMAN 10. Dibiarkan sebagai riwayat.
+- 74 kode item di stok tanpa master, hampir semuanya saldo 0 (riwayat).
+
+**Laporan review manual (`docs/planning/review/`):**
+- `satuan_beda_item.csv`: 45 item (angka rencana 42, jumlah setelah pembulatan huruf besar/kecil berbeda). Pola: Pacul sering beda dari cabang lain (BTL vs PCS, SET vs PCS).
+- `supplier_kode_bentrok.csv`: 7 kode. 6 hanya beda ejaan nama (AHSP, AIT, FM4, IMM, JMS, JMT); 1 benar-benar beda (`AHASSS`: AHASS 16675 vs ASTRA MOTOR).
+- `supplier_nama_dobel.csv`: 15 nama dengan kode berbeda antar cabang.

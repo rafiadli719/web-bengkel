@@ -19,6 +19,7 @@ $daftar = [
     ['tblhutang_header', 'idx_cr_hut_h', 'uk_fk_hut_h', 'no_transaksi'],
     ['tblpiutang_header', 'idx_cr_piu_h', 'uk_fk_piu_h', 'no_transaksi'],
     ['tblretur_pembelian_header', 'idx_cr_rb_h', 'uk_fk_rb_h', 'noretur'],
+    ['tblretur_penjualan_header', 'idx_cr_rj_h', 'uk_fk_rj_h', 'noretur'],
     ['tbitem_masuk_header', 'idx_cr_im_h', 'uk_fk_im_h', 'no_transaksi'],
     ['tbitem_keluar_header', 'idx_cr_ik_h', 'uk_fk_ik_h', 'no_transaksi'],
     ['tblkas_keluar_masuk', 'idx_cr_kas', 'uk_fk_kas', 'kode_km'],
