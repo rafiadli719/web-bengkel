@@ -18,7 +18,7 @@
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_supplier, user 
                                         FROM tblorder_header 
-                                        WHERE no_order='$nopesanan'");
+                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_supplier'];
@@ -36,7 +36,7 @@
                                         sum(quantity) as tot_order
                                         FROM tblorder_detail 
                                         WHERE 
-                                        no_order='$nopesanan'");			
+                                        no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];
         $tot_order=$tm_cari['tot_order'];
@@ -44,7 +44,7 @@
 	$query = mysqli_query($koneksi,"SELECT 
                                                                         id, no_item, quantity, harga_pokok, total 
                                                                         FROM tblorder_detail 
-                                                                        WHERE no_order='$nopesanan'");
+                                                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
 														
 	require_once("dompdf/autoload.inc.php");
 	use Dompdf\Dompdf;

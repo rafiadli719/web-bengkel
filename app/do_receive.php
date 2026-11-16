@@ -121,14 +121,14 @@ if(isset($_POST['btnreceive'])){
                                                 {$qty_terima}, 0,
                                                 'Penerimaan DO',
                                                 '".mysqli_real_escape_string($koneksi,$kd_cabang)."')");
-                                                require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $h['no_po'], $no_item), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); // Moving Average shadow
+                                                require_once __DIR__ . '/_include_inv_shadow.php'; inv_live_post_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $h['no_po'], $no_item, $h['kd_cabang']), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); // Moving Average shadow
                     }
 
                     // Update PO qty_terima
                     if($qty_terima > 0){
                         mysqli_query($koneksi, "UPDATE tblorder_detail
                                                SET qty_terima = qty_terima + {$qty_terima}
-                                               WHERE no_order='".mysqli_real_escape_string($koneksi,$h['no_po'])."'
+                                               WHERE no_order='".mysqli_real_escape_string($koneksi,$h['no_po'])."' AND kd_cabang='".mysqli_real_escape_string($koneksi,$h['kd_cabang'])."'
                                                AND no_item='".mysqli_real_escape_string($koneksi,$no_item)."'");
                     }
 

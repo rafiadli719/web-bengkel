@@ -359,14 +359,14 @@ function inv_hpp_asal($koneksi, $refType, $refNo, $item)
 }
 
 /** Harga satuan di PO (tblorder_detail.harga_pokok) untuk penerimaan DO. null bila tidak ada. */
-function inv_harga_po($koneksi, $noPo, $item)
+function inv_harga_po($koneksi, $noPo, $item, $kdCabang = null)
 {
     try {
-        $st = @mysqli_prepare($koneksi, "SELECT harga_pokok FROM tblorder_detail WHERE no_order = ? AND no_item = ? LIMIT 1");
+        $st = @mysqli_prepare($koneksi, "SELECT harga_pokok FROM tblorder_detail WHERE no_order = ? AND no_item = ? AND (? IS NULL OR kd_cabang = ?) LIMIT 1");
         if (!$st) {
             return null;
         }
-        mysqli_stmt_bind_param($st, 'ss', $noPo, $item);
+        mysqli_stmt_bind_param($st, 'ssss', $noPo, $item, $kdCabang, $kdCabang);
         mysqli_stmt_execute($st);
         $res = mysqli_stmt_get_result($st);
         $row = $res ? mysqli_fetch_assoc($res) : null;

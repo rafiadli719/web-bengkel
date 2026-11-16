@@ -273,7 +273,7 @@ if(empty($_SESSION['_iduser'])){
                                         }
 
                                         $sql = "SELECT oh.*, s.namasupplier,
-                                                    (SELECT COUNT(*) FROM tblorder_detail WHERE no_order=oh.no_order) as item_count
+                                                    (SELECT COUNT(*) FROM tblorder_detail WHERE no_order=oh.no_order AND kd_cabang=oh.kd_cabang) as item_count
                                                 FROM tblorder_header oh
                                                 LEFT JOIN tblsupplier s ON s.nosupplier = oh.no_supplier
                                                 $where_clause

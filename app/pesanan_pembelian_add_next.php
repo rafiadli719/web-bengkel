@@ -26,7 +26,7 @@
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         tanggal, no_supplier, user 
                                         FROM tblorder_header 
-                                        WHERE no_order='$nopesanan'");
+                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal_order=$tm_cari['tanggal'];
 		$no_supplier=$tm_cari['no_supplier'];
@@ -350,7 +350,7 @@
                                             $sql = mysqli_query($koneksi,"SELECT 
                                                                         id, no_item, quantity, harga_pokok, total 
                                                                         FROM tblorder_detail 
-                                                                        WHERE no_order='$nopesanan' and user='$user_order'");
+                                                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}' and user='$user_order'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];

@@ -257,7 +257,7 @@
                     // regenerate once if duplicated
                     $LastID = FormatNoTrans(OtomatisID());
                 }
-                $data2 = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header WHERE no_order='$LastID'");
+                $data2 = mysqli_query($koneksi,"SELECT no_order FROM tblorder_header WHERE no_order='$LastID' AND kd_cabang='$kd_cabang'");
                 $cek2 = mysqli_num_rows($data2);
                 if($cek2 == 0 && $msg===''){
                     $ok_header = mysqli_query($koneksi,"INSERT INTO tblorder_header
@@ -281,8 +281,8 @@
                         mysqli_stmt_bind_param($stmt_bracket, "dd", $tot_money, $tot_money);
                         mysqli_stmt_execute($stmt_bracket);
                         if(mysqli_num_rows(mysqli_stmt_get_result($stmt_bracket)) > 0){
-                            $stmt_pend = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='pending' WHERE no_order=?");
-                            mysqli_stmt_bind_param($stmt_pend, "s", $LastID);
+                            $stmt_pend = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='pending' WHERE no_order=? AND kd_cabang=?");
+                            mysqli_stmt_bind_param($stmt_pend, "ss", $LastID, $kd_cabang);
                             mysqli_stmt_execute($stmt_pend);
                         }
                     }
@@ -302,7 +302,7 @@
 
                     if($msg==='' && $no_pr!=''){
                         $no_pr_esc = mysqli_real_escape_string($koneksi, $no_pr);
-                        $qdet = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblorder_detail WHERE no_order='$LastID'");
+                        $qdet = mysqli_query($koneksi, "SELECT no_item, quantity FROM tblorder_detail WHERE no_order='$LastID' AND kd_cabang='$kd_cabang'");
                         while($qdet && ($dd = mysqli_fetch_assoc($qdet))){
                             $ni = mysqli_real_escape_string($koneksi, $dd['no_item']);
                             $remain = (int)$dd['quantity'];

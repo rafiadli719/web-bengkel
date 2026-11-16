@@ -79,7 +79,7 @@
                                                 FROM 
                                                 tblorder_header 
                                                 WHERE 
-                                                no_order='$nopesanan' and 
+                                                no_order='$nopesanan' AND kd_cabang='$kd_cabang' and 
                                                 status='0'");
                 $cek = mysqli_num_rows($data);                
                 if($cek > 0){
@@ -90,14 +90,14 @@
                                                     FROM 
                                                     tblorder_header 
                                                     WHERE 
-                                                    no_order='$nopesanan'");			
+                                                    no_order='$nopesanan' AND kd_cabang='$kd_cabang'");			
                     $tm_cari=mysqli_fetch_array($cari_kd);
                     $cbo_supplier=$tm_cari['no_supplier'];	
                 // End Cari Pelanggan
                 
                 // Pindahkan Data Pesanan ke pebelian
                     $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail 
-                                                WHERE no_order='$nopesanan'");
+                                                WHERE no_order='$nopesanan' AND kd_cabang='$kd_cabang'");
                     while ($tampil = mysqli_fetch_array($sql)) {
                         $no_item=$tampil['no_item'];
                         $txthargabarang=$tampil['harga_pokok'];
@@ -299,7 +299,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
             // Cek jika dari no pesanan yang dipilih
                 $cari_kd=mysqli_query($koneksi,"SELECT tanggal, total_qty 
                                                 FROM tblorder_header 
-                                                WHERE no_order='$nopesanan'");			
+                                                WHERE no_order='$nopesanan' AND kd_cabang='$kd_cabang'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 // Kalau $nopesanan kosong, query gak match apa pun -> $tm_cari null/false
                 // -> total_qty_order jadi NULL/'' -> INSERT header gagal (kolom int NOT NULL).
@@ -367,7 +367,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                                                 SET
                                                 qty_terima='$qty'
                                                 WHERE
-                                                no_order='$nopesanan' and
+                                                no_order='$nopesanan' AND kd_cabang='$kd_cabang' and
                                                 no_item='$no_item'");
                     }
                 }
@@ -377,7 +377,7 @@ $nopesanan= mysqli_real_escape_string($koneksi, $_POST['txtnopesanan']);
                                                 SET
                                                 status='1'
                                                 WHERE
-                                                no_order='$nopesanan'");
+                                                no_order='$nopesanan' AND kd_cabang='$kd_cabang'");
                 }
                 echo"<script>window.location=('pembelian_cetak.php?nopesanan=$LastID');</script>";
                 }

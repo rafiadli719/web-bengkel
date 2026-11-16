@@ -23,8 +23,8 @@ $pr_res = mysqli_query($koneksi, "SELECT h.no_pr, h.tanggal_pr, h.requester, h.s
             ORDER BY h.tanggal_pr DESC, h.no_pr DESC
             LIMIT ".$lim);
 $po_res = mysqli_query($koneksi, "SELECT h.no_order, h.tanggal, h.no_supplier, COALESCE(h.no_pr,'') AS no_pr,
-                   (SELECT COALESCE(SUM(GREATEST(d.quantity - d.qty_terima,0)),0) FROM tblorder_detail d WHERE d.no_order=h.no_order) AS sisa_qty,
-                   (SELECT COUNT(1) FROM tbldelivery_order_header doh WHERE doh.no_po=h.no_order) AS jml_do
+                   (SELECT COALESCE(SUM(GREATEST(d.quantity - d.qty_terima,0)),0) FROM tblorder_detail d WHERE d.no_order=h.no_order AND d.kd_cabang=h.kd_cabang) AS sisa_qty,
+                   (SELECT COUNT(1) FROM tbldelivery_order_header doh WHERE doh.no_po=h.no_order AND doh.kd_cabang=h.kd_cabang) AS jml_do
             FROM tblorder_header h
             WHERE h.kd_cabang='".$esc_cbg."'
             ORDER BY h.tanggal DESC, h.no_order DESC

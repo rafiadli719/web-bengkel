@@ -1,29 +1,18 @@
 <?php
+// Seri nomor PO web = "PW" + yy + 9 digit urut. Seri "PS" dipakai PO dari Access (reload center),
+// jadi nomor web tidak boleh lagi bentrok dengan nomor Access (keputusan Rafi 2026-11-16).
 function OtomatisID()
 {
     include "../config/koneksi.php";
-	$querycount="SELECT count(no_order) as LastID FROM tblorder_header";
-	$result=mysqli_query($koneksi,$querycount) or die(mysql_error());
-	$row=mysqli_fetch_array($result);
-	return $row['LastID'];
+    $thn = substr(date('Y'), 2, 2);
+    $pref = "PW" . $thn;
+    $result = mysqli_query($koneksi, "SELECT MAX(CAST(SUBSTRING(no_order, 5) AS UNSIGNED)) AS LastID FROM tblorder_header WHERE no_order LIKE '" . $pref . "%'");
+    $row = $result ? mysqli_fetch_array($result) : null;
+    return (int)($row['LastID'] ?? 0);
 }
 
 function FormatNoTrans($num) {
-            $thn_skr=date('Y');
-            $thn=substr($thn_skr,2,2);
-        $num=$num+1; switch (strlen($num))
-        {                
-        case 1 : $NoTrans = "PS".$thn."00000000".$num; break;    
-        case 2 : $NoTrans = "PS".$thn."0000000".$num; break;    
-        case 3 : $NoTrans = "PS".$thn."000000".$num; break;            
-        case 4 : $NoTrans = "PS".$thn."00000".$num; break;                    
-        case 5 : $NoTrans = "PS".$thn."0000".$num; break;
-        case 6 : $NoTrans = "PS".$thn."000".$num; break;
-        case 7 : $NoTrans = "PS".$thn."00".$num; break;
-        case 8 : $NoTrans = "PS".$thn."0".$num; break;
-        case 9 : $NoTrans = "PS".$thn.$num; break;
-        default: $NoTrans = $num;          
-        }          
-        return $NoTrans;
+    $thn = substr(date('Y'), 2, 2);
+    return "PW" . $thn . sprintf('%09d', (int)$num + 1);
 }
 ?>

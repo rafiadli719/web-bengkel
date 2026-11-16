@@ -5,6 +5,7 @@ if(empty($_SESSION['_iduser'])){
     exit;
 }
 $id_user = $_SESSION['_iduser'];
+$kd_cabang = $_SESSION['_cabang'] ?? '';
 include "../config/koneksi.php";
 
 // Get user info + posisi (untuk cek level approval bertingkat)
@@ -29,8 +30,8 @@ if($no_po===''){
 }
 
 // Ambil status & total_order saat ini (dasar cek bracket approval bertingkat)
-$stmt = mysqli_prepare($koneksi, "SELECT status_approval, total_order FROM tblorder_header WHERE no_order=?");
-mysqli_stmt_bind_param($stmt, "s", $no_po);
+$stmt = mysqli_prepare($koneksi, "SELECT status_approval, total_order FROM tblorder_header WHERE no_order=? AND kd_cabang=?");
+mysqli_stmt_bind_param($stmt, "ss", $no_po, $kd_cabang);
 mysqli_stmt_execute($stmt);
 $h = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
@@ -39,8 +40,8 @@ $total_order = $h ? (float)$h['total_order'] : 0;
 
 if($action==='submit'){
     // Move to pending if currently draft or rejected
-    $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='pending', approved_by=NULL, approved_date=NULL, rejected_by=NULL, rejected_date=NULL, reject_reason=NULL WHERE no_order=?");
-    mysqli_stmt_bind_param($stmt, "s", $no_po);
+    $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='pending', approved_by=NULL, approved_date=NULL, rejected_by=NULL, rejected_date=NULL, reject_reason=NULL WHERE no_order=? AND kd_cabang=?");
+    mysqli_stmt_bind_param($stmt, "ss", $no_po, $kd_cabang);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 }
@@ -76,23 +77,23 @@ elseif($action==='approve' || $action==='reject'){
         }
 
         if($action==='approve'){
-            $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='approved', approved_by=?, approved_date=?, rejected_by=NULL, rejected_date=NULL, reject_reason=NULL WHERE no_order=?");
-            mysqli_stmt_bind_param($stmt, "sss", $_nama, $now, $no_po);
+            $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='approved', approved_by=?, approved_date=?, rejected_by=NULL, rejected_date=NULL, reject_reason=NULL WHERE no_order=? AND kd_cabang=?");
+            mysqli_stmt_bind_param($stmt, "ssss", $_nama, $now, $no_po, $kd_cabang);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-            $stmt = mysqli_prepare($koneksi, "INSERT INTO tblpo_approval_log (no_po, level_approval, approver, action, notes, action_date) VALUES (?, ?, ?, 'approved', ?, ?)");
-            mysqli_stmt_bind_param($stmt, "sisss", $no_po, $level_approval, $_nama, $notes, $now);
+            $stmt = mysqli_prepare($koneksi, "INSERT INTO tblpo_approval_log (no_po, kd_cabang, level_approval, approver, action, notes, action_date) VALUES (?, ?, ?, ?, 'approved', ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssisss", $no_po, $kd_cabang, $level_approval, $_nama, $notes, $now);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
         } else {
-            $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='rejected', rejected_by=?, rejected_date=?, reject_reason=? WHERE no_order=?");
-            mysqli_stmt_bind_param($stmt, "ssss", $_nama, $now, $notes, $no_po);
+            $stmt = mysqli_prepare($koneksi, "UPDATE tblorder_header SET status_approval='rejected', rejected_by=?, rejected_date=?, reject_reason=? WHERE no_order=? AND kd_cabang=?");
+            mysqli_stmt_bind_param($stmt, "sssss", $_nama, $now, $notes, $no_po, $kd_cabang);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-            $stmt = mysqli_prepare($koneksi, "INSERT INTO tblpo_approval_log (no_po, level_approval, approver, action, notes, action_date) VALUES (?, ?, ?, 'rejected', ?, ?)");
-            mysqli_stmt_bind_param($stmt, "sisss", $no_po, $level_approval, $_nama, $notes, $now);
+            $stmt = mysqli_prepare($koneksi, "INSERT INTO tblpo_approval_log (no_po, kd_cabang, level_approval, approver, action, notes, action_date) VALUES (?, ?, ?, ?, 'rejected', ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssisss", $no_po, $kd_cabang, $level_approval, $_nama, $notes, $now);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
         }

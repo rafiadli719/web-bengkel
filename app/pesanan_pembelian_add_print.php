@@ -37,8 +37,8 @@
 		$stmt=mysqli_prepare($koneksi,"SELECT
                                         tanggal, no_supplier, user
                                         FROM tblorder_header
-                                        WHERE no_order=?");
-		mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+                                        WHERE no_order=? AND kd_cabang=?");
+		mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$_SESSION['_cabang']);
 		mysqli_stmt_execute($stmt);
 		$cari_kd=mysqli_stmt_get_result($stmt);
 		$tm_cari=mysqli_fetch_array($cari_kd);
@@ -63,8 +63,8 @@
                                         sum(quantity) as tot_order
                                         FROM tblorder_detail
                                         WHERE
-                                        no_order=?");
-        mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+                                        no_order=? AND kd_cabang=?");
+        mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$_SESSION['_cabang']);
         mysqli_stmt_execute($stmt);
         $cari_kd=mysqli_stmt_get_result($stmt);
         $tm_cari=mysqli_fetch_array($cari_kd);
@@ -295,8 +295,8 @@
                                             $stmt = mysqli_prepare($koneksi,"SELECT
                                                                         id, no_item, quantity, harga_pokok, total
                                                                         FROM tblorder_detail
-                                                                        WHERE no_order=? and user=?");
-                                            mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$user_order);
+                                                                        WHERE no_order=? AND kd_cabang=? and user=?");
+                                            mysqli_stmt_bind_param($stmt,"sss",$nopesanan,$_SESSION['_cabang'],$user_order);
                                             mysqli_stmt_execute($stmt);
                                             $sql = mysqli_stmt_get_result($stmt);
                                             while ($tampil = mysqli_fetch_array($sql)) {

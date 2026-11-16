@@ -59,9 +59,9 @@ $qpl = mysqli_query($koneksi, "
     SELECT h.no_order, h.tanggal, h.no_supplier,
            COALESCE(s.namasupplier, h.no_supplier) AS nama_supplier,
            SUM(d.quantity) - SUM(d.qty_terima) AS sisa_qty,
-           (SELECT COUNT(*) FROM tbldelivery_order_header doh WHERE doh.no_po = h.no_order) AS jml_do
+           (SELECT COUNT(*) FROM tbldelivery_order_header doh WHERE doh.no_po = h.no_order AND doh.kd_cabang = h.kd_cabang) AS jml_do
     FROM tblorder_header h
-    JOIN tblorder_detail d ON d.no_order = h.no_order
+    JOIN tblorder_detail d ON d.no_order = h.no_order AND d.kd_cabang = h.kd_cabang
     LEFT JOIN tblsupplier s ON s.nosupplier = h.no_supplier
     WHERE h.kd_cabang = '{$kd_cab_esc}' AND (h.tipe_trx = 'po' OR h.tipe_trx = '' OR h.tipe_trx IS NULL)
     GROUP BY h.no_order, h.tanggal, h.no_supplier, s.namasupplier
@@ -86,10 +86,10 @@ if(isset($_POST['btnload_po'])){
 }
 
 if($no_po!=''){
-    $qh = mysqli_query($koneksi, "SELECT no_order, no_supplier, tanggal, kd_cabang, no_pr FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."'");
+    $qh = mysqli_query($koneksi, "SELECT no_order, no_supplier, tanggal, kd_cabang, no_pr FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}'");
     $po_h = mysqli_fetch_assoc($qh);
     if($po_h){
-        $qd = mysqli_query($koneksi, "SELECT no_item, quantity, qty_terima, harga_pokok FROM tblorder_detail WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."'");
+        $qd = mysqli_query($koneksi, "SELECT no_item, quantity, qty_terima, harga_pokok FROM tblorder_detail WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}'");
         while($r = mysqli_fetch_assoc($qd)){
             $sisa = (int)$r['quantity'] - (int)$r['qty_terima'];
             if($sisa>0){
@@ -126,7 +126,7 @@ if($no_po!=''){
             }
         }
         if($do_header_table==='tbldelivery_order_header'){
-            $qdo = mysqli_query($koneksi, "SELECT no_do, tanggal_do, total_qty, status_do FROM tbldelivery_order_header WHERE no_po='".mysqli_real_escape_string($koneksi,$no_po)."' ORDER BY tanggal_do DESC, no_do DESC");
+            $qdo = mysqli_query($koneksi, "SELECT no_do, tanggal_do, total_qty, status_do FROM tbldelivery_order_header WHERE no_po='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}' ORDER BY tanggal_do DESC, no_do DESC");
             while($qdo && ($drow = mysqli_fetch_assoc($qdo))){
                 $do_list[] = [
                     'no_do' => $drow['no_do'],
@@ -139,7 +139,7 @@ if($no_po!=''){
             $qdo = mysqli_query($koneksi, "SELECT h.no_do, h.tanggal AS tanggal_do, COALESCE(SUM(d.qty_accepted),0) AS total_qty, h.status AS status_do
                                            FROM tbldo_header h
                                            LEFT JOIN tbldo_detail d ON h.no_do = d.no_do
-                                           WHERE h.ref_po='".mysqli_real_escape_string($koneksi,$no_po)."'
+                                           WHERE h.ref_po='".mysqli_real_escape_string($koneksi,$no_po)."' AND h.kd_cabang='{$kd_cab_esc}'
                                            GROUP BY h.no_do
                                            ORDER BY h.tanggal DESC, h.no_do DESC");
             while($qdo && ($drow = mysqli_fetch_assoc($qdo))){
@@ -166,8 +166,8 @@ if(isset($_POST['btnreceive_do'])){
 
     // Gate approval bertingkat: PO yang total-nya masuk bracket approval aktif
     // wajib berstatus 'approved' dulu sebelum boleh lanjut ke penerimaan/DO.
-    $stmt_appr = mysqli_prepare($koneksi, "SELECT total_order, status_approval FROM tblorder_header WHERE no_order=?");
-    mysqli_stmt_bind_param($stmt_appr, "s", $no_po);
+    $stmt_appr = mysqli_prepare($koneksi, "SELECT total_order, status_approval FROM tblorder_header WHERE no_order=? AND kd_cabang=?");
+    mysqli_stmt_bind_param($stmt_appr, "ss", $no_po, $kd_cabang);
     mysqli_stmt_execute($stmt_appr);
     $r_appr = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_appr));
     if($r_appr){
@@ -193,7 +193,7 @@ if(isset($_POST['btnreceive_do'])){
     } else {
         // Server-side validation: ensure qty_kirim/qty_terima <= sisa PO per item
         $po_map = [];
-        $qm = mysqli_query($koneksi, "SELECT no_item, quantity, qty_terima FROM tblorder_detail WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."'");
+        $qm = mysqli_query($koneksi, "SELECT no_item, quantity, qty_terima FROM tblorder_detail WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}'");
         while($r2 = mysqli_fetch_assoc($qm)){
             $po_map[$r2['no_item']] = max(0, ((int)$r2['quantity'] - (int)$r2['qty_terima']));
         }
@@ -218,7 +218,7 @@ if(isset($_POST['btnreceive_do'])){
             $no_do = generate_no_do($koneksi, $kd_cabang, $do_header_table);
 
             if($no_supplier==''){
-                $qh = mysqli_query($koneksi, "SELECT no_supplier FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."'");
+                $qh = mysqli_query($koneksi, "SELECT no_supplier FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}'");
                 if($qh){ $r = mysqli_fetch_assoc($qh); $no_supplier = $r? $r['no_supplier'] : ''; }
             }
 
@@ -262,11 +262,11 @@ if(isset($_POST['btnreceive_do'])){
                         $q3 = mysqli_query($koneksi, "INSERT INTO tbstok (tipe, no_transaksi, no_item, tanggal, masuk, keluar, keterangan, kd_cabang)
                             VALUES ('2', '".mysqli_real_escape_string($koneksi,$no_do)."', '".mysqli_real_escape_string($koneksi,$no_item)."', '{$tanggal_do}', {$qty_terima}, 0, 'Penerimaan (DO)', '".mysqli_real_escape_string($koneksi,$kd_cabang)."')");
                         if(!$q3){ $db_error = mysqli_error($koneksi); break; }
-                        require_once __DIR__ . '/_include_inv_shadow.php'; try { inv_live_post_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $no_po, $no_item), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); } catch (Throwable $e_live) { $db_error = $e_live->getMessage(); break; } // Moving Average shadow
+                        require_once __DIR__ . '/_include_inv_shadow.php'; try { inv_live_post_in($koneksi, $kd_cabang, $no_item, $qty_terima, inv_harga_po($koneksi, $no_po, $no_item, $kd_cabang), 'DO_TERIMA', $no_do, 'Penerimaan DO', ''); } catch (Throwable $e_live) { $db_error = $e_live->getMessage(); break; } // Moving Average shadow
                     }
 
                     $q4 = mysqli_query($koneksi, "UPDATE tblorder_detail SET qty_terima = qty_terima + {$qty_terima}
-                        WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND no_item='".mysqli_real_escape_string($koneksi,$no_item)."'");
+                        WHERE no_order='".mysqli_real_escape_string($koneksi,$no_po)."' AND kd_cabang='{$kd_cab_esc}' AND no_item='".mysqli_real_escape_string($koneksi,$no_item)."'");
                     if(!$q4){ $db_error = mysqli_error($koneksi); break; }
                 }
             }

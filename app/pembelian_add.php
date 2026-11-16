@@ -59,7 +59,7 @@
             // Check if PO exists and is valid
             $data = mysqli_query($koneksi,"SELECT no_order, no_supplier, payment_term
                                             FROM tblorder_header
-                                            WHERE no_order='$nopesanan' AND status='0'");
+                                            WHERE no_order='$nopesanan' AND kd_cabang='$kd_cabang' AND status='0'");
             $cek = mysqli_num_rows($data);
             if($cek > 0){
                 $po_data = mysqli_fetch_array($data);
@@ -81,7 +81,7 @@
                                         WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'");
 
                 // Copy PO items to pembelian_detail temp
-                $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail WHERE no_order='$nopesanan'");
+                $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail WHERE no_order='$nopesanan' AND kd_cabang='$kd_cabang'");
                 while ($tampil = mysqli_fetch_array($sql)) {
                     $no_item = $tampil['no_item'];
                     $txthargabarang = $tampil['harga_pokok'];
@@ -145,7 +145,7 @@
                                                 FROM 
                                                 tblorder_header 
                                                 WHERE 
-                                                no_order='$nopesanan' and 
+                                                no_order='$nopesanan' AND kd_cabang='$kd_cabang' and 
                                                 status='0'");
                 $cek = mysqli_num_rows($data);                
                 if($cek > 0){
@@ -156,14 +156,14 @@
                                                     FROM 
                                                     tblorder_header 
                                                     WHERE 
-                                                    no_order='$nopesanan'");			
+                                                    no_order='$nopesanan' AND kd_cabang='$kd_cabang'");			
                     $tm_cari=mysqli_fetch_array($cari_kd);
                     $cbo_supplier=$tm_cari['no_supplier'];	
                 // End Cari Pelanggan
                 
                 // Pindahkan Data Pesanan ke pebelian
                     $sql = mysqli_query($koneksi,"SELECT * FROM tblorder_detail 
-                                                WHERE no_order='$nopesanan'");
+                                                WHERE no_order='$nopesanan' AND kd_cabang='$kd_cabang'");
                     while ($tampil = mysqli_fetch_array($sql)) {
                         $no_item=$tampil['no_item'];
                         $txthargabarang=$tampil['harga_pokok'];
@@ -450,7 +450,7 @@
                 // '' bikin INSERT header gagal tiap transaksi tanpa referensi pesanan).
                 $total_qty_order='0';
                 if($nopesanan<>'') {
-                    $q_po=mysqli_query($koneksi,"SELECT tanggal, total_qty FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$nopesanan)."'");
+                    $q_po=mysqli_query($koneksi,"SELECT tanggal, total_qty FROM tblorder_header WHERE no_order='".mysqli_real_escape_string($koneksi,$nopesanan)."' AND kd_cabang='$kd_cabang'");
                     if($q_po) {
                         $tm_po=mysqli_fetch_array($q_po);
                         if($tm_po) {
@@ -563,7 +563,7 @@
                                                     SET 
                                                     qty_terima = qty_terima + $qty 
                                                     WHERE 
-                                                    no_order='$nopesanan' and 
+                                                    no_order='$nopesanan' AND kd_cabang='$kd_cabang' and 
                                                     no_item='$no_item'");                        
                         }
                     }
@@ -575,7 +575,7 @@
                                                 SET 
                                                 status='1' 
                                                 WHERE 
-                                                no_order='$nopesanan'");    
+                                                no_order='$nopesanan' AND kd_cabang='$kd_cabang'");    
                     }
                 }
                                 

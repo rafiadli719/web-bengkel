@@ -34,8 +34,8 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx,
                                         no_supplier, note, payment_term, total_qty, total_order
                                         FROM tblorder_header
-                                        WHERE no_order=?");
-		mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+                                        WHERE no_order=? AND kd_cabang=?");
+		mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$_SESSION['_cabang']);
 		mysqli_stmt_execute($stmt);
 		$cari_kd=mysqli_stmt_get_result($stmt);
 		$tm_cari=mysqli_fetch_array($cari_kd);
@@ -76,8 +76,8 @@
         }
 
         $total_beli = 0;
-        $stmt=mysqli_prepare($koneksi,"SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order=?");
-        mysqli_stmt_bind_param($stmt,"s",$nopesanan);
+        $stmt=mysqli_prepare($koneksi,"SELECT no_item, quantity, harga_pokok FROM tblorder_detail WHERE no_order=? AND kd_cabang=?");
+        mysqli_stmt_bind_param($stmt,"ss",$nopesanan,$_SESSION['_cabang']);
         mysqli_stmt_execute($stmt);
         $qsum = mysqli_stmt_get_result($stmt);
         while ($r = mysqli_fetch_array($qsum)) {

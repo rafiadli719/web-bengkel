@@ -48,7 +48,7 @@
                                         DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx, no_supplier, user,
                                         status_approval, approved_by, approved_date, rejected_by, rejected_date, reject_reason
                                         FROM tblorder_header 
-                                        WHERE no_order='$nopesanan'");
+                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		if (!$tm_cari) {
 			echo "<script>alert('Data pesanan tidak ditemukan');window.location='pesanan_pembelian.php';</script>";
@@ -76,7 +76,7 @@
                                         sum(quantity) as tot_order
                                         FROM tblorder_detail 
                                         WHERE 
-                                        no_order='$nopesanan'");			
+                                        no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $tot=$tm_cari['tot'];
         $tot_order=$tm_cari['tot_order'];
@@ -349,7 +349,7 @@
                                             $sql = mysqli_query($koneksi,"SELECT 
                                                                         id, no_item, quantity, harga_pokok, total 
                                                                         FROM tblorder_detail 
-                                                                        WHERE no_order='$nopesanan' and user='$user_order'");
+                                                                        WHERE no_order='$nopesanan' AND kd_cabang='{$_SESSION['_cabang']}' and user='$user_order'");
                                             while ($tampil = mysqli_fetch_array($sql)) {
                                                 $no++;
                                                 $no_item=$tampil['no_item'];
