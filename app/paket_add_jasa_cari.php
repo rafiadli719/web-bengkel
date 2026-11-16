@@ -86,61 +86,53 @@
 
         if($txtflt=='asc') {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
+                $sql_query=" SELECT * FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
                             WHERE 
                             (noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
-                            AND jenis='SERVIS' 
                             order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
+                                                count(*) as tot FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
                                                 WHERE 
                                                 (noitem like '%".$txtkey."%') OR 
                                                 (namaitem like '%".$txtkey."%') OR 
-                                                (namajenis like '%".$txtkey."%') 
-                                                AND jenis='SERVIS'");			
+                                                (namajenis like '%".$txtkey."%')");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS' order by ".$sql_urut." asc LIMIT 200";
+                $sql_query=" SELECT * FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS'");			
+                                                count(*) as tot FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
+                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                        
             }
         } else {
             IF($sql_cari=="") {
-                $sql_query=" SELECT * FROM view_cari_item 
+                $sql_query=" SELECT * FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
                             WHERE 
                             (noitem like '%".$txtkey."%') OR 
                             (namaitem like '%".$txtkey."%') OR 
                             (namajenis like '%".$txtkey."%') 
-                            AND jenis='SERVIS' 
                             order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
+                                                count(*) as tot FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
                                                 WHERE 
                                                 (noitem like '%".$txtkey."%') OR 
                                                 (namaitem like '%".$txtkey."%') OR 
-                                                (namajenis like '%".$txtkey."%') 
-                                                AND jenis='SERVIS'");			
+                                                (namajenis like '%".$txtkey."%')");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
-                $sql_query=" SELECT * FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS' order by ".$sql_urut." desc LIMIT 200";
+                $sql_query=" SELECT * FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
+                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
-                                                count(*) as tot FROM view_cari_item 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' 
-                            AND jenis='SERVIS'");			
+                                                count(*) as tot FROM (SELECT noitem, namaitem, '' AS kodebarcode, harga AS hargajual, harga AS hargapokok, '' AS namajenis, '' AS rakbarang, '' AS satuan, 0 AS stokmin FROM tblitem_jasa) vj 
+                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                                    
             }
