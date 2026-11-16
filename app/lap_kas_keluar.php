@@ -50,7 +50,7 @@
     // ---- SQL Detail -----
         $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                             FROM tblkas_keluar_masuk 
-                            WHERE 
+                            WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                             (tanggal>='$tgl_pilih_dari_eng' AND 
                             tanggal<='$tgl_pilih_sampai_eng') AND 
                             jenis='Keluar' 
@@ -60,7 +60,7 @@
         $cari_kd=mysqli_query($koneksi,"SELECT 
                                         count(*) as tot 
                                         FROM tblkas_keluar_masuk 
-                                        WHERE 
+                                        WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                         (tanggal>='$tgl_pilih_dari_eng' AND 
                                         tanggal<='$tgl_pilih_sampai_eng') AND 
                             jenis='Keluar'");			
@@ -78,7 +78,7 @@
             // ---- SQL Hasil Data ----- 
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                             FROM tblkas_keluar_masuk 
-                                    WHERE 
+                                    WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                     (tanggal>='$tglmulai' AND 
                                     tanggal<='$tglselesai') AND 
                             jenis='Keluar' 
@@ -88,7 +88,7 @@
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM tblkas_keluar_masuk 
-                                                WHERE 
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                                 (tanggal>='$tglmulai' AND 
                                                 tanggal<='$tglselesai') AND 
                             jenis='Keluar'");			

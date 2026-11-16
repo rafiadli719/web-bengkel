@@ -23,14 +23,14 @@
             // ---- SQL Hasil Data -----
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_penjualan_header
                                     WHERE
-                                    (tanggal>='$tglmulai' AND
+kd_cabang='".addslashes($_SESSION['_cabang'])."' AND                                     (tanggal>='$tglmulai' AND
                                     tanggal<='$tglselesai')
                                     ORDER BY tanggal, notransaksi";
             } else {
             // ---- SQL Hasil Data -----
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx FROM view_penjualan_header
                                     WHERE
-                                    (tanggal>='$tglmulai' AND
+kd_cabang='".addslashes($_SESSION['_cabang'])."' AND                                     (tanggal>='$tglmulai' AND
                                     tanggal<='$tglselesai') AND
                                     ((no_pelanggan like '%".$nopelanggan."%') OR
                                     (namapelanggan like '%".$nopelanggan."%'))

@@ -26,12 +26,12 @@
                 $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
                             FROM view_service vs
                             LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
-                            WHERE (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai')
+                            WHERE vs.kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai')
                             ORDER BY vs.tanggal, vs.no_service";
 
             // ---- SQL Total Data -----
                 $cari_kd=mysqli_query($koneksi,"SELECT count(*) as tot FROM view_service
-                                                WHERE (tanggal>='$tglmulai' AND tanggal<='$tglselesai')");
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (tanggal>='$tglmulai' AND tanggal<='$tglselesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];
                 $hasil_cari="Hasil Pencarian ditemukan ".$tot." data";
@@ -40,13 +40,13 @@
                 $sql_query="SELECT vs.*, ts.mekanik1, ts.mekanik2, ts.mekanik3, ts.mekanik4
                             FROM view_service vs
                             LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
-                            WHERE (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
+                            WHERE vs.kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
                             (vs.no_pelanggan LIKE '%$nopelanggan_esc%' OR vs.namapelanggan LIKE '%$nopelanggan_esc%')
                             ORDER BY vs.tanggal, vs.no_service";
 
             // ---- SQL Total Data -----
                 $cari_kd=mysqli_query($koneksi,"SELECT count(*) as tot FROM view_service
-                                                WHERE (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
                                                 (no_pelanggan LIKE '%$nopelanggan_esc%' OR namapelanggan LIKE '%$nopelanggan_esc%')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];

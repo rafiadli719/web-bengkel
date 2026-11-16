@@ -23,7 +23,7 @@
             // ---- SQL Hasil Data ----- 
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                 FROM view_pesanan_penjualan_h 
-                                    WHERE 
+                                    WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                     (tanggal>='$tglmulai' AND 
                                     tanggal<='$tglselesai') 
                                     ORDER BY tanggal, no_order";      
@@ -32,7 +32,7 @@
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_pesanan_penjualan_h 
-                                                WHERE 
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                                 (tanggal>='$tglmulai' AND 
                                                 tanggal<='$tglselesai')");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
@@ -42,7 +42,7 @@
             // ---- SQL Hasil Data ----- 
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                 FROM view_pesanan_penjualan_h 
-                                    WHERE 
+                                    WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                     (tanggal>='$tglmulai' AND 
                                     tanggal<='$tglselesai') AND 
                                     (no_pelanggan like '%".$nopelanggan."%') OR 
@@ -53,7 +53,7 @@
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM view_pesanan_penjualan_h 
-                                                WHERE 
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                                 (tanggal>='$tglmulai' AND 
                                                 tanggal<='$tglselesai') AND 
                                                 (no_pelanggan like '%".$nopelanggan."%') OR 

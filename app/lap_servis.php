@@ -56,7 +56,7 @@
                             FROM view_service vs
                             LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
                             WHERE
-                            (vs.tanggal>='$tgl_pilih_dari_eng' AND
+                            vs.kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (vs.tanggal>='$tgl_pilih_dari_eng' AND
                             vs.tanggal<='$tgl_pilih_sampai_eng')
                             AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
@@ -66,7 +66,7 @@
                                         count(*) as tot
                                         FROM view_service
                                         WHERE
-                                        (tanggal>='$tgl_pilih_dari_eng' AND
+kd_cabang='".addslashes($_SESSION['_cabang'])."' AND                                         (tanggal>='$tgl_pilih_dari_eng' AND
                                         tanggal<='$tgl_pilih_sampai_eng')
                                         AND status_servis IN ('bayar','selesai')");
         $tm_cari=mysqli_fetch_array($cari_kd);
@@ -87,7 +87,7 @@
                             FROM view_service vs
                             LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
                             WHERE
-                            (vs.tanggal>='$tglmulai' AND
+                            vs.kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (vs.tanggal>='$tglmulai' AND
                             vs.tanggal<='$tglselesai')
                             AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
@@ -97,7 +97,7 @@
                                                 count(*) as tot
                                                 FROM view_service
                                                 WHERE
-                                                (tanggal>='$tglmulai' AND
+kd_cabang='".addslashes($_SESSION['_cabang'])."' AND                                                 (tanggal>='$tglmulai' AND
                                                 tanggal<='$tglselesai')
                                                 AND status_servis IN ('bayar','selesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);
@@ -111,7 +111,7 @@
                             FROM view_service vs
                             LEFT JOIN tblservice ts ON vs.no_service = ts.no_service AND ts.kd_cabang = vs.kd_cabang
                             WHERE
-                            (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
+                            vs.kd_cabang='".addslashes($_SESSION['_cabang'])."' AND (vs.tanggal>='$tglmulai' AND vs.tanggal<='$tglselesai') AND
                             (vs.no_pelanggan LIKE '%$nopelanggan_esc%' OR vs.namapelanggan LIKE '%$nopelanggan_esc%')
                             AND vs.status_servis IN ('bayar','selesai')
                             ORDER BY vs.tanggal, vs.no_service";
@@ -120,7 +120,7 @@
                 $cari_kd=mysqli_query($koneksi,"SELECT count(*) as tot
                                                 FROM view_service
                                                 WHERE
-                                                (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
+kd_cabang='".addslashes($_SESSION['_cabang'])."' AND                                                 (tanggal>='$tglmulai' AND tanggal<='$tglselesai') AND
                                                 (no_pelanggan LIKE '%$nopelanggan_esc%' OR namapelanggan LIKE '%$nopelanggan_esc%')
                                                 AND status_servis IN ('bayar','selesai')");
                 $tm_cari=mysqli_fetch_array($cari_kd);

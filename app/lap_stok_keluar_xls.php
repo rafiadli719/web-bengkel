@@ -21,7 +21,7 @@
             // ---- SQL Hasil Data ----- 
                 $sql_query="SELECT *, DATE_FORMAT(tanggal,'%d/%m/%Y') AS tanggal_trx 
                 FROM tbitem_keluar_header 
-                                    WHERE 
+                                    WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                     (tanggal>='$tglmulai' AND 
                                     tanggal<='$tglselesai') 
                                     ORDER BY tanggal, no_transaksi";      
@@ -30,7 +30,7 @@
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot 
                                                 FROM tbitem_keluar_header 
-                                                WHERE 
+                                                WHERE kd_cabang='".addslashes($_SESSION['_cabang'])."' AND 
                                                 (tanggal>='$tglmulai' AND 
                                                 tanggal<='$tglselesai')");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
