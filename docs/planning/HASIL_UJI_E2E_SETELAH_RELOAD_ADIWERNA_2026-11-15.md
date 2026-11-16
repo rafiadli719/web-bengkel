@@ -42,7 +42,7 @@ Temuan tambahan:
 | Pembelian `BL26000013453` (5×16.000, tunai) | Tersimpan, nomor lanjut dari data center, stok tipe 2 masuk 5 (60→65). `status_lunas` `0`; 1 alarm harga beli sah |
 | Kas masuk `KM26000000053` | **BUG**: INSERT gagal diam-diam (`no_bukti`, `keluar`, `tipe` NOT NULL tanpa default) tapi tampil "Berhasil disimpan". Diperbaiki di `kas_masuk_proses.php` & `kas_keluar_proses.php` (commit `4d0462b`), kas masuk terverifikasi tersimpan 50.000. Kas keluar baru lint, belum klik |
 | Retur pembelian `RP26000000013` (2 dari BL26000013453) | Tersimpan, total 32.000, stok tipe 7 keluar 2 (65→63). Nomor baru seri `RP`, data lama seri `RB` (beda seri, tidak bentrok) |
-| Retur penjualan `RJ26000000001` (1 dari JL26000011244) | Tersimpan, total 19.000, stok tipe 8 masuk 1 (63→64 setelah retur beli −2... saldo akhir 64) |
+| Retur penjualan `RJ26000000001` (1 dari JL26000011244) | Tersimpan, total 19.000, stok tipe 8 masuk 1 (63→64) |
 | `paket_add_*_cari` (500) | Modul paket mati: tabel `tbpaket*` tidak ada dan `view_cari_item` tanpa kolom `jenis`. Bukan akibat reload. Kandidat arsip |
 
 Belum diuji tulis: retur servis, PO/DO, antar cabang, kas keluar (klik), edit/hapus, cabang selain Adiwerna.
