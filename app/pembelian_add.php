@@ -523,6 +523,8 @@
                                         '$kekurangan',
                                         '$_nama','$kd_cabang',
                                         '$syarat_hari','')");
+                // status_lunas ikut kekurangan (dulu tidak diisi -> tunai lunas terbaca belum lunas di laporan hutang/piutang)
+                if ($header_ok) { mysqli_query($koneksi, "UPDATE tblpembelian_header SET status_lunas='".(((float)$txtkekurangan <= 0) ? '1' : '0')."', tanggal_lunas=IF((".(((float)$txtkekurangan <= 0) ? '1' : '0')."='1'), '".date('Y-m-d')."', tanggal_lunas) WHERE notransaksi='$LastID' AND kd_cabang='$kd_cabang'"); }
 
                 if (!$header_ok) {
                     echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('pembelian_add.php');</script>";

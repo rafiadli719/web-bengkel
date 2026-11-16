@@ -464,6 +464,8 @@ VALUES
 '$txtnet','0','$txtdp',
 '$tgl_jt','',
 '$txtkekurangan','$_nama','$kd_cabang','" . (is_numeric($txtsyarat) ? (int)$txtsyarat : 0) . "','')");
+                // status_lunas ikut kekurangan (dulu tidak diisi -> tunai lunas terbaca belum lunas di laporan hutang/piutang)
+                if ($header_ok) { mysqli_query($koneksi, "UPDATE tblpenjualan_header SET status_lunas='".(((float)$txtkekurangan <= 0) ? '1' : '0')."' WHERE notransaksi='$LastID' AND kd_cabang='$kd_cabang'"); }
 
                 if (!$header_ok) {
                     if ($live_atomik) { mysqli_rollback($koneksi); }
