@@ -27,3 +27,6 @@
 
 ## Hasil uji pasca-reload (2026-11-15)
 - Smoke 434 halaman OK; laporan cocok DB. Temuan: laporan tanpa filter cabang, 1.799 servis `total_akhir=0` (sama dengan sumber), 15 detail yatim PCL, 15 item tanpa master, halaman lambat. Lihat `docs/planning/HASIL_UJI_E2E_SETELAH_RELOAD_ADIWERNA_2026-11-15.md`.
+
+## 2026-11-16 Fase K + PACUL
+Lihat bagian "Sesi 2: PACUL" di `docs/planning/PLAN_RELOAD_CENTER_PER_CABANG_2026-11-15.md`. Commit 181391e, 270fd9f.

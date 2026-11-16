@@ -228,3 +228,14 @@ Penuntasan sesi 1 (2026-11-15):
 - Kartu stok `08232-2MB-K8JN1` Adiwerna Nov 2026: bug lama ditemukan dan diperbaiki di `app/barang_kartu_stok_rst.php`
   (saldo berjalan dulu mulai 0 tiap bulan karena saldo awal = `inv_jmlawal`; sekarang saldo awal = mutasi sebelum tanggal 1,
   baris diurutkan per tanggal). Hasil: saldo awal 82, saldo akhir 65 = stok Access.
+
+### Sesi 2: PACUL, 2026-11-16 — SELESAI (lokal)
+- Keputusan Rafi: seri PO web diganti `PW`; usulan master (bagian 3) disetujui; semua cabang `tipe_cabang='2'` kecuali PST (gudang pusat) `'1'`;
+  servis `TotalAkhir=0` DIBIARKAN (dicek di center: semua kasus diskon 100% atau kosong, bukan cacat).
+- Fase K selesai: PK `tblorder_header` (no_order,kd_cabang), FK DO & approval log gabungan, 5 PO web lama bernomor `PW26...`,
+  UNIQUE (nomor,kd_cabang) di 9 header, 184 query/82 file diberi `kd_cabang`, penjaga pre-commit `scripts/audit_nomor_transaksi.php`.
+  Migrasi `2026-11-16_run_fase_k_po_composite.php`, `2026-11-16_run_fase_k_unique_header.php`. Uji: PO/DO/approval baru, penjualan lulus.
+- Muat PACUL dari salinan lokal `fitmotor_center` (data s/d 2026-11-12; password VPS tidak dipakai). Backup `backups/pre-center-reload-20261116-pacul.sql`,
+  tabel `bak_cr1116_PACUL_*`. Verify semua COCOK (servis 41.228, beli 9.824, jual 6.225, PO 2.788, stok 655 item). Statistik 16.387 pelanggan.
+- Nomor sama di PACUL & PESALAKAN (mis. `PS21000000001`) tampil terpisah, tidak bercampur. Smoke 250 halaman: 247 OK (3 fragmen tanpa koneksi).
+- Sisa: Cikditiro, Trayeman, Pusat; refresh dari VPS bila perlu.

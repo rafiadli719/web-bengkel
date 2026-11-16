@@ -201,7 +201,7 @@ $DS[] = ['key' => 'jual_detail', 'target' => 'tblpenjualan_detail', 'keycols' =>
             'user' => '', 'kd_cabang' => $CAB, 'status_trx' => '1'];
     }];
 $SKIP_PO = [];
-$DS[] = ['key' => 'po_header', 'target' => 'tblorder_header', 'keycols' => ['no_order'], 'pk_global' => 'no_order',
+$DS[] = ['key' => 'po_header', 'target' => 'tblorder_header', 'keycols' => ['no_order'],
     'src' => "SELECT * FROM tblorderheader WHERE kode_cabang='{ref}'",
     'map' => function ($r) use ($CAB) {
         return ['no_order' => s($r['NoOrder']), 'status' => s($r['Status'], 50), 'tanggal' => d($r['Tanggal']), 'tglkirim' => d($r['TglKirim']),
