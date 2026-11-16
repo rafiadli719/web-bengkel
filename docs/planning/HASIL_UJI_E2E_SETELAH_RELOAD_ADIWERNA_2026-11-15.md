@@ -64,6 +64,11 @@ Catatan: query `SELECT ... WHERE no_service=` untuk membuka halaman servis masih
 
 Masih belum diuji: antar cabang (butuh 2 cabang), edit/hapus item pada transaksi yang sudah tersimpan, cabang selain Adiwerna.
 
+## Uji tambahan (2026-11-16, malam)
+- Antar cabang `PA26000000004` TRAYEMAN→PESALAKAN: request (status terkirim) → kirim dari Adiwerna (stok tipe 3 keluar 3, 76→73) → terima di TRAYEMAN (tipe 2 masuk 3) → `selesai`. Lulus.
+- Temuan data: `tbcabang.tipe_cabang='1'` (dianggap "pusat") di semua cabang kecuali TRAYEMAN (=2), sehingga PESALAKAN/PACUL/CIKDITIRO/PST dialihkan dan tidak bisa membuat permintaan antar cabang. Perlu keputusan Rafi (tipe cabang benar).
+- Edit/hapus item draft PO lulus. Picker paket diperbaiki (25a4b0a), jasa mengembalikan 69 data.
+
 ## Belum diuji
 - Alur tulis browser untuk pembelian, penjualan, retur, PO/DO, kas, antar cabang (hanya servis yang diulang; suite CLI stok lulus). E2E sebelumnya lulus (2026-11-01/02/14).
 - Cabang selain Adiwerna (belum dimuat).
