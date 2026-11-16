@@ -703,7 +703,7 @@
             }
 
             $update_query = "UPDATE tblservice SET 
-                status='2', 
+                status='4', 
                 total='$tot_pay', 
                 diskon_persen='$total_diskon_persen', diskon_nom='$diskon_plus_nominal', 
                 ppn_persen='$txtpajak_persen', ppn_nom='$ppn', 
