@@ -2,6 +2,8 @@
 /**
  * Muat ulang data satu cabang dari fitmotor_center (warehouse Access) ke fitmotor_dbbengkel.
  * Rencana: docs/planning/PLAN_RELOAD_CENTER_PER_CABANG_2026-11-15.md
+ * Pemetaan kolom (digenerate dari file ini): docs/MAPPING_CENTER_KE_WEBBASE.md
+ *   regenerasi: php scripts/center_reload/generate_mapping_doc.php > docs/MAPPING_CENTER_KE_WEBBASE.md
  *
  * Aturan:
  *  - Data lama hasil impor Access (kode cabang lama PSL/PCL/CDT/TRM) DIBUANG, diganti isi center.

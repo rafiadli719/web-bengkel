@@ -16,6 +16,8 @@ Lingkup: database **lokal** `fitmotor_dbbengkel` (Laragon). Produksi FITMOTOR1 m
 
 Prinsip tambahan: data lama dibuang, diganti isi center terbaru (sumber = VPS, read-only `fm_viewer`).
 
+> Pemetaan kolom per tabel (digenerate dari kode): `docs/MAPPING_CENTER_KE_WEBBASE.md`. Changelog: `.ai/changelog/2026-11-15-reload-center-adiwerna.md`, `.ai/changelog/2026-11-16-reload-center-semua-cabang.md`.
+
 ## 2. Alat
 
 | File | Fungsi |
