@@ -48,10 +48,14 @@ $total_qty   = 0;
 $total_nilai = 0;
 $item_count  = count($item_kode);
 
+// Harga TIDAK diambil dari form ($item_harga): dihitung dari DB (harga bersih sesudah potongan),
+// supaya refund tidak bisa dimanipulasi dan tidak melebihi yang dibayar pelanggan.
+$item_harga = [];
 for($i = 0; $i < $item_count; $i++) {
-    $qty   = (int)($item_qty[$i] ?? 0);
-    $harga = (float)($item_harga[$i] ?? 0);
-    if($qty > 0) { $total_qty += $qty; $total_nilai += $qty * $harga; }
+    $tp = ($item_tipe[$i] ?? '') === 'jasa' ? 'jasa' : 'barang';
+    $item_harga[$i] = HargaNetItemReturServis($koneksi, $no_service, $kd_cabang, $tp, $item_kode[$i] ?? '');
+    $qty = (int)($item_qty[$i] ?? 0);
+    if($qty > 0) { $total_qty += $qty; $total_nilai += $qty * $item_harga[$i]; }
 }
 
 mysqli_begin_transaction($koneksi);
@@ -106,6 +110,15 @@ try {
 
         if(!mysqli_query($koneksi, $sql_upd)) throw new Exception("Gagal update qty_retur: ".mysqli_error($koneksi));
     }
+
+    // Total header = jumlah detail yang benar-benar tersimpan (qty sudah dibatasi sisa), bukan angka mentah dari form.
+    $rs_d = mysqli_query($koneksi, "SELECT COUNT(*) AS n, COALESCE(SUM(quantity),0) AS tq, COALESCE(SUM(total),0) AS tn
+                                    FROM tblretur_servis_detail WHERE no_retur='$no_retur' AND kd_cabang='$kd_cabang'");
+    $row_d_tot = mysqli_fetch_assoc($rs_d);
+    if((int)$row_d_tot['n'] === 0) throw new Exception("Tidak ada item yang bisa diretur (sisa qty sudah habis)");
+    if(!mysqli_query($koneksi, "UPDATE tblretur_servis_header SET total_qty_retur=".(int)$row_d_tot['tq'].", total_retur=".(float)$row_d_tot['tn']."
+                                WHERE noretur='$no_retur' AND kd_cabang='$kd_cabang'"))
+        throw new Exception("Gagal update total retur: ".mysqli_error($koneksi));
 
     $res_tot = mysqli_query($koneksi, "SELECT COALESCE(SUM(total_qty_retur),0) AS tq, COALESCE(SUM(total_retur),0) AS tn
                                        FROM tblretur_servis_header WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");

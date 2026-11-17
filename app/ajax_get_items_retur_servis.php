@@ -30,7 +30,7 @@ $sql_brg = mysqli_query($koneksi, "SELECT b.no_item, b.quantity, b.qty_retur, b.
                                            COALESCE(i.namaitem, b.no_item) AS namaitem
                                     FROM tblservis_barang b
                                     LEFT JOIN tblitem i ON i.noitem = b.no_item
-                                    WHERE b.no_service='$no_service' AND b.no_item != 'PART-CUST'");
+                                    WHERE b.no_service='$no_service' AND b.kd_cabang='$kd_cabang' AND b.no_item != 'PART-CUST'");
 while($row = mysqli_fetch_assoc($sql_brg)) {
     $sisa = (int)$row['quantity'] - (int)$row['qty_retur'];
     if($sisa > 0) {
@@ -41,7 +41,8 @@ while($row = mysqli_fetch_assoc($sql_brg)) {
             'qty_asal'   => (int)$row['quantity'],
             'qty_retur'  => (int)$row['qty_retur'],
             'sisa_retur' => $sisa,
-            'harga'      => (float)$row['harga_jual'],
+            // harga bersih per unit (sesudah potongan) = yang dibayar pelanggan; sama dengan hitungan di save_retur_servis.php
+            'harga'      => ((int)$row['quantity'] > 0) ? round((float)$row['total'] / (int)$row['quantity'], 2) : 0.0,
         ];
     }
 }
@@ -50,7 +51,7 @@ $sql_jsa = mysqli_query($koneksi, "SELECT j.no_item, j.harga, j.total, j.qty_ret
                                            COALESCE(i.namaitem, j.no_item) AS namaitem
                                     FROM tblservis_jasa j
                                     LEFT JOIN tblitem i ON i.noitem = j.no_item
-                                    WHERE j.no_service='$no_service'");
+                                    WHERE j.no_service='$no_service' AND j.kd_cabang='$kd_cabang'");
 while($row = mysqli_fetch_assoc($sql_jsa)) {
     $sisa = 1 - (int)$row['qty_retur'];
     if($sisa > 0) {
@@ -61,7 +62,7 @@ while($row = mysqli_fetch_assoc($sql_jsa)) {
             'qty_asal'   => 1,
             'qty_retur'  => (int)$row['qty_retur'],
             'sisa_retur' => $sisa,
-            'harga'      => (float)$row['harga'],
+            'harga'      => max(0.0, (float)$row['total']), // yang dibayar (sesudah potongan), bukan harga katalog
         ];
     }
 }
