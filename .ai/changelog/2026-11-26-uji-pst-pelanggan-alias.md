@@ -12,9 +12,20 @@
 - Servis `SV26000103589`, pelanggan Gold: jasa `SVS001` Rp40.000 - 15% = Rp34.000, bayar tunai lulus (`status='4'`).
 - Retur jasa berpotongan `RS26000000007` + approve: harga POST 99.999 diabaikan, refund Rp34.000, `qty_retur=1`, `total_retur=34000`.
 
+## Fixed
+- `penjualan_add_rst.php` tunai: `tanggal_lunas` sekarang diisi tanggal jual (sebelumnya kosong).
+- `ajax_get_items_retur_servis.php` dan `servis-reguler-struk.php`: nama jasa diambil dari `tblitem_jasa`
+  (sebelumnya tampil kode, mis. `SVS001`). Diuji lewat query ke DB lokal, belum lewat UI.
+- Migrasi `pelanggan_alias` (hasil review): tanpa konversi charset (koneksi latin1), isi ulang penuh saat rerun,
+  urutan baca tetap, hanya bisa dijalankan dari CLI. Lokal: down, up, up lulus, 9.185 baris.
+- Runbook deploy: `docs/planning/RUNBOOK_DEPLOY_PRODUKSI_2026-11-26.md`. fm1 belum dicek (SSH timeout).
+
 ## Known issues
-- `penjualan_add_rst.php` tunai: `status_lunas='1'` tetapi `tanggal_lunas` kosong.
-- `ajax_get_items_retur_servis.php`: `namaitem` jasa berisi kode (`SVS001`), bukan nama.
+- `servis-reguler-struk.php`: query hanya memfilter `no_service`, tanpa `kd_cabang` (struk bisa memuat data cabang lain).
+- Nama pelanggan/jasa belum di-escape di `servis-reguler-struk.php` (HTML Dompdf) dan `retur_servis_add.php`.
+- `penjualan_add.php` (jalur lain) hanya mengisi `status_lunas`, tidak `tanggal_lunas`.
+- `penjualan_add_rst.php`: status lunas bergantung `txtkekurangan` dari klien; DP kosong terbaca lunas.
+- `tblitem_jasa.noitem` tanpa index unik (saat ini tidak ada dobel).
 - `supplier_alias` belum dibuat: menunggu pemetaan manual 7 kode bentrok + 15 nama dobel (`docs/planning/review/`).
 - `pelanggan_alias` belum dipakai pencarian kasir; nama/telepon kanonik di `tblpelanggan` belum ditimpa (usulan 3.1 poin 2).
 - Laporan checklist-projek belum terkirim: `API_KEY_WEBBENGKEL` kosong.
