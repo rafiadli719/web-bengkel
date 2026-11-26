@@ -33,7 +33,11 @@
         $telp_cabang=''; // Column doesn't exist
     // --------------------
 
-        $no_service = $_GET['snoserv'] ?? '';
+        $no_service_raw = (string)($_GET['snoserv'] ?? '');
+        $no_service = mysqli_real_escape_string($koneksi, $no_service_raw);
+        // identitas servis = (no_service, kd_cabang); daftar riwayat lintas cabang mengirim ?cab=
+        $cab_raw = (string)(($_GET['cab'] ?? '') ?: $kd_cabang);
+        $cab_sql = mysqli_real_escape_string($koneksi, $cab_raw);
 
         if(empty($no_service)) {
             echo"<script>window.alert('Nomor servis tidak ditemukan!');
@@ -61,7 +65,7 @@
                                         LEFT JOIN tblpelanggangrup pg ON p.kgrup = pg.kgrup
                                         LEFT JOIN tblkendaraan k ON s.no_polisi = k.nopolisi
                                         LEFT JOIN tbpabrik_motor pm ON k.kode_merek = pm.id
-                                        WHERE s.no_service='$no_service'");
+                                        WHERE s.no_service='$no_service' AND s.kd_cabang='$cab_sql'");
 
         if(mysqli_num_rows($cari_service) == 0) {
             echo"<script>window.alert('Data servis tidak ditemukan!');
@@ -121,7 +125,7 @@
                                     FROM tblservis_jasa sj
                                     LEFT JOIN tbworkorderheader wh ON sj.no_item = wh.kode_wo
                                     LEFT JOIN tblitem_jasa ij ON sj.no_item = ij.noitem
-                                    WHERE sj.no_service='$no_service'
+                                    WHERE sj.no_service='$no_service' AND sj.kd_cabang='$cab_sql'
                                     ORDER BY sj.nobaris");
 
         if(!$cari_jasa) {
@@ -135,7 +139,7 @@
                                     COALESCE(vi.satuan, 'PCS') as satuan
                                     FROM tblservis_barang sb
                                     LEFT JOIN view_cari_item vi ON sb.no_item = vi.noitem
-                                    WHERE sb.no_service='$no_service'
+                                    WHERE sb.no_service='$no_service' AND sb.kd_cabang='$cab_sql'
                                     ORDER BY sb.nobaris");
 
         if(!$cari_barang) {
@@ -148,7 +152,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta charset="utf-8" />
-		<title>Invoice Servis - <?php echo $no_service; ?></title>
+		<title>Invoice Servis - <?php echo htmlspecialchars($no_service_raw, ENT_QUOTES); ?></title>
 
 		<meta name="description" content="Invoice Servis" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -292,12 +296,14 @@
 				<button onclick="printService()" class="btn btn-primary btn-sm">
 					<i class="fa fa-print"></i> Print
 				</button>
-				<a href="servis-reguler-struk.php?snoserv=<?php echo $no_service; ?>&mode=download" target="_blank" class="btn btn-danger btn-sm">
+				<a href="servis-reguler-struk.php?snoserv=<?php echo urlencode($no_service_raw); ?>&cab=<?php echo urlencode($cab_raw); ?>&mode=download" target="_blank" class="btn btn-danger btn-sm">
 					<i class="fa fa-file-pdf-o"></i> Download PDF
 				</a>
+				<?php if ($cab_raw === (string)$kd_cabang): // pengirim WA memakai cabang sesi: sembunyikan untuk servis cabang lain ?>
 				<button onclick="kirimWhatsApp()" class="btn btn-success btn-sm">
 					<i class="fa fa-whatsapp"></i> Kirim ke WhatsApp
 				</button>
+				<?php endif; ?>
 				<button onclick="window.close()" class="btn btn-default btn-sm">
 					<i class="fa fa-times"></i> Close
 				</button>
@@ -316,7 +322,7 @@
 				btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mengirim...';
 				
 				// Kirim via AJAX
-				fetch('servis-send-invoice-wa.php?no_service=<?php echo $no_service; ?>')
+				fetch('servis-send-invoice-wa.php?no_service=<?php echo urlencode($no_service_raw); ?>')
 					.then(response => response.json())
 					.then(data => {
 						btn.disabled = false;
@@ -338,7 +344,7 @@
 
 			<!-- Invoice Preview (Iframe) -->
             <div style="border: 1px solid #ccc; padding: 0;">
-                <iframe id="invoiceFrame" src="servis-reguler-struk.php?snoserv=<?php echo $no_service; ?>&mode=view" style="width: 100%; height: 800px; border: none;"></iframe>
+                <iframe id="invoiceFrame" src="servis-reguler-struk.php?snoserv=<?php echo urlencode($no_service_raw); ?>&cab=<?php echo urlencode($cab_raw); ?>&mode=view" style="width: 100%; height: 800px; border: none;"></iframe>
             </div>
 
 			<script>

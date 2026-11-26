@@ -6,10 +6,11 @@
  * mysqli_result satu baris dengan kolom tbsetting yang sama, tapi nama/alamat/telepon
  * diambil dari cabang yang sedang login ($_SESSION['_cabang']) bila terisi di tbcabang,
  * selain itu fallback ke tbsetting. Fax placeholder ("SIMPAN NOMOR WA ...") dikosongkan.
+ * $kd_dokumen (opsional): kop cabang pemilik dokumen bila berbeda dari cabang yang login.
  */
 if (!function_exists('fm_kop_query')) {
-    function fm_kop_query($koneksi) {
-        $kd = isset($_SESSION['_cabang']) ? mysqli_real_escape_string($koneksi, $_SESSION['_cabang']) : '';
+    function fm_kop_query($koneksi, $kd_dokumen = null) {
+        $kd = mysqli_real_escape_string($koneksi, (string)($kd_dokumen ?: ($_SESSION['_cabang'] ?? '')));
         $has_tel = false;
         $c = @mysqli_query($koneksi, "SHOW COLUMNS FROM tbcabang LIKE 'telepon_cabang'");
         if ($c && mysqli_num_rows($c) > 0) { $has_tel = true; }

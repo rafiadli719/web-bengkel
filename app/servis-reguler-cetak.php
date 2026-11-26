@@ -38,8 +38,8 @@
                                         diskon_persen, diskon_nom, 
                                         ppn_persen, ppn_nom, 
                                         total_grand, bayar, kembali 
-                                        FROM tblservice 
-                                        WHERE no_service='$no_service'");
+                                        FROM tblservice
+                                        WHERE no_service='$no_service' AND kd_cabang='".mysqli_real_escape_string($koneksi, $kd_cabang)."'");
 		$tm_cari=mysqli_fetch_array($cari_kd);	
 		$tanggal=$tm_cari['tanggal_serv'];                
 		$jam=$tm_cari['jam'];        
@@ -71,17 +71,17 @@
 
         // == Total dari Item Srrvice ==============
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
-                                        FROM tblservis_jasa 
-                                        WHERE 
-                                        no_service='$no_service'");			
+                                        FROM tblservis_jasa
+                                        WHERE
+                                        no_service='$no_service' AND kd_cabang='".mysqli_real_escape_string($koneksi, $kd_cabang)."'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_service=$tm_cari['tot']; 
 
         // == Total dari Item Barang ==============
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
-                                        FROM tblservis_barang 
-                                        WHERE 
-                                        no_service='$no_service'");			
+                                        FROM tblservis_barang
+                                        WHERE
+                                        no_service='$no_service' AND kd_cabang='".mysqli_real_escape_string($koneksi, $kd_cabang)."'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_barang=$tm_cari['tot']; 
 ?>

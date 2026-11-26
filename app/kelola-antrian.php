@@ -927,7 +927,7 @@ if(empty($_SESSION['_iduser'])){
                                                     </ul>
                                                 </div>
                                                 <?php endif; ?>
-                                                <a href="servis-print.php?snoserv=<?php echo $antrian['no_service']; ?>" target="_blank" class="btn btn-xs btn-success">
+                                                <a href="servis-print.php?snoserv=<?php echo urlencode($antrian['no_service']); ?>&cab=<?php echo urlencode($antrian['kd_cabang'] ?? ''); ?>" target="_blank" class="btn btn-xs btn-success">
                                                     <i class="fa fa-print"></i>
                                                 </a>
                                             </div>

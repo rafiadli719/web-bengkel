@@ -7,9 +7,12 @@
     include "helper-functions.php";
     $no_service = mysqli_real_escape_string($koneksi, $_GET['snoserv'] ?? '');
 	$mode = isset($_GET['mode']) ? mysqli_real_escape_string($koneksi, $_GET['mode']) : '';
-    
+    // Identitas servis = (no_service, kd_cabang). Daftar riwayat lintas cabang mengirim ?cab=; tanpa itu cabang sesi.
+    $kd_cabang = mysqli_real_escape_string($koneksi, (string)(($_GET['cab'] ?? '') ?: ($_SESSION['_cabang'] ?? '')));
+    function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1'); }
+
 // Data Perusahaan ===========
-	$cari_kd=fm_kop_query($koneksi);
+	$cari_kd=fm_kop_query($koneksi, (string)($_GET['cab'] ?? ''));
 	$tm_cari=mysqli_fetch_array($cari_kd);
 	$nama_perusahaan=$tm_cari['nama_perusahaan'];
     $alamat=$tm_cari['alamat'];	
@@ -29,8 +32,9 @@
                                         mekanik1, mekanik2, mekanik3, mekanik4,
                                         keterangan, km_skr, km_berikut, id_user
                                         FROM tblservice
-                                        WHERE no_service='$no_service'");
-		$tm_cari=mysqli_fetch_array($cari_kd);	
+                                        WHERE no_service='$no_service' AND kd_cabang='$kd_cabang'");
+		$tm_cari=mysqli_fetch_array($cari_kd);
+		if (!$tm_cari) { http_response_code(404); exit('Data servis tidak ditemukan di cabang ini.'); }
 		$tanggal=$tm_cari['tanggal_serv'];                
 		$jam=$tm_cari['jam'];        
 		$kode_pelanggan=$tm_cari['no_pelanggan'];        
@@ -72,17 +76,17 @@
 
         // == Total dari Item Srrvice ==============
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
-                                        FROM tblservis_jasa 
-                                        WHERE 
-                                        no_service='$no_service'");			
+                                        FROM tblservis_jasa
+                                        WHERE
+                                        no_service='$no_service' AND kd_cabang='$kd_cabang'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_service=$tm_cari['tot']; 
 
         // == Total dari Item Barang ==============
         $cari_kd=mysqli_query($koneksi,"SELECT sum(total) as tot 
-                                        FROM tblservis_barang 
-                                        WHERE 
-                                        no_service='$no_service'");			
+                                        FROM tblservis_barang
+                                        WHERE
+                                        no_service='$no_service' AND kd_cabang='$kd_cabang'");			
         $tm_cari=mysqli_fetch_array($cari_kd);
         $total_barang=$tm_cari['tot']; 
         
@@ -92,14 +96,14 @@
                     FROM tblservis_jasa j
                     LEFT JOIN tblitem_jasa js ON js.noitem = j.no_item
                     LEFT JOIN tbworkorderheader wh ON wh.kode_wo = j.no_item
-                    WHERE j.no_service='$no_service'");
+                    WHERE j.no_service='$no_service' AND j.kd_cabang='$kd_cabang'");
 
         $query_barang = mysqli_query($koneksi, "SELECT
                         b.id, b.no_item, b.quantity, b.harga_jual, b.total, b.potongan,
                         COALESCE(i.namaitem, b.no_item) AS namaitem
                     FROM tblservis_barang b
                     LEFT JOIN tblitem i ON i.noitem = b.no_item
-                    WHERE b.no_service='$no_service'");
+                    WHERE b.no_service='$no_service' AND b.kd_cabang='$kd_cabang'");
                                                                         
     														
 	require_once("dompdf/autoload.inc.php");
@@ -114,34 +118,34 @@
 			<body>
 		<div style="padding: 4pt 10pt; overflow: none; text-align: justify;">
 '.nota_pdf_header($file_logo, $nama_perusahaan, $alamat, $notlp, $fax, 'FAKTUR SERVICE', array(
-            array('No. Service', $no_service),
+            array('No. Service', h($no_service)),
             array('Tanggal', $tanggal),
-            array('Pelanggan', $namapelanggan),
+            array('Pelanggan', h($namapelanggan)),
         )).'
         <hr>
         <table style="margin: 0 0pt; width: 100%;">
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top; width: 30%;"><font size="2"><b>No. Polisi</b></font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top; width: 5%;"><font size="2"><b>:</b></font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.$no_polisi.'</b></font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top; width: 65%;"><font size="2"><b>'.h($no_polisi).'</b></font></td>
             </tr>
             '.(!empty($pemilik) ? '
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Pemilik</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$pemilik.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.h($pemilik).'</font></td>
             </tr>' : '').'
             '.(!empty($nama_mekanik) ? '
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Mekanik</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_mekanik.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.h($nama_mekanik).'</font></td>
             </tr>' : '').'
             '.(!empty($nama_user) ? '
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Pengguna</font></td>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">:</font></td>
-                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.$nama_user.'</font></td>
+                <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">'.h($nama_user).'</font></td>
             </tr>' : '').'
             <tr>
                 <td style="padding: 1pt 2pt; vertical-align:top;"><font size="2">Km</font></td>
@@ -179,11 +183,11 @@
             $no = 1;
             while($row = mysqli_fetch_array($query_jasa))
             {
-                $namaitem_tbl = $row['namaitem'];
+                $namaitem_tbl = h($row['namaitem']);
 
         $html .= "<tr>
                 <td align=center><font size=2>".$no."</font></td>
-                <td><font size=2>".$row['no_item']."</font></td>
+                <td><font size=2>".h($row['no_item'])."</font></td>
                 <td><font size=2>".$namaitem_tbl."</font></td>
                 <td><font size=2>".$row['waktu']."</font></td>
                 <td align=right><font size=2>".number_format($row['harga'],0)."</font></td>		
@@ -223,11 +227,11 @@
             $no = 1;
             while($row = mysqli_fetch_array($query_barang))
             {
-                $namaitem_tbl = $row['namaitem'];
+                $namaitem_tbl = h($row['namaitem']);
 
         $html .= "<tr>
                 <td align=center><font size=2>".$no."</font></td>
-                <td><font size=2>".$row['no_item']."</font></td>
+                <td><font size=2>".h($row['no_item'])."</font></td>
                 <td><font size=2>".$namaitem_tbl."</font></td>
                 <td align=right><font size=2>".$row['quantity']."</font></td>
                 <td><font size=2>PCS</font></td>                

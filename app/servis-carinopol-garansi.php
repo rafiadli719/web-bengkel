@@ -382,7 +382,7 @@ if(empty($_SESSION['_iduser'])){
                                                         </li>
                                                         <li class="divider"></li>
                                                         <li>
-                                                            <a href="servis-print.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>" target="_blank">
+                                                            <a href="servis-print.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>&cab=<?php echo urlencode($tampil['kd_cabang'] ?? ''); ?>" target="_blank">
                                                                 <i class="ace-icon fa fa-print"></i> Lihat Invoice Asli
                                                             </a>
                                                         </li>

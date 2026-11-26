@@ -247,12 +247,13 @@ if(empty($_SESSION['_iduser'])){
             if($('#sel_cara_bayar_refund option[value="'+data.carabayar+'"]').length){ $('#sel_cara_bayar_refund').val(data.carabayar); }
             if(data.items.length==0){$('#msg_error').text('Tidak ada item yang bisa diretur.').show();$('#tbl-items-container').hide();return;}
             var html='';
+            var esc=function(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
             for(var i=0;i<data.items.length;i++){
                 var it=data.items[i];
                 html+='<tr><td class="center"><input type="checkbox" class="chk-item"/></td>';
-                html+='<td>'+(it.tipe_item=='barang'?'Barang':'Jasa')+'<input type="hidden" name="item_tipe[]" value="'+it.tipe_item+'"/></td>';
-                html+='<td>'+it.no_item+'<input type="hidden" name="item_kode[]" value="'+it.no_item+'"/></td>';
-                html+='<td>'+it.namaitem+'</td><td class="center">'+it.qty_asal+'</td><td class="center">'+it.qty_retur+'</td>';
+                html+='<td>'+(it.tipe_item=='barang'?'Barang':'Jasa')+'<input type="hidden" name="item_tipe[]" value="'+esc(it.tipe_item)+'"/></td>';
+                html+='<td>'+esc(it.no_item)+'<input type="hidden" name="item_kode[]" value="'+esc(it.no_item)+'"/></td>';
+                html+='<td>'+esc(it.namaitem)+'</td><td class="center">'+it.qty_asal+'</td><td class="center">'+it.qty_retur+'</td>';
                 html+='<td class="center"><strong>'+it.sisa_retur+'</strong></td>';
                 html+='<td class="center"><input type="number" class="form-control qty-input" name="item_qty[]" value="1" min="1" max="'+it.sisa_retur+'"/></td>';
                 html+='<td class="harga-cell">'+formatRibuan(it.harga)+'<input type="hidden" class="harga-data" name="item_harga[]" value="'+it.harga+'"/></td>';

@@ -605,7 +605,7 @@ if(empty($_SESSION['_iduser'])){
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <a href="servis-print.php?snoserv=<?php echo $service['no_service']; ?>" class="btn btn-xs btn-info" title="Print Invoice" target="_blank">
+                                                        <a href="servis-print.php?snoserv=<?php echo urlencode($service['no_service']); ?>&cab=<?php echo urlencode($service['kd_cabang'] ?? ''); ?>" class="btn btn-xs btn-info" title="Print Invoice" target="_blank">
                                                             <i class="fa fa-print"></i>
                                                         </a>
                                                     </td>

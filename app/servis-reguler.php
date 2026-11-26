@@ -424,7 +424,7 @@ if(empty($_SESSION['_iduser'])){
                                                         </li>
                                                         <?php endif; ?>
                                                         <li>
-                                                            <a href="servis-print.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>" target="_blank">
+                                                            <a href="servis-print.php?snoserv=<?php echo urlencode($tampil['no_service']); ?>&cab=<?php echo urlencode($tampil['kd_cabang'] ?? ''); ?>" target="_blank">
                                                                 <i class="ace-icon fa fa-print"></i> Print Invoice
                                                             </a>
                                                         </li>
