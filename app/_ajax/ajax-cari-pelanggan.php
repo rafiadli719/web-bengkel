@@ -25,13 +25,15 @@ try {
               FROM tblpelanggan p
               LEFT JOIN tblpelanggangrup pg ON pg.kgrup = p.kgrup
               LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = p.nopelanggan
-              WHERE p.nopelanggan LIKE ? OR p.namapelanggan LIKE ? OR p.telephone LIKE ?
+              WHERE p.nopelanggan LIKE ? OR p.namapelanggan LIKE ? OR p.telephone LIKE ?"
+              . fitmotorAliasMatchSql($koneksi, 'p.nopelanggan', $like) . "
               ORDER BY
                 CASE WHEN p.nopelanggan = ? THEN 0 ELSE 1 END,
                 CASE WHEN p.namapelanggan = ? THEN 0 ELSE 1 END,
+                CASE WHEN p.nopelanggan LIKE ? OR p.namapelanggan LIKE ? OR p.telephone LIKE ? THEN 0 ELSE 1 END,
                 p.namapelanggan ASC";
     $stmt = mysqli_prepare($koneksi, $query);
-    mysqli_stmt_bind_param($stmt, 'sssss', $like, $like, $like, $kode_pelanggan, $kode_pelanggan);
+    mysqli_stmt_bind_param($stmt, 'ssssssss', $like, $like, $like, $kode_pelanggan, $kode_pelanggan, $like, $like, $like);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $jumlah_kecocokan = $result ? mysqli_num_rows($result) : 0;

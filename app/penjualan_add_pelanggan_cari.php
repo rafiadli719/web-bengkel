@@ -7,6 +7,7 @@
 		$kd_cabang=$_SESSION['_cabang'];		                        
 		include "../config/koneksi.php";
 		include_once "_include_statistik_pelanggan.php";
+		include_once "_include_customer_vehicle_sync.php";
         
 		$cari_kd=mysqli_query($koneksi,"SELECT 
                                         nama_user, password, user_akses, foto_user 
@@ -78,8 +79,10 @@
         }
     // end ===========
 
-    
-    
+        // Varian nama/telepon antar cabang (pelanggan_alias): untuk "seluruh kolom", nama, dan telepon.
+        $alias_cond = fitmotorAliasMatchSql($koneksi, 'nopelanggan', "%".$txtkey."%");
+        $alias_kolom = in_array($sql_cari, ['namapelanggan', 'telephone'], true) ? $alias_cond : '';
+
     // urut ================
         if($txturut=='22') {
             $sql_urut="nopelanggan";
@@ -105,7 +108,7 @@
                             (alamat like '%".$txtkey."%') OR 
                             (kota like '%".$txtkey."%') OR 
                             (telephone like '%".$txtkey."%') OR 
-                            (grup like '%".$txtkey."%') 
+                            (grup like '%".$txtkey."%')".$alias_cond." 
                             order by ".$sql_urut." asc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -116,15 +119,15 @@
                             (alamat like '%".$txtkey."%') OR 
                             (kota like '%".$txtkey."%') OR 
                             (telephone like '%".$txtkey."%') OR 
-                            (grup like '%".$txtkey."%')");			
+                            (grup like '%".$txtkey."%')".$alias_cond."");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];               
             } ELSE {
                 $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." asc LIMIT 200";
+                            WHERE ".$sql_cari." like '%".$txtkey."%'".$alias_kolom." order by ".$sql_urut." asc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_pelanggan 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                            WHERE ".$sql_cari." like '%".$txtkey."%'".$alias_kolom."");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                        
             }
@@ -137,7 +140,7 @@
                             (alamat like '%".$txtkey."%') OR 
                             (kota like '%".$txtkey."%') OR 
                             (telephone like '%".$txtkey."%') OR 
-                            (grup like '%".$txtkey."%') 
+                            (grup like '%".$txtkey."%')".$alias_cond." 
                             order by ".$sql_urut." desc LIMIT 200"; 
 
                 $cari_kd=mysqli_query($koneksi,"SELECT 
@@ -148,15 +151,15 @@
                             (alamat like '%".$txtkey."%') OR 
                             (kota like '%".$txtkey."%') OR 
                             (telephone like '%".$txtkey."%') OR 
-                            (grup like '%".$txtkey."%')");			
+                            (grup like '%".$txtkey."%')".$alias_cond."");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];                               
             } else {
                 $sql_query=" SELECT v.*, COALESCE(sp.status_member, 'Bronze') AS kategori_member FROM view_cari_pelanggan v LEFT JOIN statistik_pelanggan sp ON sp.no_pelanggan = v.nopelanggan 
-                            WHERE ".$sql_cari." like '%".$txtkey."%' order by ".$sql_urut." desc LIMIT 200";
+                            WHERE ".$sql_cari." like '%".$txtkey."%'".$alias_kolom." order by ".$sql_urut." desc LIMIT 200";
                 $cari_kd=mysqli_query($koneksi,"SELECT 
                                                 count(*) as tot FROM view_cari_pelanggan 
-                            WHERE ".$sql_cari." like '%".$txtkey."%'");			
+                            WHERE ".$sql_cari." like '%".$txtkey."%'".$alias_kolom."");			
                 $tm_cari=mysqli_fetch_array($cari_kd);
                 $tot=$tm_cari['tot'];				                                    
             }

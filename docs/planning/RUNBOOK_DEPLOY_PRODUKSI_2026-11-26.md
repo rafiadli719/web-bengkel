@@ -1,7 +1,11 @@
 # Runbook deploy produksi (disusun 2026-11-26)
 
-Dijalankan Rafi. Belum pernah diuji di produksi atau fm1. Keadaan fm1 per 2026-11-26 tidak bisa dicek
-(SSH `fm1` timeout di port 22 dan 2222).
+Dijalankan Rafi. Belum pernah diuji di produksi.
+
+Keadaan fm1 (cek read-only 2026-11-26): kode di `fa23106`; trigger `trg_ns_kdcab_*` ada (18), UNIQUE retur servis
+ada, `audit_no_service --monitor` OK. Belum: Fase 6 (FK), UNIQUE `tblitem.noitem` (11-21), `pelanggan_alias`.
+`log_bin=1` dan `log_bin_trust_function_creators=0`: migrasi trigger gagal dengan user aplikasi; di fm1 dipakai
+`sudo mysql -e "SET GLOBAL log_bin_trust_function_creators=1"` hanya selama migrasi, lalu dikembalikan ke 0.
 
 Daftar di bawah berasal dari header tiap runner di `db/migrations/` dan dari
 `.ai/changelog/2026-11-14-no-service-composite-key.md`. Daftar ini mulai dari 2026-09-30;

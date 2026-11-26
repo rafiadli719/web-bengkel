@@ -303,6 +303,16 @@
                 // stok minus ribuan yang ditemukan di cabang lain hari ini (lihat memory
                 // project_e2e_lapangan). Sekarang: kalau INSERT gagal, STOP, jangan sentuh
                 // detail/stok.
+                // Status lunas tidak boleh bergantung hitungan browser: net dan kekurangan dihitung ulang dari detail.
+                $r_tot = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT SUM(total) AS tot FROM tblpenjualan_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'"));
+                $txtnet = max(0, (int)($r_tot['tot'] ?? 0) - (int)(float)$txtpotfaktur_nom + (int)(float)$txtpajak_nom);
+                // "100,000" jangan sampai tersimpan sebagai 100.
+                if (trim($txtdp) !== '' && !is_numeric(trim($txtdp))) {
+                    echo "<script>window.alert('Jumlah bayar (DP) harus angka tanpa titik atau koma ribuan.');window.history.back();</script>";
+                    exit;
+                }
+                $txtdp = (float)$txtdp;
+                $txtkekurangan = max(0, $txtnet - $txtdp);
                 $header_ok = mysqli_query($koneksi,"INSERT INTO tblpenjualan_header
 (notransaksi, status, carabayar, tanggal,
 no_order, tanggal_order, no_sales, no_pelanggan,
@@ -326,7 +336,7 @@ VALUES
 '$txtjt','',
 '$txtkekurangan','$_nama','$kd_cabang','" . (is_numeric($txtsyarat) ? (int)$txtsyarat : 0) . "','')");
                 // status_lunas ikut kekurangan (dulu tidak diisi -> tunai lunas terbaca belum lunas di laporan hutang/piutang)
-                if ($header_ok) { mysqli_query($koneksi, "UPDATE tblpenjualan_header SET status_lunas='".(((float)$txtkekurangan <= 0) ? '1' : '0')."' WHERE notransaksi='$LastID' AND kd_cabang='$kd_cabang'"); }
+                if ($header_ok) { mysqli_query($koneksi, "UPDATE tblpenjualan_header SET status_lunas='".(((float)$txtkekurangan <= 0) ? '1' : '0')."', tanggal_lunas=IF((".(((float)$txtkekurangan <= 0) ? '1' : '0')."='1'), '$txttglpesan', tanggal_lunas) WHERE notransaksi='$LastID' AND kd_cabang='$kd_cabang'"); }
 
                 if (!$header_ok) {
                     echo "<script>window.alert('Gagal menyimpan transaksi. Coba lagi atau hubungi admin.');window.location=('penjualan_add.php');</script>";

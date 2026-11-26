@@ -4,6 +4,18 @@ function fitmotorEscapeLike($koneksi, $value) {
     return mysqli_real_escape_string($koneksi, str_replace(['%', '_'], ['\\%', '\\_'], (string) $value));
 }
 
+// Tambahan klausa OR agar pencarian juga cocok dengan nama/telepon varian cabang (tabel pelanggan_alias).
+// $polaEscaped = pola LIKE yang SUDAH di-escape. Kembali '' bila tabel belum dimigrasi.
+function fitmotorAliasMatchSql($koneksi, $kolomId, $polaEscaped) {
+    static $ada = null;
+    if ($ada === null) {
+        $r = mysqli_query($koneksi, "SHOW TABLES LIKE 'pelanggan\\_alias'");
+        $ada = $r && mysqli_num_rows($r) > 0;
+    }
+    if (!$ada) { return ''; }
+    return " OR $kolomId IN (SELECT nopelanggan FROM pelanggan_alias WHERE nama LIKE '$polaEscaped' OR telepon LIKE '$polaEscaped')";
+}
+
 function fitmotorFindLatestCustomerCodeByPolice($koneksi, $noPolisi) {
     $noPolisi = trim((string) $noPolisi);
     if ($noPolisi === '') {

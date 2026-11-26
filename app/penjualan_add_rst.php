@@ -443,6 +443,16 @@
                 // Moving Average live: header + detail + tbstok + ledger dalam SATU transaksi (BR-05 atomik, tanpa race antar kasir)
                 $live_atomik = inv_cabang_live($koneksi, $kd_cabang);
                 if ($live_atomik) { $svc_live = new InventoryService($koneksi); mysqli_begin_transaction($koneksi); }
+                // Status lunas tidak boleh bergantung hitungan browser: net dan kekurangan dihitung ulang dari detail.
+                $r_tot = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT SUM(total) AS tot FROM tblpenjualan_detail WHERE user='$_nama' AND kd_cabang='$kd_cabang' AND status_trx='0'"));
+                $txtnet = max(0, (int)($r_tot['tot'] ?? 0) - (int)(float)$txtpotfaktur_nom + (int)(float)$txtpajak_nom);
+                // "100,000" jangan sampai tersimpan sebagai 100.
+                if (trim($txtdp) !== '' && !is_numeric(trim($txtdp))) {
+                    echo "<script>window.alert('Jumlah bayar (DP) harus angka tanpa titik atau koma ribuan.');window.history.back();</script>";
+                    exit;
+                }
+                $txtdp = (float)$txtdp;
+                $txtkekurangan = max(0, $txtnet - $txtdp);
                 $header_ok = mysqli_query($koneksi,"INSERT INTO tblpenjualan_header
 (notransaksi, status, carabayar, tanggal,
 no_order, tanggal_order, no_sales, no_pelanggan,
