@@ -28,6 +28,13 @@
 - Tombol kirim WhatsApp disembunyikan untuk servis cabang lain (pengirimnya memakai cabang sesi).
 - Diuji lewat HTTP dan lint. Belum diuji klik di browser; link antrian dan riwayat pelanggan belum teruji (daftar kosong).
 
+## Changed (sesudah review ketiga)
+- Penjualan (`penjualan_add.php`, `penjualan_add_rst.php`): net dan kekurangan dihitung server dari baris detail;
+  DP bukan angka ditolak; `penjualan_add.php` mengisi `tanggal_lunas`. Baru lint, belum diuji simpan.
+- Pencarian pelanggan servis dan penjualan ikut mencari `pelanggan_alias` (bila tabel ada). Diuji lewat HTTP lokal.
+- Belum diperbaiki: penjualan Kredit dengan DP bawaan (= total) tersimpan lunas
+  (`app/_template/_penjualan_total.php`); menunggu keputusan.
+
 ## Known issues
 - **Kritis:** `servis-print-pdf.php` (link PDF WhatsApp) tanpa cek login dan tanpa `kd_cabang`; nomor servis berurutan
   bisa ditebak dan memuat data pelanggan. Usulan link bertanda tangan, menunggu persetujuan Rafi.
