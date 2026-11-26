@@ -2,8 +2,10 @@
 
 Dijalankan Rafi. Belum pernah diuji di produksi.
 
-Keadaan fm1 (cek read-only 2026-11-26): kode di `fa23106`; trigger `trg_ns_kdcab_*` ada (18), UNIQUE retur servis
-ada, `audit_no_service --monitor` OK. Belum: Fase 6 (FK), UNIQUE `tblitem.noitem` (11-21), `pelanggan_alias`.
+Keadaan fm1 (di-update 2026-11-26): kode di `752acc0`; trigger `trg_ns_kdcab_*` ada (18), UNIQUE retur servis,
+indeks 11-16, UNIQUE `tblitem.noitem` (11-21, 6 baris terkait), `pelanggan_alias` 9.224 baris,
+`audit_no_service --monitor` OK. Belum: Fase 6 (FK). Backup pra-deploy:
+`~/backups/pre-deploy-20261126-fitmotor_dbbengkel.sql.gz`. Kode dikirim lewat `git bundle` (tanpa token).
 `log_bin=1` dan `log_bin_trust_function_creators=0`: migrasi trigger gagal dengan user aplikasi; di fm1 dipakai
 `sudo mysql -e "SET GLOBAL log_bin_trust_function_creators=1"` hanya selama migrasi, lalu dikembalikan ke 0.
 
