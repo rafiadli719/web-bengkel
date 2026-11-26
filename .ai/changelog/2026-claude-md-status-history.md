@@ -1,0 +1,438 @@
+# Riwayat status CLAUDE.md (dipindah 2026-11-15)
+
+Isi di bawah dipindah APA ADANYA dari `CLAUDE.md` root (baris 99-531) saat perampingan /doctor 2026-11-15.
+Akurat pada saat ditulis; status terkini ada di section "Status Ringkas" di `CLAUDE.md` root.
+
+## Progress Merge Modul Kasir & Keuangan (2026-09-03)
+
+Plan lengkap: `docs/superpowers/plans/2026-09-03-merge-modul-kasir-keuangan.md` (34 task).
+History detail tiap update (2026-09-03 s/d 2026-09-07) dipindah ke
+`.ai/changelog/2026-09-kasir-keuangan-merge-history.md` — baca situ kalau butuh jejak
+keputusan lama. Status TERKINI ada di section "Status Ringkas per 2026-09-27" di bawah,
+itu satu-satunya sumber kebenaran, jangan percaya baris history mana pun tanpa cek situ dulu.
+
+## Status Ringkas per 2026-09-27 (baca INI dulu, bukan scroll history di atas)
+
+Log di atas ("Update YYYY-MM-DD ...") adalah jurnal historis — akurat
+PADA SAAT ditulis, tapi bisa jadi basi kalau gak ada entry baru yang
+mengoreksi. Section ini satu-satunya sumber kebenaran soal status
+SEKARANG; kalau bingung status sesuatu, cek di sini dulu sebelum percaya
+baris history manapun di atas. Update section ini tiap kali status
+berubah (jangan biarin basi lagi kayak sebelumnya).
+
+**Selesai, bukan backlog lagi:**
+- Task 16 (smoke test E2E 5 cabang, commit `93cc6de`), Task 17
+  (blokir web_kasir lama, commit `f9e9787`, Step 2 di-skip permanen atas
+  keputusan Rafi), Task 18 revisi (drop 5/9 tabel orphan, commit
+  `115f12f`, 4 tabel akuntansi aktif sengaja gak didrop) — semua tuntas
+  2026-09-12.
+- N+1 query listing utama `setoran_keuangan.php` (paling parah, 4
+  query/baris tanpa limit) — fixed commit `ea3d7be` (2026-09-07).
+- Log hygiene `setoran_keuangan.php` — fixed commit `9353db1`
+  (2026-09-07).
+- Trigger lifecycle `tr_update_setoran_status` — fixed commit `b038463`
+  (2026-09-07).
+- Semua commit lokal numpuk (sampai `383d10c`) sudah di-push ke origin
+  2026-09-13.
+- **Modul Penanganan Komplain Tahap 1+2 SELESAI TUNTAS** (branch
+  `feat/modul-komplain`, merge ke `fix/servis-garansi-wo-fraud-validation`
+  2026-09-13, plan: `docs/superpowers/plans/2026-09-12-modul-komplain-implementation.md`,
+  spec: `docs/Modul_Penanganan_Komplain_Fit_Motor.md`). 13 task, semua
+  commit + smoke test live + final code review (5 temuan, semua difix:
+  permission bocor di endpoint riwayat nopol, race condition nomor
+  komplain, hardcoded DB credential fallback di file baru, duplicate-key
+  handling master kategori, migration file gak reproducible). Checklist-
+  projek diupdate 8 fitur, semua selesai/100%. `app/_komplain/` folder
+  baru, 4 tabel `tblkomplain*`, posisi `KACAB` baru, permission RBAC
+  `komplain_*` di posisi CS/ADM/KM/MNG. Fitur Komplain Garansi existing
+  di modul servis TIDAK disentuh (tetap terpisah, sesuai keputusan Rafi).
+- **REWORK-to-Warranty Integration SELESAI & LIVE** (commit `93190ce`,
+  2026-09-17, di atas Tahap 1+2 di atas). Komplain kategori REWORK yang
+  di-approve Kepala Cabang sekarang otomatis bikin servis garansi
+  (is_garansi=1, prioritas urgent) via `createServisGaransi()` di
+  `function_servis.php`, bukan servis reguler/jemput lagi. Kolom baru
+  `tblkomplain.no_service_asli`/`no_service_rework` (migration
+  `db/migrations/2026-09-15_komplain_rework_garansi.sql`, sudah jalan
+  live). Form input komplain sekarang wajib pilih "No Service Asli"
+  (dropdown tervalidasi ke `tblservice`, harus nopol sama). Endpoint baru
+  `ajax_cari_service_nopol.php`. Sudah E2E test via browser (login test
+  account KACAB, submit komplain -> approve Setuju -> servis garansi
+  ke-generate benar, ref_no_service_original match) — data test dihapus
+  setelah verifikasi, akun test dihapus juga.
+  Catatan environment: modul komplain butuh `app/db_env.php` DAN
+  `config/db_env.php` (2 file terpisah, tiap `koneksi.php` cari
+  `db_env.php` di direktori sendiri) — keduanya gitignored, isi
+  `putenv()` DB_HOST/DB_USER/DB_PASS/DB_NAME. Kalau setup ulang di mesin
+  lain, kedua file itu harus dibuat manual (gak ke-commit by design,
+  sesuai [[feedback_secrets_no_hardcoded_default]]).
+- **Modul Komplain — tema ACE global (navbar/sidebar/footer) SELESAI &
+  LIVE** (commit `f3c158a`, `bbc7006`, 2026-09-27). 7 halaman
+  (`antrian_approval.php`, `antrian_rework.php`, `dashboard_manajemen.php`,
+  `detail.php`, `eskalasi_manajemen.php`, `input.php`,
+  `master_kategori.php`) tadinya standalone Bootstrap5+CDN, gak nyambung
+  sidebar/navbar global — sekarang pakai partial baru
+  `app/_komplain/_ace_header.php` / `_ace_footer.php` (include
+  `menu_dashboard.php`, `lib/logo.php`, `lib/footer.php`, sama pola
+  `servis-reguler.php` dkk). `koneksi_komplain.php` nambah `$_nama`/
+  `$foto_user` dari `tbuser` buat navbar. `export.php` gak disentuh (murni
+  download xlsx). Commit kedua (`bbc7006`) rapiin grid form
+  `input.php` dari class Bootstrap5 (`row g-3`, `form-label`,
+  `form-select`) ke Bootstrap3 (`form-group`, `control-label`,
+  `form-control`) biar match CSS tema ACE. Divalidasi E2E browser pakai
+  session admin live (bukan bikin akun test baru — udah ada sesi aktif),
+  semua 7 halaman render sidebar/navbar/breadcrumb/footer benar. Sekalian
+  bersih-bersih data test nyasar `tblkomplain.id=10`
+  (`KPL-20260927-0005`, "[TEST-ALUR] E-tolak") yang lolos dari cleanup
+  sesi REWORK-to-Warranty sebelumnya — dihapus via script sekali-pakai
+  yang langsung dihapus lagi setelah jalan (gak masuk git).
+- **N+1 minor 2 POST handler `setoran_keuangan.php` SELESAI** (commit
+  `eb2da78`, 2026-09-27). Handler `terima_setoran` (baris ~718, tadinya
+  3 query/item loop) dan `kembalikan_ke_cs` (baris ~1103, tadinya 1
+  query/item loop) dibatch pakai `WHERE ... IN (...)`. Behavior-
+  preserving, kolom/kondisi WHERE sama persis dgn query original — cuma
+  divalidasi via review kode + php lint (gak ada data live "Sedang
+  Dibawa Kurir" buat E2E browser saat itu).
+- **`includes/sidebar.css` modul Keuangan Kasir dibuat** (commit
+  `8f6dccb`, `b352eee`, 2026-09-27). File ini gak pernah ada di repo
+  (404 dari awal) — dipakai `includes/sidebar.php` di 11 halaman
+  (`setoran_keuangan`, `keuangan_pusat`, `master_akun`,
+  `master_nama_transaksi`, `master_rekening_cabang`,
+  `monitoring_setoran`, `setoran_bank_rekap`,
+  `konfirmasi_buka_transaksi`, `closing_revisi_admin`, `keping`),
+  sidebar tampil polos tanpa styling di semua halaman itu. Divalidasi
+  E2E browser (session admin live) di 2 halaman beda, sidebar dark +
+  kategori collapsible + active state render benar. Sempat coba ganti
+  animasi `max-height` accordion ke `grid-template-rows` (0fr/1fr) buat
+  fix temuan linter impeccable "layout-transition", tapi gagal ditest
+  live (height tetap 0px walau class `.open` ke-apply) — di-revert balik
+  ke `max-height` (commit `b352eee`), temuan linter di-suppress via
+  `.impeccable/config.json` dengan alasan tercatat (accordion click-
+  triggered, max 4 kategori, bukan animasi scroll/frequent).
+
+**Update 2026-10-08 Moving Average (commit `ff6c48b`..`58b9103` dan lanjutan):** HPP resmi = Moving Average per lokasi
+(planning `docs/planning/PLANNING_MOVING_AVERAGE_WEBBASE_2026-10-05.md`). Fase 0-4 + jurnal + cek harian SELESAI di lokal,
+semuanya mode shadow/off: tabel `inv_*`, `app/lib/InventoryService.php`/`InventoryCorrection.php`/`InventoryJournal.php`,
+adapter `app/_include_inv_shadow.php` di 29 titik tulis `tbstok`, modul `app/_inventory/` (pengaturan+rekonsiliasi, opening stock,
+valuasi, kartu stok, koreksi maker-checker, laporan transit/PPV/klaim/HPP), permission `inv_*`, `scripts/inv_harian.php`.
+`inv_mode` default `off` di semua cabang = nol efek ke jalur lama. Keputusan D-01..D-12 memakai rekomendasi planning
+(`.ai/decisions/2026-10-08-moving-average-keputusan-default.md`); `tbstok.kd_cabang` sengaja TIDAK dinormalisasi.
+Tes CLI 164 lulus (`tests/inventory/`) dan E2E browser lulus (pembelian+penjualan nyata dengan PST shadow, rekonsiliasi 0
+selisih, maker-checker ADM->KEU, opening stock, RBAC). Bug penjualan langsung tanpa pesanan (`penjualan_add_rst.php`) ikut diperbaiki. Penegakan LIVE (stok dari ledger, tanggal hari ini) sudah dipasang di penjualan, stok keluar/opname, servis bayar x6, transfer kirim, retur pembelian, pembelian; Semua alur penulis stok kini ATOMIK saat live (satu transaksi DB, rollback total bila ledger menolak; komit sebelum WhatsApp/Accurate). Teruji dengan kode halaman asli: POS, Pembelian, Retur Pembelian/Penjualan/Servis, Transfer Kirim/Terima, Terima DO, do_from_po, servis-reguler-byr; sisanya (halaman input servis x5 dengan WhatsApp, stok masuk/keluar rst dengan Accurate) baru lint + tes helper, wajib E2E di cabang pilot. E2E PST lulus untuk POS, stok keluar, pembelian (servis/transfer/retur baru teruji CLI) (lihat `docs/planning/RUNBOOK_CUTOVER_MOVING_AVERAGE.md`, SOP: `docs/SOP_PERSEDIAAN_MOVING_AVERAGE.md`).
+BELUM: migrasi `2026-10-08_*` di produksi, opening stock dari opname fisik (D-03), mode `live` per cabang + BR-05/larang
+backdate di tiap alur (F5-06), kode akun COA (D-07; jurnal otomatis aktif begitu `inv_config acct_*` diisi), checklist-projek.
+Temuan F0-08 (guard potong ganda servis) sudah DIPERBAIKI (semua cabang); detail di `docs/planning/F0-07_F0-08_JALUR_TULIS_STOK_2026-10-08.md`. Snapshot HPP ke detail penjualan/servis aktif untuk cabang live (migrasi `2026-10-08_run_inv_hpp_snapshot.php`).
+Aturan project "HPP FIFO" sudah usang, ganti ke Moving Average.
+
+**Masih pending/backlog beneran (bukan salah baca history):**
+- **Task 1 Step 4 Modul Komplain** — akun Kepala Cabang (posisi `KACAB`)
+  per cabang + lengkapi akun Kepala Mekanik (`KM`) di cabang PACUL,
+  PESALAKAN, TRAYEMAN, CIKDITIRO (cuma PST yang punya KM sekarang).
+  BLOCKING approval REWORK/non-REWORK beneran jalan di 4 cabang itu.
+  Butuh dari Rafi: nama staf real + kode karyawan per cabang — JANGAN
+  auto-generate akun/password STAF ASLI. UPDATE 2026-10-04: akun TEST
+  (`kode_karyawan` `TEST-KACAB-*`/`TEST-KM-*`, password `test123`,
+  tbuser id 125-135 lokal) sudah ada untuk SEMUA cabang (KACAB x5 incl.
+  PST, KM x4 di PACUL/PESALAKAN/TRAYEMAN/CIKDITIRO) atas izin Rafi, jadi
+  testing approval komplain tidak terblokir lagi. Akun staf asli tetap
+  pending dan akun TEST wajib dinonaktifkan sebelum produksi.
+- **Task 34** (retire `masterkey.php`) — masih blocked Task 21 (migrasi
+  SSO bridge `priori-tech` → `tbuser`), Task 21 butuh koordinasi
+  eksternal, belum ada progress baru.
+- 3 gap desain Modul Komplain yang sengaja di-skip (spec ambigu, butuh
+  keputusan Rafi): uploader data massal komplain, idempotent submit
+  (dedup 60 detik), threshold No-show 7 hari configurable.
+- Kredensial DB fallback hardcode (`fitmotor_LOGIN`/`Sayalupa12`) di
+  `app/koneksi.php` dan file-file lama sejenis — utang teknis
+  codebase-wide, bukan regresi baru, belum dibereskan (scope lintas
+  banyak file, belum dijadwalkan).
+- Audit menu_config: Batch 0-7 selesai (Batch 6 Stok+Laporan sudah di
+  commit `2c5db74`/`f79db7e`, Batch 7 Keuangan Kasir bersih per
+  2026-09-28: semua halaman+handler guarded, sidebar 9 halaman
+  terverifikasi live). Batch 8 Komplain SELESAI 2026-09-30 (lihat update
+  di bawah) — audit menu_config TUNTAS.
+
+**Update 2026-09-28 (commit `7e9c055`):** sidebar 9 halaman Keuangan
+Kasir diverifikasi live (bg dark, 260px, 18 link, 1 active tiap
+halaman). Redirect login `koneksi_kasir.php` & `koneksi_komplain.php`
+diganti dari `/index.php` (root domain, salah di Laragon) ke path
+relatif ke `index.php` login app.
+
+**Update 2026-09-29 (commit `e268742`):** lanjutan E2E lapangan setelah
+fix kritis Penjualan/Pembelian (`fe857f8`/`af2d220`) — ketemu bug baru
+saat verify live browser: `app/penjualan_add_item_cari.php` (menu
+Penjualan > Tambah Data > Item Barang) fatal error tiap kali cari item
+apapun, tabel hasil selalu kosong walau teks bilang "ditemukan N data"
+(gak keliatan di layar karena `display_errors` off). Root cause: query
+`SELECT status_harga_naik FROM tblitem` — kolom itu gak pernah ada di
+skema, fitur badge "HARGA NAIK" per-item ini nyasar/gak nyambung ke
+desain asli alarm harga beli (`db/migrations/2026-07-17_f4_alarm_harga_beli.sql`,
+tabel terpisah `alarm_harga_beli` + trigger DB, bukan kolom di tblitem).
+`mysqli_fetch_array(false)` fatal TypeError PHP 8, while loop mati
+sebelum baris pertama ke-render. Fix: hapus query+cabang logic itu
+(blocked_reason-nya toh gak pernah ditampilkan ke user juga), balik ke
+validasi stok polos. Cuma 1 file kena (`pesanan_penjualan_add_item_cari.php`
+dan `pesanan_penjualan_cab_add_item_cari.php` sudah dicek, bersih).
+Divalidasi live: cari "20W-40MATIC" -> row render -> Pilih -> masuk
+keranjang qty 2 -> item dihapus lagi (cleanup, gak checkout beneran).
+Checklist-projek `feat-pos-cari-item` diupdate ke uat/80%.
+
+**Update 2026-09-29 lanjutan (commit `8dc399a`, `d25b18d`):** verify live
+Pembelian Input Manual ketemu pola sama — `pembelian_add_item_cari.php`
+juga render SEMUA 5761 baris `view_cari_item` tanpa LIMIT (beda file dari
+`cari_item_pembelian.php` yang udah dibatasi commit `a5794d9` sebelumnya,
+kelewat). Sekalian header "Hasil Pencarian ditemukan N data" ke-render
+2x (blok HTML kepasang dobel). Fixed (`8dc399a`).
+
+Nyari lebih jauh: pola `SELECT * FROM view_cari_item` 4-varian
+(asc/desc x kosong/isi keyword) tanpa LIMIT ternyata di-copy-paste ke
+25 file modal cari item/jasa lintas modul — Penjualan (jl, jl_pesan),
+Pembelian (bl), Pesanan Pembelian/Penjualan (+cab), Servis (item/jasa,
+jemput, garansi), Stok Masuk/Keluar, Paket, Master Barang. Disapu
+sekaligus LIMIT 200 (commit `d25b18d`), $tot tetap query count terpisah.
+Divalidasi: php -l lolos 25 file, diff cuma nambah " LIMIT 200", live
+browser 2 sample (stok_masuk_add_item_cari.php, servis-add-item-cari.php
+struktur beda app_score) render normal.
+
+**Update 2026-09-29 lanjutan lagi (commit `f6e98b4`):** backlog di atas
+(pencarian PELANGGAN/KENDARAAN/PIUTANG-HUTANG) SELESAI DISAPU juga, di
+sesi yang sama. Dicek dulu satu-satu apa ada WHERE kd_cabang yang perlu
+hati-hati — ternyata semua view (`view_cari_pelanggan`,
+`view_cari_kendaraan`, `view_penjualan_header`, `view_pembelian_header`,
+`view_pesanan_pembelian_header`, `view_pesanan_penjualan_h`,
+`view_pembayaran_hutang`, `view_pembayaran_piutang`) gak difilter
+kd_cabang di WHERE sql_query-nya (2 file `penyesuaian-stok-*-manual-rst.php`
+malah udah ada WHERE kd_cabang, tinggal nambah LIMIT dalam scope cabang
+itu) — jadi LIMIT aman ditambah tanpa mengubah correctness. 17 file
+disapu LIMIT 200 sekaligus: cari_pelanggan_jl.php + _pesan_rst + _rst,
+cari_pelanggan_rst.php, kendaraan_rst.php, pelanggan_rst.php,
+pembelian_rst.php, penjualan_rst.php, pesanan_pembelian_rst.php,
+pesanan_penjualan_rst.php, penjualan_add_pelanggan_cari.php,
+pesanan_penjualan_add_pelanggan_cari.php, pmby_piutang_add_pelanggan_cari.php,
+pmby_hutang_rst.php, pmby_piutang_rst.php,
+penyesuaian-stok-keluar/masuk-manual-rst.php. php -l lolos semua, diff
+cuma nambah " LIMIT 200". Divalidasi live: pelanggan.php -> klik
+Ascending -> pelanggan_rst.php render cepat walau total 37,674 baris
+pelanggan. Checklist-projek diupdate (`feat-bayar-servis`).
+
+Sapuan LIMIT search-modal lintas app (42 file total: 25 item/jasa +
+17 pelanggan/kendaraan/transaksi/piutang-hutang) TUNTAS per commit
+`d25b18d` + `f6e98b4`. Gak ada backlog serupa yang tersisa dari temuan
+E2E lapangan sesi ini.
+
+**Update 2026-09-29 Servis E2E penuh:** alur booking -> Work Order ->
+item barang/jasa -> halaman bayar divalidasi live pakai data real
+(A 2036 IH / ANDI, MAS / CBR-150, servis SV26000103579, dihapus bersih
+setelah tes — no_service + tbservis_workorder + tblservis_barang/jasa +
+tbservis_pending_items semua ke-cleanup, gak ada sisa).
+
+Temuan (bukan bug kode, dicatat buat keputusan Rafi):
+- **Duplikat kategori motor**: `tbkategori_motor` punya baris dobel
+  untuk kategori yang sama — MATIC (id 2 & 6), SUPERMATIC (id 7 & 8),
+  SUPER SPORT vs SUPERSPORT (id 5 & 10, beda ejaan doang). Akibatnya
+  guard "WO tidak sesuai kategori motor" di `servis-input-reguler.php`
+  (fungsi `_get_kd_kategori_motor_by_service`) BISA nge-block WO yang
+  sebenarnya valid, kalau motor ke-mapping ke kategori id yang beda dari
+  yang dipakai waktu setting mapping WO-nya (kejadian nyata: CBR-150
+  ke-kategori id 5 "SUPER SPORT", tapi WO0001 di-mapping ke id 10
+  "SUPERSPORT" — dianggap gak cocok padahal sama). Guard logic-nya
+  sendiri BENER, cuma kena data kotor. Perlu keputusan Rafi: merge
+  kategori duplikat (butuh cek semua FK/mapping yang nunjuk ke id lama
+  sebelum didrop) — bukan sesuatu yang aman diputuskan sepihak.
+- **Data sampah di `tbworkorderheader`**: WO0003 nama kosong, WO0004
+  nama "2444" + waktu 2147483647 menit (integer overflow, jelas dummy),
+  WO0006 "coba", WO0007 "DUMMYQA WO DUPLICATE TEST", dan WO0001 kode
+  dobel (row lain juga "WO0001" tapi nama "Servis Rutin Matic" beda
+  dari "SERVIS STANDAR MATIC/BEBEK"). Belum dibersihkan sesi ini,
+  bukan bug tapi ganggu kalau dipakai staf beneran.
+- **`view_service_kategori_motor` gak ada** — tapi kode udah defensif
+  (`_tbl_exists_local()` check dulu sebelum query), jadi otomatis
+  fallback ke derive dari `tblkendaraan`+`tbtipe_motor`+`tbkategori_motor`
+  tanpa error. Bukan bug, cuma catatan kalau view itu emang gak pernah
+  dibuat (mungkin sisa rencana lama yang gak jadi dipakai).
+- Setiap klik submit (Tambah WO, dkk) di `servis-input-reguler.php`
+  pakai pola `alert()` + `window.location.href` bawaan legacy — bikin
+  tab browser automation freeze ~10-40 detik nunggu resource/dialog,
+  padahal proses server-side-nya sendiri cepat begitu selesai (row
+  DB langsung ke-insert). Bukan bug, tapi jadi catatan buat E2E
+  browser session berikutnya: jangan buru-buru nutup tab pas macet,
+  cek DB langsung buat verifikasi state, baru lanjut.
+
+**Update 2026-09-30 Pesanan Pembelian/Penjualan E2E (commit `ea2c1a6`):** bug
+KRITIS sama persis pola Penjualan/Pembelian/Stok Masuk-Keluar sebelumnya — INSERT
+ke `tblorder_detail`/`tblorderjual_detail`/`tblorderjual_header` di jalur "Pilih"
+modal cari item (`pesanan_pembelian_add_rst.php`,
+`proses-add-detail/pesanan-penjualan.php`, `pesanan_penjualan_add_rst.php`,
+`pesanan_penjualan_cab_add_rst.php`) hilang kolom NOT NULL tanpa default
+(`nobaris`, `qty_terima`, `harga_sp`, `harga_pokok`, `margin_jual`,
+`total_terima`, `id_tabel`, `tipe_trx`, `order_ke` — beda-beda per file). Fix:
+tambah kolom hilang, `nobaris` dihitung `MAX(nobaris)+1` per user/cabang.
+Halaman `_add.php` utama (form langsung, bukan lewat modal) TIDAK kena, sudah
+lengkap dari awal. Divalidasi E2E live 3x (fetch POST sesi test, bukan klik UI):
+Pesanan Pembelian, Pesanan Penjualan Input Manual, Pesanan Penjualan Antar
+Cabang — semua sukses simpan header+detail, data test dihapus. Checklist E2E
+lapangan: Servis, Penjualan, Pembelian, Antar Cabang, Stok Masuk/Keluar,
+Pesanan Pembelian/Penjualan, Laporan, **Keuangan Kasir** SELESAI. Sisa: Komplain,
+Data Master.
+
+**Update 2026-09-30 Keuangan Kasir E2E (commit `66fcc3d`):** bug SISTEMIK
+ketemu & fixed — `requirePermission()` (`_include_menu_rbac.php`, dipakai
+lintas app) redirect `403.php` pakai path relatif, cuma valid dari `app/`
+root. ~40 file `_keuangan/kasir/*.php` (depth 2-3) yang kena permission-denied
+malah 404 mentah (server nginx, gak ada fallback .htaccess). Fix: hitung
+depth direktori dinamis buat prefix `../`. Core transaksi kasir (kas_awal,
+kas_akhir, pemasukan, pengeluaran) pakai PDO prepared statement — gak kena
+pola bug INSERT-kolom-hilang yang ditemuin di modul lain sesi ini.
+`setoran_bank_rekap.php` gak ada default date range (1.2MB HTML kalau filter
+kosong) — belum critical (364 baris/487ms), watchlist aja.
+
+**Update 2026-09-30 Laporan E2E (commit `4118c84`):** crawl otomatis 42 halaman
+`lap_*.php`. Fix `lap_komisi_mekanik.php` 8906ms->1943ms (subquery laba_barang
+scan 361rb baris `tblservis_barang` tanpa filter tanggal, ditambah `WHERE
+no_service IN (...)` date-filtered). Halaman ini gak dilink `menu_config.php`
+(akses URL langsung), formula referensi buat `_include_komisi_snapshot.php`.
+500 error di `lap_kas_keluar/masuk_pdf/xls.php` + `lap_servis_pdf/xls.php` pas
+crawl tanpa GET params itu artifact crawl doang (halaman utama selalu isi
+default date range dulu), bukan bug reachable — gak difix.
+`laporan-cancel-servis.php` 2111ms bukan N+1, view `view_laporan_cancel_servis`
+sendiri berat (984ms buat 1 baris) — ditunda, fitur jarang dipakai.
+
+**Update 2026-09-30 E2E Komplain + Data Master + watchlist (commit `4c17e5c`,
+`7ee23cb`, `9404562`, `58a086f`, `0021419`):** checklist E2E
+lapangan SEMUA MODUL TUNTAS.
+- Komplain (`4c17e5c`): handler AJAX gak cek cabang (KACAB cabang A bisa
+  close/No-show komplain cabang B cuma ganti id), `ajax_close_nonrework` bisa
+  nutup komplain REWORK (lompati approval), usulan masih diterima saat
+  Eskalasi Manajemen (langgar aturan 8 spec), keputusan eskalasi
+  "Dijadwalkan" gak bikin servis garansi. Helper baru
+  `ambilKomplainDalamScope()` + `buatServisGaransiDariKomplain()` di
+  `koneksi_komplain.php`. Divalidasi live 11 skenario.
+- Data Master (`7ee23cb`): 13 INSERT gagal silent (kolom NOT NULL tanpa
+  default / kolom gak ada) — tambah barang ORI/NON-ORI, jasa, satuan,
+  pelanggan, supplier, sales, master temuan, merge log pelanggan, stok
+  cabang, validation log. Helper baru `_include_tblitem_defaults.php`.
+  `save_pelanggan/supplier/sales.php` tanpa session guard -> ditambah.
+  `updateCancelStatistikPelanggan()` gak pernah jalan (3 bug) -> fixed.
+  `pelanggan.php` 2,8s -> 0,5s.
+- `closing_revisi_admin.php` sekarang pakai sidebar, link sidebar lama
+  `admin_closing_revision.php` (404) diganti (`9404562`).
+- `setoran_bank_rekap.php` default 30 hari (1,2MB -> 79KB).
+- `view_laporan_cancel_servis` 3,2s -> 1ms: charset JOIN mismatch
+  (`0021419`). **Migrasi `db/migrations/2026-09-30_run_cancel_servis_charset.php`
+  BELUM dijalankan di produksi** (lokal sudah).
+
+5 temuan lanjutan scan INSERT — SELESAI (commit `bcb061b`, divalidasi live):
+penjualan mitra (fatal TypeError array + header kolom salah + detail
+"disedot" pesanan berikutnya karena status_trx '0'), pembayaran piutang
+(detail+header) & hutang (header) — dulu tabelnya kosong total, pembelian/
+penjualan bisa ketandai lunas walau header gagal (sekarang digerbang),
+pesanan_penjualan_add.php header. `pengadaan_antarcab_push.php:113` false
+positive (cabang fallback gak terjangkau). CATATAN: klaim lama "halaman
+_add.php utama pesanan sudah lengkap" SALAH, header-nya juga kena.
+Juga: tabel `tbmaster_temuan_jasa_mapping` ada di dump produksi tapi gak
+ada di DB lokal (halaman Temuan - Jasa Mapping kosong di lokal saja).
+Watchlist: `statistik_pelanggan_dashboard.php` ~1,8s (3 view agregat,
+bukan N+1).
+
+**Update 2026-09-30 sapuan INSERT seluruh app (commit `5dd1b32`):** scan semua
+INSERT di `app/` (regex kolom vs skema live, lalu tiap kandidat dibuktikan INSERT
+nyata dalam transaksi rollback) -> 50 gagal, kini tinggal 9 kode mati/legacy.
+- 2 migrasi BARU, lokal sudah jalan, **PRODUKSI BELUM** (Rafi jalankan runner-nya):
+  `db/migrations/2026-09-30_run_default_kolom_warisan_access.php` (DEFAULT kolom
+  NOT NULL warisan Access: qty_retur, waktu, penyesuaian, stok_sistem, dst;
+  reversible, instan) dan `2026-09-30_run_tblservis_jasa_keterangan.php` (kolom
+  keterangan yang di-INSERT garansi & jemput tapi gak ada di skema).
+  Tanpa migrasi ini beberapa kode baru tetap gagal di MySQL strict.
+- `nobaris` servis (barang/jasa) diisi atomik `INSERT..SELECT COALESCE(MAX)+1`.
+- Tab Progress Mekanik (`_ajax/ajax-update-progress-mekanik.php`) ditulis ulang
+  (dulu kolom salah + SQL injection, tabel kosong = gak pernah jalan).
+  Log pembatalan servis (`tb_log_antrian`) juga dulu gak pernah tersimpan.
+- Kode mati (tanpa pemanggil, TIDAK diubah): keluhan-proses.php,
+  servis-input-reguler-jemput-rst.php (btnsimpan), _ajax/ajax-save-service.php,
+  save_*_h.php, save_barang.php. Boleh diarsipkan.
+- Fitur yang tabelnya TIDAK ADA di DB (butuh keputusan Rafi: bangun atau arsip):
+  Rencana Order (tblrencana_order_*), notifications/activity_logs
+  (helper-functions.php), tbdokter, tb_history_service_pelanggan/
+  tb_history_mekanik_servis/tb_log_naik_tier_member (_include_statistik_pelanggan),
+  tb_servis_mekanik_assignment, tb_pickup_details, tbl_whatsapp_messages,
+  tb_log_activity, activity_log (service-validation).
+
+**Update 2026-09-30 audit UI/UX + perbaikan (commit `a9a4b34`, `7136d52`, `c463642`,
+`188eb3c`, planning `docs/superpowers/plans/2026-09-30-audit-ui-ux-plan.md`):**
+audit 152 halaman menu + 24 halaman cetak + hak akses 11 posisi. Yang gak butuh
+keputusan Rafi sudah dikerjakan & divalidasi (crawl 0 error, PDF dirender jadi gambar,
+DOM/screenshot browser):
+- Judul tab dinamis dari `menu_config.php` (`lib/titel.php`, generik 110 -> 1).
+- Font serif: 20 halaman gak muat `fonts.googleapis.com.css`; `ace.min.css` diberi
+  fallback sans-serif. `lap_profit_insentif.php` layout pecah (pembungkus `#navbar`
+  hilang) sudah beres. Gotcha: `_include_navbar.php` cuma fragmen dalam navbar, halaman
+  wajib bungkus `<div id="navbar" class="navbar navbar-default"><div class="navbar-container">`.
+- Cetak: `servis-print-pdf.php` (teks saling menimpa di Dompdf lama: hindari div+h2/h3/h4
+  margin, pakai tabel; kolom item = quantity/harga_jual/potongan), kop `penjualan_struk` &
+  `pesanan_pembelian_struk` sempat mencetak alamat pelanggan/supplier, tanggal struk
+  dd/mm/yyyy (helper `_template/_nota_pdf_parts.php`).
+- DataTables Indonesia (`assets/js/jquery.dataTables.bootstrap.min.js`, 112 halaman),
+  pagination manual Sebelumnya/Berikutnya, master pelanggan nama kosong di akhir,
+  label "No GPS" jadi strip, badge tier nowrap, 4 menu ke tujuan akhir.
+- Koreksi: "Cancel di 120 halaman" false alarm (label menu Laporan Cancel Service);
+  format tanggal `09/30/2026` di filter itu dari `<input type=date>` bawaan browser.
+- BELUM (nunggu keputusan Rafi K1-K9): kop struk per cabang (`tbsetting` cuma 1 baris ->
+  semua cabang berkop ADIWERNA, fax berisi "SIMPAN NOMOR WA DI ATAS"), tampilan Keuangan
+  Kasir vs ACE, data uji/duplikat, menu KACAB cuma 1 item, halaman berlabel "Cetak" yang
+  ternyata form edit, gaya/tanggal bawaan laporan.
+- Catatan: browser nyimpen cache `ace.min.css` & DataTables -> hard-reload sekali setelah
+  deploy. Lingkungan tes browser: tab sering `visibilityState=hidden` (screenshot gagal /
+  innerWidth 0); buat tab baru + `resize_window` 1366x768 sebelum ukur/screenshot.
+
+
+**Update 2026-10-04 (commit `8238769`):** keputusan Rafi atas backlog:
+- Kategori motor duplikat DI-MERGE (migrasi reversible
+  `db/migrations/2026-10-04_run_merge_kategori_motor_cleanup_wo.php [up|down]`,
+  backup `bak_20261004_*`): 6->2, 7/8->3, 10->5. Kanonik = id yang dipakai
+  `tbtipe_motor` (BEBEK 1, MATIC 2, SUPER MATIC 3, SPORT 4, SUPER SPORT 5);
+  mapping WO0001 sekarang mencakup 1-5 (guard "WO tidak sesuai kategori"
+  tidak salah blok lagi). WO0004/WO0006/WO0007 dihapus, WO0003 dinamai
+  "GANTI KARET VAKUM". WO001-WO005 (seed demo, dipakai 9 servis lama
+  2025) sengaja TIDAK dihapus. **Migrasi BELUM dijalankan di produksi.**
+  `workorder-input.php` kini tolak nama kosong + clamp waktu; master
+  kategori motor cek duplikat abaikan spasi.
+- Item 5 (bangun fitur yang tabelnya hilang) SEDANG ditriase: Rencana Order
+  butuh `tblsupplier_tempo` (juga hilang, perlu data tempo supplier dari
+  Rafi); `tbdokter`, `webhook_whatsapp`, `tb_log_activity` = sisa template
+  / kode komentar, bukan fitur bisnis bengkel; history service pelanggan
+  punya kode yang gak cocok skema asli (tblcabang/tbmaster_workorder/
+  tbservis_barang gak ada) dan jalan di alur bayar, jadi perlu perbaikan
+  hati-hati, bukan sekadar CREATE TABLE.
+- 3 gap desain Komplain tetap ditunda sesuai Rafi.
+
+**Update 2026-10-04 (sesi lanjutan, commit `da8795b` + commit gap Komplain):**
+- Migrasi lokal (DB Laragon) SUDAH terpasang semua: 3 migrasi 2026-09-30, merge kategori motor,
+  merge merek motor (`2026-10-04_run_merge_merek_motor_duplikat.php`, FK nyata
+  `tblpelanggan.merek_id` & `tbmaster_tipe_header.id_brand`), `tbcabang.telepon_cabang`,
+  `tblkomplain_setting`. **Semua migrasi 2026-09-30 dan 2026-10-04 BELUM di produksi** (shared hosting,
+  Rafi jalankan runner-nya). Orphan merek legacy id 1-4 (`tblkendaraan.kode_merek`, `tblitem.kd_pabrik`,
+  `tbtipe_motor.kode_pabrik=3`) TIDAK disentuh: pemetaan butuh keputusan Rafi.
+- K6 kop struk per cabang: `config/kop_cabang.php` `fm_kop_query()` dipakai 18 file struk/cetak,
+  ambil nama/alamat/telepon dari cabang login, fallback `tbsetting`. Alamat CIKDITIRO & PACUL
+  masih kosong, alamat PESALAKAN ("Jl. Pesalakan No. 10") dan PST ("Jl. Industri No. 1") tampak
+  dummy, telepon cabang belum diisi -> **Rafi isi di Master Cabang (field Telepon/WA baru)**.
+- K8: breadcrumb halaman `*_cetak` jadi "Detail ..." (tombol Cetak sudah ada). K9 tanggal struk sudah dd/mm/yyyy.
+- `dokter*.php`, `webhook_whatsapp.php` diarsipkan ke `archive/dokter-whatsapp/`.
+- Komplain 3 gap SELESAI & diuji browser: batas No-show configurable (`tblkomplain_setting.noshow_hari`,
+  default 7, diatur di Master Kategori, No-show juga dari status Dijadwalkan), idempotent submit 60 detik,
+  uploader CSV massal (`_komplain/import_massal.php`, validasi dulu, all-or-nothing).
+- Masih menunggu keputusan Rafi: K2 (Keuangan Kasir vs ACE), K4 (glosarium), K5 (mobile), K7 (menu KACAB),
+  Rencana Order (butuh data tempo supplier), history service pelanggan.
+
+**Update 2026-11-02 (commit `a6a2eb5`, lokal, BELUM push/deploy):** E2E klik penuh sisa halaman stok (masuk/keluar rst
+dan non-rst, SO masuk/keluar rst) dan servis bayar (reguler, jemput, garansi) di CIKDITIRO mode live: semua lulus.
+2 bug fixed: `stok_keluar_add_rst.php` tombol Simpan di-disable sinkron (btnsimpan hilang dari POST), dan
+`servis-input-reguler-jemput.php` SUM jasa NULL ("Data truncated subtotal_jasa") bikin servis jemput tanpa jasa gagal bayar.
+`servis-input-reguler-rst.php` read-only (handler bayar tak terjangkau UI), `...jemput-rst.php` kode mati.
+Dropdown Admin form bayar servis ambil dari `tbuser_karyawan` per cabang: CIKDITIRO kosong, butuh data admin dari Rafi.
+Detail: `.ai/changelog/2026-11-02-e2e-servis-stok.md`.
+
+**Update 2026-11-09 (lokal, BELUM push/deploy):** commit `8f4d0ee` (audit input servis: catatan/keluhan, keterangan tidak ditimpa, invoice WA per cabang) berisi migrasi `2026-11-07_run_tblservice_catatan.php` yang WAJIB jalan di produksi sebelum/bersamaan deploy. Bug "total edit-item salah": rumus handler benar, akarnya qty pecahan vs kolom `quantity` int; qty kini dibulatkan di 4 file (hanya lint). 5 baris lama CDT total-nya meleset (lihat `.ai/changelog/2026-11-09-qty-bulat-edit-item.md`), belum dikoreksi.
+
+**Update 2026-11-14 (lokal, BELUM push/deploy):** akar masalah `no_service` tidak unik lintas cabang dikerjakan Fase 0-6 (identitas servis = `(no_service, kd_cabang)`): kolom + trigger + FK di 18/13 tabel anak, 8 view dan trigger bayar diperbaiki, ~33 query kode dibatasi per cabang, penjaga `scripts/audit_no_service.php` + pre-commit (`make install-hooks`). Runner `db/migrations/2026-11-14_run_no_service_fase{1,2,3,4,6}_*.php` BELUM di produksi. Karantina `ns_karantina` (137 grup open) butuh keputusan Rafi. E2E klik penuh setelah FK aktif LULUS 2026-11-14 (booking, keluhan, WO, mekanik, bayar, antrian, batal, batal lintas cabang ditolak, garansi; semua baris ber-kd_cabang CIKDITIRO). Servis uji `SV26000103580` (sudah dibayar) sengaja dibiarkan karena jejak stok/komisi; keputusan Rafi. Admin CIKDITIRO di `tbuser_karyawan` masih kosong (bayar servis di cabang itu gagal). Detail + runbook: `.ai/changelog/2026-11-14-no-service-composite-key.md`.
+
+**Update 2026-11-15 (lokal, BELUM commit/push/deploy):** audit `fitmotor_center` (VPS, warehouse 5 MDB Access) vs `fitmotor_dbbengkel` + keputusan Rafi (histori diganti total dari center, semua data, tabel HR dipertahankan, DB lokal lain jangan dihapus, urutan sesi Adiwerna -> Pacul -> Cikditiro -> Trayeman -> Pusat). Sesi 1 PESALAKAN SELESAI lokal: data lama PSL dibuang, diganti center via `scripts/center_reload/reload_cabang.php` (migrasi `2026-11-15_run_center_reload_schema.php` up lokal); verify cocok persis, saldo stok = Access. WAJIB sebelum sesi PACUL: Fase K (kunci gabungan nomor transaksi pembelian/penjualan/PO/hutang/dst, PK `tblorder_header` terkunci FK DO/approval). Gotcha: dari Windows `127.0.0.1:3306` = MySQL WSL, Laragon pakai `localhost`. Detail: `docs/planning/PLAN_RELOAD_CENTER_PER_CABANG_2026-11-15.md`, `.ai/changelog/2026-11-15-reload-center-adiwerna.md`.

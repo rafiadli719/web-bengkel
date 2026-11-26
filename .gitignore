@@ -17,3 +17,6 @@ agentdb.rvf
 agentdb.rvf.lock
 ruvector.db
 backups/*.sql
+
+# log PHP (berisi data pelanggan)
+app/stderr
