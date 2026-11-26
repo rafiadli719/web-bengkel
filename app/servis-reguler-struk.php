@@ -88,8 +88,9 @@
         
         $query_jasa = mysqli_query($koneksi, "SELECT
                         j.id, j.no_item, j.waktu, j.harga, j.total, j.potongan,
-                        COALESCE(wh.nama_wo, j.no_item) AS namaitem
+                        COALESCE(js.namaitem, wh.nama_wo, j.no_item) AS namaitem
                     FROM tblservis_jasa j
+                    LEFT JOIN tblitem_jasa js ON js.noitem = j.no_item
                     LEFT JOIN tbworkorderheader wh ON wh.kode_wo = j.no_item
                     WHERE j.no_service='$no_service'");
 

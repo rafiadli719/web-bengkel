@@ -48,8 +48,10 @@ while($row = mysqli_fetch_assoc($sql_brg)) {
 }
 
 $sql_jsa = mysqli_query($koneksi, "SELECT j.no_item, j.harga, j.total, j.qty_retur,
-                                           COALESCE(i.namaitem, j.no_item) AS namaitem
+                                           COALESCE(js.namaitem, wh.nama_wo, i.namaitem, j.no_item) AS namaitem
                                     FROM tblservis_jasa j
+                                    LEFT JOIN tblitem_jasa js ON js.noitem = j.no_item
+                                    LEFT JOIN tbworkorderheader wh ON wh.kode_wo = j.no_item
                                     LEFT JOIN tblitem i ON i.noitem = j.no_item
                                     WHERE j.no_service='$no_service' AND j.kd_cabang='$kd_cabang'");
 while($row = mysqli_fetch_assoc($sql_jsa)) {
